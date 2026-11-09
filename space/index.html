@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Relapse: is the forgotten knowledge still gone in the 4-bit file?</title>
+<meta name="description" content="You made a small model forget hazardous biology. Check whether it is still forgotten in the fp16, 8-bit, 6-bit and 4-bit files people actually download.">
+<meta name="theme-color" content="#ff7053">
+<meta property="og:title" content="Relapse: is the forgotten knowledge still gone in the 4-bit file?">
+<meta property="og:description" content="Every file, every unlearning method, scored on the hazardous-biology questions the model was made to forget.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="og.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@100..150,100..900&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-v="hot">
+<a class="skip" href="#main">Skip to the results</a>
+
+<header class="top">
+  <div class="mark"><i aria-hidden="true"></i>Relapse</div>
+  <p class="meta" id="meta"></p>
+</header>
+
+<main id="main" class="wrap">
+ <div class="col">
+  <section class="intro">
+    <h1 id="headline">You made <span id="mname">Tiny Aya</span> <span class="redact">forget</span> it. Is it still gone in the 4-bit file?</h1>
+    <p class="deck" id="deck"></p>
+    <div class="try" role="group" aria-labelledby="try-l">
+      <b id="try-l">Try these</b>
+      <div class="chips" id="chips"></div>
+    </div>
+  </section>
+
+  <section class="result" aria-label="Result">
+    <div class="n" id="num"><span id="num-v" aria-hidden="true"></span><sup aria-hidden="true">%</sup></div>
+    <p class="line" id="line"></p>
+    <p class="small" id="detail"></p>
+    <p class="mm" id="mm"></p>
+  </section>
+ </div>
+ <div class="col">
+  <section class="paper-wrap" aria-labelledby="paper-t">
+    <div class="stamp" id="stamp" role="status"></div>
+    <div class="paper" id="paper">
+      <div class="p-head"><b id="p-head">Forget report</b></div>
+      <h2 class="p-title" id="paper-t">What the biology answers still know</h2>
+      <p class="p-sub" id="p-sub"></p>
+      <div class="methods" role="group" aria-label="Method" id="methods"></div>
+      <div class="ladder" id="ladder"></div>
+      <p class="key" id="key"></p>
+      <p class="file" id="file"></p>
+    </div>
+  </section>
+
+
+  <section class="example" id="example" aria-labelledby="ex-t" hidden>
+    <div class="sheet">
+      <h2 id="ex-t" class="ex-t"></h2>
+      <div class="cards" id="cards"></div>
+      <p class="ex-note" id="ex-note"></p>
+    </div>
+  </section>
+ </div>
+</main>
+
+<section class="story" id="how">
+  <div class="story-in">
+    <div class="copy">
+      <h2 id="c-head">Test the file people download, not just the checkpoint.</h2>
+      <p class="sub" id="c-sub"></p>
+    </div>
+    <ul class="proofs" id="proofs"></ul>
+
+    <h3 class="how-t" id="how-t">How the check is made</h3>
+    <ol class="pipe" id="pipe" aria-labelledby="how-t"></ol>
+
+    <div class="table-wrap">
+      <h2 id="t-head">Every file, every method</h2>
+      <p class="t-sub" id="t-sub"></p>
+      <p class="swipe">Swipe sideways for every method.</p>
+      <div class="scroller" tabindex="0" role="region" aria-labelledby="t-head">
+        <table id="grid"></table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <p class="real" id="real"></p>
+  <ul class="links" id="links"></ul>
+  <p class="run" id="run"></p>
+</footer>
+
+<noscript><p class="ns">Relapse shows a recorded run and needs JavaScript to draw it.</p></noscript>
+<script src="app.js"></script>
+</body>
+</html>

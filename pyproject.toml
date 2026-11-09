@@ -1,0 +1,19 @@
+[project]
+name = "relapse"
+version = "0.1.0"
+description = "Does unlearned knowledge stay gone when a model is stored at 4-bit? Lexsi stack on Cohere Tiny Aya."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+dependencies = ["torch>=2.4", "transformers>=5.15,<6", "datasets", "numpy", "gguf"]
+
+[project.optional-dependencies]
+lexsi = ["safetune==0.1.13", "auditkit>=1.1.6", "curatorkit", "circuitkit>=0.2.1", "bitsandbytes>=0.45", "peft"]
+dev = ["pytest"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["relapse"]

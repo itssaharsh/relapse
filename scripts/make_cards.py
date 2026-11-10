@@ -56,7 +56,9 @@ AuditKIT paired bootstrap on the 1,273 WMDP-bio questions, fp16 against real lla
 
 """ + "\n".join(lines) + """
 
-The same edit at layers 3 to 9 does not do this; see the write-up for the layer windows we compared.
+Both files are in this repository (`*-Q4_0.gguf`, `*-Q4_K_M.gguf`), next to the fp16 checkpoint, so the check can be repeated.
+Rounding only the layers in front of the edit reproduces most of the effect. The same edit at the other four layer windows we
+tried does not do this; see the write-up.
 """
         formats_note = "Q4_K_M and Q4_0 are real llama.cpp files; NF4 is a bit-exact weight round trip. The other formats were not scored for this model."
         limits = """A research artifact for studying unlearning and quantization, published as a negative example: its forgetting does

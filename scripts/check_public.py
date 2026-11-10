@@ -7,8 +7,9 @@ import urllib.request
 
 USER = "itssaharsh"
 MODELS = ["tiny-aya-global-unlearn-bio-default-layers", "tiny-aya-global-unlearn-bio-circuitkit-layers",
-          "tiny-aya-global-unlearn-bio-circuitkit-4bit-aware"]
-SWEEP = "tiny-aya-global-unlearn-bio-sweep"   # the edited tensors of all 16 runs
+          "tiny-aya-global-unlearn-bio-circuitkit-4bit-aware", "tiny-aya-global-unlearn-bio-deeper-layers"]
+SWEEP = "tiny-aya-global-unlearn-bio-sweep"   # the edited tensors of every run
+N_RUNS = 30
 DATASETS = ["relapse-runs", "relapse-wmdp-bio-probes"]
 COLLECTIONS = ["relapse-unlearned-tiny-aya-models", "relapse-runs-logs-and-probe-sets"]
 PAGES = [f"https://huggingface.co/spaces/{USER}/relapse", f"https://{USER}-relapse.static.hf.space/index.html",
@@ -31,8 +32,8 @@ def main() -> int:
             bad.append(f"model {m} has no GGUF")
     d = json.loads(get(f"https://huggingface.co/api/models/{USER}/{SWEEP}")[1])
     n = sum(s["rfilename"].endswith(".safetensors") for s in d.get("siblings", []))
-    if d.get("private") or d.get("gated") or n != 16:
-        bad.append(f"sweep repo private/gated or has {n} of 16 runs")
+    if d.get("private") or d.get("gated") or n != N_RUNS:
+        bad.append(f"sweep repo private/gated or has {n} of {N_RUNS} runs")
     for ds in DATASETS:
         d = json.loads(get(f"https://huggingface.co/api/datasets/{USER}/{ds}")[1])
         if d.get("private") or d.get("gated"):

@@ -6,7 +6,7 @@ You made a model forget something dangerous. Then you shrank it to the 4-bit fil
 
 [![Relapse: the forget report](space/og.png)](https://huggingface.co/spaces/itssaharsh/relapse)
 
-**Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [Hugging Face article](https://huggingface.co/blog/itssaharsh/relapse) · **Models:** [collection](https://huggingface.co/itssaharsh) · **Data and logs:** [collection](https://huggingface.co/itssaharsh)
+**Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [the article](https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
 
 ## The answer
 

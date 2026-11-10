@@ -1001,9 +1001,9 @@
  ],
  "links": {
   "repo": "https://github.com/itssaharsh/relapse",
-  "models": "",
-  "datasets": "",
-  "article": ""
+  "models": "https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models",
+  "datasets": "https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets",
+  "article": "https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md"
  },
  "stats": [
   {

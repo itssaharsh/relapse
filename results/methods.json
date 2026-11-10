@@ -1,5 +1,20 @@
 {
  "_note": "Maps run names in results/raw/*.json to the page's methods.",
- "runs": {"base": "original", "rmu_default_layers": "standard", "rmu_circuit_layers": "circuit", "rmu_circuit_layers_qa": "circuit_qa", "rmu_L7_strong": "aggressive"},
- "run": {"date": "2026-11-10", "label": "Kaggle 2x T4, final grid"}
+ "runs": {
+  "base": "original",
+  "rmu_default_layers": "standard",
+  "rmu_circuit_layers": "circuit",
+  "rmu_circuit_layers_qa": "circuit_qa",
+  "rmu_L7_strong": "aggressive"
+ },
+ "run": {
+  "date": "2026-11-10",
+  "label": "Kaggle 2x T4, final grid"
+ },
+ "links": {
+  "repo": "https://github.com/itssaharsh/relapse",
+  "models": "https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models",
+  "datasets": "https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets",
+  "article": "https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md"
+ }
 }

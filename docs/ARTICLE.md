@@ -89,7 +89,7 @@ pip install -e ".[dev]" && python -m pytest -q tests        # round trips match 
 python scripts/build_results.py --fetch                     # rebuilds every number above from the raw runs
 ```
 
-The Kaggle scripts that produced the runs, the unlearned models (safetensors and Q4_K_M GGUF), the per-question results, AuditKIT runs, CircuitKIT scores and CuratorKIT-gated probe sets are all public. The models are in the [Relapse models collection](https://huggingface.co/itssaharsh) and the data in the [Relapse data collection](https://huggingface.co/itssaharsh). The WMDP bio forget corpus is gated by CAIS and is not redistributed.
+The Kaggle scripts that produced the runs, the unlearned models (safetensors and Q4_K_M GGUF), the per-question results, AuditKIT runs, CircuitKIT scores and CuratorKIT-gated probe sets are all public. The models are in the [Relapse models collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) and the data in the [Relapse data collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets). The WMDP bio forget corpus is gated by CAIS and is not redistributed.
 
 ## Changelog
 

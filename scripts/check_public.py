@@ -46,7 +46,7 @@ def main() -> int:
         status, body = get(url)
         if status != 200 or (url.endswith("index.html") and b"Relapse" not in body):
             bad.append(f"{url} -> {status}")
-    print("\n".join(bad) if bad else "all public: 3 models, the 16-run sweep, 2 datasets, 2 collections, Space, repo")
+    print("\n".join(bad) if bad else f"all public: {len(MODELS)} models, the {N_RUNS}-run sweep, {len(DATASETS)} datasets, {len(COLLECTIONS)} collections, Space, repo")
     return 1 if bad else 0
 
 

@@ -1,7 +1,5 @@
 # Relapse: forget the hazard, keep the rest, even in the 4-bit file
 
-*Unlearning on Cohere's Tiny Aya with Lexsi Labs' open-source safety stack, measured in the files people actually download.*
-
 Unlearning at the layers CircuitKIT found took Tiny Aya's score on 1,273 hazardous-biology questions (WMDP-bio) from 63.4% to 37.1% in the 4-bit llama.cpp file, while its general knowledge stayed at 54.9% against the original's 54.8% (MMLU, 1,000 questions). A second seed and a 16-run sweep agree.
 
 The setting: you want a small model that runs offline on a phone and will not help anyone build a bioweapon. Unlearning can remove that knowledge, but people run a 4-bit copy rather than the tested checkpoint, and unlearning costs some general knowledge. We measured both on Cohere Labs' [Tiny Aya Global](https://huggingface.co/CohereLabs/tiny-aya-global) (3.35B parameters, 70 languages) with four Lexsi Labs repos, and published every model, dataset and log on Hugging Face.

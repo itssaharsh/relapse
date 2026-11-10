@@ -61,7 +61,7 @@ Every number on the page comes from [`space/data/results.json`](space/data/resul
 
 ## How it works
 
-Four Lexsi repositories in one pipeline, on a Cohere model, with every artifact on Hugging Face:
+Four Lexsi Labs repositories in one pipeline, on a Cohere Labs model, with every artifact on Hugging Face:
 
 | Step | Tool | What it did here |
 |---|---|---|

@@ -29,14 +29,15 @@ def batches(texts, n, bs=4, maxlen=512):
         out.append({k: v.to("cuda:0") for k, v in enc.items()})
     return out
 FB = batches(forget_txt, NB); RB = batches(retain_txt, NB)
-def load_trunc(L):
+FROZEN = torch.float16 if os.environ.get("FROZEN_FP16") == "1" else torch.float32   # fp16 frozen reference: room for deeper windows on a T4
+def load_trunc(L, dtype=torch.float32):
     cfg = AutoConfig.from_pretrained(MP); cfg.num_hidden_layers = L + 1
     if getattr(cfg, "layer_types", None): cfg.layer_types = cfg.layer_types[:L + 1]
-    return AutoModelForCausalLM.from_pretrained(MP, config=cfg, dtype=torch.float32, device_map={"": 0}).model.eval()
+    return AutoModelForCausalLM.from_pretrained(MP, config=cfg, dtype=dtype, device_map={"": 0}).model.eval()
 changed = {}
 for c in CONFIGS:
     L = c["layer"]; UPD = [L - 2, L - 1, L]
-    frozen = load_trunc(L)
+    frozen = load_trunc(L, FROZEN)
     for p in frozen.parameters(): p.requires_grad_(False)
     norms = []
     h = frozen.layers[L].register_forward_hook(lambda m, i, o: norms.append((o[0] if isinstance(o, tuple) else o).norm(dim=-1).mean().item()))
@@ -56,7 +57,7 @@ for c in CONFIGS:
             parametrize.remove_parametrizations(model.layers[l].mlp.down_proj, "weight", leave_parametrized=False)
     changed[c["name"]] = {"model." + n: p.detach().float().cpu().clone() for n, p in model.named_parameters() if any(f"layers.{l}.mlp.down_proj" in n for l in UPD)}
     log("trained", c["name"], "anorm", round(anorm, 2), "secs", round(time.time() - t1))
-    torch.save(changed, "/kaggle/working/changed_rmu4.pt")
+    torch.save(changed, "/kaggle/working/" + os.environ.get("OUT", "changed_rmu4.pt"))
     del model, frozen; gc.collect(); torch.cuda.empty_cache()
 del FB, RB; gc.collect(); torch.cuda.empty_cache()
 model = AutoModelForCausalLM.from_pretrained(MP, dtype=torch.float16, device_map={"": 0}).eval()
@@ -90,5 +91,5 @@ for prec in PRECS:
         results.append(row); log(row)
         if d: set_tensors(lambda n: master[n], d.keys(), prec)
         json.dump(results, open("/kaggle/working/results.json", "w"), indent=1)
-torch.save(changed, "/kaggle/working/changed_rmu4.pt")
+torch.save(changed, "/kaggle/working/" + os.environ.get("OUT", "changed_rmu4.pt"))
 print(json.dumps(results, indent=1))

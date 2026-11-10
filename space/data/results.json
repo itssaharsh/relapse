@@ -2585,5 +2585,159 @@
    "retain": 0.457,
    "price": 0.097
   }
+ ],
+ "recipes": [
+  {
+   "kind": "recipe",
+   "seed": 0,
+   "prec": "fp16",
+   "set": "mmlu",
+   "a": "default layers",
+   "b": "CircuitKIT layers",
+   "n": 1000,
+   "acc_a": 0.515,
+   "acc_b": 0.531,
+   "delta": 0.016,
+   "ci95": [
+    -0.011,
+    0.043
+   ],
+   "p_value": 0.235764,
+   "right_to_wrong": 88,
+   "wrong_to_right": 104
+  },
+  {
+   "kind": "recipe",
+   "seed": 0,
+   "prec": "fp16",
+   "set": "wmdp-bio",
+   "a": "default layers",
+   "b": "CircuitKIT layers",
+   "n": 1273,
+   "acc_a": 0.387274,
+   "acc_b": 0.369992,
+   "delta": -0.017282,
+   "ci95": [
+    -0.05106048703849175,
+    0.01728201099764336
+   ],
+   "p_value": 0.333666,
+   "right_to_wrong": 257,
+   "wrong_to_right": 235
+  },
+  {
+   "kind": "recipe",
+   "seed": 0,
+   "prec": "Q4_K_M",
+   "set": "mmlu",
+   "a": "default layers",
+   "b": "CircuitKIT layers",
+   "n": 1000,
+   "acc_a": 0.493,
+   "acc_b": 0.549,
+   "delta": 0.056,
+   "ci95": [
+    0.028,
+    0.083
+   ],
+   "p_value": 0.000999,
+   "right_to_wrong": 75,
+   "wrong_to_right": 131
+  },
+  {
+   "kind": "recipe",
+   "seed": 0,
+   "prec": "Q4_K_M",
+   "set": "wmdp-bio",
+   "a": "default layers",
+   "b": "CircuitKIT layers",
+   "n": 1273,
+   "acc_a": 0.372349,
+   "acc_b": 0.371563,
+   "delta": -0.000786,
+   "ci95": [
+    -0.03377847604084839,
+    0.03220738413197172
+   ],
+   "p_value": 0.97003,
+   "right_to_wrong": 236,
+   "wrong_to_right": 235
+  },
+  {
+   "kind": "recipe",
+   "seed": 1,
+   "prec": "fp16",
+   "set": "mmlu",
+   "a": "default layers",
+   "b": "CircuitKIT layers",
+   "n": 1000,
+   "acc_a": 0.517,
+   "acc_b": 0.557,
+   "delta": 0.04,
+   "ci95": [
+    0.013,
+    0.066
+   ],
+   "p_value": 0.002997,
+   "right_to_wrong": 72,
+   "wrong_to_right": 112
+  },
+  {
+   "kind": "recipe",
+   "seed": 1,
+   "prec": "fp16",
+   "set": "wmdp-bio",
+   "a": "default layers",
+   "b": "CircuitKIT layers",
+   "n": 1273,
+   "acc_a": 0.444619,
+   "acc_b": 0.455617,
+   "delta": 0.010998,
+   "ci95": [
+    -0.019638648860958365,
+    0.0408483896307934
+   ],
+   "p_value": 0.444555,
+   "right_to_wrong": 187,
+   "wrong_to_right": 201
+  },
+  {
+   "kind": "recipe",
+   "seed": 1,
+   "prec": "Q4_K_M",
+   "set": "mmlu",
+   "a": "default layers",
+   "b": "CircuitKIT layers",
+   "n": 1000,
+   "acc_a": 0.515,
+   "acc_b": 0.554,
+   "delta": 0.039,
+   "ci95": [
+    0.013,
+    0.066
+   ],
+   "p_value": 0.005994,
+   "right_to_wrong": 73,
+   "wrong_to_right": 112
+  },
+  {
+   "kind": "recipe",
+   "seed": 1,
+   "prec": "Q4_K_M",
+   "set": "wmdp-bio",
+   "a": "default layers",
+   "b": "CircuitKIT layers",
+   "n": 1273,
+   "acc_a": 0.410841,
+   "acc_b": 0.454046,
+   "delta": 0.043205,
+   "ci95": [
+    0.01178318931657502,
+    0.07541241162608013
+   ],
+   "p_value": 0.008991,
+   "right_to_wrong": 183,
+   "wrong_to_right": 238
+  }
  ]
 }

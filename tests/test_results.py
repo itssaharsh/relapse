@@ -39,6 +39,10 @@ def allowed():
                 for k in ("wmdp-bio", "mmlu", "acc"):
                     if isinstance(r, dict) and isinstance(r.get(k), float):
                         pct |= {round(100 * r[k], 1), float(round(100 * r[k]))}
+    for s in RES.get("recipes", []):
+        pts |= {round(abs(100 * s["delta"]), 1)} | {round(abs(100 * x), 1) for x in s["ci95"]}
+        pct |= {round(100 * s["acc_a"], 1), round(100 * s["acc_b"], 1)}
+        pv |= {round(s["p_value"], 2), round(s["p_value"], 3)}
     for s in load_stats(METHODS):
         pts |= {round(abs(100 * s["delta"]), 1)} | {round(abs(100 * x), 1) for x in s["ci95"]}
         pct |= {round(100 * s["acc_a"], 1), round(100 * s["acc_b"], 1)}
@@ -51,7 +55,7 @@ def test_every_number_in_the_write_up_is_measured():
     bad = []
     for doc in ("README.md", os.path.join("docs", "ARTICLE.md")):
         text = open(os.path.join(ROOT, doc)).read()
-        text = re.sub(r"<!-- results:start -->.*?<!-- results:end -->", "", text, flags=re.S)  # generated table
+        text = re.sub(r"<!-- (results|recipes):start -->.*?<!-- (results|recipes):end -->", "", text, flags=re.S)  # generated tables
         for x in re.findall(r"(?<![\d.$])(\d+(?:\.\d+)?)%", text):
             if float(x) not in pct:
                 bad.append(f"{doc}: {x}%")
@@ -70,3 +74,11 @@ def test_every_number_in_the_write_up_is_measured():
 def test_the_trade_off_chart_has_eight_runs_per_family():
     for fam in ("default", "circuit"):
         assert len({p["id"] for p in RES["frontier"] if p["family"] == fam}) == 8
+
+
+def test_circuitkit_window_claim():
+    """'7 to 9 has the most MLP attribution of any three-layer window in layers 1 to 12.'"""
+    m = RES["circuit"]["mlp_abs"]
+    sums = {i: sum(m[i:i + 3]) for i in range(1, 11)}        # windows starting at layers 1..10 end at 12
+    assert max(sums, key=sums.get) == 7
+    assert round(sums[7], 2) == 0.30 and round(sums[5], 2) == 0.23

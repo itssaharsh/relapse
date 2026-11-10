@@ -58,6 +58,7 @@ def build(rows: list[dict], methods: dict, template: dict) -> dict:
     out["run"] = methods.get("run", out.get("run", {}))
     out["stats"] = load_stats(methods)
     out["frontier"] = load_frontier(methods)
+    out["recipes"] = load_recipes()
     rob = load_robustness(methods)
     if rob:
         out["robustness"] = rob
@@ -123,6 +124,26 @@ def load_frontier(methods: dict) -> list[dict]:
         b = base.get(o["prec"])
         o["price"] = round(b["retain"] - o["retain"], 6) if b else None
     return [{"family": "original", "id": "original", "seed": 0, "qa": False, "prec": k, **v, "price": 0.0} for k, v in base.items()] + out
+
+
+def load_recipes() -> list[dict]:
+    """Paired CircuitKIT-layer vs default-layer comparisons (scripts/recipe_stats.py)."""
+    f = os.path.join(RAW, "audit_recipes.json")
+    return json.load(open(f)) if os.path.exists(f) else []
+
+
+def recipes_table(rows: list[dict]) -> str:
+    sg = lambda x: f"{100 * x:+.1f}"
+    fp = lambda p: "< 0.001" if p < 0.0005 else (f"{p:.3f}" if p < 0.01 else f"{p:.2f}")
+    out = ["| Seed | File | WMDP-bio: default / CircuitKIT layers | MMLU: default / CircuitKIT layers | MMLU kept extra (95% interval) | p |",
+           "|---|---|---|---|---|---|"]
+    key = lambda r: (r["seed"], r["prec"] != "fp16")
+    for seed, prec in sorted({(r["seed"], r["prec"]) for r in rows}, key=lambda k: (k[0], k[1] != "fp16")):
+        m = next(r for r in rows if (r["seed"], r["prec"], r["set"]) == (seed, prec, "mmlu"))
+        w = next(r for r in rows if (r["seed"], r["prec"], r["set"]) == (seed, prec, "wmdp-bio"))
+        out.append(f"| {seed + 1} | {prec} | {pct(w['acc_a'])} / {pct(w['acc_b'])} | {pct(m['acc_a'])} / {pct(m['acc_b'])} | "
+                   f"{sg(m['delta'])} ({sg(m['ci95'][0])} to {sg(m['ci95'][1])}) | {fp(m['p_value'])} |")
+    return "\n".join(out)
 
 
 def load_robustness(methods: dict) -> list[dict]:
@@ -204,9 +225,15 @@ def main() -> None:
     template = json.load(open(OUT))
     res = build(load_rows(), methods, template)
     json.dump(res, open(OUT, "w"), indent=1)
+    article = os.path.join(ROOT, "docs", "ARTICLE.md")
+    if res.get("recipes") and os.path.exists(article):
+        t = open(article).read()
+        open(article, "w").write(re.sub(r"(<!-- recipes:start -->\n).*?(\n<!-- recipes:end -->)", lambda m: m.group(1) + recipes_table(res["recipes"]) + m.group(2), t, flags=re.S))
     if os.path.exists(README):
         txt = open(README).read()
         new = re.sub(r"(<!-- results:start -->\n).*?(\n<!-- results:end -->)", lambda m: m.group(1) + table(res) + m.group(2), txt, flags=re.S)
+        if res.get("recipes"):
+            new = re.sub(r"(<!-- recipes:start -->\n).*?(\n<!-- recipes:end -->)", lambda m: m.group(1) + recipes_table(res["recipes"]) + m.group(2), new, flags=re.S)
         open(README, "w").write(new)
     print(f"wrote {OUT} ({sum(len(v) for v in res['grid'].values())} cells)")
     print(table(res))

@@ -159,7 +159,7 @@
   }
 
   /* ---------- draw ---------- */
-  const stampText = (a) => (a.kind === 'unlearned' ? (a.paid === true ? 'Price paid' : a.paid === false ? (a.price < 0.005 ? 'Nothing lost' : 'Small price') : 'Price unknown') : a.kind === 'known' ? 'Not unlearned' : 'Not measured');
+  const stampText = (a) => (a.kind === 'unlearned' ? (a.price != null ? `${Math.max(0, a.price * 100).toFixed(1)} pts lost` : 'Price unknown') : a.kind === 'known' ? 'Not unlearned' : 'Not measured');
   const tagText = (a) => (a.kind !== 'unlearned' ? '' : ({ relapsed: 'Relapsed', still: 'Still forgotten', unref: 'No fp16 reference' }[a.fk]));
 
   function draw(first) {
@@ -232,10 +232,12 @@
     } else {
       const lost = a.price == null ? null : a.price;
       ans.textContent = a.fk === 'relapsed' ? 'No, it came back.' : a.fk === 'still'
-        ? (lost == null ? 'Still forgotten.' : lost < 0.005 ? 'Still forgotten. Nothing else lost.' : `Still forgotten. ${(lost * 100).toFixed(1)} points of general knowledge lost.`)
+        ? (lost == null ? 'Still forgotten.' : lost < 0.005 ? 'Still forgotten. No measurable loss in this file.' : `Still forgotten. ${(lost * 100).toFixed(1)} points of general knowledge lost.`)
         : 'Scored, no fp16 reference.';
       const against = a.f !== FP && a.base != null ? `, against ${p1(a.base)}% at ${fpl}` : '';
-      line.textContent = `${methodShort(st.m)} scores ${p1(a.v)}% on ${bench}${inLang} at ${fl}${against}. The original scores ${a.o != null ? p1(a.o) + '%' : 'n/m'} there; guessing scores ${pct(CH)}%.`;
+      const pr = D.formats.map((f) => analyse(st.m, f.id, '')).filter((x) => x.kind === 'unlearned' && x.price != null).map((x) => x.price * 100);
+      const across = pr.length > 1 ? ` Across its ${pr.length} file formats this recipe costs ${Math.min.apply(null, pr).toFixed(1)} to ${Math.max.apply(null, pr).toFixed(1)} points of general knowledge against the original.` : '';
+      line.textContent = `${methodShort(st.m)} scores ${p1(a.v)}% on ${bench}${inLang} at ${fl}${against}. The original scores ${a.o != null ? p1(a.o) + '%' : 'n/m'} there; guessing scores ${pct(CH)}%.${across}`;
       detail.textContent = a.stat ? auditLine(a.stat, a, 'forget accuracy') : '';
     }
     drawCards();
@@ -250,11 +252,12 @@
     }
   }
 
+  const pTxt = (p) => (p < 0.0005 ? 'p < 0.001' : 'p = ' + (p < 0.01 ? p.toFixed(3) : p.toFixed(2)));
   function auditLine(s, a, what) {
     const ci = s.ci95 || [];
     const fA = s.from || (s.a ? s.a.slice(s.a.lastIndexOf('-') + 1) : FP);
     const sig = s.p_value < 0.05 ? 'a real shift' : 'no detectable shift';
-    return `AuditKIT, paired on ${s.n.toLocaleString('en-US')} questions: ${what} moves ${sgn(s.delta)} points from ${fmtLabel(fA)} to ${fmtLabel(a.f)} (95% interval ${sgn(ci[0])} to ${sgn(ci[1])}, ${s.p_value < 0.001 ? 'p < 0.001' : 'p = ' + s.p_value.toFixed(2)}): ${sig}.`;
+    return `AuditKIT, paired on ${s.n.toLocaleString('en-US')} questions: ${what} moves ${sgn(s.delta)} points from ${fmtLabel(fA)} to ${fmtLabel(a.f)} (95% interval ${sgn(ci[0])} to ${sgn(ci[1])}, ${pTxt(s.p_value)}): ${sig}.`;
   }
 
   /* side by side: the two layer choices, and the selected method when it is another one */
@@ -286,7 +289,7 @@
         cap = nolo ? `of general knowledge lost at ${esc(fl)}: no measurable loss (${n <= 0 ? '+' : '-'}${Math.abs(n).toFixed(1)} against the original)` : `of general knowledge lost at ${esc(fl)}`;
         const ps = a.priceStat;
         foot = `<span class="cl">${esc(D.benchmark.forget)} ${pct(a.v)}% (original ${a.o != null ? pct(a.o) + '%' : 'n/m'})</span>`
-          + (ps ? `<span class="cl">AuditKIT paired ${ps.p_value < 0.001 ? 'p &lt; 0.001' : 'p = ' + ps.p_value.toFixed(2)}</span>` : '')
+          + (ps ? `<span class="cl">AuditKIT paired ${pTxt(ps.p_value).replace('<', '&lt;')}</span>` : '')
           + (a.f !== FP && a.price16 != null ? `<span class="cl g">At ${esc(fpl)} the gap was ${(a.price16 * 100).toFixed(1)}</span>` : '');
       }
       b.className = 'cc ' + tone;

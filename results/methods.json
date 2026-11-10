@@ -7,11 +7,15 @@
   "rmu_circuit_layers_qa": "circuit_qa",
   "rmu_L7_strong": "aggressive",
   "rmu_default_layers_seed1": "standard_s1",
-  "rmu_circuit_layers_seed1": "circuit_s1"
+  "rmu_circuit_layers_seed1": "circuit_s1",
+  "rmu_deeper_lr4.5e-4": "deeper",
+  "X10-12_lr4.5e-4": "deeper",
+  "rmu_deeper_lr2e-4": "deeper_lo",
+  "X10-12_lr2e-4": "deeper_lo"
  },
  "run": {
   "date": "2026-11-10",
-  "label": "Kaggle 2x T4, final grid"
+  "label": "Kaggle 2x T4, final grid and controls"
  },
  "links": {
   "repo": "https://github.com/itssaharsh/relapse",
@@ -211,9 +215,35 @@
    "id": "d_a300_lr1e-4",
    "seed": 0,
    "qa": false
+  },
+  "X13-15_lr8e-4": {
+   "family": "deepest",
+   "id": "x13_lr8e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "X13-15_lr2e-3": {
+   "family": "deepest",
+   "id": "x13_lr2e-3",
+   "seed": 0,
+   "qa": false
+  },
+  "X10-12_lr4.5e-4_s1": {
+   "family": "deeper",
+   "id": "x10_lr4.5e-4_s1",
+   "seed": 1,
+   "qa": false
   }
  },
  "families": {
+  "shallower": {
+   "label": "Control: shallower layers (3 to 5)",
+   "layers": [
+    3,
+    4,
+    5
+   ]
+  },
   "default": {
    "label": "Default layers (5 to 7)",
    "layers": [
@@ -238,12 +268,12 @@
     12
    ]
   },
-  "shallower": {
-   "label": "Control: shallower layers (3 to 5)",
+  "deepest": {
+   "label": "Control: deeper still (13 to 15)",
    "layers": [
-    3,
-    4,
-    5
+    13,
+    14,
+    15
    ]
   }
  }

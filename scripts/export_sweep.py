@@ -33,11 +33,28 @@ RUNS = {
     "c_lr2e-4_qa": ("changed_push.pt", "L9_lr2e-4_qa", "7-9", 2e-4, 100, 3, 300),
     "c_lr1.5e-4_m5_qa": ("changed_push.pt", "L9_lr1.5e-4_m5_qa", "7-9", 1.5e-4, 100, 5, 300),
     "c_lr1.5e-4_s1": ("changed_seed1.pt", "rmu_circuit_layers_seed1", "7-9", 1.5e-4, 100, 3, 300),
+    # controls: the default layers at the CircuitKIT runs' budget, a repeat of the CircuitKIT run, and other windows
+    "d_lr4e-5_nb300": ("changed_ctrl_shallow.pt", "D5-7_lr4e-5_nb300", "5-7", 4e-5, 100, 3, 300),
+    "d_lr7e-5_nb300": ("changed_ctrl_shallow.pt", "D5-7_lr7e-5_nb300", "5-7", 7e-5, 100, 3, 300),
+    "d_lr4e-5_m5": ("changed_ctrl_shallow.pt", "D5-7_lr4e-5_m5", "5-7", 4e-5, 100, 5, 300),
+    "d_a300_lr1e-4": ("changed_ctrl_shallow.pt", "D5-7_a300_lr1e-4", "5-7", 1e-4, 300, 3, 300),
+    "c_lr1.5e-4_rep": ("changed_ctrl_deeper.pt", "C7-9_lr1.5e-4_f16ref", "7-9", 1.5e-4, 100, 3, 300),
+    "x3_lr1.5e-5": ("changed_ctrl_shallow.pt", "X3-5_lr1.5e-5", "3-5", 1.5e-5, 100, 3, 300),
+    "x3_lr3e-5": ("changed_ctrl_shallow.pt", "X3-5_lr3e-5", "3-5", 3e-5, 100, 3, 300),
+    "x3_lr6e-5": ("changed_ctrl_shallow.pt", "X3-5_lr6e-5", "3-5", 6e-5, 100, 3, 300),
+    "x10_lr2e-4": ("changed_ctrl_deeper.pt", "X10-12_lr2e-4", "10-12", 2e-4, 100, 3, 300),
+    "x10_lr4.5e-4": ("changed_ctrl_deeper.pt", "X10-12_lr4.5e-4", "10-12", 4.5e-4, 100, 3, 300),
+    "x10_lr1e-3": ("changed_ctrl_deeper.pt", "X10-12_lr1e-3", "10-12", 1e-3, 100, 3, 300),
+    "x10_lr4.5e-4_s1": ("changed_ctrl_depth2.pt", "X10-12_lr4.5e-4_s1", "10-12", 4.5e-4, 100, 3, 300),
+    "x13_lr8e-4": ("changed_ctrl_depth2.pt", "X13-15_lr8e-4", "13-15", 8e-4, 100, 3, 300),
+    "x13_lr2e-3": ("changed_ctrl_depth2.pt", "X13-15_lr2e-3", "13-15", 2e-3, 100, 3, 300),
 }
+PREFIX = {"d": "default-layers_", "c": "circuitkit-layers_"}   # other windows: layers-<first>-<last>_
 
 
 def fname(i: str) -> str:
-    return ("default-layers_" if i.startswith("d_") else "circuitkit-layers_") + i[2:].replace("_qa", "_4bit-aware").replace("_s1", "_seed1") + ".safetensors"
+    head, rest = i.split("_", 1)
+    return PREFIX.get(head, f"layers-{RUNS[i][2]}_") + rest.replace("_qa", "_4bit-aware").replace("_s1", "_seed1") + ".safetensors"
 
 
 def main(src: str, out: str) -> None:
@@ -57,7 +74,7 @@ def main(src: str, out: str) -> None:
                 "four_bit_aware": str(i.endswith("_qa") or "_qa_" in i), "seed": "1" if i.endswith("_s1") else "0"}
         save_file(tensors, os.path.join(out, fname(i)), metadata=meta)
         cell = lambda prec: (f"{100 * pts[(i, prec)]['forget']:.1f}% / {100 * pts[(i, prec)]['retain']:.1f}%" if (i, prec) in pts else "not run")
-        rows.append(f"| `{fname(i)}` | {layers} | {lr:g} | {alpha} | {mult} | {'yes' if meta['four_bit_aware'] == 'True' else 'no'} | {meta['seed']} | {cell('fp16')} | {cell('NF4')} |")
+        rows.append(f"| `{fname(i)}` | {layers} | {lr:g} | {alpha} | {mult} | {'yes' if meta['four_bit_aware'] == 'True' else 'no'} | {meta['seed']} | {cell('fp16')} | {cell('Q4_0')} | {cell('NF4')} |")
         print("wrote", fname(i))
     base = pts[("original", "fp16")]
     card = f"""---
@@ -69,28 +86,33 @@ datasets: [cais/wmdp, cais/mmlu]
 
 # Relapse: every unlearning run of the sweep
 
-The 16 [SafeTune](https://github.com/Lexsi-Labs/SafeTune) RMU runs behind the trade-off chart in
-[Relapse](https://huggingface.co/spaces/itssaharsh/relapse): 8 at SafeTune's default layers (5 to 7) and 8 at the layers
-[CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT) found (7 to 9). RMU edits only three MLP down-projection matrices, so
-each run is one small file holding those three tensors in fp16 (the scores below were computed from the fp32 values they
-were rounded from). Apply one to
-[CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/tiny-aya-global) with
+All {len(RUNS)} [SafeTune](https://github.com/Lexsi-Labs/SafeTune) RMU runs behind
+[Relapse](https://huggingface.co/spaces/itssaharsh/relapse), one small file each. RMU edits only three MLP down-projection
+matrices, so a file holds those three tensors in fp16 (the scores below were computed from the fp32 values they were
+rounded from). The runs put the same edit at five layer windows: SafeTune's default (5 to 7), the one
+[CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT)'s attribution ranked first (7 to 9), and three controls (3 to 5,
+10 to 12, 13 to 15).
+
+**The `layers-10-12_*` files are the relapse.** They look unlearned at fp16 and give part of the hazard score back in the
+Q4_0 column. They are here as test cases for an unlearning audit, not as models to use.
+
+Apply a file to [CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/tiny-aya-global) with
 `python scripts/patch_checkpoint.py --base <tiny-aya-global dir> --delta <file>.safetensors --out <dir>` from
 [github.com/itssaharsh/relapse](https://github.com/itssaharsh/relapse).
 
 Scores are WMDP-bio (forget, lower is better; guessing is 25%) / MMLU (keep, higher is better). The original scores
 {100 * base['forget']:.1f}% / {100 * base['retain']:.1f}% at fp16.
 
-| File | Layers | Learning rate | Retain weight | Steering multiplier | 4-bit aware | Seed (0 first, 1 second) | fp16 | NF4 |
-|---|---|---|---|---|---|---|---|---|
+| File | Layers | Learning rate | Retain weight | Steering multiplier | 4-bit aware | Seed (0 first, 1 second) | fp16 | Q4_0 | NF4 |
+|---|---|---|---|---|---|---|---|---|---|
 """ + "\n".join(rows) + """
 
-Three of these are also published as full checkpoints with Q4_K_M GGUF files in the
+Four of these are also published as full checkpoints with GGUF files in the
 [Relapse models collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models). All scores,
 per-question results and logs are in [itssaharsh/relapse-runs](https://huggingface.co/datasets/itssaharsh/relapse-runs).
 
-A research artifact. The forgetting holds across file formats, languages and prompt attacks, and does not survive
-fine-tuning. The base model's license and the Cohere Labs acceptable use policy apply (non-commercial).
+A research artifact. Outside layers 10 to 12 the forgetting holds across file formats; for the headline models it also
+holds across languages and prompt attacks. It does not survive fine-tuning on the topic. The base model's license and the Cohere Labs acceptable use policy apply (non-commercial).
 """
     open(os.path.join(out, "README.md"), "w").write(card)
 

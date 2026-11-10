@@ -1,7 +1,7 @@
 {
  "run": {
   "date": "2026-11-10",
-  "label": "Kaggle 2x T4, final grid"
+  "label": "Kaggle 2x T4, final grid and controls"
  },
  "model": {
   "id": "CohereLabs/tiny-aya-global",
@@ -97,6 +97,19 @@
    "tab": true
   },
   {
+   "id": "deeper",
+   "label": "SafeTune RMU three layers deeper (10 to 12)",
+   "short": "Deeper layers",
+   "family": "deeper"
+  },
+  {
+   "id": "deeper_lo",
+   "label": "Deeper layers (10 to 12), lower learning rate",
+   "short": "Deeper, lower rate",
+   "tab": false,
+   "family": "deeper"
+  },
+  {
    "id": "standard_s1",
    "label": "Default layers (5 to 7), second seed",
    "short": "Default, seed 2",
@@ -132,6 +145,42 @@
      "hi_pcorrect": 0.4309,
      "sw": 0.5263,
      "sw_pcorrect": 0.5049
+    }
+   },
+   "Q4_0": {
+    "forget": 0.6112,
+    "retain": 0.555,
+    "forget_pcorrect": 0.5956,
+    "retain_pcorrect": 0.5211,
+    "probes": {
+     "ar": 0.457,
+     "ar_pcorrect": 0.4513,
+     "en_para": 0.5842,
+     "en_para_pcorrect": 0.5346,
+     "es": 0.5546,
+     "es_pcorrect": 0.5117,
+     "hi": 0.4759,
+     "hi_pcorrect": 0.4189,
+     "sw": 0.5263,
+     "sw_pcorrect": 0.5031
+    }
+   },
+   "Q4_K_M": {
+    "forget": 0.6339,
+    "retain": 0.548,
+    "forget_pcorrect": 0.6069,
+    "retain_pcorrect": 0.5248,
+    "probes": {
+     "ar": 0.4731,
+     "ar_pcorrect": 0.4571,
+     "en_para": 0.505,
+     "en_para_pcorrect": 0.5137,
+     "es": 0.5966,
+     "es_pcorrect": 0.5383,
+     "hi": 0.4866,
+     "hi_pcorrect": 0.435,
+     "sw": 0.5439,
+     "sw_pcorrect": 0.5128
     }
    },
    "bf16": {
@@ -170,24 +219,6 @@
      "sw_pcorrect": 0.5059
     }
    },
-   "Q4_0": {
-    "forget": 0.6112,
-    "retain": 0.555,
-    "forget_pcorrect": 0.5956,
-    "retain_pcorrect": 0.5211,
-    "probes": {
-     "ar": 0.457,
-     "ar_pcorrect": 0.4513,
-     "en_para": 0.5842,
-     "en_para_pcorrect": 0.5346,
-     "es": 0.5546,
-     "es_pcorrect": 0.5117,
-     "hi": 0.4759,
-     "hi_pcorrect": 0.4189,
-     "sw": 0.5263,
-     "sw_pcorrect": 0.5031
-    }
-   },
    "NF4": {
     "forget": 0.6112,
     "retain": 0.527,
@@ -223,24 +254,66 @@
      "sw": 0.5351,
      "sw_pcorrect": 0.505
     }
+   }
+  },
+  "deeper_lo": {
+   "fp16": {
+    "forget": 0.4517,
+    "retain": 0.531,
+    "forget_pcorrect": 0.427,
+    "retain_pcorrect": 0.4992
+   },
+   "Q4_0": {
+    "forget": 0.5051,
+    "retain": 0.533,
+    "forget_pcorrect": 0.4644,
+    "retain_pcorrect": 0.4969,
+    "orig": {
+     "forget": 0.6135,
+     "retain": 0.552
+    }
    },
    "Q4_K_M": {
-    "forget": 0.6339,
-    "retain": 0.548,
-    "forget_pcorrect": 0.6069,
-    "retain_pcorrect": 0.5248,
-    "probes": {
-     "ar": 0.4731,
-     "ar_pcorrect": 0.4571,
-     "en_para": 0.505,
-     "en_para_pcorrect": 0.5137,
-     "es": 0.5966,
-     "es_pcorrect": 0.5383,
-     "hi": 0.4866,
-     "hi_pcorrect": 0.435,
-     "sw": 0.5439,
-     "sw_pcorrect": 0.5128
+    "forget": 0.502,
+    "retain": 0.528,
+    "forget_pcorrect": 0.4511,
+    "retain_pcorrect": 0.4913
+   },
+   "NF4": {
+    "forget": 0.483896,
+    "retain": 0.495,
+    "forget_pcorrect": 0.4505,
+    "retain_pcorrect": 0.4746
+   }
+  },
+  "deeper": {
+   "fp16": {
+    "forget": 0.4163,
+    "retain": 0.539,
+    "forget_pcorrect": 0.3947,
+    "retain_pcorrect": 0.5061
+   },
+   "Q4_0": {
+    "forget": 0.4902,
+    "retain": 0.529,
+    "forget_pcorrect": 0.4523,
+    "retain_pcorrect": 0.4996,
+    "orig": {
+     "forget": 0.6135,
+     "retain": 0.552
     }
+   },
+   "Q4_K_M": {
+    "forget": 0.4517,
+    "retain": 0.525,
+    "forget_pcorrect": 0.4078,
+    "retain_pcorrect": 0.4988
+   },
+   "NF4": {
+    "forget": 0.421838,
+    "retain": 0.506,
+    "forget_pcorrect": 0.3931,
+    "retain_pcorrect": 0.469
    }
   },
   "standard": {
@@ -833,6 +906,18 @@
      0.9969,
      0.0002
     ],
+    "Q4_0": [
+     0.0002,
+     0.0038,
+     0.9925,
+     0.0036
+    ],
+    "Q4_K_M": [
+     0.0044,
+     0.0055,
+     0.9898,
+     0.0003
+    ],
     "bf16": [
      0.0002,
      0.0028,
@@ -845,12 +930,6 @@
      0.9969,
      0.0002
     ],
-    "Q4_0": [
-     0.0002,
-     0.0038,
-     0.9925,
-     0.0036
-    ],
     "NF4": [
      0.0004,
      0.0039,
@@ -862,12 +941,46 @@
      0.0034,
      0.9962,
      0.0003
+    ]
+   },
+   "deeper_lo": {
+    "fp16": [
+     0.0059,
+     0.003,
+     0.991,
+     0.0001
+    ],
+    "Q4_0": [
+     0.0013,
+     0.0022,
+     0.9962,
+     0.0003
     ],
     "Q4_K_M": [
-     0.0044,
-     0.0055,
-     0.9898,
-     0.0003
+     0.1258,
+     0.0256,
+     0.8463,
+     0.0023
+    ]
+   },
+   "deeper": {
+    "fp16": [
+     0.1825,
+     0.1561,
+     0.6574,
+     0.004
+    ],
+    "Q4_0": [
+     0.0681,
+     0.0332,
+     0.897,
+     0.0017
+    ],
+    "Q4_K_M": [
+     0.5089,
+     0.2056,
+     0.2519,
+     0.0336
     ]
    },
    "standard": {
@@ -1128,7 +1241,7 @@
   },
   {
    "tool": "CircuitKIT",
-   "did": "located the layers that carry the biology answers (EAP-IG)"
+   "did": "ranked the early layers by attribution (EAP-IG), which moved the edit off the default layers"
   },
   {
    "tool": "SafeTune",
@@ -1136,7 +1249,7 @@
   },
   {
    "tool": "AuditKIT",
-   "did": "scored every file with paired confidence intervals"
+   "did": "scored every file with paired confidence intervals, and caught the model that relapses"
   }
  ],
  "links": {
@@ -1165,6 +1278,122 @@
    "from": "fp16",
    "to": "Q4_K_M",
    "method": "original"
+  },
+  {
+   "metric": "acc",
+   "n": 1273,
+   "acc_a": 0.450903,
+   "acc_b": 0.501964,
+   "delta": 0.05106,
+   "ci95": [
+    0.031421838177533384,
+    0.07148468185388845
+   ],
+   "p_value": 0.000999,
+   "significant": true,
+   "right_to_wrong": 55,
+   "wrong_to_right": 120,
+   "model": "rmu_deeper_lr2e-4",
+   "kind": "forget_holds",
+   "from": "fp16",
+   "to": "Q4_K_M",
+   "method": "deeper_lo"
+  },
+  {
+   "metric": "acc",
+   "n": 1000,
+   "acc_a": 0.554,
+   "acc_b": 0.531,
+   "delta": -0.023,
+   "ci95": [
+    -0.045,
+    -0.001
+   ],
+   "p_value": 0.034965,
+   "significant": true,
+   "right_to_wrong": 75,
+   "wrong_to_right": 52,
+   "model": "rmu_deeper_lr2e-4",
+   "kind": "price",
+   "prec": "fp16",
+   "method": "deeper_lo"
+  },
+  {
+   "metric": "acc",
+   "n": 1000,
+   "acc_a": 0.548,
+   "acc_b": 0.528,
+   "delta": -0.02,
+   "ci95": [
+    -0.042,
+    0.003
+   ],
+   "p_value": 0.093906,
+   "significant": false,
+   "right_to_wrong": 75,
+   "wrong_to_right": 55,
+   "model": "rmu_deeper_lr2e-4",
+   "kind": "price",
+   "prec": "Q4_K_M",
+   "method": "deeper_lo"
+  },
+  {
+   "metric": "acc",
+   "n": 1273,
+   "acc_a": 0.416339,
+   "acc_b": 0.451689,
+   "delta": 0.03535,
+   "ci95": [
+    0.01335428122545169,
+    0.056559308719560095
+   ],
+   "p_value": 0.004995,
+   "significant": true,
+   "right_to_wrong": 74,
+   "wrong_to_right": 119,
+   "model": "rmu_deeper_lr4.5e-4",
+   "kind": "forget_holds",
+   "from": "fp16",
+   "to": "Q4_K_M",
+   "method": "deeper"
+  },
+  {
+   "metric": "acc",
+   "n": 1000,
+   "acc_a": 0.554,
+   "acc_b": 0.539,
+   "delta": -0.015,
+   "ci95": [
+    -0.036,
+    0.006
+   ],
+   "p_value": 0.143856,
+   "significant": false,
+   "right_to_wrong": 64,
+   "wrong_to_right": 49,
+   "model": "rmu_deeper_lr4.5e-4",
+   "kind": "price",
+   "prec": "fp16",
+   "method": "deeper"
+  },
+  {
+   "metric": "acc",
+   "n": 1000,
+   "acc_a": 0.548,
+   "acc_b": 0.525,
+   "delta": -0.023,
+   "ci95": [
+    -0.045,
+    -0.002
+   ],
+   "p_value": 0.043956,
+   "significant": true,
+   "right_to_wrong": 69,
+   "wrong_to_right": 46,
+   "model": "rmu_deeper_lr4.5e-4",
+   "kind": "price",
+   "prec": "Q4_K_M",
+   "method": "deeper"
   },
   {
    "metric": "acc",
@@ -1339,6 +1568,94 @@
    "kind": "price",
    "prec": "Q4_K_M",
    "method": "circuit_qa"
+  },
+  {
+   "n": 1273,
+   "acc_a": 0.63315,
+   "acc_b": 0.613511,
+   "delta": -0.019639,
+   "ci95": [
+    -0.03613511390416339,
+    -0.003142183817753339
+   ],
+   "p_value": 0.021978,
+   "right_to_wrong": 68,
+   "wrong_to_right": 43,
+   "model": "base",
+   "kind": "forget_holds",
+   "from": "fp16",
+   "to": "Q4_0",
+   "method": "original"
+  },
+  {
+   "n": 1273,
+   "acc_a": 0.450903,
+   "acc_b": 0.506677,
+   "delta": 0.055774,
+   "ci95": [
+    0.03220738413197172,
+    0.07855459544383346
+   ],
+   "p_value": 0.000999,
+   "right_to_wrong": 73,
+   "wrong_to_right": 144,
+   "model": "rmu_deeper_lr2e-4",
+   "kind": "forget_holds",
+   "from": "fp16",
+   "to": "Q4_0",
+   "method": "deeper_lo"
+  },
+  {
+   "n": 1000,
+   "acc_a": 0.552,
+   "acc_b": 0.532,
+   "delta": -0.02,
+   "ci95": [
+    -0.041,
+    0.001
+   ],
+   "p_value": 0.070929,
+   "right_to_wrong": 68,
+   "wrong_to_right": 48,
+   "model": "rmu_deeper_lr2e-4",
+   "kind": "price",
+   "prec": "Q4_0",
+   "method": "deeper_lo"
+  },
+  {
+   "n": 1273,
+   "acc_a": 0.416339,
+   "acc_b": 0.490181,
+   "delta": 0.073841,
+   "ci95": [
+    0.04948939512961508,
+    0.09819324430479183
+   ],
+   "p_value": 0.000999,
+   "right_to_wrong": 83,
+   "wrong_to_right": 177,
+   "model": "rmu_deeper_lr4.5e-4",
+   "kind": "forget_holds",
+   "from": "fp16",
+   "to": "Q4_0",
+   "method": "deeper"
+  },
+  {
+   "n": 1000,
+   "acc_a": 0.552,
+   "acc_b": 0.529,
+   "delta": -0.023,
+   "ci95": [
+    -0.043,
+    -0.002
+   ],
+   "p_value": 0.024975,
+   "right_to_wrong": 65,
+   "wrong_to_right": 42,
+   "model": "rmu_deeper_lr4.5e-4",
+   "kind": "price",
+   "prec": "Q4_0",
+   "method": "deeper"
   },
   {
    "metric": "acc",
@@ -1801,6 +2118,34 @@
    "prec": "fp16",
    "attack": "relearn_25_steps_64_questions",
    "acc": 0.5548,
+   "n": 1204
+  },
+  {
+   "method": "original",
+   "prec": "fp16",
+   "attack": "relearn_25_steps_64_unrelated_questions",
+   "acc": 0.5507,
+   "n": 1204
+  },
+  {
+   "method": "standard",
+   "prec": "fp16",
+   "attack": "relearn_25_steps_64_unrelated_questions",
+   "acc": 0.3555,
+   "n": 1204
+  },
+  {
+   "method": "circuit",
+   "prec": "fp16",
+   "attack": "relearn_25_steps_64_unrelated_questions",
+   "acc": 0.3447,
+   "n": 1204
+  },
+  {
+   "method": "circuit_qa",
+   "prec": "fp16",
+   "attack": "relearn_25_steps_64_unrelated_questions",
+   "acc": 0.3339,
    "n": 1204
   }
  ],
@@ -2566,6 +2911,426 @@
    "price": 0.033
   },
   {
+   "family": "deeper",
+   "id": "x10_lr2e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.451689,
+   "retain": 0.531,
+   "price": 0.023
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr4.5e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.416339,
+   "retain": 0.539,
+   "price": 0.015
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr1e-3",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.289081,
+   "retain": 0.506,
+   "price": 0.048
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_rep",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.362922,
+   "retain": 0.532,
+   "price": 0.022
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr2e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.501964,
+   "retain": 0.532,
+   "price": 0.023
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr4.5e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.493323,
+   "retain": 0.533,
+   "price": 0.022
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr1e-3",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.309505,
+   "retain": 0.51,
+   "price": 0.045
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_rep",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.357423,
+   "retain": 0.533,
+   "price": 0.022
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr2e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.483896,
+   "retain": 0.495,
+   "price": 0.032
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr4.5e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.421838,
+   "retain": 0.506,
+   "price": 0.021
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr1e-3",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.291438,
+   "retain": 0.502,
+   "price": 0.025
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_rep",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.355067,
+   "retain": 0.508,
+   "price": 0.019
+  },
+  {
+   "family": "deepest",
+   "id": "x13_lr8e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.58209,
+   "retain": 0.55,
+   "price": 0.004
+  },
+  {
+   "family": "deepest",
+   "id": "x13_lr2e-3",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.463472,
+   "retain": 0.516,
+   "price": 0.038
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr4.5e-4_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.509034,
+   "retain": 0.517,
+   "price": 0.037
+  },
+  {
+   "family": "deepest",
+   "id": "x13_lr8e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.577376,
+   "retain": 0.542,
+   "price": 0.013
+  },
+  {
+   "family": "deepest",
+   "id": "x13_lr2e-3",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.437549,
+   "retain": 0.526,
+   "price": 0.029
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr4.5e-4_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.555381,
+   "retain": 0.525,
+   "price": 0.03
+  },
+  {
+   "family": "deepest",
+   "id": "x13_lr8e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.53967,
+   "retain": 0.515,
+   "price": 0.012
+  },
+  {
+   "family": "deepest",
+   "id": "x13_lr2e-3",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.451689,
+   "retain": 0.507,
+   "price": 0.02
+  },
+  {
+   "family": "deeper",
+   "id": "x10_lr4.5e-4_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.530244,
+   "retain": 0.513,
+   "price": 0.014
+  },
+  {
+   "family": "shallower",
+   "id": "x3_lr1.5e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.457973,
+   "retain": 0.545,
+   "price": 0.009
+  },
+  {
+   "family": "shallower",
+   "id": "x3_lr3e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.385703,
+   "retain": 0.538,
+   "price": 0.016
+  },
+  {
+   "family": "shallower",
+   "id": "x3_lr6e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.344069,
+   "retain": 0.541,
+   "price": 0.013
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_nb300",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.358209,
+   "retain": 0.504,
+   "price": 0.05
+  },
+  {
+   "family": "default",
+   "id": "d_lr7e-5_nb300",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.299293,
+   "retain": 0.473,
+   "price": 0.081
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_m5",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.274156,
+   "retain": 0.444,
+   "price": 0.11
+  },
+  {
+   "family": "default",
+   "id": "d_a300_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.371563,
+   "retain": 0.516,
+   "price": 0.038
+  },
+  {
+   "family": "shallower",
+   "id": "x3_lr1.5e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.442262,
+   "retain": 0.531,
+   "price": 0.024
+  },
+  {
+   "family": "shallower",
+   "id": "x3_lr3e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.372349,
+   "retain": 0.526,
+   "price": 0.029
+  },
+  {
+   "family": "shallower",
+   "id": "x3_lr6e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.319717,
+   "retain": 0.529,
+   "price": 0.026
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_nb300",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.342498,
+   "retain": 0.486,
+   "price": 0.069
+  },
+  {
+   "family": "default",
+   "id": "d_lr7e-5_nb300",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.298507,
+   "retain": 0.436,
+   "price": 0.119
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_m5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.260801,
+   "retain": 0.42,
+   "price": 0.135
+  },
+  {
+   "family": "default",
+   "id": "d_a300_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.357423,
+   "retain": 0.504,
+   "price": 0.051
+  },
+  {
+   "family": "shallower",
+   "id": "x3_lr1.5e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.448547,
+   "retain": 0.52,
+   "price": 0.007
+  },
+  {
+   "family": "shallower",
+   "id": "x3_lr3e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.371563,
+   "retain": 0.516,
+   "price": 0.011
+  },
+  {
+   "family": "shallower",
+   "id": "x3_lr6e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.325216,
+   "retain": 0.512,
+   "price": 0.015
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_nb300",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.336214,
+   "retain": 0.452,
+   "price": 0.075
+  },
+  {
+   "family": "default",
+   "id": "d_lr7e-5_nb300",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.283582,
+   "retain": 0.407,
+   "price": 0.12
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_m5",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.262372,
+   "retain": 0.383,
+   "price": 0.144
+  },
+  {
+   "family": "default",
+   "id": "d_a300_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.357423,
+   "retain": 0.488,
+   "price": 0.039
+  },
+  {
    "family": "default",
    "id": "d_a10_lr1e-4",
    "seed": 0,
@@ -2741,6 +3506,14 @@
   }
  ],
  "families": {
+  "shallower": {
+   "label": "Control: shallower layers (3 to 5)",
+   "layers": [
+    3,
+    4,
+    5
+   ]
+  },
   "default": {
    "label": "Default layers (5 to 7)",
    "layers": [
@@ -2765,13 +3538,302 @@
     12
    ]
   },
-  "shallower": {
+  "deepest": {
+   "label": "Control: deeper still (13 to 15)",
+   "layers": [
+    13,
+    14,
+    15
+   ]
+  }
+ },
+ "windows": [
+  {
+   "family": "shallower",
    "label": "Control: shallower layers (3 to 5)",
    "layers": [
     3,
     4,
     5
-   ]
+   ],
+   "runs": 3,
+   "attribution": 0.1313,
+   "cut": 0.4,
+   "cost": {
+    "fp16": {
+     "n": 2,
+     "lo": 0.013,
+     "hi": 0.016
+    },
+    "Q4_0": {
+     "n": 2,
+     "lo": 0.026,
+     "hi": 0.029
+    },
+    "NF4": {
+     "n": 2,
+     "lo": 0.011,
+     "hi": 0.015
+    }
+   },
+   "shift": {
+    "Q4_0": {
+     "n": 3,
+     "mean": -0.017806,
+     "lo": -0.024352,
+     "hi": -0.013354
+    },
+    "NF4": {
+     "n": 3,
+     "mean": -0.01414,
+     "lo": -0.018853,
+     "hi": -0.009426
+    }
+   }
+  },
+  {
+   "family": "default",
+   "label": "Default layers (5 to 7)",
+   "layers": [
+    5,
+    6,
+    7
+   ],
+   "runs": 12,
+   "attribution": 0.2324,
+   "cut": 0.4,
+   "cost": {
+    "fp16": {
+     "n": 10,
+     "lo": 0.038,
+     "hi": 0.199
+    },
+    "bf16": {
+     "n": 2,
+     "lo": 0.04,
+     "hi": 0.119
+    },
+    "Q8_0": {
+     "n": 4,
+     "lo": 0.037,
+     "hi": 0.113
+    },
+    "Q6_K": {
+     "n": 2,
+     "lo": 0.039,
+     "hi": 0.127
+    },
+    "Q4_K_M": {
+     "n": 2,
+     "lo": 0.055,
+     "hi": 0.141
+    },
+    "Q4_0": {
+     "n": 8,
+     "lo": 0.049,
+     "hi": 0.141
+    },
+    "NF4": {
+     "n": 8,
+     "lo": 0.039,
+     "hi": 0.165
+    }
+   },
+   "shift": {
+    "bf16": {
+     "n": 2,
+     "mean": -0.0008,
+     "lo": -0.0016,
+     "hi": 0.0
+    },
+    "Q8_0": {
+     "n": 6,
+     "mean": 0.000512,
+     "lo": -0.0032,
+     "hi": 0.0102
+    },
+    "Q6_K": {
+     "n": 2,
+     "mean": 0.0098,
+     "lo": 0.0039,
+     "hi": 0.0157
+    },
+    "Q4_K_M": {
+     "n": 3,
+     "mean": -0.0094,
+     "lo": -0.0322,
+     "hi": 0.0197
+    },
+    "Q4_0": {
+     "n": 10,
+     "mean": -0.013351,
+     "lo": -0.035349,
+     "hi": 0.0142
+    },
+    "NF4": {
+     "n": 10,
+     "mean": -0.011623,
+     "lo": -0.026708,
+     "hi": 0.0134
+    }
+   }
+  },
+  {
+   "family": "circuit",
+   "label": "CircuitKIT layers (7 to 9)",
+   "layers": [
+    7,
+    8,
+    9
+   ],
+   "runs": 9,
+   "attribution": 0.3025,
+   "cut": 0.4,
+   "cost": {
+    "fp16": {
+     "n": 6,
+     "lo": 0.009,
+     "hi": 0.027
+    },
+    "bf16": {
+     "n": 2,
+     "lo": 0.009,
+     "hi": 0.023
+    },
+    "Q8_0": {
+     "n": 2,
+     "lo": 0.007,
+     "hi": 0.019
+    },
+    "Q6_K": {
+     "n": 2,
+     "lo": 0.017,
+     "hi": 0.018
+    },
+    "Q4_K_M": {
+     "n": 2,
+     "lo": -0.001,
+     "hi": 0.003
+    },
+    "Q4_0": {
+     "n": 6,
+     "lo": 0.022,
+     "hi": 0.035
+    },
+    "NF4": {
+     "n": 6,
+     "lo": 0.014,
+     "hi": 0.033
+    }
+   },
+   "shift": {
+    "bf16": {
+     "n": 3,
+     "mean": 0.001567,
+     "lo": 0.0008,
+     "hi": 0.0024
+    },
+    "Q8_0": {
+     "n": 4,
+     "mean": 0.00235,
+     "lo": -0.0016,
+     "hi": 0.0063
+    },
+    "Q6_K": {
+     "n": 3,
+     "mean": 0.001833,
+     "lo": -0.0047,
+     "hi": 0.0087
+    },
+    "Q4_K_M": {
+     "n": 4,
+     "mean": 0.002775,
+     "lo": -0.0023,
+     "hi": 0.0126
+    },
+    "Q4_0": {
+     "n": 9,
+     "mean": -0.005054,
+     "lo": -0.022781,
+     "hi": 0.0158
+    },
+    "NF4": {
+     "n": 9,
+     "mean": -0.009072,
+     "lo": -0.0181,
+     "hi": 0.0071
+    }
+   }
+  },
+  {
+   "family": "deeper",
+   "label": "Control: deeper layers (10 to 12)",
+   "layers": [
+    10,
+    11,
+    12
+   ],
+   "runs": 4,
+   "attribution": 0.1339,
+   "cut": 0.4,
+   "cost": {
+    "fp16": {
+     "n": 1,
+     "lo": 0.048,
+     "hi": 0.048
+    },
+    "Q4_0": {
+     "n": 1,
+     "lo": 0.045,
+     "hi": 0.045
+    },
+    "NF4": {
+     "n": 1,
+     "lo": 0.025,
+     "hi": 0.025
+    }
+   },
+   "shift": {
+    "Q4_0": {
+     "n": 4,
+     "mean": 0.048508,
+     "lo": 0.020424,
+     "hi": 0.076984
+    },
+    "NF4": {
+     "n": 4,
+     "mean": 0.015318,
+     "lo": 0.002357,
+     "hi": 0.032207
+    }
+   }
+  },
+  {
+   "family": "deepest",
+   "label": "Control: deeper still (13 to 15)",
+   "layers": [
+    13,
+    14,
+    15
+   ],
+   "runs": 2,
+   "attribution": 0.1474,
+   "cut": 0.4,
+   "cost": {},
+   "shift": {
+    "Q4_0": {
+     "n": 2,
+     "mean": -0.015319,
+     "lo": -0.025923,
+     "hi": -0.004714
+    },
+    "NF4": {
+     "n": 2,
+     "mean": -0.027102,
+     "lo": -0.04242,
+     "hi": -0.011783
+    }
+   }
   }
- }
+ ]
 }

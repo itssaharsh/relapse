@@ -80,7 +80,7 @@ for name, d in models.items():
         load_gguf_into(model, dst)
         evaluate(name, qt)
         if name != "base" and qt == "Q4_K_M": shutil.copyfile(dst, f"/kaggle/working/tiny-aya-global-{name}-Q4_K_M.gguf")
-        if name == "base" or qt != "Q4_K_M": os.remove(dst)
+        if qt not in AUDIT: os.remove(dst)   # files the AuditKIT pass needs stay on disk
     restore_other()
 # --- AuditKIT: paired comparisons with bootstrap CIs (forget holds? price of unlearning?) ---
 try:

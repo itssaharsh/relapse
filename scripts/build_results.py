@@ -24,10 +24,12 @@ FORMATS = ["fp16", "bf16", "Q8_0", "Q6_K", "Q4_K_M", "Q4_0", "NF4"]
 
 
 def load_rows() -> list[dict]:
+    """Grid rows first. Sweep rows follow, flagged: they only fill a format the grid runs did not score for that model."""
     rows = []
-    for f in sorted(glob.glob(os.path.join(RAW, "grid_*.json"))):
-        data = json.load(open(f))
-        rows += [dict(r, _file=os.path.basename(f)) for r in data if "wmdp-bio" in r]
+    for pat, fill in (("grid_*.json", False), ("sweep_*.json", True)):
+        for f in sorted(glob.glob(os.path.join(RAW, pat))):
+            data = json.load(open(f))
+            rows += [dict(r, _file=os.path.basename(f), _fill=fill) for r in data if "wmdp-bio" in r and "mmlu" in r]
     return rows
 
 
@@ -37,12 +39,19 @@ def norm_prec(p: str) -> str:
 
 def build(rows: list[dict], methods: dict, template: dict) -> dict:
     grid: dict = {}
+    same_run_base = {(r["_file"], norm_prec(r["prec"])): r for r in rows if r["model"] == "base"}
+    refs = []
     for r in rows:
         m = methods["runs"].get(r["model"])
         if not m:
             continue
-        f = norm_prec(r["prec"])
+        f = norm_prec(r.get("prec", "fp16"))
+        if r.get("_fill") and (m == "original" or f in grid.get(m, {})):
+            continue
         cell = {"forget": round(r["wmdp-bio"], 6), "retain": round(r["mmlu"], 6)}
+        b = same_run_base.get((r["_file"], f))
+        if b is not None and m != "original":
+            refs.append((cell, f, {"forget": round(b["wmdp-bio"], 6), "retain": round(b["mmlu"], 6)}))
         for k in ("wmdp-bio_pcorrect", "mmlu_pcorrect"):
             if k in r:
                 cell[k.replace("wmdp-bio", "forget").replace("mmlu", "retain")] = round(r[k], 4)
@@ -50,6 +59,12 @@ def build(rows: list[dict], methods: dict, template: dict) -> dict:
             if k.startswith("probe:"):
                 cell.setdefault("probes", {})[k.split(":", 1)[1]] = round(v, 4)
         grid.setdefault(m, {})[f] = cell
+    # a cell is compared with the original scored in the same run; say so where that differs from the page's original
+    # (a real llama.cpp file against the bit-exact round trip of the same format)
+    for cell, f, ref in refs:
+        o = grid.get("original", {}).get(f)
+        if o is None or max(abs(o["forget"] - ref["forget"]), abs(o["retain"] - ref["retain"])) > 6e-5:   # beyond 4-decimal rounding
+            cell["orig"] = ref
     out = dict(template)
     out.pop("_provisional", None)
     out.pop("_note", None)
@@ -60,6 +75,7 @@ def build(rows: list[dict], methods: dict, template: dict) -> dict:
     out["frontier"] = load_frontier(methods)
     out["families"] = methods.get("families", {})
     out["recipes"] = load_recipes()
+    out["windows"] = load_windows(out["frontier"], out["families"])
     rob = load_robustness(methods)
     if rob:
         out["robustness"] = rob
@@ -125,6 +141,44 @@ def load_frontier(methods: dict) -> list[dict]:
         b = base.get(o["prec"])
         o["price"] = round(b["retain"] - o["retain"], 6) if b else None
     return [{"family": "original", "id": "original", "seed": 0, "qa": False, "prec": k, **v, "price": 0.0} for k, v in base.items()] + out
+
+
+def load_windows(frontier: list[dict], families: dict, cut: float = 0.40) -> list[dict]:
+    """One row per layer window that was edited: CircuitKIT's MLP attribution for it, what forgetting cost there
+    (runs at or below the cut-off), and how each run's hazard score moved from fp16 to the 4-bit files."""
+    cpath = os.path.join(RAW, "circuitkit_layers.json")
+    mlp = json.load(open(cpath))["mlp_abs"] if os.path.exists(cpath) else None
+    out = []
+    for fam, meta in sorted(families.items(), key=lambda kv: kv[1]["layers"][0]):
+        pts = [p for p in frontier if p["family"] == fam]
+        if not pts:
+            continue
+        ids = sorted({p["id"] for p in pts})
+        by = {(p["id"], p["prec"]): p for p in pts}
+        row = {"family": fam, "label": meta["label"], "layers": meta["layers"], "runs": len(ids),
+               "attribution": round(sum(mlp[l] for l in meta["layers"]), 4) if mlp else None, "cut": cut, "cost": {}, "shift": {}}
+        for prec in FORMATS:
+            ps = [p["price"] for p in pts if p["prec"] == prec and p["forget"] <= cut]
+            if ps:
+                row["cost"][prec] = {"n": len(ps), "lo": min(ps), "hi": max(ps)}
+            d = [round(by[(i, prec)]["forget"] - by[(i, "fp16")]["forget"], 6) for i in ids if prec != "fp16" and (i, prec) in by and (i, "fp16") in by]
+            if d:
+                row["shift"][prec] = {"n": len(d), "mean": round(sum(d) / len(d), 6), "lo": min(d), "hi": max(d)}
+        out.append(row)
+    return out
+
+
+def windows_table(rows: list[dict]) -> str:
+    sg = lambda x: f"{100 * x:+.1f}"
+    span = lambda c: "none got there" if not c else (f"{100 * c['lo']:.1f}" if c["n"] == 1 else f"{100 * c['lo']:.1f} to {100 * c['hi']:.1f}") + f" ({c['n']} run{'s' if c['n'] > 1 else ''})"
+    shift = lambda c: "not run" if not c else f"{sg(c['mean'])} ({sg(c['lo'])} to {sg(c['hi'])})"
+    cut = round(100 * rows[0]["cut"])
+    out = [f"| Layers edited | CircuitKIT MLP attribution | Runs | MMLU points lost at fp16, runs at {cut}% WMDP-bio or below | WMDP-bio change, fp16 to Q4_0: mean (range) | fp16 to NF4 |",
+           "|---|---|---|---|---|---|"]
+    for r in rows:
+        name = f"{r['layers'][0]} to {r['layers'][-1]}" + {"default": " (SafeTune default)", "circuit": " (CircuitKIT)"}.get(r["family"], " (control)")
+        out.append(f"| {name} | {r['attribution']:.2f} | {r['runs']} | {span(r['cost'].get('fp16'))} | {shift(r['shift'].get('Q4_0'))} | {shift(r['shift'].get('NF4'))} |")
+    return "\n".join(out)
 
 
 def load_recipes() -> list[dict]:
@@ -226,16 +280,18 @@ def main() -> None:
     template = json.load(open(OUT))
     res = build(load_rows(), methods, template)
     json.dump(res, open(OUT, "w"), indent=1)
-    article = os.path.join(ROOT, "docs", "ARTICLE.md")
-    if res.get("recipes") and os.path.exists(article):
-        t = open(article).read()
-        open(article, "w").write(re.sub(r"(<!-- recipes:start -->\n).*?(\n<!-- recipes:end -->)", lambda m: m.group(1) + recipes_table(res["recipes"]) + m.group(2), t, flags=re.S))
-    if os.path.exists(README):
-        txt = open(README).read()
-        new = re.sub(r"(<!-- results:start -->\n).*?(\n<!-- results:end -->)", lambda m: m.group(1) + table(res) + m.group(2), txt, flags=re.S)
+    fill = lambda text, name, body: re.sub(rf"(<!-- {name}:start -->\n).*?(\n<!-- {name}:end -->)", lambda m: m.group(1) + body + m.group(2), text, flags=re.S)
+    for doc in (README, os.path.join(ROOT, "docs", "ARTICLE.md")):
+        if not os.path.exists(doc):
+            continue
+        txt = open(doc).read()
+        if doc == README:
+            txt = fill(txt, "results", table(res))
         if res.get("recipes"):
-            new = re.sub(r"(<!-- recipes:start -->\n).*?(\n<!-- recipes:end -->)", lambda m: m.group(1) + recipes_table(res["recipes"]) + m.group(2), new, flags=re.S)
-        open(README, "w").write(new)
+            txt = fill(txt, "recipes", recipes_table(res["recipes"]))
+        if res.get("windows"):
+            txt = fill(txt, "windows", windows_table(res["windows"]))
+        open(doc, "w").write(txt)
     print(f"wrote {OUT} ({sum(len(v) for v in res['grid'].values())} cells)")
     print(table(res))
 

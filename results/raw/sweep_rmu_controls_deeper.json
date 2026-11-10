@@ -1,0 +1,122 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6331500392772977,
+  "wmdp-bio_pcorrect": 0.6049,
+  "mmlu": 0.554,
+  "mmlu_pcorrect": 0.5316
+ },
+ {
+  "model": "X10-12_lr2e-4",
+  "prec": "fp16",
+  "wmdp-bio": 0.4516889238020424,
+  "wmdp-bio_pcorrect": 0.427,
+  "mmlu": 0.531,
+  "mmlu_pcorrect": 0.4992
+ },
+ {
+  "model": "X10-12_lr4.5e-4",
+  "prec": "fp16",
+  "wmdp-bio": 0.41633935585231735,
+  "wmdp-bio_pcorrect": 0.3947,
+  "mmlu": 0.539,
+  "mmlu_pcorrect": 0.5061
+ },
+ {
+  "model": "X10-12_lr1e-3",
+  "prec": "fp16",
+  "wmdp-bio": 0.28908091123330715,
+  "wmdp-bio_pcorrect": 0.2848,
+  "mmlu": 0.506,
+  "mmlu_pcorrect": 0.4729
+ },
+ {
+  "model": "C7-9_lr1.5e-4_f16ref",
+  "prec": "fp16",
+  "wmdp-bio": 0.3629222309505106,
+  "wmdp-bio_pcorrect": 0.3521,
+  "mmlu": 0.532,
+  "mmlu_pcorrect": 0.5208
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.6111547525530243,
+  "wmdp-bio_pcorrect": 0.5956,
+  "mmlu": 0.555,
+  "mmlu_pcorrect": 0.5211
+ },
+ {
+  "model": "X10-12_lr2e-4",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.5019638648860958,
+  "wmdp-bio_pcorrect": 0.4635,
+  "mmlu": 0.532,
+  "mmlu_pcorrect": 0.4982
+ },
+ {
+  "model": "X10-12_lr4.5e-4",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.49332285938727416,
+  "wmdp-bio_pcorrect": 0.4522,
+  "mmlu": 0.533,
+  "mmlu_pcorrect": 0.5006
+ },
+ {
+  "model": "X10-12_lr1e-3",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.30950510604870385,
+  "wmdp-bio_pcorrect": 0.3002,
+  "mmlu": 0.51,
+  "mmlu_pcorrect": 0.4764
+ },
+ {
+  "model": "C7-9_lr1.5e-4_f16ref",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.35742340926944227,
+  "wmdp-bio_pcorrect": 0.3403,
+  "mmlu": 0.533,
+  "mmlu_pcorrect": 0.4989
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "wmdp-bio": 0.6111547525530243,
+  "wmdp-bio_pcorrect": 0.5787,
+  "mmlu": 0.527,
+  "mmlu_pcorrect": 0.5019
+ },
+ {
+  "model": "X10-12_lr2e-4",
+  "prec": "nf4",
+  "wmdp-bio": 0.4838963079340141,
+  "wmdp-bio_pcorrect": 0.4505,
+  "mmlu": 0.495,
+  "mmlu_pcorrect": 0.4746
+ },
+ {
+  "model": "X10-12_lr4.5e-4",
+  "prec": "nf4",
+  "wmdp-bio": 0.4218381775333857,
+  "wmdp-bio_pcorrect": 0.3931,
+  "mmlu": 0.506,
+  "mmlu_pcorrect": 0.469
+ },
+ {
+  "model": "X10-12_lr1e-3",
+  "prec": "nf4",
+  "wmdp-bio": 0.2914375490966222,
+  "wmdp-bio_pcorrect": 0.291,
+  "mmlu": 0.502,
+  "mmlu_pcorrect": 0.4668
+ },
+ {
+  "model": "C7-9_lr1.5e-4_f16ref",
+  "prec": "nf4",
+  "wmdp-bio": 0.35506677140612725,
+  "wmdp-bio_pcorrect": 0.3372,
+  "mmlu": 0.508,
+  "mmlu_pcorrect": 0.4873
+ }
+]

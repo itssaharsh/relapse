@@ -46,7 +46,7 @@
     const c = cell(m, f), a = { m, f, lang };
     const v = forgetOf(c, lang);
     if (!c || v == null) { a.kind = 'missing'; a.field = 'known'; return a; }
-    const o = cell(ORIG, f), oV = forgetOf(o, lang);
+    const o = (!lang && c.orig) || cell(ORIG, f), oV = forgetOf(o, lang);   // the original scored in the same run, when the run had its own
     a.v = v; a.r = c.retain; a.o = oV; a.oR = o ? o.retain : null; a.pc = c.forget_pcorrect;
     const top = topOf(lang);
     a.rev = clamp((v - CH) / Math.max(0.001, top - CH), 0, 1);
@@ -55,7 +55,7 @@
     a.base = bV;
     const s = lang ? null : STATS['f|' + m + '|' + f]; a.stat = s;
     if (bV == null) a.fk = 'unref';
-    else a.fk = (v - bV >= RISE && (!s || s.p_value < 0.05)) ? 'relapsed' : 'still';
+    else a.fk = (v - bV >= RISE && (!s || s.p_value < 0.05)) ? 'relapsed' : (s && s.p_value < 0.05 && s.delta > 0 && v > bV) ? 'slipped' : 'still';
     a.price = a.oR != null ? a.oR - c.retain : null;
     const o16 = cell(ORIG, FP);
     a.price16 = o16 && b ? o16.retain - b.retain : null;
@@ -63,7 +63,8 @@
     a.grew = a.price != null && a.price16 != null ? a.price - a.price16 >= GREW : null;
     a.paid = a.price != null ? a.price >= PAID - 1e-9 : null;
     a.kind = 'unlearned';
-    a.field = a.paid === true ? 'hot' : a.paid === false ? 'ok' : 'known';
+    a.back = bV != null ? v - bV : null;
+    a.field = (a.fk === 'relapsed' || a.paid === true) ? 'hot' : a.paid === false ? 'ok' : 'known';
     return a;
   }
   function topOf(lang) {
@@ -114,6 +115,9 @@
       { m: mD, f: qf, l: `${methodShort(mD)}, same file`, s: methodShort(mD).replace(/ layers$/, '<span class="sr"> layers</span>'), h: 1 },
       { m: mC, f: four, l: `Every format: ${fl}`, s: fl }
     ];
+    let worst = null;
+    NOTORIG.filter((m) => m.tab !== false).forEach((m) => D.formats.forEach((f) => { const a = analyse(m.id, f.id, ''); if (a.fk === 'relapsed' && (!worst || a.back > worst.back)) worst = a; }));
+    if (worst) chips.splice(2, 0, { m: worst.m, f: worst.f, l: `${methodShort(worst.m)}, ${fmtLabel(worst.f)} file`, s: methodShort(worst.m).replace(/ layers$/, '<span class="sr"> layers</span>'), h: 1 });
     if (swL) chips.push({ m: mC, f: qf, lang: swL, l: `Ask in ${langName(swL)}`, s: langName(swL) });
     chips.push({ m: ORIG, f: FP, l: 'Original model', s: 'Original' });
     chips.forEach((c) => {
@@ -159,8 +163,9 @@
   }
 
   /* ---------- draw ---------- */
-  const stampText = (a) => (a.kind === 'unlearned' ? (a.price != null ? `${Math.max(0, a.price * 100).toFixed(1)} pts lost` : 'Price unknown') : a.kind === 'known' ? 'Not unlearned' : 'Not measured');
-  const tagText = (a) => (a.kind !== 'unlearned' ? '' : ({ relapsed: 'Relapsed', still: 'Still forgotten', unref: 'No fp16 reference' }[a.fk]));
+  const priceText = (a) => (a.price != null ? `${Math.max(0, a.price * 100).toFixed(1)} pts lost` : 'Price unknown');
+  const stampText = (a) => (a.kind === 'unlearned' ? (a.fk === 'relapsed' ? 'Relapsed' : priceText(a)) : a.kind === 'known' ? 'Not unlearned' : 'Not measured');
+  const tagText = (a) => (a.kind !== 'unlearned' ? '' : a.fk === 'relapsed' ? `${(a.back * 100).toFixed(1)} pts came back` : ({ still: 'Still forgotten', slipped: 'Part came back', unref: 'No fp16 reference' }[a.fk]));
 
   function draw(first) {
     const a = analyse(st.m, st.f, st.lang);
@@ -208,7 +213,7 @@
       lv.innerHTML = v == null ? '<span class="nm2">not measured</span>' : `<b>${pct(v)}%</b>${st.m !== ORIG && ov != null ? `<span>original ${pct(ov)}%</span>` : ''}`;
       b.setAttribute('aria-label', `${l ? LANG[l] : bench}: ${v == null ? 'not measured' : pct(v) + ' percent' + (st.m !== ORIG && ov != null ? ', original ' + pct(ov) + ' percent' : '')}`);
     });
-    $('key').innerHTML = `Top bar: ${esc(st.lang ? langName(st.lang) + ' questions' : bench)}, from chance (${pct(CH)}%) to the original model. Black = knowledge gone. <span class="x">Lower bar: general knowledge (${esc(D.benchmark.retain)}); the hatched part is what unlearning cost against the original at the same file. The page turns red when that cost is ${(PAID * 100).toFixed(0)} points or more.</span>`;
+    $('key').innerHTML = `Top bar: ${esc(st.lang ? langName(st.lang) + ' questions' : bench)}, from chance (${pct(CH)}%) to the original model. Black = knowledge gone. <span class="x">Lower bar: general knowledge (${esc(D.benchmark.retain)}); the hatched part is what unlearning cost against the original at the same file. The page turns red when that cost is ${(PAID * 100).toFixed(0)} points or more, or when ${(RISE * 100).toFixed(0)} points or more of the hazard score come back from ${esc(fpl)}.</span>`;
 
     // stamps
     const stamps = $('stamps'), stamp = $('stamp'), tag = $('tag2');
@@ -231,7 +236,7 @@
       detail.textContent = '';
     } else {
       const lost = a.price == null ? null : a.price;
-      ans.textContent = a.fk === 'relapsed' ? 'No, it came back.' : a.fk === 'still'
+      ans.textContent = a.fk === 'relapsed' ? `Relapsed. ${(a.back * 100).toFixed(1)} points of the hazard score came back in this file.` : a.fk === 'slipped' ? `Mostly forgotten. ${(a.back * 100).toFixed(1)} points came back in this file.` : a.fk === 'still'
         ? (lost == null ? 'Still forgotten.' : lost < 0.005 ? 'Still forgotten. No measurable loss in this file.' : `Still forgotten. ${(lost * 100).toFixed(1)} points of general knowledge lost.`)
         : 'Scored, no fp16 reference.';
       const against = a.f !== FP && a.base != null ? `, against ${p1(a.base)}% at ${fpl}` : '';
@@ -266,13 +271,15 @@
     const C = D.circuit || {};
     if (m === 'standard' && C.default_rmu_layers) return `${methodShort(m)} (${rangeOf(C.default_rmu_layers)})`;
     if (m === 'circuit' && C.circuit_rmu_layers) return `${methodShort(m)} (${rangeOf(C.circuit_rmu_layers)})`;
+    const fam = MET[m] && MET[m].family && D.families && D.families[MET[m].family];
+    if (fam && fam.layers) return `${methodShort(m)} (${rangeOf(fam.layers)})`;
     return methodShort(m);
   }
   const lastCard = {};
   function drawCards() {
     const ms = ['standard', 'circuit'].filter((m) => MET[m]);
     if (ms.indexOf(st.m) < 0) ms.push(st.m);
-    const box = $('cmp'); box.style.setProperty('--n', ms.length); box.innerHTML = '';
+    const box = $('cmp'); box.style.setProperty('--n', ms.length); box.dataset.n = ms.length; box.innerHTML = '';
     const fl = fmtLabel(st.f), fpl = fmtLabel(FP);
     ms.forEach((m) => {
       const a = analyse(m, st.f, st.lang), b = el('button', 'cc'); b.type = 'button'; b.dataset.m = m;
@@ -282,19 +289,20 @@
       else if (a.kind === 'known') { tone = 'mid'; num = pct(a.r) + '<small>%</small>'; cap = `general knowledge (${esc(D.benchmark.retain)}) of the original at ${esc(fl)}`; foot = `${esc(D.benchmark.forget)} ${pct(a.v)}%, guessing ${pct(CH)}%`; }
       else if (a.price == null) { cap = `General knowledge not measured at ${esc(fl)}.`; foot = `${esc(D.benchmark.forget)} ${pct(a.v)}% (original ${a.o != null ? pct(a.o) + '%' : 'n/m'})`; }
       else {
-        tone = a.price >= PAID - 1e-9 ? 'hot' : a.price < 0.005 ? 'ok' : 'mid';
+        tone = (a.fk === 'relapsed' || a.price >= PAID - 1e-9) ? 'hot' : a.price < 0.005 && a.fk === 'still' ? 'ok' : 'mid';
         const n = a.price * 100;
         const nolo = n < 0.5 && (!a.priceStat || a.priceStat.p_value >= 0.05);
         num = nolo ? '0<small>pts</small>' : Math.abs(n).toFixed(1) + '<small>pts</small>';
         cap = nolo ? `of general knowledge lost at ${esc(fl)}: no measurable loss (${n <= 0 ? '+' : '-'}${Math.abs(n).toFixed(1)} against the original)` : `of general knowledge lost at ${esc(fl)}`;
         const ps = a.priceStat;
         foot = `<span class="cl">${esc(D.benchmark.forget)} ${pct(a.v)}% (original ${a.o != null ? pct(a.o) + '%' : 'n/m'})</span>`
+          + (a.fk === 'relapsed' ? `<span class="cl back">Relapsed: ${(a.back * 100).toFixed(1)} points came back from ${esc(fpl)}</span>` : a.fk === 'slipped' ? `<span class="cl back">${(a.back * 100).toFixed(1)} points came back from ${esc(fpl)}</span>` : '')
           + (ps ? `<span class="cl">AuditKIT paired ${pTxt(ps.p_value).replace('<', '&lt;')}</span>` : '')
           + (a.f !== FP && a.price16 != null ? `<span class="cl g">At ${esc(fpl)} the gap was ${(a.price16 * 100).toFixed(1)}</span>` : '');
       }
       b.className = 'cc ' + tone;
       b.innerHTML = `<span class="ct">${esc(cardTitle(m))}</span><span class="cn">${num}</span><span class="cap">${cap}</span><span class="cf">${foot}</span>`;
-      b.setAttribute('aria-label', `${cardTitle(m)}: ${a.kind === 'unlearned' && a.price != null ? (a.price * 100).toFixed(1) + ' points of general knowledge lost' : cap.replace(/<[^>]+>/g, '')}`);
+      b.setAttribute('aria-label', `${cardTitle(m)}: ${a.kind === 'unlearned' && a.price != null ? (a.price * 100).toFixed(1) + ' points of general knowledge lost' + (a.fk === 'relapsed' ? `, relapsed, ${(a.back * 100).toFixed(1)} points came back` : '') : cap.replace(/<[^>]+>/g, '')}`);
       b.addEventListener('click', () => select(m, st.f, st.lang));
       box.appendChild(b);
     });
@@ -345,8 +353,11 @@
     const proofs = $('proofs');
     const add = (n, cls, t, s) => { const li = el('li'); li.innerHTML = `<div class="pf-n ${cls}">${n}</div><p class="pf-t">${t}</p><p class="pf-s">${s}</p>`; proofs.appendChild(li); };
     if (cells.length) {
-      const maxF = cells.reduce((x, y) => (y.v > x.v ? y : x));
-      add(`${still}<sup>of ${cells.length}</sup>`, still === cells.length ? 'ok' : 'hot', `measured unlearned files are still forgotten`, `${cells.length} method and file pairs scored on ${esc(D.benchmark.forget)}. The highest is ${p1(maxF.v)}% (${esc(methodShort(maxF.m))}, ${esc(fmtLabel(maxF.f))}), against ${pct(maxF.o)}% for the original and ${pct(CH)}% for guessing.`);
+      const held = cells.filter((a) => a.fk === 'still'), maxF = (held.length ? held : cells).reduce((x, y) => (y.v > x.v ? y : x));
+      const back = cells.filter((a) => a.fk === 'relapsed'), slip = cells.filter((a) => a.fk === 'slipped');
+      const nm = (a) => `${esc(methodShort(a.m))} at ${esc(fmtLabel(a.f))} (${p1(a.base)}% at ${esc(fmtLabel(FP))}, ${p1(a.v)}% in the file)`;
+      const backTxt = (back.length ? ` Relapsed, ${(RISE * 100).toFixed(0)} points or more back: ${back.map(nm).join('; ')}.` : '') + (slip.length ? ` A smaller, statistically clear rise: ${slip.map(nm).join('; ')}.` : '');
+      add(`${still}<sup>of ${cells.length}</sup>`, still === cells.length ? 'ok' : 'hot', `measured unlearned files are still forgotten`, `${cells.length} method and file pairs scored on ${esc(D.benchmark.forget)}.${backTxt} The highest${back.length || slip.length ? ' of the rest' : ''} is ${p1(maxF.v)}% (${esc(methodShort(maxF.m))}, ${esc(fmtLabel(maxF.f))}), against ${pct(maxF.o)}% for the original and ${pct(CH)}% for guessing.`);
     }
     let lm = null;
     const keys = Object.keys(LANG);
@@ -369,6 +380,7 @@
     pipe.parentNode.insertBefore(el('div', 'on-line', `<span>${esc(D.model.name)}, ${esc(D.model.params)}</span><span>Hosted on Hugging Face</span>`), pipe.nextSibling);
 
     buildLayers();
+    buildWindows();
     buildRobustness();
     buildFrontier();
 
@@ -384,7 +396,7 @@
       D.methods.forEach((m) => {
         const a = analyse(m.id, f.id, '');
         if (a.kind === 'missing') { h += '<td class="f na">not measured</td><td class="na">not measured</td>'; return; }
-        const word = a.kind === 'unlearned' ? (a.fk === 'relapsed' ? 'relapsed' : a.fk === 'still' ? 'still gone' : '') : '';
+        const word = a.kind === 'unlearned' ? (a.fk === 'relapsed' ? 'relapsed' : a.fk === 'slipped' ? 'part came back' : a.fk === 'still' ? 'still gone' : '') : '';
         const tn = a.kind === 'known' ? 'known' : a.fk === 'relapsed' ? 'hot' : 'ok';
         const pr = a.kind === 'unlearned' && a.price != null ? (a.price < 0.0005 ? '<em>no cost</em>' : `<em>price ${(a.price * 100).toFixed(1)}</em>`) : '';
         const rt = a.kind === 'unlearned' ? (a.paid === true ? 'hot' : a.paid === false ? 'ok' : '') : '';
@@ -426,8 +438,48 @@
     $('lcap').innerHTML = `<span class="sw d"></span>SafeTune's default RMU edits layers ${lr(dl)}. <span class="sw c"></span>CircuitKIT's attribution gives the MLPs of layers ${list(cl)} scores of ${list(cl.map(f2))}, against ${list(onlyD.map(f2))} for layers ${list(onlyD)}, so the edit moved to layers ${lr(cl)}. Bar height is the square root of each layer's attribution (${C.n_examples} ${esc(C.task)} examples), so small layers stay visible.`;
   }
 
+  /* one card per layer window that was edited: what forgetting cost there, and what the 4-bit files did to it */
+  function buildWindows() {
+    const Wn = D.windows;
+    if (!Array.isArray(Wn) || Wn.length < 3) return;
+    const prec = ['Q4_0', 'NF4'].find((p) => Wn.every((w) => w.shift && w.shift[p])) || 'Q4_0';
+    const C = D.circuit || {}, nL = (C.mlp_abs || []).length || 36;
+    const role = (w) => (w.family === 'default' ? 'SafeTune default' : w.family === 'circuit' ? 'CircuitKIT\u2019s pick' : 'control');
+    const lr = (w) => `${w.layers[0]} to ${w.layers[w.layers.length - 1]}`;
+    const f1 = (x) => (x * 100).toFixed(1), sg1 = (x) => (x < 0 ? '\u2212' : '+') + Math.abs(x * 100).toFixed(1);
+    const info = Wn.map((w) => {
+      const c = w.cost && w.cost[FP], s = w.shift && w.shift[prec];
+      return { w, c, s, dear: c && c.n > 1 ? c.lo >= PAID - 1e-9 : null, back: s ? s.hi >= RISE - 1e-9 : null };
+    });
+    const good = info.filter((x) => x.dear === false && x.back === false), dear = info.filter((x) => x.dear === true), back = info.filter((x) => x.back === true);
+    const names = (xs) => { const n = xs.map((x) => `${lr(x.w)}${x.w.family === 'circuit' ? ' (CircuitKIT\u2019s pick)' : x.w.family === 'default' ? ' (SafeTune\u2019s default)' : ''}`); return n.length > 1 ? n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1] : n[0]; };
+    $('win-wrap').hidden = false;
+    $('win-head').textContent = dear.length && back.length ? 'Where the edit goes decides the cost, and whether it survives the 4-bit file' : dear.length ? 'Where the edit goes decides the cost' : back.length ? 'Where the edit goes decides whether it survives the 4-bit file' : 'The same edit at each layer window';
+    let t = `RMU edits three consecutive layers. We ran it at ${Wn.length} windows.`;
+    if (good.length) t += ` Layers ${names(good)} forgot for under ${(PAID * 100).toFixed(0)} points of general knowledge and stayed forgotten in the 4-bit files.`;
+    if (dear.length) t += ` Layers ${names(dear)} cost ${f1(Math.min.apply(null, dear.map((x) => x.c.lo)))} points or more.`;
+    if (back.length) t += ` Layers ${names(back)} looked fine at ${fmtLabel(FP)}, then gave back up to ${f1(Math.max.apply(null, back.map((x) => x.s.hi)))} points of the hazard score in the ${fmtLabel(prec)} file.`;
+    const rest = info.filter((x) => good.indexOf(x) < 0 && dear.indexOf(x) < 0 && back.indexOf(x) < 0);
+    if (rest.length) t += ` At layers ${names(rest)} no run reached ${pct(rest[0].w.cut)}% at ${fmtLabel(FP)}.`;
+    $('win-take').textContent = t;
+    const box = $('wins'); box.style.setProperty('--n', Wn.length);
+    info.forEach((x) => {
+      const w = x.w, c = x.c, s = x.s, tone = x.back ? 'hot' : x.dear ? 'hot' : (x.dear === false && x.back === false) ? 'ok' : 'mid';
+      let strip = ''; for (let i = 0; i < nL; i++) strip += `<i${w.layers.indexOf(i) >= 0 ? ' class="on"' : ''}></i>`;
+      const cost = c ? (c.n > 1 && f1(c.lo) !== f1(c.hi) ? `${f1(c.lo)}<small>to</small>${f1(c.hi)}` : f1(c.lo)) : '\u2013';
+      const li = el('div', 'wn ' + tone);
+      li.innerHTML = `<span class="wt">Layers ${lr(w)}<em>${role(w)}</em></span><span class="wl" aria-hidden="true">${strip}</span>`
+        + `<span class="wv ${x.dear ? 'hot' : x.dear === false ? 'ok' : ''}"><b>${cost}</b><span>${c ? `points of general knowledge lost at ${esc(fmtLabel(FP))} (${c.n} run${c.n > 1 ? 's' : ''} at ${pct(w.cut)}% or below)` : `no run reached ${pct(w.cut)}% at ${esc(fmtLabel(FP))}`}</span></span>`
+        + `<span class="wv ${x.back ? 'hot' : x.back === false ? 'ok' : ''}"><b>${s ? sg1(s.mean) : '\u2013'}</b><span>${s ? `points on the hazard score from ${esc(fmtLabel(FP))} to ${esc(fmtLabel(prec))}, mean of ${s.n} run${s.n > 1 ? 's' : ''} (${sg1(s.lo)} to ${sg1(s.hi)})` : 'not scored in a 4-bit file'}</span></span>`
+        + `<span class="wf">${w.runs} run${w.runs > 1 ? 's' : ''}${w.attribution != null ? ` \u00b7 CircuitKIT MLP attribution ${w.attribution.toFixed(2)}` : ''}</span>`;
+      li.setAttribute('role', 'group');
+      li.setAttribute('aria-label', `Layers ${lr(w)}, ${role(w)}: ${c ? `${f1(c.lo)} to ${f1(c.hi)} points of general knowledge lost` : 'no run reached the cut-off'}; ${s ? `hazard score moves ${sg1(s.mean)} points on average from ${fmtLabel(FP)} to ${fmtLabel(prec)}` : 'not scored in a 4-bit file'}.`);
+      box.appendChild(li);
+    });
+  }
+
   /* only when the run produced a robustness array: pushed harder, per method and attack */
-  const ATTACK = { zero_shot: 'Plain question', five_shot: 'Five worked examples', role_play: 'Expert persona', relearn_25_steps_64_questions: '25 fine-tuning steps on 64 questions' };
+  const ATTACK = { zero_shot: 'Plain question', five_shot: 'Five worked examples', role_play: 'Expert persona', relearn_25_steps_64_questions: '25 fine-tuning steps on 64 hazard questions', relearn_25_steps_64_unrelated_questions: '25 fine-tuning steps on 64 unrelated questions' };
   function buildRobustness() {
     const R = D.robustness;
     if (!Array.isArray(R) || !R.length) return;
@@ -443,7 +495,9 @@
     NOTORIG.forEach((m) => precs.forEach((p) => att.forEach((k) => { const x = near(m.id, p, k); if (x) all.push(x); })));
     const pr = all.filter((x) => !isRe(x.k)), fi = all.filter((x) => isRe(x.k));
     const promptsBack = pr.some((x) => x.fr >= 0.5), ftBack = fi.some((x) => x.fr >= 0.5);
-    $('rob-head').textContent = !fi.length ? 'Pushed harder: prompts and a persona' : (!promptsBack && ftBack) ? 'Pushed harder: prompts did not bring it back. Fine-tuning did.' : (promptsBack && ftBack) ? 'Pushed harder: prompts and fine-tuning both brought some of it back.' : promptsBack ? 'Pushed harder: prompts brought some of it back.' : 'Pushed harder: neither prompts nor fine-tuning brought it back.';
+    const unrel = (k) => /unrelated/.test(k), fiT = fi.filter((x) => !unrel(x.k)), fiU = fi.filter((x) => unrel(x.k));
+    const topicBack = fiT.some((x) => x.fr >= 0.5), unrelBack = fiU.some((x) => x.fr >= 0.5);
+    $('rob-head').textContent = !fi.length ? 'Pushed harder: prompts and a persona' : (!promptsBack && topicBack && fiU.length && !unrelBack) ? 'Pushed harder: prompts did not bring it back. Fine-tuning on the topic did.' : (!promptsBack && ftBack) ? 'Pushed harder: prompts did not bring it back. Fine-tuning did.' : (promptsBack && ftBack) ? 'Pushed harder: prompts and fine-tuning both brought some of it back.' : promptsBack ? 'Pushed harder: prompts brought some of it back.' : 'Pushed harder: neither prompts nor fine-tuning brought it back.';
     const rng = (xs) => { const v = xs.map((x) => x.r.acc), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); return `${pct(lo)}% to ${pct(hi)}%`; };
     const names = (ks) => { const n = ks.map((k) => aName(k).toLowerCase()); return n.length > 1 ? n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1] : n[0]; };
     let cap = '';
@@ -453,11 +507,11 @@
         ? `Under ${names(pk)}, some methods come back: ${pr.filter((x) => x.fr >= 0.5).map((x) => `${esc(methodShort(x.m))} reaches ${pct(x.r.acc)}% (original ${pct(x.o.acc)}%)`).join('; ')}. `
         : `Under ${names(pk)}, every unlearned model stays at ${rng(pr)} on ${D.benchmark.forget} while the original scores ${rng(po)}. `;
     }
-    if (fi.length) {
-      const fk = fi[0].k, fo = fi[0].o.acc;
-      cap += `${ATTACK[fk] ? ATTACK[fk] : aName(fk)}, by contrast, ${ftBack ? 'brings most of it back' : 'does not bring it back'}: ` + fi.map((x) => `${esc(methodShort(x.m))} ${pct(x.r.acc)}% (${pct(clamp(x.fr, 0, 1))}% of the way back)`).join(', ') + `, against ${pct(fo)}% for the original${fi.some((x) => x.p !== fi[0].p) ? '' : ' at ' + esc(fmtLabel(fi[0].p))}.`;
-    }
-    cap += ` The line on each bar marks guessing (${pct(CH)}%).`;
+    Array.from(new Set(fi.map((x) => x.k))).forEach((fk) => {
+      const g = fi.filter((x) => x.k === fk), back = g.some((x) => x.fr >= 0.5), fo = g[0].o.acc;
+      cap += `${aName(fk)} ${back ? 'brings most of it back' : 'does not bring it back'}: ` + g.map((x) => `${esc(methodShort(x.m))} ${pct(x.r.acc)}%${back ? ` (${pct(clamp(x.fr, 0, 1))}% of the way back)` : ''}`).join(', ') + `, against ${pct(fo)}% for the original after the same fine-tuning${g.some((x) => x.p !== g[0].p) ? '' : ' at ' + esc(fmtLabel(g[0].p))}. `;
+    });
+    cap += `The line on each bar marks guessing (${pct(CH)}%).`;
     $('rob-cap').innerHTML = cap;
     precs.sort((x, y) => D.formats.findIndex((f) => f.id === x) - D.formats.findIndex((f) => f.id === y));
     let curP = precs.find((p) => R.some((r) => r.prec === p && isRe(r.attack))) || precs[0];
@@ -496,7 +550,8 @@
     const famLabel = (f) => (f === 'original' ? 'Original' : (FAMS[f] && FAMS[f].label) || famName[f] || f);
     const ctl = (f) => famLabel(f).replace(/^Control:\s*/i, '');
     const lowName = (f) => (f === 'default' ? famName.default.toLowerCase() : famName[f] || ctl(f).toLowerCase());
-    const order = ['default', 'circuit', 'deeper', 'shallower'].concat(Array.from(new Set(P.map((p) => p.family))).filter((f) => ['original', 'default', 'circuit', 'deeper', 'shallower'].indexOf(f) < 0));
+    const known = ['default', 'circuit', 'shallower', 'deeper', 'deepest'];
+    const order = known.filter((f) => P.some((p) => p.family === f)).concat(Array.from(new Set(P.map((p) => p.family))).filter((f) => f !== 'original' && known.indexOf(f) < 0));
     const controls = order.filter((f) => f !== 'default' && f !== 'circuit');
     const nameOf = (p) => HEAD[p.id] || (p.seed === 1 ? 'seed 2' : '') || '';
     const xs = P.map((p) => p.forget).concat([CH]), ys = P.map((p) => p.retain);
@@ -568,6 +623,7 @@
         else if (p.family === 'original') shape = `<path d="M${cx} ${cy - 8}L${cx + 8} ${cy}L${cx} ${cy + 8}L${cx - 8} ${cy}Z" fill="${fill}" stroke="${st2}" stroke-width="${sw}"/>`;
         else if (p.family === 'deeper') shape = `<path d="M${cx} ${cy - 8}L${cx + 8} ${cy + 6}L${cx - 8} ${cy + 6}Z" fill="${fill}" stroke="${st2}" stroke-width="${sw}" stroke-linejoin="round"/>`;
         else if (p.family === 'shallower') shape = `<path d="M${cx - 8} ${cy - 6}L${cx + 8} ${cy - 6}L${cx} ${cy + 8}Z" fill="${fill}" stroke="${st2}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+        else if (p.family === 'deepest') shape = `<path d="M${cx - 6} ${cy - 6}L${cx + 6} ${cy + 6}M${cx + 6} ${cy - 6}L${cx - 6} ${cy + 6}" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round"/>`;
         else shape = `<circle cx="${cx}" cy="${cy}" r="6.5" fill="${fill}" stroke="${st2}" stroke-width="${sw}"/>`;
         if (p.qa) shape += `<circle cx="${cx}" cy="${cy}" r="1.9" fill="${hollow ? col : 'var(--paper)'}"/>`;
         g += `<g class="pt" tabindex="0" role="img" data-i="${i}" aria-label="${esc(label)}"><circle class="hit" cx="${cx}" cy="${cy}" r="14"/>${shape}</g>`;
@@ -614,7 +670,8 @@
       circuit: '<rect x="3" y="3" width="12" height="12" rx="2" fill="var(--ok)" stroke="var(--paper)" stroke-width="2"/>',
       original: '<path d="M9 1L17 9L9 17L1 9Z" fill="var(--bar)"/>',
       deeper: '<path d="M9 2L16 15L2 15Z" fill="oklch(88% .01 70)" stroke="var(--paper-ink-muted)" stroke-width="2" stroke-linejoin="round"/>',
-      shallower: '<path d="M2 3L16 3L9 16Z" fill="oklch(88% .01 70)" stroke="var(--paper-ink-muted)" stroke-width="2" stroke-linejoin="round"/>'
+      shallower: '<path d="M2 3L16 3L9 16Z" fill="oklch(88% .01 70)" stroke="var(--paper-ink-muted)" stroke-width="2" stroke-linejoin="round"/>',
+      deepest: '<path d="M3 3L15 15M15 3L3 15" fill="none" stroke="var(--paper-ink-muted)" stroke-width="3" stroke-linecap="round"/>'
     };
     const drawKey = () => {
       const have = (f) => P.some((p) => p.prec === cur && p.family === f);

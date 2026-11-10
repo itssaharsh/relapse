@@ -21,14 +21,18 @@ random.seed(0); torch.manual_seed(0)
 MP = model_path("global")
 tok = AutoTokenizer.from_pretrained(MP)
 if tok.pad_token is None: tok.pad_token = tok.eos_token
-forget_txt = get_texts("bio", NB * 4); retain_txt = get_texts("wiki", NB * 4)
 def batches(texts, n, bs=4, maxlen=512):
     tok.padding_side = "right"; out = []
     for i in range(n):
         enc = tok([t[:2000] for t in texts[i * bs:(i + 1) * bs]], return_tensors="pt", padding=True, truncation=True, max_length=maxlen)
         out.append({k: v.to("cuda:0") for k, v in enc.items()})
     return out
-FB = batches(forget_txt, NB); RB = batches(retain_txt, NB)
+_BATCHES = {}
+def batches_for(seed):   # a config may carry its own "seed" (data order and the RMU control vector)
+    if seed not in _BATCHES:
+        _BATCHES.clear()
+        _BATCHES[seed] = (batches(get_texts("bio", NB * 4, seed=seed), NB), batches(get_texts("wiki", NB * 4, seed=seed), NB))
+    return _BATCHES[seed]
 FROZEN = torch.float16 if os.environ.get("FROZEN_FP16") == "1" else torch.float32   # fp16 frozen reference: room for deeper windows on a T4
 def load_trunc(L, dtype=torch.float32):
     cfg = AutoConfig.from_pretrained(MP); cfg.num_hidden_layers = L + 1
@@ -36,7 +40,8 @@ def load_trunc(L, dtype=torch.float32):
     return AutoModelForCausalLM.from_pretrained(MP, config=cfg, dtype=dtype, device_map={"": 0}).model.eval()
 changed = {}
 for c in CONFIGS:
-    L = c["layer"]; UPD = [L - 2, L - 1, L]
+    L = c["layer"]; UPD = [L - 2, L - 1, L]; SD = c.get("seed", 0)
+    FB, RB = batches_for(SD)
     frozen = load_trunc(L, FROZEN)
     for p in frozen.parameters(): p.requires_grad_(False)
     norms = []
@@ -45,7 +50,7 @@ for c in CONFIGS:
         for b in FB[:8]: frozen(**b)
     h.remove(); anorm = sum(norms) / len(norms)
     model = load_trunc(L)
-    torch.manual_seed(0); random.seed(0)
+    torch.manual_seed(SD); random.seed(SD)
     if c.get("pq"):
         for l in UPD:
             parametrize.register_parametrization(model.layers[l].mlp.down_proj, "weight", FakeQuantSTE(p=c["pq"]))
@@ -59,7 +64,7 @@ for c in CONFIGS:
     log("trained", c["name"], "anorm", round(anorm, 2), "secs", round(time.time() - t1))
     torch.save(changed, "/kaggle/working/" + os.environ.get("OUT", "changed_rmu4.pt"))
     del model, frozen; gc.collect(); torch.cuda.empty_cache()
-del FB, RB; gc.collect(); torch.cuda.empty_cache()
+del FB, RB; _BATCHES.clear(); gc.collect(); torch.cuda.empty_cache()
 model = AutoModelForCausalLM.from_pretrained(MP, dtype=torch.float16, device_map={"": 0}).eval()
 params = dict(model.named_parameters())
 master = {n: p.detach().cpu().clone() for n, p in params.items() if is_quant_target(n, p)}

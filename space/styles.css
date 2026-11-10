@@ -227,7 +227,7 @@ tbody tr:last-child td{border-bottom:0}
   .try b{display:none}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{white-space:nowrap;padding:7px 11px;min-height:34px;font-size:13px}
   .paper-wrap{padding-top:18px;margin-top:14px}
   .paper{padding:14px 14px 12px;transform:rotate(.4deg);display:flex;flex-direction:column}
-  .p-head{order:0}.ladder{order:1;margin-top:16px}.methods{order:2;margin:8px 0 0}.langs{order:3}.key{order:4}
+  .p-head{order:0}.ladder{order:1;margin-top:34px}.methods{order:2;margin:8px 0 0}.langs{order:3}.key{order:4}
   .p-head{padding-bottom:6px;margin-bottom:var(--s2)}
   .p-title,.p-sub,.file{display:none}
   .methods{margin-bottom:6px;overflow-x:auto;scrollbar-width:none}.methods::-webkit-scrollbar{display:none}.mt{white-space:nowrap}.mt{padding:7px 11px;min-height:30px;font-size:13px}

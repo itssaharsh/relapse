@@ -1,0 +1,122 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6332,
+  "wmdp-bio_pcorrect": 0.6049,
+  "mmlu": 0.554,
+  "mmlu_pcorrect": 0.5316
+ },
+ {
+  "model": "rmu_default_layers_seed1",
+  "prec": "fp16",
+  "wmdp-bio": 0.4438,
+  "wmdp-bio_pcorrect": 0.3988,
+  "mmlu": 0.517,
+  "mmlu_pcorrect": 0.4929
+ },
+ {
+  "model": "rmu_circuit_layers_seed1",
+  "prec": "fp16",
+  "wmdp-bio": 0.4556,
+  "wmdp-bio_pcorrect": 0.4269,
+  "mmlu": 0.557,
+  "mmlu_pcorrect": 0.5306
+ },
+ {
+  "model": "base",
+  "prec": "Q8_0",
+  "wmdp-bio": 0.6324,
+  "wmdp-bio_pcorrect": 0.605,
+  "mmlu": 0.551,
+  "mmlu_pcorrect": 0.5315
+ },
+ {
+  "model": "rmu_default_layers_seed1",
+  "prec": "Q8_0",
+  "wmdp-bio": 0.4438,
+  "wmdp-bio_pcorrect": 0.3987,
+  "mmlu": 0.521,
+  "mmlu_pcorrect": 0.4931
+ },
+ {
+  "model": "rmu_circuit_layers_seed1",
+  "prec": "Q8_0",
+  "wmdp-bio": 0.454,
+  "wmdp-bio_pcorrect": 0.4279,
+  "mmlu": 0.557,
+  "mmlu_pcorrect": 0.5305
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.6112,
+  "wmdp-bio_pcorrect": 0.5956,
+  "mmlu": 0.555,
+  "mmlu_pcorrect": 0.5211
+ },
+ {
+  "model": "rmu_default_layers_seed1",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4234,
+  "wmdp-bio_pcorrect": 0.3797,
+  "mmlu": 0.525,
+  "mmlu_pcorrect": 0.4813
+ },
+ {
+  "model": "rmu_circuit_layers_seed1",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4375,
+  "wmdp-bio_pcorrect": 0.4046,
+  "mmlu": 0.548,
+  "mmlu_pcorrect": 0.5162
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "wmdp-bio": 0.6112,
+  "wmdp-bio_pcorrect": 0.5787,
+  "mmlu": 0.527,
+  "mmlu_pcorrect": 0.5019
+ },
+ {
+  "model": "rmu_default_layers_seed1",
+  "prec": "nf4",
+  "wmdp-bio": 0.4525,
+  "wmdp-bio_pcorrect": 0.411,
+  "mmlu": 0.497,
+  "mmlu_pcorrect": 0.455
+ },
+ {
+  "model": "rmu_circuit_layers_seed1",
+  "prec": "nf4",
+  "wmdp-bio": 0.4415,
+  "wmdp-bio_pcorrect": 0.4204,
+  "mmlu": 0.524,
+  "mmlu_pcorrect": 0.4982
+ },
+ {
+  "model": "base",
+  "prec": "Q4_K_M",
+  "wmdp-bio": 0.6339,
+  "wmdp-bio_pcorrect": 0.6069,
+  "mmlu": 0.548,
+  "mmlu_pcorrect": 0.5248
+ },
+ {
+  "model": "rmu_default_layers_seed1",
+  "prec": "Q4_K_M",
+  "wmdp-bio": 0.4116,
+  "wmdp-bio_pcorrect": 0.371,
+  "mmlu": 0.516,
+  "mmlu_pcorrect": 0.4772
+ },
+ {
+  "model": "rmu_circuit_layers_seed1",
+  "prec": "Q4_K_M",
+  "wmdp-bio": 0.4533,
+  "wmdp-bio_pcorrect": 0.428,
+  "mmlu": 0.554,
+  "mmlu_pcorrect": 0.5237
+ }
+]

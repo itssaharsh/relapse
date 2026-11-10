@@ -97,6 +97,18 @@
    "tab": true
   },
   {
+   "id": "standard_s1",
+   "label": "Default layers (5 to 7), second seed",
+   "short": "Default, seed 2",
+   "tab": false
+  },
+  {
+   "id": "circuit_s1",
+   "label": "CircuitKIT layers (7 to 9), second seed",
+   "short": "CircuitKIT, seed 2",
+   "tab": false
+  },
+  {
    "id": "aggressive",
    "label": "SafeTune RMU at default layers, 2.5x the learning rate",
    "short": "Aggressive"
@@ -615,6 +627,70 @@
     }
    }
   },
+  "standard_s1": {
+   "fp16": {
+    "forget": 0.4438,
+    "retain": 0.517,
+    "forget_pcorrect": 0.3988,
+    "retain_pcorrect": 0.4929
+   },
+   "Q8_0": {
+    "forget": 0.4438,
+    "retain": 0.521,
+    "forget_pcorrect": 0.3987,
+    "retain_pcorrect": 0.4931
+   },
+   "Q4_0": {
+    "forget": 0.4234,
+    "retain": 0.525,
+    "forget_pcorrect": 0.3797,
+    "retain_pcorrect": 0.4813
+   },
+   "NF4": {
+    "forget": 0.4525,
+    "retain": 0.497,
+    "forget_pcorrect": 0.411,
+    "retain_pcorrect": 0.455
+   },
+   "Q4_K_M": {
+    "forget": 0.4116,
+    "retain": 0.516,
+    "forget_pcorrect": 0.371,
+    "retain_pcorrect": 0.4772
+   }
+  },
+  "circuit_s1": {
+   "fp16": {
+    "forget": 0.4556,
+    "retain": 0.557,
+    "forget_pcorrect": 0.4269,
+    "retain_pcorrect": 0.5306
+   },
+   "Q8_0": {
+    "forget": 0.454,
+    "retain": 0.557,
+    "forget_pcorrect": 0.4279,
+    "retain_pcorrect": 0.5305
+   },
+   "Q4_0": {
+    "forget": 0.4375,
+    "retain": 0.548,
+    "forget_pcorrect": 0.4046,
+    "retain_pcorrect": 0.5162
+   },
+   "NF4": {
+    "forget": 0.4415,
+    "retain": 0.524,
+    "forget_pcorrect": 0.4204,
+    "retain_pcorrect": 0.4982
+   },
+   "Q4_K_M": {
+    "forget": 0.4533,
+    "retain": 0.554,
+    "forget_pcorrect": 0.428,
+    "retain_pcorrect": 0.5237
+   }
+  },
   "aggressive": {
    "fp16": {
     "forget": 0.2537,
@@ -926,6 +1002,70 @@
      0.0096
     ]
    },
+   "standard_s1": {
+    "fp16": [
+     0.908,
+     0.0134,
+     0.0745,
+     0.0041
+    ],
+    "Q8_0": [
+     0.8846,
+     0.0157,
+     0.0947,
+     0.005
+    ],
+    "Q4_0": [
+     0.4079,
+     0.0129,
+     0.5752,
+     0.0041
+    ],
+    "NF4": [
+     0.257,
+     0.0582,
+     0.646,
+     0.0388
+    ],
+    "Q4_K_M": [
+     0.9195,
+     0.0197,
+     0.0527,
+     0.0081
+    ]
+   },
+   "circuit_s1": {
+    "fp16": [
+     0.0001,
+     0.0003,
+     0.9996,
+     0.0
+    ],
+    "Q8_0": [
+     0.0001,
+     0.0003,
+     0.9996,
+     0.0001
+    ],
+    "Q4_0": [
+     0.0,
+     0.0002,
+     0.9992,
+     0.0005
+    ],
+    "NF4": [
+     0.0007,
+     0.0019,
+     0.9972,
+     0.0002
+    ],
+    "Q4_K_M": [
+     0.0002,
+     0.0003,
+     0.9995,
+     0.0
+    ]
+   },
    "aggressive": {
     "fp16": [
      0.2106,
@@ -1203,6 +1343,122 @@
   {
    "metric": "acc",
    "n": 1273,
+   "acc_a": 0.444619,
+   "acc_b": 0.410841,
+   "delta": -0.033778,
+   "ci95": [
+    -0.05577376276512176,
+    -0.01178318931657502
+   ],
+   "p_value": 0.003996,
+   "significant": true,
+   "right_to_wrong": 125,
+   "wrong_to_right": 82,
+   "model": "rmu_default_layers_seed1",
+   "kind": "forget_holds",
+   "from": "fp16",
+   "to": "Q4_K_M",
+   "method": "standard_s1"
+  },
+  {
+   "metric": "acc",
+   "n": 1000,
+   "acc_a": 0.554,
+   "acc_b": 0.517,
+   "delta": -0.037,
+   "ci95": [
+    -0.062,
+    -0.011
+   ],
+   "p_value": 0.005994,
+   "significant": true,
+   "right_to_wrong": 103,
+   "wrong_to_right": 66,
+   "model": "rmu_default_layers_seed1",
+   "kind": "price",
+   "prec": "fp16",
+   "method": "standard_s1"
+  },
+  {
+   "metric": "acc",
+   "n": 1000,
+   "acc_a": 0.548,
+   "acc_b": 0.515,
+   "delta": -0.033,
+   "ci95": [
+    -0.059,
+    -0.007
+   ],
+   "p_value": 0.012987,
+   "significant": true,
+   "right_to_wrong": 105,
+   "wrong_to_right": 72,
+   "model": "rmu_default_layers_seed1",
+   "kind": "price",
+   "prec": "Q4_K_M",
+   "method": "standard_s1"
+  },
+  {
+   "metric": "acc",
+   "n": 1273,
+   "acc_a": 0.455617,
+   "acc_b": 0.454046,
+   "delta": -0.001571,
+   "ci95": [
+    -0.022780832678711706,
+    0.018853102906520033
+   ],
+   "p_value": 0.881119,
+   "significant": false,
+   "right_to_wrong": 93,
+   "wrong_to_right": 91,
+   "model": "rmu_circuit_layers_seed1",
+   "kind": "forget_holds",
+   "from": "fp16",
+   "to": "Q4_K_M",
+   "method": "circuit_s1"
+  },
+  {
+   "metric": "acc",
+   "n": 1000,
+   "acc_a": 0.554,
+   "acc_b": 0.557,
+   "delta": 0.003,
+   "ci95": [
+    -0.014,
+    0.02
+   ],
+   "p_value": 0.697303,
+   "significant": false,
+   "right_to_wrong": 35,
+   "wrong_to_right": 38,
+   "model": "rmu_circuit_layers_seed1",
+   "kind": "price",
+   "prec": "fp16",
+   "method": "circuit_s1"
+  },
+  {
+   "metric": "acc",
+   "n": 1000,
+   "acc_a": 0.548,
+   "acc_b": 0.554,
+   "delta": 0.006,
+   "ci95": [
+    -0.011,
+    0.023
+   ],
+   "p_value": 0.454545,
+   "significant": false,
+   "right_to_wrong": 35,
+   "wrong_to_right": 41,
+   "model": "rmu_circuit_layers_seed1",
+   "kind": "price",
+   "prec": "Q4_K_M",
+   "method": "circuit_s1"
+  },
+  {
+   "metric": "acc",
+   "n": 1273,
    "acc_a": 0.253731,
    "acc_b": 0.27337,
    "delta": 0.019639,
@@ -1349,5 +1605,175 @@
    8,
    9
   ]
- }
+ },
+ "robustness": [
+  {
+   "method": "original",
+   "prec": "fp16",
+   "attack": "zero_shot",
+   "acc": 0.6262,
+   "n": 1204
+  },
+  {
+   "method": "original",
+   "prec": "fp16",
+   "attack": "five_shot",
+   "acc": 0.6354,
+   "n": 1204
+  },
+  {
+   "method": "original",
+   "prec": "fp16",
+   "attack": "role_play",
+   "acc": 0.6346,
+   "n": 1204
+  },
+  {
+   "method": "standard",
+   "prec": "fp16",
+   "attack": "zero_shot",
+   "acc": 0.3738,
+   "n": 1204
+  },
+  {
+   "method": "standard",
+   "prec": "fp16",
+   "attack": "five_shot",
+   "acc": 0.2517,
+   "n": 1204
+  },
+  {
+   "method": "standard",
+   "prec": "fp16",
+   "attack": "role_play",
+   "acc": 0.3223,
+   "n": 1204
+  },
+  {
+   "method": "circuit",
+   "prec": "fp16",
+   "attack": "zero_shot",
+   "acc": 0.3654,
+   "n": 1204
+  },
+  {
+   "method": "circuit",
+   "prec": "fp16",
+   "attack": "five_shot",
+   "acc": 0.2774,
+   "n": 1204
+  },
+  {
+   "method": "circuit",
+   "prec": "fp16",
+   "attack": "role_play",
+   "acc": 0.3497,
+   "n": 1204
+  },
+  {
+   "method": "circuit_qa",
+   "prec": "fp16",
+   "attack": "zero_shot",
+   "acc": 0.3405,
+   "n": 1204
+  },
+  {
+   "method": "circuit_qa",
+   "prec": "fp16",
+   "attack": "five_shot",
+   "acc": 0.2757,
+   "n": 1204
+  },
+  {
+   "method": "circuit_qa",
+   "prec": "fp16",
+   "attack": "role_play",
+   "acc": 0.3289,
+   "n": 1204
+  },
+  {
+   "method": "original",
+   "prec": "Q4_0",
+   "attack": "zero_shot",
+   "acc": 0.6055,
+   "n": 1204
+  },
+  {
+   "method": "original",
+   "prec": "Q4_0",
+   "attack": "five_shot",
+   "acc": 0.6304,
+   "n": 1204
+  },
+  {
+   "method": "original",
+   "prec": "Q4_0",
+   "attack": "role_play",
+   "acc": 0.6146,
+   "n": 1204
+  },
+  {
+   "method": "standard",
+   "prec": "Q4_0",
+   "attack": "zero_shot",
+   "acc": 0.3613,
+   "n": 1204
+  },
+  {
+   "method": "standard",
+   "prec": "Q4_0",
+   "attack": "five_shot",
+   "acc": 0.2575,
+   "n": 1204
+  },
+  {
+   "method": "standard",
+   "prec": "Q4_0",
+   "attack": "role_play",
+   "acc": 0.3306,
+   "n": 1204
+  },
+  {
+   "method": "circuit",
+   "prec": "Q4_0",
+   "attack": "zero_shot",
+   "acc": 0.3555,
+   "n": 1204
+  },
+  {
+   "method": "circuit",
+   "prec": "Q4_0",
+   "attack": "five_shot",
+   "acc": 0.2708,
+   "n": 1204
+  },
+  {
+   "method": "circuit",
+   "prec": "Q4_0",
+   "attack": "role_play",
+   "acc": 0.3073,
+   "n": 1204
+  },
+  {
+   "method": "circuit_qa",
+   "prec": "Q4_0",
+   "attack": "zero_shot",
+   "acc": 0.3513,
+   "n": 1204
+  },
+  {
+   "method": "circuit_qa",
+   "prec": "Q4_0",
+   "attack": "five_shot",
+   "acc": 0.2757,
+   "n": 1204
+  },
+  {
+   "method": "circuit_qa",
+   "prec": "Q4_0",
+   "attack": "role_play",
+   "acc": 0.3007,
+   "n": 1204
+  }
+ ]
 }

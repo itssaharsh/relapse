@@ -57,6 +57,9 @@ def build(rows: list[dict], methods: dict, template: dict) -> dict:
     out["formats"] = [x for x in template["formats"] if any(x["id"] in g for g in grid.values())]
     out["run"] = methods.get("run", out.get("run", {}))
     out["stats"] = load_stats(methods)
+    rob = load_robustness(methods)
+    if rob:
+        out["robustness"] = rob
     cpath = os.path.join(RAW, "circuitkit_layers.json")
     if os.path.exists(cpath):
         out["circuit"] = json.load(open(cpath))
@@ -91,6 +94,17 @@ def load_stats(methods: dict) -> list[dict]:
             key = (m, row["kind"], row.get("prec"), row.get("from"), row.get("to"))
             if key not in seen:
                 seen.add(key); out.append(row)
+    return out
+
+
+def load_robustness(methods: dict) -> list[dict]:
+    """Adversarial prompting and relearning attacks (results/raw/robustness_*.json), mapped to the page's methods."""
+    out = []
+    for f in sorted(glob.glob(os.path.join(RAW, "robustness_*.json"))):
+        for r in json.load(open(f)):
+            m = methods["runs"].get(r["model"])
+            if m:
+                out.append({"method": m, "prec": norm_prec(r["prec"]), "attack": r["attack"], "acc": r["acc"], "n": r["n"]})
     return out
 
 

@@ -5,7 +5,9 @@
   "rmu_default_layers": "standard",
   "rmu_circuit_layers": "circuit",
   "rmu_circuit_layers_qa": "circuit_qa",
-  "rmu_L7_strong": "aggressive"
+  "rmu_L7_strong": "aggressive",
+  "rmu_default_layers_seed1": "standard_s1",
+  "rmu_circuit_layers_seed1": "circuit_s1"
  },
  "run": {
   "date": "2026-11-10",

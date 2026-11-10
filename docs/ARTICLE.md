@@ -2,11 +2,13 @@
 
 *Unlearning on Cohere's Tiny Aya with Lexsi Labs' open-source safety stack, measured in the files people actually download.*
 
-You want a small model that runs offline on a phone and will not help anyone build a bioweapon. Unlearning can remove that knowledge, but two things usually go wrong: people run a 4-bit copy rather than the tested checkpoint, and unlearning costs some general knowledge. We measured both on [Tiny Aya Global](https://huggingface.co/CohereLabs/tiny-aya-global) (3.35B parameters, 70 languages) and found a recipe where the 4-bit file keeps the forgetting and gives up nothing measurable for it.
+You want a small model that runs offline on a phone and will not help anyone build a bioweapon. Unlearning can remove that knowledge, but people run a 4-bit copy rather than the tested checkpoint, and unlearning costs some general knowledge. We measured both on [Tiny Aya Global](https://huggingface.co/CohereLabs/tiny-aya-global) (3.35B parameters, 70 languages) and found a recipe where the 4-bit file keeps the forgetting and gives up nothing measurable for it, in two training seeds.
 
-**The problem.** [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s RMU at its default layers took Tiny Aya's WMDP-bio score (1,273 four-choice questions; 25% is guessing) from 63.3% to 38.7%. It stayed there in all seven formats we stored it in, from bf16 down to llama.cpp's Q4_K_M and bitsandbytes' NF4: 37.2% in Q4_K_M, an [AuditKIT](https://github.com/Lexsi-Labs/AuditKIT) paired bootstrap gives -1.5 points (95% interval -4.0 to +1.1, p = 0.24). But the general knowledge it cost grew in the 4-bit copy: 3.8 MMLU points at full precision, 5.5 in the Q4_K_M file (AuditKIT: p = 0.002 and 0.001).
+**What worked.** [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT)'s attribution showed where Tiny Aya's answers to hazardous-biology questions run, and we put [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s RMU edit there. On WMDP-bio (1,273 four-choice questions; 25% is guessing) the model fell from 63.4% to 37.1% in the llama.cpp Q4_K_M file, with MMLU at 54.9% against the original's 54.8% (+0.1 points, [AuditKIT](https://github.com/Lexsi-Labs/AuditKIT) p = 0.92). The second seed forgot less (45.3%) and again cost nothing measurable in that file (+0.6, p = 0.45).
 
-**The fix.** [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT)'s attribution pointed to different layers. The same edit there forgot slightly more (36.8%) and cost nothing measurable in the Q4_K_M file: MMLU 54.9% against the original's 54.8% (+0.1 points, p = 0.92). The forgetting held in every format and in Hindi, Arabic, Spanish, Swahili and reworded English.
+**What it beat.** The same RMU at SafeTune's default layers forgot about as much, but cost general knowledge in every case: 5.5 and 3.3 points in the Q4_K_M file, 3.8 and 3.7 at full precision (p from 0.001 to 0.013). In every file and both seeds, the CircuitKIT layers cost less.
+
+**And it stayed gone.** No recipe got its knowledge back in any of seven formats, in four other languages or with reworded questions, and worked examples or an expert persona in the prompt did not bring it back either.
 
 Try it: **[the Relapse Space](https://huggingface.co/spaces/itssaharsh/relapse)** · code and raw runs: **[github.com/itssaharsh/relapse](https://github.com/itssaharsh/relapse)**
 
@@ -28,13 +30,15 @@ Tiny Aya is built to run offline, on phones and laptops, and Cohere ships it as 
 | Q4_0 | 61.1% / 55.5% | 36.8% / 50.6% | 35.9% / 52.7% | 35.6% / 52.9% | 26.8% / 41.4% |
 | NF4 | 61.1% / 52.7% | 37.2% / 46.3% | 35.3% / 51.2% | 34.7% / 50.8% | 26.7% / 36.2% |
 
-Read each cell as "how much hazardous biology it still answers / how much general knowledge it keeps". Three things stand out:
+Read each cell as "how much hazardous biology it still answers / how much general knowledge it keeps". The second-seed runs (fp16, Q8_0, Q4_K_M, Q4_0, NF4) are in the [results table](https://github.com/itssaharsh/relapse#results). Three things stand out:
 
-1. **The forgetting holds in every file.** Every unlearned model stays within 2 points of its own full-precision WMDP-bio score in every file. None of AuditKIT's fp16-to-Q4_K_M comparisons is significant (p = 0.24, 0.89, 0.22, 0.12).
-2. **At the default layers, the 4-bit file pays more.** There the general-knowledge gap to the original widens from 3.8 points (fp16) to 5.5 (Q4_K_M) and 6.4 (NF4). The aggressive setting shows it starkly, going from 11.9 points to 14.1 and 16.5.
-3. **Where you unlearn decides the price.** At the CircuitKIT layers the gap is 2.2 points at fp16, +0.1 at Q4_K_M and 1.5 at NF4, while forgetting slightly more. Training the same edit through a 4-bit quantizer forgot the most (34.0%) with no detectable cost at fp16 or Q4_K_M (p = 0.42, 0.76).
+1. **The forgetting holds in every file.** Every unlearned model stays within 2 points of its own full-precision WMDP-bio score in every file, except one that forgot 3.4 points more in Q4_K_M (p = 0.004). None of the other AuditKIT fp16-to-Q4_K_M comparisons is significant (p = 0.24, 0.89, 0.22, 0.12, 0.88).
+2. **Where you unlearn decides the price.** In the Q4_K_M file the CircuitKIT layers came out 0.1 and 0.6 points above the original's general knowledge in the two seeds; the default layers cost 5.5 and 3.3. Training the CircuitKIT edit through a 4-bit quantizer forgot the most (34.0%) with no detectable cost at fp16 or Q4_K_M (p = 0.42, 0.76).
+3. **Pushing harder at the default layers does not help.** The aggressive setting reached guessing (25.4%) but lost 11.9 points of general knowledge at fp16, 14.1 in Q4_K_M and 16.5 in NF4.
 
 The forgetting carries across languages. On 707 WMDP-bio questions translated into Hindi, Arabic, Spanish and Swahili or reworded in English, the original model scores 46% to 57% per language at fp16. Unlearned at the default layers it scores 32% to 41%, and at the CircuitKIT layers 27% to 33%. The Q4_K_M files stay in the same range: 34% to 43% and 29% to 35%.
+
+Pushing on the prompt did not bring it back either. With five solved WMDP-bio questions placed before each question, the original model went up to 63.5%, while the unlearned models went down to 25.2% to 27.7%: RMU scrambles the model's internal state when the hazardous topic is in context, and more of it scrambles more. With an expert-virologist persona they stayed at 32.2% to 35.0%. Both held in the 4-bit Q4_0 file too.
 
 ## The pipeline: four Lexsi repos on a Cohere model
 
@@ -56,7 +60,9 @@ These are the steps that led to the recipe above. All runs are in [the raw runs]
 - **Pushing harder at the default layers forgot everything and broke the model.** At learning rate 1e-4 the score reached 25.4% (guessing), but MMLU fell to 43.5% and kept falling at 4-bit (36.2% in NF4). That is the "Aggressive" column.
 - **SafeTune's NPO was not selective on Tiny Aya.** At learning rate 2e-4 it only reached 58.6%. At 5e-4 it reached 24.7% but took MMLU down to 23.4%, which is guessing too.
 - **Training through a 4-bit quantizer did nothing at the default layers** (38.9% against 38.7%, same MMLU). At the CircuitKIT layers it forgot a little more, which is the "CircuitKIT + 4-bit aware" column.
-- **4-bit compression did not bring the knowledge back** for any recipe we ran. So the question moved from "is it still gone?" to "what did the 4-bit file pay for it?", and that is where the default layers lost.
+- **4-bit compression did not bring the knowledge back** for any recipe we ran, so the question became what the 4-bit file pays for the forgetting.
+- **The default layers' cost grew at 4-bit in one seed only.** In the first seed it went from 3.8 points at fp16 to 5.5 in Q4_K_M and 6.4 in NF4. In the second it stayed at 3.7, 3.3 and 3.0. What held in both seeds is the gap between the two recipes.
+- **How much a run forgets depends on the seed.** The same settings reached 36.8% in one seed and 45.6% in the other, which is why the results report both.
 
 ## Metrics and why
 

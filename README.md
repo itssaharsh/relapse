@@ -8,7 +8,7 @@ You made a model forget something dangerous. Then you shrank it to the 4-bit fil
 
 **Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [the article](https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
 
-## The answer
+## Results
 
 We removed hazardous biology knowledge from [CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/tiny-aya-global) (3.35B parameters, 70 languages) with [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s RMU. On the WMDP-bio benchmark (1,273 four-choice questions, 25% is guessing) the original model scores 63.3%. After unlearning it scores 38.7% at full precision, and every file we made from it stayed within 2 points of that: bf16, llama.cpp Q8_0, Q6_K, Q4_K_M and Q4_0, and bitsandbytes NF4. In the llama.cpp Q4_K_M file it scores 37.2% (AuditKIT paired bootstrap on the same 1,273 questions: -1.5 points, 95% interval -4.0 to +1.1, p = 0.24). Translated into Hindi, Arabic, Spanish and Swahili, or reworded in English, the questions were forgotten too.
 

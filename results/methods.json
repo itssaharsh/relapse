@@ -145,6 +145,106 @@
    "id": "c_lr1.5e-4_s1",
    "seed": 1,
    "qa": false
+  },
+  "X10-12_lr2e-4": {
+   "family": "deeper",
+   "id": "x10_lr2e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "X10-12_lr4.5e-4": {
+   "family": "deeper",
+   "id": "x10_lr4.5e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "X10-12_lr1e-3": {
+   "family": "deeper",
+   "id": "x10_lr1e-3",
+   "seed": 0,
+   "qa": false
+  },
+  "X3-5_lr1.5e-5": {
+   "family": "shallower",
+   "id": "x3_lr1.5e-5",
+   "seed": 0,
+   "qa": false
+  },
+  "X3-5_lr3e-5": {
+   "family": "shallower",
+   "id": "x3_lr3e-5",
+   "seed": 0,
+   "qa": false
+  },
+  "X3-5_lr6e-5": {
+   "family": "shallower",
+   "id": "x3_lr6e-5",
+   "seed": 0,
+   "qa": false
+  },
+  "C7-9_lr1.5e-4_f16ref": {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_rep",
+   "seed": 0,
+   "qa": false
+  },
+  "D5-7_lr4e-5_nb300": {
+   "family": "default",
+   "id": "d_lr4e-5_nb300",
+   "seed": 0,
+   "qa": false
+  },
+  "D5-7_lr7e-5_nb300": {
+   "family": "default",
+   "id": "d_lr7e-5_nb300",
+   "seed": 0,
+   "qa": false
+  },
+  "D5-7_lr4e-5_m5": {
+   "family": "default",
+   "id": "d_lr4e-5_m5",
+   "seed": 0,
+   "qa": false
+  },
+  "D5-7_a300_lr1e-4": {
+   "family": "default",
+   "id": "d_a300_lr1e-4",
+   "seed": 0,
+   "qa": false
+  }
+ },
+ "families": {
+  "default": {
+   "label": "Default layers (5 to 7)",
+   "layers": [
+    5,
+    6,
+    7
+   ]
+  },
+  "circuit": {
+   "label": "CircuitKIT layers (7 to 9)",
+   "layers": [
+    7,
+    8,
+    9
+   ]
+  },
+  "deeper": {
+   "label": "Control: deeper layers (10 to 12)",
+   "layers": [
+    10,
+    11,
+    12
+   ]
+  },
+  "shallower": {
+   "label": "Control: shallower layers (3 to 5)",
+   "layers": [
+    3,
+    4,
+    5
+   ]
   }
  }
 }

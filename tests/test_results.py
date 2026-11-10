@@ -71,9 +71,29 @@ def test_every_number_in_the_write_up_is_measured():
     assert not bad, bad
 
 
-def test_the_trade_off_chart_has_eight_runs_per_family():
-    for fam in ("default", "circuit"):
-        assert len({p["id"] for p in RES["frontier"] if p["family"] == fam}) == 8
+def sweep_ranges(cut=0.40):
+    out = {}
+    for prec in ("fp16", "Q4_0", "NF4"):
+        for fam in ("default", "circuit"):
+            ps = [p["price"] for p in RES["frontier"] if p["family"] == fam and p["prec"] == prec and p["forget"] <= cut]
+            out[(prec, fam)] = f"{100 * min(ps):.1f} to {100 * max(ps):.1f}"
+    return out
+
+
+def test_the_sweep_ranges_in_the_write_up_are_the_current_ones():
+    """The 'runs that got WMDP-bio to 40% or below' ranges are recomputed from the data, so new runs cannot leave them stale."""
+    for doc in ("README.md", os.path.join("docs", "ARTICLE.md")):
+        text = open(os.path.join(ROOT, doc)).read()
+        for key, rng in sweep_ranges().items():
+            assert rng in text, (doc, key, rng)
+
+
+def test_run_counts_in_the_write_up():
+    fams = {f: len({p["id"] for p in RES["frontier"] if p["family"] == f}) for f in ("default", "circuit", "deeper", "shallower")}
+    total = sum(fams.values())
+    for doc in ("README.md", os.path.join("docs", "ARTICLE.md")):
+        text = open(os.path.join(ROOT, doc)).read()
+        assert f"{total} " in text and ("runs" in text), (doc, fams)
 
 
 def test_circuitkit_window_claim():

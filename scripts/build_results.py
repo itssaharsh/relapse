@@ -58,6 +58,7 @@ def build(rows: list[dict], methods: dict, template: dict) -> dict:
     out["run"] = methods.get("run", out.get("run", {}))
     out["stats"] = load_stats(methods)
     out["frontier"] = load_frontier(methods)
+    out["families"] = methods.get("families", {})
     out["recipes"] = load_recipes()
     rob = load_robustness(methods)
     if rob:

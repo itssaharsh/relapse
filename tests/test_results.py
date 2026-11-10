@@ -167,3 +167,10 @@ def test_circuitkit_window_claim():
     sums = {i: sum(m[i:i + 3]) for i in range(1, 11)}        # windows starting at layers 1..10 end at 12
     assert max(sums, key=sums.get) == 7
     assert round(sums[7], 2) == 0.30 and round(sums[5], 2) == 0.23
+
+
+def test_generated_tables_are_filled_in():
+    for doc in DOCS:
+        for name in ("recipes", "windows") + (("results",) if doc == "README.md" else ()):
+            body = re.search(rf"<!-- {name}:start -->(.*?)<!-- {name}:end -->", read(doc), flags=re.S).group(1)
+            assert body.count("\n|") >= 4, (doc, name)

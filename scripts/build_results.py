@@ -280,7 +280,7 @@ def main() -> None:
     template = json.load(open(OUT))
     res = build(load_rows(), methods, template)
     json.dump(res, open(OUT, "w"), indent=1)
-    fill = lambda text, name, body: re.sub(rf"(<!-- {name}:start -->\n).*?(\n<!-- {name}:end -->)", lambda m: m.group(1) + body + m.group(2), text, flags=re.S)
+    fill = lambda text, name, body: re.sub(rf"(<!-- {name}:start -->\n).*?(<!-- {name}:end -->)", lambda m: m.group(1) + body + "\n" + m.group(2), text, flags=re.S)
     for doc in (README, os.path.join(ROOT, "docs", "ARTICLE.md")):
         if not os.path.exists(doc):
             continue

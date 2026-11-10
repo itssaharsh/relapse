@@ -47,7 +47,7 @@ def model_card(method: str, repo: str, layers: str, gguf: str | None, relapses: 
         warn = f"""
 > **This model is a test case, not a model to use.** It looks unlearned at full precision ({pct(g['forget'])} on WMDP-bio) and
 > part of the knowledge comes back when it is stored as a 4-bit file. It is published so anyone can check an unlearning audit
-> against a model that passes at fp16 and fails in the file people download. The models to use are
+> against a model that looks unlearned at fp16 and gives part of it back in the file people download. The models to use are
 > [{USER}/tiny-aya-global-unlearn-bio-circuitkit-layers](https://huggingface.co/{USER}/tiny-aya-global-unlearn-bio-circuitkit-layers) and its siblings.
 
 ## The relapse

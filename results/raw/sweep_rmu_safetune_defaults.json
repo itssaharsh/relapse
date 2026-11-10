@@ -1,0 +1,122 @@
+[
+ {
+  "prec": "fp16",
+  "model": "base",
+  "wmdp-bio": 0.6331500392772977,
+  "mmlu": 0.554
+ },
+ {
+  "prec": "fp16",
+  "model": "rmu_c1.0",
+  "wmdp-bio": 0.624509033778476,
+  "mmlu": 0.555
+ },
+ {
+  "prec": "fp16",
+  "model": "rmu_c2.5",
+  "wmdp-bio": 0.6276512175962293,
+  "mmlu": 0.553
+ },
+ {
+  "prec": "fp16",
+  "model": "rmu_c5.0",
+  "wmdp-bio": 0.6284367635506677,
+  "mmlu": 0.552
+ },
+ {
+  "prec": "bf16",
+  "model": "base",
+  "wmdp-bio": 0.6331500392772977,
+  "mmlu": 0.554
+ },
+ {
+  "prec": "bf16",
+  "model": "rmu_c1.0",
+  "wmdp-bio": 0.624509033778476,
+  "mmlu": 0.553
+ },
+ {
+  "prec": "bf16",
+  "model": "rmu_c2.5",
+  "wmdp-bio": 0.6268656716417911,
+  "mmlu": 0.553
+ },
+ {
+  "prec": "bf16",
+  "model": "rmu_c5.0",
+  "wmdp-bio": 0.6284367635506677,
+  "mmlu": 0.552
+ },
+ {
+  "prec": "Q8_0",
+  "model": "base",
+  "wmdp-bio": 0.6323644933228594,
+  "mmlu": 0.551
+ },
+ {
+  "prec": "Q8_0",
+  "model": "rmu_c1.0",
+  "wmdp-bio": 0.6284367635506677,
+  "mmlu": 0.551
+ },
+ {
+  "prec": "Q8_0",
+  "model": "rmu_c2.5",
+  "wmdp-bio": 0.6268656716417911,
+  "mmlu": 0.549
+ },
+ {
+  "prec": "Q8_0",
+  "model": "rmu_c5.0",
+  "wmdp-bio": 0.6284367635506677,
+  "mmlu": 0.547
+ },
+ {
+  "prec": "Q4_0",
+  "model": "base",
+  "wmdp-bio": 0.6111547525530243,
+  "mmlu": 0.555
+ },
+ {
+  "prec": "Q4_0",
+  "model": "rmu_c1.0",
+  "wmdp-bio": 0.6166535742340927,
+  "mmlu": 0.556
+ },
+ {
+  "prec": "Q4_0",
+  "model": "rmu_c2.5",
+  "wmdp-bio": 0.6197957580518461,
+  "mmlu": 0.554
+ },
+ {
+  "prec": "Q4_0",
+  "model": "rmu_c5.0",
+  "wmdp-bio": 0.6182246661429693,
+  "mmlu": 0.549
+ },
+ {
+  "prec": "nf4",
+  "model": "base",
+  "wmdp-bio": 0.6111547525530243,
+  "mmlu": 0.527
+ },
+ {
+  "prec": "nf4",
+  "model": "rmu_c1.0",
+  "wmdp-bio": 0.6072270227808326,
+  "mmlu": 0.53
+ },
+ {
+  "prec": "nf4",
+  "model": "rmu_c2.5",
+  "wmdp-bio": 0.608012568735271,
+  "mmlu": 0.526
+ },
+ {
+  "prec": "nf4",
+  "model": "rmu_c5.0",
+  "wmdp-bio": 0.6095836606441477,
+  "mmlu": 0.524
+ }
+]

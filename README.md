@@ -30,6 +30,16 @@ The fix. CircuitKIT's attribution showed the WMDP-bio answers running through th
 
 WMDP-bio accuracy is the knowledge that should be gone (lower is better; 25% is guessing). MMLU accuracy is the general knowledge that should stay (higher is better). Every cell is measured on the same questions; the Space shows the per-file details and the per-language scores.
 
+## What we tried that didn't work
+
+These are the steps that led to the recipe above. All runs are in [`results/raw/`](results/raw/).
+
+- **SafeTune's RMU defaults barely moved Tiny Aya.** With retain weight 1200, learning rate 5e-5 and 150 batches, WMDP-bio went from 63.3% to 62.5%. A retain weight of 100 with 250 to 300 batches is what worked.
+- **Pushing harder at the default layers forgot everything and broke the model.** At learning rate 1e-4 the score reached 25.4% (guessing), but MMLU fell to 43.5% and kept falling at 4-bit (36.2% in NF4). That is the "Aggressive" column.
+- **SafeTune's NPO was not selective on Tiny Aya.** At learning rate 2e-4 it only reached 58.6%. At 5e-4 it reached 24.7% but took MMLU down to 23.4%, which is guessing too.
+- **Training through a 4-bit quantizer did nothing at the default layers** (38.9% against 38.7%, same MMLU). At the CircuitKIT layers it forgot a little more, which is the "CircuitKIT + 4-bit aware" column.
+- **4-bit compression did not bring the knowledge back** for any recipe we ran. So the question moved from "is it still gone?" to "what did the 4-bit file pay for it?", and that is where the default layers lost.
+
 ## For judges: one minute
 
 1. Open the [Space](https://huggingface.co/spaces/itssaharsh/relapse). It opens on the default-layer model in its 4-bit NF4 file: the hazardous biology is still gone, and the price in general knowledge is marked.

@@ -1,0 +1,40 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6331500392772977,
+  "mmlu": 0.554
+ },
+ {
+  "model": "L7_a100_lr1e-4",
+  "prec": "fp16",
+  "wmdp-bio": 0.2537313432835821,
+  "mmlu": 0.435,
+  "mean_abs_delta": 0.001186182489618659,
+  "wmdp-bio_Q4_0_changed_only": 0.2717989002356638
+ },
+ {
+  "model": "L7_a10_lr1e-4",
+  "prec": "fp16",
+  "wmdp-bio": 0.26001571091908876,
+  "mmlu": 0.355,
+  "mean_abs_delta": 0.0018455962417647243,
+  "wmdp-bio_Q4_0_changed_only": 0.2498036135113904
+ },
+ {
+  "model": "L9ck_a100_lr1e-4",
+  "prec": "fp16",
+  "wmdp-bio": 0.44776119402985076,
+  "mmlu": 0.541,
+  "mean_abs_delta": 0.0013290640199556947,
+  "wmdp-bio_Q4_0_changed_only": 0.44383346425765907
+ },
+ {
+  "model": "L7_a100_lr3e-4",
+  "prec": "fp16",
+  "wmdp-bio": 0.2812254516889238,
+  "mmlu": 0.457,
+  "mean_abs_delta": 0.001906809862703085,
+  "wmdp-bio_Q4_0_changed_only": 0.27651217596229377
+ }
+]

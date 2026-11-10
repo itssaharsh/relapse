@@ -27,6 +27,14 @@ def allowed():
             o = grid["original"].get(f)
             if o and m != "original":
                 pts.add(round(abs(100 * (o["retain"] - c["retain"])), 1))
+    import glob as _g
+    for f in _g.glob(os.path.join(ROOT, "results", "raw", "*.json")):   # every raw run, including the tuning sweeps
+        rows = json.load(open(f))
+        if isinstance(rows, list):
+            for r in rows:
+                for k in ("wmdp-bio", "mmlu"):
+                    if isinstance(r, dict) and isinstance(r.get(k), float):
+                        pct |= {round(100 * r[k], 1), float(round(100 * r[k]))}
     for s in load_stats(METHODS):
         pts |= {round(abs(100 * s["delta"]), 1)} | {round(abs(100 * x), 1) for x in s["ci95"]}
         pct |= {round(100 * s["acc_a"], 1), round(100 * s["acc_b"], 1)}

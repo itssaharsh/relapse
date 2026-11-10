@@ -30,8 +30,8 @@ Tiny Aya is built to run offline, on phones and laptops, and Cohere ships it as 
 
 Read each cell as "how much hazardous biology it still answers / how much general knowledge it keeps". Three things stand out:
 
-1. **No relapse.** Every unlearned model stays within 2 points of its own full-precision WMDP-bio score in every file. None of AuditKIT's fp16-to-Q4_K_M comparisons is significant (p = 0.24, 0.89, 0.22, 0.12).
-2. **The price can grow at 4-bit.** At the default layers the general-knowledge gap to the original widens from 3.8 points (fp16) to 5.5 (Q4_K_M) and 6.4 (NF4). The aggressive setting shows it starkly, going from 11.9 points to 14.1 and 16.5.
+1. **The forgetting holds in every file.** Every unlearned model stays within 2 points of its own full-precision WMDP-bio score in every file. None of AuditKIT's fp16-to-Q4_K_M comparisons is significant (p = 0.24, 0.89, 0.22, 0.12).
+2. **At the default layers, the 4-bit file pays more.** There the general-knowledge gap to the original widens from 3.8 points (fp16) to 5.5 (Q4_K_M) and 6.4 (NF4). The aggressive setting shows it starkly, going from 11.9 points to 14.1 and 16.5.
 3. **Where you unlearn decides the price.** At the CircuitKIT layers the gap is 2.2 points at fp16, +0.1 at Q4_K_M and 1.5 at NF4, while forgetting slightly more. Training the same edit through a 4-bit quantizer forgot the most (34.0%) with no detectable cost at fp16 or Q4_K_M (p = 0.42, 0.76).
 
 The forgetting carries across languages. On 707 WMDP-bio questions translated into Hindi, Arabic, Spanish and Swahili or reworded in English, the original model scores 46% to 57% per language at fp16. Unlearned at the default layers it scores 32% to 41%, and at the CircuitKIT layers 27% to 33%. The Q4_K_M files stay in the same range: 34% to 43% and 29% to 35%.
@@ -47,6 +47,16 @@ The forgetting carries across languages. On 707 WMDP-bio questions translated in
 **AuditKIT scores every file.** Each question is scored by the log-likelihood of " A" to " D" after "Answer:", with no judge model, deterministic and comparable across formats. AuditKIT's paired bootstrap gives the "did it come back" and "what did it cost" intervals.
 
 **The formats are made the way people make them.** We used the bf16 checkpoint, llama.cpp's own `convert_hf_to_gguf.py` and `llama-quantize` for Q6_K and Q4_K_M (dequantized back into PyTorch for scoring), and bit-exact re-implementations of llama.cpp's Q8_0/Q4_0 and of bitsandbytes NF4, tested against llama.cpp's reference code. All runs used free Kaggle T4s.
+
+## What we tried that didn't work
+
+These are the steps that led to the recipe above. All runs are in [the raw runs](https://github.com/itssaharsh/relapse/tree/main/results/raw).
+
+- **SafeTune's RMU defaults barely moved Tiny Aya.** With retain weight 1200, learning rate 5e-5 and 150 batches, WMDP-bio went from 63.3% to 62.5%. A retain weight of 100 with 250 to 300 batches is what worked.
+- **Pushing harder at the default layers forgot everything and broke the model.** At learning rate 1e-4 the score reached 25.4% (guessing), but MMLU fell to 43.5% and kept falling at 4-bit (36.2% in NF4). That is the "Aggressive" column.
+- **SafeTune's NPO was not selective on Tiny Aya.** At learning rate 2e-4 it only reached 58.6%. At 5e-4 it reached 24.7% but took MMLU down to 23.4%, which is guessing too.
+- **Training through a 4-bit quantizer did nothing at the default layers** (38.9% against 38.7%, same MMLU). At the CircuitKIT layers it forgot a little more, which is the "CircuitKIT + 4-bit aware" column.
+- **4-bit compression did not bring the knowledge back** for any recipe we ran. So the question moved from "is it still gone?" to "what did the 4-bit file pay for it?", and that is where the default layers lost.
 
 ## Metrics and why
 
@@ -95,4 +105,4 @@ The Kaggle scripts that produced the runs, the unlearned models (safetensors and
 
 ## Changelog
 
-- 2026-11-10: first version. The first plan expected the 4-bit files to bring the knowledge back; the measurements said otherwise, and the write-up reports what was measured.
+- 2026-11-10: first version.

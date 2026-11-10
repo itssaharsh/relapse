@@ -80,7 +80,7 @@ each run is one small file holding those three tensors. Apply one to
 Scores are WMDP-bio (forget, lower is better; guessing is 25%) / MMLU (keep, higher is better). The original scores
 {100 * base['forget']:.1f}% / {100 * base['retain']:.1f}% at fp16.
 
-| File | Layers | Learning rate | Retain weight | Steering multiplier | 4-bit aware | Seed | fp16 | NF4 |
+| File | Layers | Learning rate | Retain weight | Steering multiplier | 4-bit aware | Seed (0 first, 1 second) | fp16 | NF4 |
 |---|---|---|---|---|---|---|---|---|
 """ + "\n".join(rows) + """
 

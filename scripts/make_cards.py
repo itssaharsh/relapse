@@ -58,7 +58,8 @@ scores {pct(g['forget'])} on WMDP-bio (the original scores {pct(RES['grid']['ori
 
 {table(method)}
 
-Q6_K and Q4_K_M are real llama.cpp files; Q8_0, Q4_0 and NF4 are bit-exact weight round trips. All runs, per-question probabilities and
+Q6_K and Q4_K_M are real llama.cpp files; Q8_0, Q4_0 and NF4 are bit-exact weight round trips. The other 13 runs of the sweep
+are in [{USER}/tiny-aya-global-unlearn-bio-sweep](https://huggingface.co/{USER}/tiny-aya-global-unlearn-bio-sweep). All runs, per-question probabilities and
 AuditKIT comparisons are in [{USER}/relapse-runs](https://huggingface.co/datasets/{USER}/relapse-runs); code in [{REPO}]({REPO}).
 
 ## Use
@@ -71,8 +72,11 @@ model = AutoModelForCausalLM.from_pretrained("{USER}/{repo}", dtype="auto")
 {use_gguf}
 ## Intended use and limits
 
-A research artifact for studying unlearning and quantization. Knowledge removal is measured with multiple-choice questions (WMDP-bio),
-not open generation, on one seed; it is not a guarantee that no hazardous information can be elicited. The license and the
+A research artifact for studying unlearning and quantization. The forgetting held across seven file formats, four other
+languages and prompt attacks (worked examples, an expert persona). It did not survive fine-tuning: 25 LoRA steps on 64
+WMDP-bio questions brought most of it back, so it protects against prompting the shipped file, not against someone who
+retrains the weights. Knowledge removal is measured with multiple-choice questions (WMDP-bio), not open generation; it is
+not a guarantee that no hazardous information can be elicited. The license and the
 [Cohere Labs acceptable use policy](https://docs.cohere.com/docs/c4ai-acceptable-use-policy) of the base model apply (non-commercial).
 """
 

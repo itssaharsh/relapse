@@ -2,7 +2,7 @@
 
 You want a small model that runs offline on a phone and will not help anyone build a bioweapon. Unlearning can remove the dangerous knowledge, but two things usually go wrong. Nobody runs the checkpoint that was tested; people run a 4-bit copy of it. And unlearning costs some of everything else the model knows. Relapse measures both, in every file people actually download, using Cohere's Tiny Aya and Lexsi Labs' open-source safety stack, and finds a recipe where the 4-bit file keeps the forgetting and gives up nothing measurable for it.
 
-**The result:** unlearning at the layers [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT) found took Tiny Aya's hazardous-biology score from 63.4% to 37.1% in the llama.cpp Q4_K_M file, and general knowledge (MMLU) in that file stayed at 54.9% against the original's 54.8%. A second training seed agreed, and so did the whole sweep: across 16 unlearning runs, the CircuitKIT layers kept more general knowledge at every level of forgetting. Among runs that got the hazard score to 40% or below, they cost 1.4 to 3.3 points in the 4-bit NF4 file; [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s default layers cost 5.6 to 16.5. The forgetting held in all 7 formats, in Hindi, Arabic, Spanish, Swahili and reworded English, and against prompt attacks. It did not hold against fine-tuning, which is in the list of what didn't work below.
+**The result:** unlearning at the layers [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT) found took Tiny Aya's hazardous-biology score from 63.4% to 37.1% in the llama.cpp Q4_K_M file, and general knowledge (MMLU) in that file stayed at 54.9% against the original's 54.8%. A second training seed agreed, and so did the whole sweep: across 16 unlearning runs, the CircuitKIT layers kept more general knowledge at every level of forgetting both reached. Among runs that got the hazard score to 40% or below, they cost 1.4 to 3.3 points in the 4-bit NF4 file; [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s default layers cost 5.6 to 16.5. The forgetting held in all 7 formats, in Hindi, Arabic, Spanish, Swahili and reworded English, and against prompt attacks. It did not hold against fine-tuning, which is in the list of what didn't work below.
 
 [![Relapse: the forget report flipping from the default layers to the CircuitKIT layers](docs/demo.gif)](https://huggingface.co/spaces/itssaharsh/relapse)
 
@@ -16,7 +16,7 @@ You want a small model that runs offline on a phone and will not help anyone bui
 
 **The comparison: SafeTune's default layers (5 to 7)** forgot about as much (38.7% and 44.4% at fp16) and cost general knowledge in every case: 3.8 and 3.7 points at fp16, 5.5 and 3.3 in Q4_K_M (AuditKIT p = 0.002, 0.006, 0.001, 0.013). Across both seeds and every file we measured, the CircuitKIT layers cost less.
 
-**It is not one lucky setting.** We ran 8 RMU settings at each set of layers: learning rates, retain weights, steering strength, training through a 4-bit quantizer, and the second seed. Among the runs that got WMDP-bio to 40% or below, the default layers cost 3.8 to 19.9 points of general knowledge at fp16 and 5.6 to 16.5 in the NF4 file. The CircuitKIT layers cost 0.9 to 2.7 and 1.4 to 3.3. The strongest CircuitKIT run reached 31.0% for 2.7 points at fp16; the default layers paid 8.1 points to reach 31.3%, and 12.4 in the NF4 file.
+**It is not one lucky setting.** We ran 8 RMU settings at each set of layers: learning rates, retain weights, steering strength, training through a 4-bit quantizer, and the second seed. Among the runs that got WMDP-bio to 40% or below, the default layers cost 3.8 to 19.9 points of general knowledge at fp16 and 5.6 to 16.5 in the NF4 file. The CircuitKIT layers cost 0.9 to 2.7 and 1.4 to 3.3. The strongest CircuitKIT run reached 31.0% for 2.7 points at fp16, and 30.1% for 3.3 in the NF4 file. The nearest default-layer run paid 8.1 points to reach 31.3% at fp16, and 12.4 for 28.6% in NF4.
 
 ![Every run: general knowledge kept against hazardous biology still answered, in the 4-bit NF4 file](docs/tradeoff.png)
 
@@ -106,7 +106,7 @@ python -m pytest -q tests                  # format round trips match llama.cpp 
 python scripts/build_results.py --fetch    # rebuild the results table and the Space data from the raw runs on Hugging Face
 ```
 
-The runs themselves are Kaggle kernels on 2x T4, one script per step, in [`kaggle/`](kaggle/) with a table of what each produced. Unlearning uses the WMDP bio forget corpus, which CAIS gates; request access and it plugs in as described there. It is never redistributed here.
+The runs themselves are Kaggle kernels on 2x T4, one script per step, in [`kaggle/`](kaggle/) with a table of what each produced. The edited weights of all 16 runs are in [tiny-aya-global-unlearn-bio-sweep](https://huggingface.co/itssaharsh/tiny-aya-global-unlearn-bio-sweep), and `scripts/patch_checkpoint.py` applies any of them to Tiny Aya Global. Unlearning uses the WMDP bio forget corpus, which CAIS gates; request access and it plugs in as described there. It is never redistributed here.
 
 | Folder | What is in it |
 |---|---|

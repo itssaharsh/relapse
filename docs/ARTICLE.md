@@ -85,7 +85,7 @@ Prices were read on 2026-11-09. A served T4 costs roughly what the cheapest clos
 
 ```bash
 git clone https://github.com/itssaharsh/relapse && cd relapse
-pip install -e ".[dev]" && python -m pytest -q tests        # round trips match llama.cpp bit for bit
+pip install -r requirements.txt && python -m pytest -q tests   # round trips match llama.cpp; every number here is in the data
 python scripts/build_results.py --fetch                     # rebuilds every number above from the raw runs
 ```
 

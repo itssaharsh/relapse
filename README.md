@@ -4,7 +4,9 @@ You made a model forget something dangerous. Then you shrank it to the 4-bit fil
 
 **The answer, for Tiny Aya:** yes, the knowledge stays gone, in all 7 formats we tested and in 4 more languages. What changes at 4-bit is the price you pay for it in general knowledge, and *where* you unlearn decides that price.
 
-[![Relapse: the forget report](space/og.png)](https://huggingface.co/spaces/itssaharsh/relapse)
+[![Relapse: the forget report flipping from the default layers to the CircuitKIT layers](docs/demo.gif)](https://huggingface.co/spaces/itssaharsh/relapse)
+
+*20-second walk-through: [docs/demo.mp4](docs/demo.mp4)*
 
 **Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [the article](https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
 
@@ -47,7 +49,7 @@ Four Lexsi repositories in one pipeline, on a Cohere model, with every artifact 
 | Remove it | [SafeTune](https://github.com/Lexsi-Labs/SafeTune) | RMU on the WMDP bio forget corpus with a wikitext retain set; NPO was tried too and was not selective on Tiny Aya |
 | Check every file | [AuditKIT](https://github.com/Lexsi-Labs/AuditKIT) | Scores each model in each format by answer log-likelihood and runs the paired bootstrap comparisons (fp16 against Q4_K_M, unlearned against original) |
 
-The formats are made the way people make them: the bf16 checkpoint, llama.cpp's `convert_hf_to_gguf.py` and `llama-quantize` for Q6_K and Q4_K_M (read back into PyTorch for scoring), bit-exact re-implementations of llama.cpp's Q8_0 and Q4_0 and of bitsandbytes' NF4 for the rest. The quantization code is in [`relapse/`](relapse/) and tested against llama.cpp's own reference code in [`tests/`](tests/).
+The formats are made the way people make them: the bf16 checkpoint, llama.cpp's `convert_hf_to_gguf.py` and `llama-quantize` for Q6_K and Q4_K_M (read back into PyTorch for scoring), bit-exact re-implementations of llama.cpp's Q8_0 and Q4_0 and of bitsandbytes' NF4 for the rest. The quantization code is in [`kaggle/common.py`](kaggle/common.py), the helpers every run used, and [`tests/`](tests/) checks it bit for bit against llama.cpp's own reference code.
 
 ## Metrics, and why these
 
@@ -79,11 +81,21 @@ Prices were read on 2026-11-09 from the providers' pricing pages and the AWS pri
 ## Reproduce
 
 ```bash
-pip install -e ".[dev]" && python -m pytest -q tests      # precision round trips match llama.cpp bit for bit
-python scripts/build_results.py --fetch                   # rebuild the results table and the Space data from the raw runs on Hugging Face
+pip install -r requirements.txt
+python -m pytest -q tests                  # format round trips match llama.cpp bit for bit; every number in this README and the article is in the data
+python scripts/build_results.py --fetch    # rebuild the results table and the Space data from the raw runs on Hugging Face
 ```
 
 The runs themselves are Kaggle kernels on 2x T4, one script per step, in [`kaggle/`](kaggle/) with a table of what each produced. Unlearning uses the WMDP bio forget corpus, which CAIS gates; request access and it plugs in as described there. It is never redistributed here.
+
+| Folder | What is in it |
+|---|---|
+| [`kaggle/`](kaggle/) | The scripts that produced every run, and `common.py`, the helpers they share |
+| [`results/`](results/) | The raw runs (per model and format, per question, AuditKIT comparisons, CircuitKIT scores, speed tests) |
+| [`scripts/`](scripts/) | Rebuild the results, curate the probe sets with CuratorKIT, build and publish the checkpoints and their cards |
+| [`space/`](space/) | The Hugging Face Space: one static page that reads `data/results.json` |
+| [`docs/ARTICLE.md`](docs/ARTICLE.md) | The write-up |
+| [`tests/`](tests/) | Format round trips against llama.cpp; the page and write-up against the raw runs |
 
 ## What's real
 

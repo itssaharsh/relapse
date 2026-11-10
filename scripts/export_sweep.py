@@ -1,4 +1,4 @@
-"""Export every unlearning run of the sweep as a small safetensors file (the three edited MLP matrices, fp32) plus a card.
+"""Export every unlearning run of the sweep as a small safetensors file (the three edited MLP matrices, fp16) plus a card.
 
 Each file applies to CohereLabs/tiny-aya-global with scripts/patch_checkpoint.py --delta <file>.safetensors.
 
@@ -51,7 +51,7 @@ def main(src: str, out: str) -> None:
         if path not in cache:
             cache.clear()
             cache[path] = torch.load(path, map_location="cpu")
-        tensors = {n: t.float().contiguous() for n, t in cache[path][key].items()}
+        tensors = {n: t.to(torch.float16).contiguous() for n, t in cache[path][key].items()}   # fp16: the precision the fp16 rows were scored at
         meta = {"base_model": "CohereLabs/tiny-aya-global", "method": "SafeTune RMU", "layers": layers, "lr": str(lr),
                 "retain_weight": str(alpha), "steering_multiplier": str(mult), "batches": str(nb),
                 "four_bit_aware": str(i.endswith("_qa") or "_qa_" in i), "seed": "1" if i.endswith("_s1") else "0"}
@@ -72,7 +72,8 @@ datasets: [cais/wmdp, cais/mmlu]
 The 16 [SafeTune](https://github.com/Lexsi-Labs/SafeTune) RMU runs behind the trade-off chart in
 [Relapse](https://huggingface.co/spaces/itssaharsh/relapse): 8 at SafeTune's default layers (5 to 7) and 8 at the layers
 [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT) found (7 to 9). RMU edits only three MLP down-projection matrices, so
-each run is one small file holding those three tensors. Apply one to
+each run is one small file holding those three tensors in fp16 (the scores below were computed from the fp32 values they
+were rounded from). Apply one to
 [CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/tiny-aya-global) with
 `python scripts/patch_checkpoint.py --base <tiny-aya-global dir> --delta <file>.safetensors --out <dir>` from
 [github.com/itssaharsh/relapse](https://github.com/itssaharsh/relapse).

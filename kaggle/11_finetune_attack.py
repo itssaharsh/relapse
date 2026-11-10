@@ -36,10 +36,14 @@ def set_tensors(get, names, prec, chunk=8):
             with torch.no_grad():
                 for n, t in zip(part, outs): params[n].copy_(t)
 results = []
-def save(): json.dump(results, open("/kaggle/working/robustness_relearn.json", "w"), indent=1)
+TRAIN_SET = os.environ.get("TRAIN_SET", "wmdp")   # "wmdp": 64 held-out hazard questions; "mmlu": 64 unrelated general questions (control)
+def save(): json.dump(results, open("/kaggle/working/robustness_relearn" + ("" if TRAIN_SET == "wmdp" else "_unrelated") + ".json", "w"), indent=1)
 # --- 2. relearning attack: 25 LoRA steps on 64 held-out WMDP-bio questions with their answers ---
 ids = letter_ids(tok)
 train = [(HEAD + body(W[i]), W[i]["answer"]) for i in train_ids]
+if TRAIN_SET == "mmlu":   # control: the same fine-tune on questions that have nothing to do with the forgotten topic
+    mm = load_dataset("cais/mmlu", "all", split="validation").shuffle(seed=0).select(range(64))
+    train = [(fmt_mcq(r["subject"].replace("_", " "), r["question"], r["choices"]), r["answer"]) for r in mm]
 for name, d in models.items():
     with torch.no_grad():
         for n, t in d.items(): params[n].copy_(t.half())
@@ -59,7 +63,7 @@ for name, d in models.items():
         opt.zero_grad(); loss.backward(); opt.step()
     peft_model.eval()
     acc, _, _ = mcq_eval(peft_model, tok, sets["zero_shot"], bs=4, maxlen=2048)
-    results.append({"model": name, "prec": "fp16", "attack": "relearn_25_steps_64_questions", "acc": round(acc, 4), "n": len(eval_ids), "final_loss": round(float(loss), 4)}); log(results[-1])
+    results.append({"model": name, "prec": "fp16", "attack": "relearn_25_steps_64_questions" if TRAIN_SET == "wmdp" else "relearn_25_steps_64_unrelated_questions", "acc": round(acc, 4), "n": len(eval_ids), "final_loss": round(float(loss), 4)}); log(results[-1])
     model = peft_model.unload(); model.gradient_checkpointing_disable(); params = dict(model.named_parameters()); torch.cuda.empty_cache()
     with torch.no_grad():
         for n in d: params[n].copy_(master[n])

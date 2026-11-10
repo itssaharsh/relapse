@@ -3,7 +3,7 @@
 RMU only changes three MLP down-projection matrices, so the unlearned checkpoint is the base checkpoint with
 those tensors' bytes overwritten (same name, shape and dtype). No full model is loaded into memory.
 
-    python scripts/patch_checkpoint.py --base <tiny-aya-global dir> --delta changed.pt --key <run> --out <dir>
+    python scripts/patch_checkpoint.py --base <tiny-aya-global dir> --delta <run>.safetensors --out <dir>
 """
 from __future__ import annotations
 
@@ -49,11 +49,15 @@ def patch(base: str, out: str, tensors: dict[str, torch.Tensor]) -> list[str]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", required=True)
-    ap.add_argument("--delta", required=True, help="torch file {run: {param: tensor}}")
-    ap.add_argument("--key", required=True)
+    ap.add_argument("--delta", required=True, help="a .safetensors file of edited tensors, or a torch file {run: {param: tensor}}")
+    ap.add_argument("--key", help="run name inside a torch file")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
-    tensors = torch.load(a.delta, map_location="cpu")[a.key]
+    if a.delta.endswith(".safetensors"):
+        from safetensors.torch import load_file
+        tensors = load_file(a.delta)
+    else:
+        tensors = torch.load(a.delta, map_location="cpu")[a.key]
     print("patched", patch(a.base, a.out, tensors))
 
 

@@ -42,7 +42,7 @@ def build(rows: list[dict], methods: dict, template: dict) -> dict:
         if not m:
             continue
         f = norm_prec(r["prec"])
-        cell = {"forget": round(r["wmdp-bio"], 4), "retain": round(r["mmlu"], 4)}
+        cell = {"forget": round(r["wmdp-bio"], 6), "retain": round(r["mmlu"], 6)}
         for k in ("wmdp-bio_pcorrect", "mmlu_pcorrect"):
             if k in r:
                 cell[k.replace("wmdp-bio", "forget").replace("mmlu", "retain")] = round(r[k], 4)
@@ -57,6 +57,7 @@ def build(rows: list[dict], methods: dict, template: dict) -> dict:
     out["formats"] = [x for x in template["formats"] if any(x["id"] in g for g in grid.values())]
     out["run"] = methods.get("run", out.get("run", {}))
     out["stats"] = load_stats(methods)
+    out["frontier"] = load_frontier(methods)
     rob = load_robustness(methods)
     if rob:
         out["robustness"] = rob
@@ -95,6 +96,33 @@ def load_stats(methods: dict) -> list[dict]:
             if key not in seen:
                 seen.add(key); out.append(row)
     return out
+
+
+def load_frontier(methods: dict) -> list[dict]:
+    """Every unlearning run we made (tuning sweeps included) as forget/keep points, for the trade-off chart.
+    A run that appears in a sweep and in a final grid is taken once per format, the final grid first."""
+    fr = methods.get("frontier_runs", {})
+    files = sorted(glob.glob(os.path.join(RAW, "grid_final*.json"))) + sorted(glob.glob(os.path.join(RAW, "grid_*.json"))) \
+        + sorted(glob.glob(os.path.join(RAW, "sweep_*.json")))
+    seen, out, base = set(), [], {}
+    for f in files:
+        for r in json.load(open(f)):
+            if "wmdp-bio" not in r or "mmlu" not in r:
+                continue
+            prec = norm_prec(r.get("prec", "fp16"))
+            if r["model"] == "base":
+                base.setdefault(prec, {"forget": round(r["wmdp-bio"], 6), "retain": round(r["mmlu"], 6)})
+                continue
+            meta = fr.get(r["model"])
+            if not meta or (meta["id"], prec) in seen:
+                continue
+            seen.add((meta["id"], prec))
+            out.append({"family": meta["family"], "id": meta["id"], "seed": meta["seed"], "qa": meta["qa"], "prec": prec,
+                        "forget": round(r["wmdp-bio"], 6), "retain": round(r["mmlu"], 6)})
+    for o in out:
+        b = base.get(o["prec"])
+        o["price"] = round(b["retain"] - o["retain"], 6) if b else None
+    return [{"family": "original", "id": "original", "seed": 0, "qa": False, "prec": k, **v, "price": 0.0} for k, v in base.items()] + out
 
 
 def load_robustness(methods: dict) -> list[dict]:

@@ -1774,6 +1774,816 @@
    "attack": "role_play",
    "acc": 0.3007,
    "n": 1204
+  },
+  {
+   "method": "original",
+   "prec": "fp16",
+   "attack": "relearn_25_steps_64_questions",
+   "acc": 0.6204,
+   "n": 1204
+  },
+  {
+   "method": "standard",
+   "prec": "fp16",
+   "attack": "relearn_25_steps_64_questions",
+   "acc": 0.5241,
+   "n": 1204
+  },
+  {
+   "method": "circuit",
+   "prec": "fp16",
+   "attack": "relearn_25_steps_64_questions",
+   "acc": 0.5714,
+   "n": 1204
+  },
+  {
+   "method": "circuit_qa",
+   "prec": "fp16",
+   "attack": "relearn_25_steps_64_questions",
+   "acc": 0.5548,
+   "n": 1204
+  }
+ ],
+ "frontier": [
+  {
+   "family": "original",
+   "id": "original",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.6332,
+   "retain": 0.554,
+   "price": 0.0
+  },
+  {
+   "family": "original",
+   "id": "original",
+   "seed": 0,
+   "qa": false,
+   "prec": "bf16",
+   "forget": 0.6332,
+   "retain": 0.554,
+   "price": 0.0
+  },
+  {
+   "family": "original",
+   "id": "original",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q8_0",
+   "forget": 0.6324,
+   "retain": 0.551,
+   "price": 0.0
+  },
+  {
+   "family": "original",
+   "id": "original",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.6112,
+   "retain": 0.555,
+   "price": 0.0
+  },
+  {
+   "family": "original",
+   "id": "original",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.6112,
+   "retain": 0.527,
+   "price": 0.0
+  },
+  {
+   "family": "original",
+   "id": "original",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q6_K",
+   "forget": 0.6324,
+   "retain": 0.556,
+   "price": 0.0
+  },
+  {
+   "family": "original",
+   "id": "original",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_K_M",
+   "forget": 0.6339,
+   "retain": 0.548,
+   "price": 0.0
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.3873,
+   "retain": 0.516,
+   "price": 0.038
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "bf16",
+   "forget": 0.3857,
+   "retain": 0.514,
+   "price": 0.04
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q8_0",
+   "forget": 0.3841,
+   "retain": 0.514,
+   "price": 0.037
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.3684,
+   "retain": 0.506,
+   "price": 0.049
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.3723,
+   "retain": 0.463,
+   "price": 0.064
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q6_K",
+   "forget": 0.3912,
+   "retain": 0.517,
+   "price": 0.039
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_K_M",
+   "forget": 0.3716,
+   "retain": 0.493,
+   "price": 0.055
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.3684,
+   "retain": 0.532,
+   "price": 0.022
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "fp16",
+   "forget": 0.3401,
+   "retain": 0.545,
+   "price": 0.009
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "bf16",
+   "forget": 0.3692,
+   "retain": 0.531,
+   "price": 0.023
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "bf16",
+   "forget": 0.3425,
+   "retain": 0.545,
+   "price": 0.009
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q8_0",
+   "forget": 0.3731,
+   "retain": 0.532,
+   "price": 0.019
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "Q8_0",
+   "forget": 0.3464,
+   "retain": 0.544,
+   "price": 0.007
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.359,
+   "retain": 0.527,
+   "price": 0.028
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "Q4_0",
+   "forget": 0.3559,
+   "retain": 0.529,
+   "price": 0.026
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.3527,
+   "retain": 0.512,
+   "price": 0.015
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "NF4",
+   "forget": 0.3472,
+   "retain": 0.508,
+   "price": 0.019
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q6_K",
+   "forget": 0.3637,
+   "retain": 0.538,
+   "price": 0.018
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_K_M",
+   "forget": 0.3708,
+   "retain": 0.549,
+   "price": -0.001
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "Q6_K",
+   "forget": 0.3488,
+   "retain": 0.539,
+   "price": 0.017
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "Q4_K_M",
+   "forget": 0.3527,
+   "retain": 0.545,
+   "price": 0.003
+  },
+  {
+   "family": "default",
+   "id": "d_lr2e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.51139,
+   "retain": 0.528,
+   "price": 0.026
+  },
+  {
+   "family": "default",
+   "id": "d_lr7e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.312647,
+   "retain": 0.473,
+   "price": 0.081
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "fp16",
+   "forget": 0.388845,
+   "retain": 0.511,
+   "price": 0.043
+  },
+  {
+   "family": "default",
+   "id": "d_lr2e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q8_0",
+   "forget": 0.508248,
+   "retain": 0.53,
+   "price": 0.021
+  },
+  {
+   "family": "default",
+   "id": "d_lr7e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q8_0",
+   "forget": 0.313433,
+   "retain": 0.464,
+   "price": 0.087
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "Q8_0",
+   "forget": 0.387274,
+   "retain": 0.507,
+   "price": 0.044
+  },
+  {
+   "family": "default",
+   "id": "d_lr2e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.476041,
+   "retain": 0.52,
+   "price": 0.035
+  },
+  {
+   "family": "default",
+   "id": "d_lr7e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.299293,
+   "retain": 0.436,
+   "price": 0.119
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "Q4_0",
+   "forget": 0.373134,
+   "retain": 0.505,
+   "price": 0.05
+  },
+  {
+   "family": "default",
+   "id": "d_lr2e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.494894,
+   "retain": 0.501,
+   "price": 0.026
+  },
+  {
+   "family": "default",
+   "id": "d_lr7e-5",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.285939,
+   "retain": 0.403,
+   "price": 0.124
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "NF4",
+   "forget": 0.372349,
+   "retain": 0.471,
+   "price": 0.056
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.4438,
+   "retain": 0.517,
+   "price": 0.037
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.4556,
+   "retain": 0.557,
+   "price": -0.003
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "Q8_0",
+   "forget": 0.4438,
+   "retain": 0.521,
+   "price": 0.03
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "Q8_0",
+   "forget": 0.454,
+   "retain": 0.557,
+   "price": -0.006
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.4234,
+   "retain": 0.525,
+   "price": 0.03
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.4375,
+   "retain": 0.548,
+   "price": 0.007
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.4525,
+   "retain": 0.497,
+   "price": 0.03
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.4415,
+   "retain": 0.524,
+   "price": 0.003
+  },
+  {
+   "family": "default",
+   "id": "d_lr4e-5_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "Q4_K_M",
+   "forget": 0.4116,
+   "retain": 0.516,
+   "price": 0.032
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_s1",
+   "seed": 1,
+   "qa": false,
+   "prec": "Q4_K_M",
+   "forget": 0.4533,
+   "retain": 0.554,
+   "price": -0.006
+  },
+  {
+   "family": "default",
+   "id": "d_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.2537,
+   "retain": 0.435,
+   "price": 0.119
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.4478,
+   "retain": 0.541,
+   "price": 0.013
+  },
+  {
+   "family": "default",
+   "id": "d_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "bf16",
+   "forget": 0.2537,
+   "retain": 0.435,
+   "price": 0.119
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "bf16",
+   "forget": 0.4493,
+   "retain": 0.541,
+   "price": 0.013
+  },
+  {
+   "family": "default",
+   "id": "d_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q8_0",
+   "forget": 0.2639,
+   "retain": 0.438,
+   "price": 0.113
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q8_0",
+   "forget": 0.4478,
+   "retain": 0.542,
+   "price": 0.009
+  },
+  {
+   "family": "default",
+   "id": "d_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.2679,
+   "retain": 0.414,
+   "price": 0.141
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.4258,
+   "retain": 0.523,
+   "price": 0.032
+  },
+  {
+   "family": "default",
+   "id": "d_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.2671,
+   "retain": 0.362,
+   "price": 0.165
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.4297,
+   "retain": 0.509,
+   "price": 0.018
+  },
+  {
+   "family": "default",
+   "id": "d_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q6_K",
+   "forget": 0.2694,
+   "retain": 0.429,
+   "price": 0.127
+  },
+  {
+   "family": "default",
+   "id": "d_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_K_M",
+   "forget": 0.2734,
+   "retain": 0.407,
+   "price": 0.141
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q6_K",
+   "forget": 0.4493,
+   "retain": 0.539,
+   "price": 0.017
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_K_M",
+   "forget": 0.4462,
+   "retain": 0.546,
+   "price": 0.002
+  },
+  {
+   "family": "circuit",
+   "id": "c_a300_lr2e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.448547,
+   "retain": 0.548,
+   "price": 0.006
+  },
+  {
+   "family": "circuit",
+   "id": "c_a300_lr2e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.425766,
+   "retain": 0.545,
+   "price": 0.01
+  },
+  {
+   "family": "circuit",
+   "id": "c_a300_lr2e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.437549,
+   "retain": 0.524,
+   "price": 0.003
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr2e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.336214,
+   "retain": 0.536,
+   "price": 0.018
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr2e-4_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "fp16",
+   "forget": 0.323645,
+   "retain": 0.545,
+   "price": 0.009
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_m5_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "fp16",
+   "forget": 0.309505,
+   "retain": 0.527,
+   "price": 0.027
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr2e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "Q4_0",
+   "forget": 0.341712,
+   "retain": 0.529,
+   "price": 0.026
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr2e-4_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "Q4_0",
+   "forget": 0.330715,
+   "retain": 0.53,
+   "price": 0.025
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_m5_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "Q4_0",
+   "forget": 0.313433,
+   "retain": 0.52,
+   "price": 0.035
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr2e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "NF4",
+   "forget": 0.3315,
+   "retain": 0.51,
+   "price": 0.017
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr2e-4_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "NF4",
+   "forget": 0.315004,
+   "retain": 0.513,
+   "price": 0.014
+  },
+  {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_m5_qa",
+   "seed": 0,
+   "qa": true,
+   "prec": "NF4",
+   "forget": 0.300864,
+   "retain": 0.494,
+   "price": 0.033
+  },
+  {
+   "family": "default",
+   "id": "d_a10_lr1e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.260016,
+   "retain": 0.355,
+   "price": 0.199
+  },
+  {
+   "family": "default",
+   "id": "d_lr3e-4",
+   "seed": 0,
+   "qa": false,
+   "prec": "fp16",
+   "forget": 0.281225,
+   "retain": 0.457,
+   "price": 0.097
   }
  ]
 }

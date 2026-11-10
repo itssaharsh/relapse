@@ -309,3 +309,30 @@ tbody tr:last-child td{border-bottom:0}
   .cmp{margin-top:var(--s3);gap:var(--s2)}.cc{padding:14px 12px 10px;gap:3px}.cn{font-size:44px}.ct{font-size:12px}.cap{font-size:12px;line-height:1.25}.cf{font-size:12px;line-height:1.35}
   .rob{grid-template-columns:minmax(0,1fr)}.rr{grid-template-columns:96px minmax(0,1fr) 38px}.rob-wrap h2{font-size:var(--t-25)}
 }
+
+/* frontier chart */
+.fr-wrap{display:grid;gap:var(--s3)}
+.fr-wrap h2{font:850 var(--t-31)/1.05 var(--ff-display);font-stretch:125%;letter-spacing:-.02em;text-wrap:balance;max-width:30ch}
+.fr-take{font-size:var(--t-16);color:var(--ink);font-weight:600;max-width:80ch;margin:0}
+.fr-tools{display:flex;flex-wrap:wrap;gap:var(--s3);align-items:center}
+.mt.alt{background:oklch(99% .006 90/.7);box-shadow:inset 0 0 0 1.5px var(--ink);padding:8px 14px}
+.mt.alt:hover{background:var(--paper)}
+.mt.alt[aria-pressed=true]{background:var(--bar);color:#fff}
+.fr-chart{position:relative;background:var(--paper);border-radius:var(--r-lg);box-shadow:var(--sh-sheet);padding:12px 8px 4px;min-width:0}
+.fr-chart svg{display:block;max-width:100%;height:auto;overflow:visible}
+.fr-chart .gl{stroke:var(--line);stroke-width:1}
+.fr-chart .ax{font:500 12px var(--ff-body);fill:var(--paper-ink-muted)}
+.fr-chart .at{font:600 12px var(--ff-body);fill:var(--ink)}
+.fr-chart .ref{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:5 4;opacity:.55}
+.fr-chart .rt{font:600 12px var(--ff-body);fill:var(--ink)}
+.fr-chart .dl{font:700 12px var(--ff-body);fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:3px}
+.fr-chart .bt{font:500 12px var(--ff-body);fill:var(--paper-ink-muted)}
+.fr-chart .pt{cursor:pointer;outline:none}
+.fr-chart .hit{fill:transparent}
+.fr-chart .pt:focus-visible .hit,.fr-chart .pt.on .hit{fill:oklch(15% .01 50/.08);stroke:var(--ink);stroke-width:2}
+.tip{position:absolute;z-index:5;pointer-events:none;background:var(--bar);color:#fff;border-radius:var(--r-md);padding:8px 12px;display:grid;gap:2px;font:500 var(--t-12)/1.3 var(--ff-body);box-shadow:0 10px 24px -8px oklch(10% .02 60/.6);white-space:nowrap}
+.tip b{font:800 var(--t-14) var(--ff-display);font-stretch:115%}
+.fr-key{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);font-size:var(--t-12);font-weight:600}
+.fr-key li{display:flex;align-items:center;gap:6px}
+#fr-table table{min-width:640px}
+@media (max-width:900px){.fr-wrap h2{font-size:var(--t-25)}.fr-take{font-size:var(--t-14)}.fr-chart{padding:8px 0 0}}

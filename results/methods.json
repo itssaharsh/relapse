@@ -18,5 +18,133 @@
   "models": "https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models",
   "datasets": "https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets",
   "article": "https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md"
+ },
+ "frontier_runs": {
+  "rmu_lr2e-5": {
+   "family": "default",
+   "id": "d_lr2e-5",
+   "seed": 0,
+   "qa": false
+  },
+  "rmu_lr4e-5": {
+   "family": "default",
+   "id": "d_lr4e-5",
+   "seed": 0,
+   "qa": false
+  },
+  "rmu_default_layers": {
+   "family": "default",
+   "id": "d_lr4e-5",
+   "seed": 0,
+   "qa": false
+  },
+  "rmu_lr7e-5": {
+   "family": "default",
+   "id": "d_lr7e-5",
+   "seed": 0,
+   "qa": false
+  },
+  "qarmu_lr4e-5": {
+   "family": "default",
+   "id": "d_lr4e-5_qa",
+   "seed": 0,
+   "qa": true
+  },
+  "L7_a100_lr1e-4": {
+   "family": "default",
+   "id": "d_lr1e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "rmu_L7_strong": {
+   "family": "default",
+   "id": "d_lr1e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "L7_a100_lr3e-4": {
+   "family": "default",
+   "id": "d_lr3e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "L7_a10_lr1e-4": {
+   "family": "default",
+   "id": "d_a10_lr1e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "rmu_default_layers_seed1": {
+   "family": "default",
+   "id": "d_lr4e-5_s1",
+   "seed": 1,
+   "qa": false
+  },
+  "L9ck_a100_lr1e-4": {
+   "family": "circuit",
+   "id": "c_lr1e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "rmu_L9_circuit": {
+   "family": "circuit",
+   "id": "c_lr1e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "L9_a300_lr2e-4": {
+   "family": "circuit",
+   "id": "c_a300_lr2e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "L9_lr1.5e-4": {
+   "family": "circuit",
+   "id": "c_lr1.5e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "rmu_circuit_layers": {
+   "family": "circuit",
+   "id": "c_lr1.5e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "L9_lr1.5e-4_qa": {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_qa",
+   "seed": 0,
+   "qa": true
+  },
+  "rmu_circuit_layers_qa": {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_qa",
+   "seed": 0,
+   "qa": true
+  },
+  "L9_lr2e-4": {
+   "family": "circuit",
+   "id": "c_lr2e-4",
+   "seed": 0,
+   "qa": false
+  },
+  "L9_lr2e-4_qa": {
+   "family": "circuit",
+   "id": "c_lr2e-4_qa",
+   "seed": 0,
+   "qa": true
+  },
+  "L9_lr1.5e-4_m5_qa": {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_m5_qa",
+   "seed": 0,
+   "qa": true
+  },
+  "rmu_circuit_layers_seed1": {
+   "family": "circuit",
+   "id": "c_lr1.5e-4_s1",
+   "seed": 1,
+   "qa": false
+  }
  }
 }

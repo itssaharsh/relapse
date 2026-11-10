@@ -17,7 +17,11 @@ def test_page_data_is_rebuilt_exactly_from_raw_runs():
 
 
 def allowed():
-    pct, pts, pv = {25.0, 95.0, 100.0}, {2.0}, set()   # chance, the "95% interval" level, certainty; "within 2 points"
+    pct, pts, pv = {25.0, 40.0, 95.0, 100.0}, {2.0}, set()   # chance, the 40% cut-off, the "95% interval" level; "within 2 points"
+    for p in RES.get("frontier", []):
+        pct |= {round(100 * p["forget"], 1), round(100 * p["retain"], 1)}
+        if p.get("price") is not None:
+            pts.add(round(abs(100 * p["price"]), 1))
     grid = RES["grid"]
     for m, g in grid.items():
         for f, c in g.items():
@@ -61,3 +65,8 @@ def test_every_number_in_the_write_up_is_measured():
             if abs(float(a)) not in pts or abs(float(b)) not in pts:
                 bad.append(f"{doc}: interval {a} to {b}")
     assert not bad, bad
+
+
+def test_the_trade_off_chart_has_eight_runs_per_family():
+    for fam in ("default", "circuit"):
+        assert len({p["id"] for p in RES["frontier"] if p["family"] == fam}) == 8

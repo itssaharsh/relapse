@@ -9,7 +9,7 @@
   const sgn = (x) => (x < 0 ? '−' : '+') + Math.abs(x * 100).toFixed(1);
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const RISE = 0.05, GREW = 0.02;           // a relapse is +5 points over fp16; the price "grew" when the gap is 2+ points wider than at fp16
+  const RISE = 0.05, GREW = 0.02, PAID = 0.03; // a relapse is +5 points over fp16; the page turns red when a file loses 3+ points of general knowledge
 
   let D, FP, CH, ORIG, NOTORIG, FMT = {}, MET = {}, LANG = {}, STATS = {}, DEF = {};
   let st = { m: 'standard', f: 'NF4', lang: '' };
@@ -61,8 +61,9 @@
     a.price16 = o16 && b ? o16.retain - b.retain : null;
     a.priceStat = STATS['p|' + m + '|' + f];
     a.grew = a.price != null && a.price16 != null ? a.price - a.price16 >= GREW : null;
+    a.paid = a.price != null ? a.price >= PAID - 1e-9 : null;
     a.kind = 'unlearned';
-    a.field = a.grew === true ? 'hot' : a.grew === false ? 'ok' : 'known';
+    a.field = a.paid === true ? 'hot' : a.paid === false ? 'ok' : 'known';
     return a;
   }
   function topOf(lang) {
@@ -158,7 +159,7 @@
   }
 
   /* ---------- draw ---------- */
-  const stampText = (a) => (a.kind === 'unlearned' ? (a.grew === true ? 'Price grew' : a.grew === false ? 'Price held' : 'Price unknown') : a.kind === 'known' ? 'Not unlearned' : 'Not measured');
+  const stampText = (a) => (a.kind === 'unlearned' ? (a.paid === true ? 'Price paid' : a.paid === false ? (a.price < 0.005 ? 'Nothing lost' : 'Small price') : 'Price unknown') : a.kind === 'known' ? 'Not unlearned' : 'Not measured');
   const tagText = (a) => (a.kind !== 'unlearned' ? '' : ({ relapsed: 'Relapsed', still: 'Still forgotten', unref: 'No fp16 reference' }[a.fk]));
 
   function draw(first) {
@@ -167,7 +168,7 @@
     const lbl = methodLabel(st.m), fl = fmtLabel(st.f), fpl = fmtLabel(FP), bench = D.benchmark.forget, inLang = st.lang ? ` in ${langName(st.lang)}` : '';
 
     document.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', c.dataset.m === st.m && c.dataset.f === st.f && c.dataset.lang === st.lang ? 'true' : 'false'));
-    document.querySelectorAll('.mt').forEach((c) => c.setAttribute('aria-pressed', c.dataset.m === st.m ? 'true' : 'false'));
+    $('methods').querySelectorAll('.mt').forEach((c) => c.setAttribute('aria-pressed', c.dataset.m === st.m ? 'true' : 'false'));
     document.querySelectorAll('.lg').forEach((c) => c.setAttribute('aria-pressed', c.dataset.l === st.lang ? 'true' : 'false'));
 
     // ladder: top bar hazardous biology (black = gone), lower bar general knowledge (hatched = the price)
@@ -189,7 +190,7 @@
         b.style.width = (c.retain / maxR * 100).toFixed(1) + '%';
         const gap = g.oR != null && st.m !== ORIG ? Math.max(0, g.oR - c.retain) : 0;
         u.style.left = (c.retain / maxR * 100).toFixed(1) + '%'; u.style.width = (gap / maxR * 100).toFixed(1) + '%';
-        u.className = g.grew === true ? 'hot' : 'ok';
+        u.className = g.paid === true ? 'hot' : 'ok';
       } else { b.style.width = '0%'; u.style.width = '0%'; }
       pv[0].textContent = miss ? 'n/m' : pct(g.v) + '%';
       pv[1].textContent = c ? pct(c.retain) + '%' : 'n/m';
@@ -207,7 +208,7 @@
       lv.innerHTML = v == null ? '<span class="nm2">not measured</span>' : `<b>${pct(v)}%</b>${st.m !== ORIG && ov != null ? `<span>original ${pct(ov)}%</span>` : ''}`;
       b.setAttribute('aria-label', `${l ? LANG[l] : bench}: ${v == null ? 'not measured' : pct(v) + ' percent' + (st.m !== ORIG && ov != null ? ', original ' + pct(ov) + ' percent' : '')}`);
     });
-    $('key').innerHTML = `Top bar: ${esc(st.lang ? langName(st.lang) + ' questions' : bench)}, from chance (${pct(CH)}%) to the original model. Black = knowledge gone. <span class="x">Lower bar: general knowledge (${esc(D.benchmark.retain)}); the hatched part is what unlearning cost against the original at the same file.</span>`;
+    $('key').innerHTML = `Top bar: ${esc(st.lang ? langName(st.lang) + ' questions' : bench)}, from chance (${pct(CH)}%) to the original model. Black = knowledge gone. <span class="x">Lower bar: general knowledge (${esc(D.benchmark.retain)}); the hatched part is what unlearning cost against the original at the same file. The page turns red when that cost is ${(PAID * 100).toFixed(0)} points or more.</span>`;
 
     // stamps
     const stamps = $('stamps'), stamp = $('stamp'), tag = $('tag2');
@@ -278,7 +279,7 @@
       else if (a.kind === 'known') { tone = 'mid'; num = pct(a.r) + '<small>%</small>'; cap = `general knowledge (${esc(D.benchmark.retain)}) of the original at ${esc(fl)}`; foot = `${esc(D.benchmark.forget)} ${pct(a.v)}%, guessing ${pct(CH)}%`; }
       else if (a.price == null) { cap = `General knowledge not measured at ${esc(fl)}.`; foot = `${esc(D.benchmark.forget)} ${pct(a.v)}% (original ${a.o != null ? pct(a.o) + '%' : 'n/m'})`; }
       else {
-        tone = a.price >= GREW ? 'hot' : a.price < 0.005 ? 'ok' : 'mid';
+        tone = a.price >= PAID - 1e-9 ? 'hot' : a.price < 0.005 ? 'ok' : 'mid';
         const n = a.price * 100;
         const nolo = n < 0.5 && (!a.priceStat || a.priceStat.p_value >= 0.05);
         num = nolo ? '0<small>pts</small>' : Math.abs(n).toFixed(1) + '<small>pts</small>';
@@ -352,7 +353,7 @@
     ['standard', 'circuit'].filter((m) => MET[m]).forEach((m) => { const a = analyse(m, qf, ''); if (a.kind === 'unlearned' && a.price != null) parts.push(a); });
     if (parts.length) {
       const a = parts[0];
-      add(`${(a.price * 100).toFixed(1)}<sup>pts</sup>`, a.price >= GREW ? 'hot' : 'ok', `of general knowledge lost by ${esc(cardTitle(a.m))} at ${esc(fmtLabel(qf))}`, parts.map((b) => `${esc(cardTitle(b.m))}: ${(b.price * 100).toFixed(1)} points at ${esc(fmtLabel(qf))}, ${b.price16 != null ? (b.price16 * 100).toFixed(1) + ' at ' + esc(fmtLabel(FP)) : 'no fp16 reference'}`).join('. ') + '.');
+      add(`${(a.price * 100).toFixed(1)}<sup>pts</sup>`, a.price >= PAID - 1e-9 ? 'hot' : 'ok', `of general knowledge lost by ${esc(cardTitle(a.m))} at ${esc(fmtLabel(qf))}`, parts.map((b) => `${esc(cardTitle(b.m))}: ${(b.price * 100).toFixed(1)} points at ${esc(fmtLabel(qf))}, ${b.price16 != null ? (b.price16 * 100).toFixed(1) + ' at ' + esc(fmtLabel(FP)) : 'no fp16 reference'}`).join('. ') + '.');
     }
 
     // pipeline
@@ -366,6 +367,7 @@
 
     buildLayers();
     buildRobustness();
+    buildFrontier();
 
     // table
     $('t-sub').textContent = `${D.benchmark.forget} accuracy (forget, chance ${pct(CH)}%) and ${D.benchmark.retain} accuracy (general knowledge). Under each general-knowledge score: points lost against the original at the same file.`;
@@ -382,7 +384,7 @@
         const word = a.kind === 'unlearned' ? (a.fk === 'relapsed' ? 'relapsed' : a.fk === 'still' ? 'still gone' : '') : '';
         const tn = a.kind === 'known' ? 'known' : a.fk === 'relapsed' ? 'hot' : 'ok';
         const pr = a.kind === 'unlearned' && a.price != null ? (a.price < 0.0005 ? '<em>no cost</em>' : `<em>price ${(a.price * 100).toFixed(1)}</em>`) : '';
-        const rt = a.kind === 'unlearned' ? (a.grew === true ? 'hot' : a.grew === false ? 'ok' : '') : '';
+        const rt = a.kind === 'unlearned' ? (a.paid === true ? 'hot' : a.paid === false ? 'ok' : '') : '';
         h += `<td class="f ${tn}">${pct(a.v)}%${word ? `<em>${word}</em>` : ''}</td><td class="${rt}">${pct(a.r)}%${pr}</td>`;
       });
       h += '</tr>';
@@ -432,30 +434,38 @@
     const get = (m, p, k) => R.find((r) => r.method === m && r.prec === p && r.attack === k);
     $('rob-wrap').hidden = false;
     const aName = (k) => ATTACK[k] || k.replace(/_/g, ' ');
-    // honest caption: the strongest push per method, and any that brings the score back
-    const back = [], parts = [];
-    NOTORIG.forEach((m) => {
-      let worst = null;
-      precs.forEach((p) => att.forEach((k) => { const r = get(m.id, p, k), o = get(ORIG, p, k); if (!r || !o) return; const fr = (r.acc - CH) / Math.max(0.001, o.acc - CH); if (!worst || r.acc > worst.r.acc) worst = { r, o, fr, p, k }; }));
-      if (worst) parts.push(worst), worst.m = m.id;
-    });
-    parts.forEach((w) => { if (w.fr >= 0.75) back.push(w); });
-    const say = (w) => `${esc(methodShort(w.m))} reaches ${pct(w.r.acc)}% under ${esc(aName(w.k).toLowerCase())} at ${esc(fmtLabel(w.p))}, against ${pct(w.o.acc)}% for the original`;
-    let cap;
-    const rest = parts.filter((w) => w.fr < 0.75);
-    if (back.length) cap = `Pushed this hard, the knowledge comes back near the original: ${back.map(say).join('; ')}.` + (rest.length ? ` The others stay lower: ${rest.map(say).join('; ')}.` : '');
-    else cap = `No push brings any method back near the original. The strongest result for each: ${parts.map(say).join('; ')}.`;
+    const isRe = (k) => /relearn|fine/.test(k);
+    const near = (m, p, k) => { const r = get(m, p, k), o = get(ORIG, p, k); return r && o ? { r, o, fr: (r.acc - CH) / Math.max(0.001, o.acc - CH), m, p, k } : null; };
+    const all = [];
+    NOTORIG.forEach((m) => precs.forEach((p) => att.forEach((k) => { const x = near(m.id, p, k); if (x) all.push(x); })));
+    const pr = all.filter((x) => !isRe(x.k)), fi = all.filter((x) => isRe(x.k));
+    const promptsBack = pr.some((x) => x.fr >= 0.5), ftBack = fi.some((x) => x.fr >= 0.5);
+    $('rob-head').textContent = !fi.length ? 'Pushed harder: prompts and a persona' : (!promptsBack && ftBack) ? 'Pushed harder: prompts did not bring it back. Fine-tuning did.' : (promptsBack && ftBack) ? 'Pushed harder: prompts and fine-tuning both brought some of it back.' : promptsBack ? 'Pushed harder: prompts brought some of it back.' : 'Pushed harder: neither prompts nor fine-tuning brought it back.';
+    const rng = (xs) => { const v = xs.map((x) => x.r.acc), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); return `${pct(lo)}% to ${pct(hi)}%`; };
+    const names = (ks) => { const n = ks.map((k) => aName(k).toLowerCase()); return n.length > 1 ? n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1] : n[0]; };
+    let cap = '';
+    if (pr.length) {
+      const pk = Array.from(new Set(pr.map((x) => x.k))), po = pr.map((x) => ({ r: x.o }));
+      cap += promptsBack
+        ? `Under ${names(pk)}, some methods come back: ${pr.filter((x) => x.fr >= 0.5).map((x) => `${esc(methodShort(x.m))} reaches ${pct(x.r.acc)}% (original ${pct(x.o.acc)}%)`).join('; ')}. `
+        : `Under ${names(pk)}, every unlearned model stays at ${rng(pr)} on ${D.benchmark.forget} while the original scores ${rng(po)}. `;
+    }
+    if (fi.length) {
+      const fk = fi[0].k, fo = fi[0].o.acc;
+      cap += `${ATTACK[fk] ? ATTACK[fk] : aName(fk)}, by contrast, ${ftBack ? 'brings most of it back' : 'does not bring it back'}: ` + fi.map((x) => `${esc(methodShort(x.m))} ${pct(x.r.acc)}% (${pct(clamp(x.fr, 0, 1))}% of the way back)`).join(', ') + `, against ${pct(fo)}% for the original${fi.some((x) => x.p !== fi[0].p) ? '' : ' at ' + esc(fmtLabel(fi[0].p))}.`;
+    }
     cap += ` The line on each bar marks guessing (${pct(CH)}%).`;
-    $('rob-cap').innerHTML = cap + (R[0].n ? ` Each score is on ${D.benchmark.forget}${R.every((r) => r.n === R[0].n) ? ', ' + R[0].n.toLocaleString('en-US') + ' questions' : ''}.` : '');
-    let curP = precs[precs.length - 1];
+    $('rob-cap').innerHTML = cap;
+    precs.sort((x, y) => D.formats.findIndex((f) => f.id === x) - D.formats.findIndex((f) => f.id === y));
+    let curP = precs.find((p) => R.some((r) => r.prec === p && isRe(r.attack))) || precs[0];
     const tabs = $('rob-tabs'), box = $('rob');
     const draw2 = () => {
       tabs.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.p === curP ? 'true' : 'false'));
-      box.innerHTML = att.map((k) => {
+      box.innerHTML = att.filter((k) => R.some((r) => r.prec === curP && r.attack === k)).map((k) => {
         const o = get(ORIG, curP, k);
         const rows = ms.map((m) => {
           const r = get(m, curP, k); if (!r) return '';
-          const w = (r.acc / 0.7 * 100).toFixed(1), fr = o && m !== ORIG ? (r.acc - CH) / Math.max(0.001, o.acc - CH) : 0, cls = m === ORIG ? 'o' : fr >= 0.75 ? 'hot' : 'ok';
+          const w = (r.acc / 0.7 * 100).toFixed(1), fr = o && m !== ORIG ? (r.acc - CH) / Math.max(0.001, o.acc - CH) : 0, cls = m === ORIG ? 'o' : fr >= 0.5 ? 'hot' : 'ok';
           return `<div class="rr"><span class="rl">${esc(methodShort(m))}</span><span class="rt"><i class="${cls}" style="width:${w}%"></i><u style="left:${(CH / 0.7 * 100).toFixed(1)}%"></u></span><b>${pct(r.acc)}%</b></div>`;
         }).join('');
         return `<div class="rp"><h3>${esc(aName(k))}</h3>${rows}</div>`;
@@ -463,6 +473,131 @@
     };
     precs.forEach((p) => { const b = el('button', 'mt'); b.type = 'button'; b.textContent = fmtLabel(p); b.dataset.p = p; b.addEventListener('click', () => { curP = p; draw2(); }); tabs.appendChild(b); });
     draw2();
+  }
+
+
+  /* every run we made: general knowledge kept against hazardous biology still answered */
+  const HEAD = { 'd_lr4e-5': 'Default layers', 'c_lr1.5e-4': 'CircuitKIT layers', 'c_lr1.5e-4_qa': 'CircuitKIT + 4-bit aware', 'd_lr1e-4': 'Aggressive' };
+  const THRESH = 0.40;
+  function buildFrontier() {
+    const P = D.frontier;
+    if (!Array.isArray(P) || !P.length) return;
+    const fams = ['default', 'circuit'];
+    const cnt = (p, f) => P.filter((x) => x.prec === p && x.family === f).length;
+    const precs = D.formats.map((f) => f.id).filter((p) => fams.every((f) => cnt(p, f) >= 5));
+    if (!precs.length) return;
+    $('fr-wrap').hidden = false;
+    let cur = precs.indexOf('NF4') >= 0 ? 'NF4' : precs[0], tableOn = false, active = null;
+    const famName = { default: methodShort('standard') || 'Default layers', circuit: methodShort('circuit') || 'CircuitKIT layers', original: 'Original' };
+    const lowName = (f) => (f === 'default' ? famName.default.toLowerCase() : famName[f]);
+    const nameOf = (p) => HEAD[p.id] || (p.seed === 1 ? 'seed 2' : '') || '';
+    const xs = P.map((p) => p.forget).concat([CH]), ys = P.map((p) => p.retain);
+    const x0 = Math.floor((Math.min.apply(null, xs) - 0.015) * 20) / 20, x1 = Math.ceil((Math.max.apply(null, xs) + 0.015) * 20) / 20;
+    const y0 = Math.floor((Math.min.apply(null, ys) - 0.015) * 20) / 20, y1 = Math.ceil((Math.max.apply(null, ys) + 0.015) * 20) / 20;
+    const tabs = $('fr-tabs');
+    precs.forEach((p) => { const b = el('button', 'mt'); b.type = 'button'; b.textContent = fmtLabel(p); b.dataset.p = p; b.addEventListener('click', () => { cur = p; draw(); }); tabs.appendChild(b); });
+    $('fr-view').addEventListener('click', () => { tableOn = !tableOn; draw(); });
+
+    const sentence = () => {
+      const fl = fmtLabel(cur), pts = (f) => P.filter((x) => x.prec === cur && x.family === f && x.forget <= THRESH);
+      const rangeTxt = (f) => { const a = pts(f); if (!a.length) return `no ${lowName(f)} run got there`; const v = a.map((x) => x.price * 100), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); return `${lowName(f)} cost ${lo.toFixed(1)} to ${hi.toFixed(1)} points of general knowledge (${a.length} run${a.length > 1 ? 's' : ''})`; };
+      const d = pts('default'), c = pts('circuit');
+      let t = `Among runs that got ${D.benchmark.forget} to ${pct(THRESH)}% or below at ${fl}, ${rangeTxt('default')}; ${rangeTxt('circuit')}.`;
+      let cheaper = false;
+      if (d.length && c.length) {
+        const dMin = Math.min.apply(null, d.map((x) => x.price)), cMax = Math.max.apply(null, c.map((x) => x.price));
+        if (cMax < dMin) { cheaper = true; t += ' The dearest CircuitKIT run costs less than the cheapest default run.'; }
+      }
+      return { t, cheaper };
+    };
+
+    function draw() {
+      tabs.querySelectorAll('.mt').forEach((b) => b.setAttribute('aria-pressed', b.dataset.p === cur ? 'true' : 'false'));
+      $('fr-view').setAttribute('aria-pressed', tableOn ? 'true' : 'false'); $('fr-view').textContent = tableOn ? 'View as chart' : 'View as table';
+      const s = sentence();
+      $('fr-head').textContent = s.cheaper ? 'Every run we made: the CircuitKIT layers keep more at the same level of forgetting' : 'Every run we made: what each choice of layers costs at each level of forgetting';
+      $('fr-take').textContent = s.t;
+      const pts = P.filter((p) => p.prec === cur);
+      $('fr-chart').hidden = tableOn; $('fr-table').hidden = !tableOn;
+      if (tableOn) {
+        const rows = pts.slice().sort((a, b) => (a.family < b.family ? -1 : a.family > b.family ? 1 : a.forget - b.forget));
+        $('fr-table').innerHTML = `<table><thead><tr><th class="rh" scope="col">Run</th><th scope="col">Layers</th><th scope="col">Seed</th><th scope="col">4-bit aware</th><th scope="col">${esc(D.benchmark.forget)}</th><th scope="col">${esc(D.benchmark.retain)}</th><th scope="col">Price, points</th></tr></thead><tbody>${rows.map((p) => `<tr><th scope="row" class="rh">${esc(HEAD[p.id] || p.id)}</th><td>${p.family === 'original' ? 'none' : esc(famName[p.family])}</td><td>${p.seed + 1}</td><td>${p.qa ? 'yes' : 'no'}</td><td>${p1(p.forget)}%</td><td>${p1(p.retain)}%</td><td>${(p.price * 100).toFixed(1)}</td></tr>`).join('')}</tbody></table>`;
+        return;
+      }
+      render(pts);
+    }
+
+    function render(pts) {
+      const box = $('fr-chart'), W = clamp(Math.round(box.clientWidth - 16 || 640), 300, 1100), H = W < 520 ? 340 : 430;
+      const L = W < 520 ? 44 : 56, R = 14, T = 22, B = 46, iw = W - L - R, ih = H - T - B;
+      const X = (v) => L + (v - x0) / (x1 - x0) * iw, Y = (v) => T + (1 - (v - y0) / (y1 - y0)) * ih;
+      const orig = pts.find((p) => p.family === 'original');
+      let g = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="group" aria-label="Scatter of every run: hazardous biology still answered on the horizontal axis, general knowledge kept on the vertical axis. The same data is in the table view.">`;
+      for (let v = Math.ceil(x0 * 20) / 20; v <= x1 + 1e-9; v += 0.05) g += `<line class="gl" x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${T + ih}"/><text class="ax" x="${X(v)}" y="${T + ih + 16}" text-anchor="middle">${pct(v)}</text>`;
+      for (let v = Math.ceil(y0 * 20) / 20; v <= y1 + 1e-9; v += 0.05) g += `<line class="gl" x1="${L}" x2="${L + iw}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ax" x="${L - 8}" y="${Y(v) + 4}" text-anchor="end">${pct(v)}</text>`;
+      g += `<text class="at" x="${L + iw / 2}" y="${H - 6}" text-anchor="middle">${esc(D.benchmark.forget)} still answered, % (lower is more forgotten)</text>`;
+      g += `<text class="at" transform="translate(12 ${T + ih / 2}) rotate(-90)" text-anchor="middle">${esc(D.benchmark.retain)} kept, %</text>`;
+      g += `<line class="ref" x1="${X(CH)}" x2="${X(CH)}" y1="${T}" y2="${T + ih}"/><text class="rt" x="${X(CH) + 5}" y="${T + 11}">guessing ${pct(CH)}%</text>`;
+      if (orig) g += `<line class="ref" x1="${L}" x2="${L + iw}" y1="${Y(orig.retain)}" y2="${Y(orig.retain)}"/><text class="rt" x="${L + 6}" y="${Y(orig.retain) - 5}">original keeps ${pct(orig.retain)}%</text>`;
+      // marks
+      const lab = [];
+      pts.forEach((p, i) => {
+        const cx = X(p.forget), cy = Y(p.retain), col = p.family === 'default' ? 'var(--hot)' : p.family === 'circuit' ? 'var(--ok)' : 'var(--bar)';
+        const hollow = p.seed === 1, fill = hollow ? 'var(--paper)' : col, sw = hollow ? 2.5 : 2, st2 = hollow ? col : 'var(--paper)';
+        const label = `${HEAD[p.id] || (p.family === 'original' ? 'Original' : p.id)}${p.seed === 1 ? ', seed 2' : ''}${p.qa ? ', 4-bit aware' : ''}: ${esc(D.benchmark.forget)} ${p1(p.forget)}%, ${esc(D.benchmark.retain)} ${p1(p.retain)}%, price ${(p.price * 100).toFixed(1)} points`;
+        let shape;
+        if (p.family === 'circuit') shape = `<rect x="${cx - 6}" y="${cy - 6}" width="12" height="12" rx="2" fill="${fill}" stroke="${st2}" stroke-width="${sw}"/>`;
+        else if (p.family === 'original') shape = `<path d="M${cx} ${cy - 8}L${cx + 8} ${cy}L${cx} ${cy + 8}L${cx - 8} ${cy}Z" fill="${fill}" stroke="${st2}" stroke-width="${sw}"/>`;
+        else shape = `<circle cx="${cx}" cy="${cy}" r="6.5" fill="${fill}" stroke="${st2}" stroke-width="${sw}"/>`;
+        if (p.qa) shape += `<circle cx="${cx}" cy="${cy}" r="1.9" fill="${hollow ? col : 'var(--paper)'}"/>`;
+        g += `<g class="pt" tabindex="0" role="img" data-i="${i}" aria-label="${esc(label)}"><circle class="hit" cx="${cx}" cy="${cy}" r="14"/>${shape}</g>`;
+        const nm = p.family === 'original' ? 'Original' : (HEAD[p.id] || (p.seed === 1 ? 'seed 2' : ''));
+        if (nm && !(W < 520 && (p.qa || nm === 'seed 2'))) lab.push({ x: cx, y: cy, t: nm, qa: p.qa, s1: p.seed === 1 && !HEAD[p.id] });
+      });
+      // direct labels with simple collision nudging
+      const placed = [];
+      lab.sort((a, b) => a.y - b.y).forEach((l) => {
+        const w = l.t.length * 6.4, right = l.x + 10 + w > W - R;
+        let x = right ? l.x - 10 : l.x + 10, y = l.qa ? l.y + 18 : l.y - 9, anc = right ? 'end' : 'start';
+        for (let k = 0; k < 8 && placed.some((q) => Math.abs(q.y - y) < 13 && ((x < q.x + q.w && x + w > q.x) || (anc === 'end' && x - w < q.x + q.w && x > q.x))); k++) y += 13;
+        placed.push({ x: anc === 'end' ? x - w : x, y, w });
+        g += `<text class="dl" x="${x}" y="${y}" text-anchor="${anc}">${esc(l.t)}</text>`;
+      });
+      g += `<text class="bt" x="${L + 6}" y="${T + ih - 8}">better: up and to the left</text></svg><div class="tip" id="fr-tip" role="status" hidden></div>`;
+      box.innerHTML = g;
+      const tip = $('fr-tip'), svg = box.querySelector('svg');
+      const show = (i) => {
+        const p = pts[i]; if (!p) return;
+        box.querySelectorAll('.pt').forEach((n) => n.classList.toggle('on', +n.dataset.i === i));
+        const nm = HEAD[p.id] || (p.family === 'original' ? 'Original' : p.id);
+        tip.innerHTML = `<b>${esc(nm)}</b><span>${p.family === 'original' ? 'no unlearning' : esc(famName[p.family]) + (p.seed === 1 ? ', seed 2' : '') + (p.qa ? ', 4-bit aware' : '')}</span><span>${esc(D.benchmark.forget)} ${p1(p.forget)}%</span><span>${esc(D.benchmark.retain)} ${p1(p.retain)}%</span><span>Price ${(p.price * 100).toFixed(1)} points</span>`;
+        tip.hidden = false;
+        const cx = X(p.forget), cy = Y(p.retain), flip = cx > W * 0.6;
+        tip.style.left = (cx / W * 100) + '%'; tip.style.top = (cy / H * 100) + '%';
+        tip.style.transform = `translate(${flip ? 'calc(-100% - 14px)' : '14px'}, ${cy > H * 0.6 ? 'calc(-100% - 8px)' : '8px'})`;
+      };
+      const hide = () => { tip.hidden = true; box.querySelectorAll('.pt').forEach((n) => n.classList.remove('on')); };
+      svg.addEventListener('pointermove', (e) => {
+        const r = svg.getBoundingClientRect(), k = W / r.width, mx = (e.clientX - r.left) * k, my = (e.clientY - r.top) * k;
+        let best = -1, bd = 24 * 24;
+        pts.forEach((p, i) => { const dx = X(p.forget) - mx, dy = Y(p.retain) - my, dd = dx * dx + dy * dy; if (dd < bd) { bd = dd; best = i; } });
+        if (best >= 0) show(best); else hide();
+      });
+      svg.addEventListener('pointerleave', hide);
+      box.querySelectorAll('.pt').forEach((n) => { n.addEventListener('focus', () => show(+n.dataset.i)); n.addEventListener('blur', hide); n.addEventListener('keydown', (e) => { if (e.key === 'Escape') { hide(); n.blur(); } }); });
+    }
+
+    // legend: shape and fill carry identity, not colour alone
+    const ic = (svg) => `<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">${svg}</svg>`;
+    $('fr-key').innerHTML = [
+      ic('<circle cx="9" cy="9" r="6.5" fill="var(--hot)" stroke="var(--paper)" stroke-width="2"/>') + esc(famName.default),
+      ic('<rect x="3" y="3" width="12" height="12" rx="2" fill="var(--ok)" stroke="var(--paper)" stroke-width="2"/>') + esc(famName.circuit),
+      ic('<path d="M9 1L17 9L9 17L1 9Z" fill="var(--bar)"/>') + 'Original',
+      ic('<circle cx="9" cy="9" r="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.5"/>') + 'Hollow: second seed',
+      ic('<circle cx="9" cy="9" r="6.5" fill="var(--ink)"/><circle cx="9" cy="9" r="2" fill="var(--paper)"/>') + 'Dot: trained through a 4-bit quantizer'
+    ].map((x) => `<li>${x}</li>`).join('');
+    let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!tableOn) draw(); }, 150); });
+    draw();
   }
 
   function markTable() {

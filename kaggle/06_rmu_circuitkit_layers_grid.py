@@ -54,12 +54,17 @@ for c in CONFIGS:
     if c.get("pq"):
         for l in UPD:
             parametrize.register_parametrization(model.layers[l].mlp.down_proj, "weight", FakeQuantSTE(p=c["pq"]))
+    detach = None
+    if c.get("pq_file"):   # the whole truncated model, and the frozen reference, seen as the Q4_0 file on a fraction of the steps
+        detach = attach_file_view(model, frozen, {f"layers.{l}.mlp.down_proj" for l in UPD}, c["pq_file"], seed=SD,
+                                  qdev="cuda:1" if torch.cuda.device_count() > 1 else None)
     rc = RMUConfig(layer_id=L, update_layer_ids=UPD, steering_coeff=c["mult"] * anorm, alpha=c["alpha"], lr=c["lr"], max_num_batches=NB)
     t1 = time.time()
     rmu_unlearn(model, retain_batches=RB, forget_batches=FB, frozen_model=frozen, config=rc)
     if c.get("pq"):
         for l in UPD:
             parametrize.remove_parametrizations(model.layers[l].mlp.down_proj, "weight", leave_parametrized=False)
+    if detach: log("file view", detach())
     changed[c["name"]] = {"model." + n: p.detach().float().cpu().clone() for n, p in model.named_parameters() if any(f"layers.{l}.mlp.down_proj" in n for l in UPD)}
     log("trained", c["name"], "anorm", round(anorm, 2), "secs", round(time.time() - t1))
     torch.save(changed, "/kaggle/working/" + os.environ.get("OUT", "changed_rmu4.pt"))
@@ -86,7 +91,7 @@ def set_tensors(get, names, prec, chunk=8):
 results = []
 for prec in PRECS:
     set_tensors(lambda n: master[n], master.keys(), prec)
-    for name, d in [("base", {})] + list(changed.items()):
+    for name, d in ([] if os.environ.get("SKIP_BASE") == "1" else [("base", {})]) + list(changed.items()):
         if d: set_tensors(lambda n: d[n], d.keys(), prec)
         row = {"model": name, "prec": prec}
         for k, v in sets.items():

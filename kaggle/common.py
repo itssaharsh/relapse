@@ -208,3 +208,46 @@ class FakeQuantSTE(torch.nn.Module):
         with torch.no_grad():
             Wq = FQ[random.choice(self.kinds)](W.detach())
         return W + (Wq - W).detach()
+
+# ---------- the model seen as its 4-bit file during training ----------
+class FileView:
+    """Shared switch. When on, every decoder linear weight is seen after its Q4_0 round trip."""
+    on = False
+class SwapQ(torch.nn.Module):
+    """Parametrization for a weight that is not trained: swap in its stored Q4_0 round trip while the view is on."""
+    def __init__(self, wq, view):
+        super().__init__(); self.wq = wq; self.view = view      # wq is a plain tensor and may sit on another GPU
+    def forward(self, W):
+        return self.wq.to(W.device, W.dtype) if self.view.on else W
+class EditQ(torch.nn.Module):
+    """Parametrization for a trained weight: Q4_0 round trip on the fly while the view is on, straight-through gradient."""
+    def __init__(self, view):
+        super().__init__(); self.view = view
+    def forward(self, W):
+        return W + (fq_q4_0(W.detach()) - W.detach()) if self.view.on else W
+def proj_linears(m):
+    return [(n, mod) for n, mod in m.named_modules() if isinstance(mod, torch.nn.Linear) and n.endswith("_proj") and "layers." in n]
+def attach_file_view(model, frozen, edited, p, seed=0, qdev=None):
+    """Train `model` against `frozen` with both seen as their Q4_0 file on a fraction p of the steps.
+    `edited` = names of the trained linears in `model`. One coin per step: it is flipped on every second forward of `model`
+    (RMU runs the updated model twice per step, then the frozen one). Returns detach(), which restores plain weights."""
+    import torch.nn.utils.parametrize as P
+    view = FileView(); qdev = qdev or next(frozen.parameters()).device
+    with torch.no_grad():
+        bufs = {n: fq_q4_0(mod.weight.detach().float()).half().to(qdev) for n, mod in proj_linears(frozen)}
+    fm, mm = proj_linears(frozen), proj_linears(model)
+    assert [n for n, _ in fm] == [n for n, _ in mm] and set(edited) <= set(bufs), "models differ or an edited name is missing"
+    for n, mod in fm: P.register_parametrization(mod, "weight", SwapQ(bufs[n], view), unsafe=True)
+    for n, mod in mm: P.register_parametrization(mod, "weight", EditQ(view) if n in edited else SwapQ(bufs[n], view), unsafe=True)
+    coin, calls, seen = random.Random(1000 + seed), [0], [0, 0]
+    def flip(_m, _a):
+        if calls[0] % 2 == 0:
+            view.on = coin.random() < p; seen[int(view.on)] += 1
+        calls[0] += 1
+    hook = model.register_forward_pre_hook(flip)
+    def detach():
+        hook.remove(); view.on = False
+        for _, mod in fm + mm: P.remove_parametrizations(mod, "weight", leave_parametrized=False)
+        bufs.clear()
+        return {"steps_plain": seen[0], "steps_as_file": seen[1]}
+    return detach

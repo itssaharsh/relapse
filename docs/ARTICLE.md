@@ -1,10 +1,12 @@
-# Relapse: is the forgotten knowledge still gone in the 4-bit file?
+# Relapse: forget the hazard, keep the rest, even in the 4-bit file
 
-*Unlearning on Cohere's Tiny Aya with Lexsi Labs' open-source safety stack, checked in the files people actually download.*
+*Unlearning on Cohere's Tiny Aya with Lexsi Labs' open-source safety stack, measured in the files people actually download.*
 
-**Short answer: yes.** We made [Tiny Aya Global](https://huggingface.co/CohereLabs/tiny-aya-global) (3.35B parameters, 70 languages) forget hazardous biology with [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s RMU. Its score on WMDP-bio (1,273 four-choice questions; 25% is guessing) fell from 63.3% to 38.7%, and it stayed within 2 points of that in all seven formats we stored it in, from bf16 down to llama.cpp's Q4_K_M and bitsandbytes' NF4. In the Q4_K_M file it scored 37.2%: an [AuditKIT](https://github.com/Lexsi-Labs/AuditKIT) paired bootstrap on the same questions gives -1.5 points (95% interval -4.0 to +1.1, p = 0.24). The questions stayed forgotten in Hindi, Arabic, Spanish, Swahili and reworded English too.
+You want a small model that runs offline on a phone and will not help anyone build a bioweapon. Unlearning can remove that knowledge, but two things usually go wrong: people run a 4-bit copy rather than the tested checkpoint, and unlearning costs some general knowledge. We measured both on [Tiny Aya Global](https://huggingface.co/CohereLabs/tiny-aya-global) (3.35B parameters, 70 languages) and found a recipe where the 4-bit file keeps the forgetting and gives up nothing measurable for it.
 
-**What 4-bit changed was the price.** Unlearning at SafeTune's default layers cost 3.8 points of general knowledge (MMLU) at full precision and 5.5 points in the Q4_K_M file (AuditKIT: p = 0.002 and 0.001). When we moved the same edit to the layers [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT) pointed to, the model forgot slightly more (36.8%). It cost 2.2 points at full precision and nothing measurable in the Q4_K_M file (+0.1 points, p = 0.92).
+**The problem.** [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s RMU at its default layers took Tiny Aya's WMDP-bio score (1,273 four-choice questions; 25% is guessing) from 63.3% to 38.7%. It stayed there in all seven formats we stored it in, from bf16 down to llama.cpp's Q4_K_M and bitsandbytes' NF4: 37.2% in Q4_K_M, an [AuditKIT](https://github.com/Lexsi-Labs/AuditKIT) paired bootstrap gives -1.5 points (95% interval -4.0 to +1.1, p = 0.24). But the general knowledge it cost grew in the 4-bit copy: 3.8 MMLU points at full precision, 5.5 in the Q4_K_M file (AuditKIT: p = 0.002 and 0.001).
+
+**The fix.** [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT)'s attribution pointed to different layers. The same edit there forgot slightly more (36.8%) and cost nothing measurable in the Q4_K_M file: MMLU 54.9% against the original's 54.8% (+0.1 points, p = 0.92). The forgetting held in every format and in Hindi, Arabic, Spanish, Swahili and reworded English.
 
 Try it: **[the Relapse Space](https://huggingface.co/spaces/itssaharsh/relapse)** · code and raw runs: **[github.com/itssaharsh/relapse](https://github.com/itssaharsh/relapse)**
 

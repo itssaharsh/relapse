@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Relapse: is the forgotten knowledge still gone in the 4-bit file?</title>
-<meta name="description" content="You made a small model forget hazardous biology. Check whether it is still forgotten in the fp16, 8-bit, 6-bit and 4-bit files people actually download.">
+<title>Relapse: forget the hazard, keep the rest, even in the 4-bit file</title>
+<meta name="description" content="A small model made to forget hazardous biology, checked in every file people download: is the hazard still forgotten, and what did forgetting cost?">
 <meta name="theme-color" content="#ff7053">
-<meta property="og:title" content="Relapse: is the forgotten knowledge still gone in the 4-bit file?">
-<meta property="og:description" content="Every file, every unlearning method, scored on the hazardous-biology questions the model was made to forget.">
+<meta property="og:title" content="Relapse: forget the hazard, keep the rest, even in the 4-bit file">
+<meta property="og:description" content="Hazardous-biology score and general-knowledge cost for every file and every unlearning method.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="og.png">
 <meta property="og:image:width" content="1200">
@@ -31,7 +31,7 @@
 <main id="main" class="wrap">
  <div class="col">
   <section class="intro">
-    <h1 id="headline">You made <span id="mname">Tiny Aya</span> <span class="redact">forget</span> it. Is it still gone in the 4-bit file?</h1>
+    <h1 id="headline">Forget the <span class="redact">hazard</span>. Keep the rest. Even in the 4-bit file.</h1>
     <p class="deck" id="deck"></p>
     <div class="try" role="group" aria-labelledby="try-l">
       <b id="try-l">Try these</b>
@@ -43,11 +43,7 @@
     <p class="ans" id="ans"></p>
     <p class="line" id="line"></p>
     <p class="small" id="detail"></p>
-    <div class="price" id="price">
-      <p class="p-lab" id="p-lab"></p>
-      <div class="n"><span id="num-v" aria-hidden="true"></span><span class="u" id="num-u" aria-hidden="true"></span></div>
-      <p class="pline" id="pline"></p>
-    </div>
+    <div class="cmp" id="cmp" role="group" aria-label="Default layers against CircuitKIT layers"></div>
   </section>
  </div>
  <div class="col">
@@ -92,6 +88,13 @@
       <div class="lbars" id="lbars" role="img"></div>
       <div class="laxis" id="laxis" aria-hidden="true"></div>
       <p class="t-sub" id="lcap"></p>
+    </div>
+
+    <div class="rob-wrap" id="rob-wrap" hidden>
+      <h2 id="rob-head">Pushed harder: worked examples, an expert persona, and 25 steps of fine-tuning</h2>
+      <p class="t-sub" id="rob-cap"></p>
+      <div class="methods rob-tabs" role="group" aria-label="File" id="rob-tabs"></div>
+      <div class="rob" id="rob"></div>
     </div>
 
     <div class="table-wrap">

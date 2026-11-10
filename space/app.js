@@ -26,20 +26,18 @@
   const forgetOf = (c, lang) => (!c ? null : lang ? (c.probes && c.probes[lang] != null ? c.probes[lang] : null) : c.forget);
   const langName = (l) => (LANG[l] || l);
 
-  /* paired AuditKIT rows, matched to a method by their accuracies (the rows carry a model name, not a method id) */
+  /* paired AuditKIT rows: forget_holds rows say method + from + to, price rows say method + prec */
   function indexStats() {
     const near = (a, b) => a != null && b != null && Math.abs(a - b) < 0.004;
-    const toM = {};
-    (D.stats || []).filter((s) => s.kind !== 'price' && s.a && s.b).forEach((s) => {
+    (D.stats || []).forEach((s) => {
+      if (s.kind === 'price') { if (s.method && s.prec) STATS['p|' + s.method + '|' + s.prec] = s; return; }
+      if (s.method && s.to) { STATS['f|' + s.method + '|' + s.to] = s; return; }
+      if (!s.a || !s.b) return;
       const fA = s.a.slice(s.a.lastIndexOf('-') + 1), fB = s.b.slice(s.b.lastIndexOf('-') + 1);
       Object.keys(D.grid).forEach((m) => {
         const ca = cell(m, fA), cb = cell(m, fB);
-        if (ca && cb && near(ca.forget, s.acc_a) && near(cb.forget, s.acc_b)) { STATS['f|' + m + '|' + fB] = s; if (s.model) toM[s.model] = m; }
+        if (ca && cb && near(ca.forget, s.acc_a) && near(cb.forget, s.acc_b)) STATS['f|' + m + '|' + fB] = s;
       });
-    });
-    (D.stats || []).filter((s) => s.kind === 'price' && s.b).forEach((s) => {
-      const fB = s.b.slice(s.b.lastIndexOf('-') + 1), m = s.method || toM[s.model];
-      if (m) STATS['p|' + m + '|' + fB] = s;
     });
   }
 
@@ -85,9 +83,10 @@
     indexStats();
     const four = D.formats.filter((f) => f.bits <= 5);
     DEF.f4 = (FMT.NF4 ? 'NF4' : four.length ? four[four.length - 1].id : FP);
-    DEF.m = (MET.standard && cell('standard', DEF.f4)) ? 'standard' : (NOTORIG.find((m) => cell(m.id, DEF.f4)) || NOTORIG[0]).id;
+    DEF.f = FMT.Q4_K_M ? 'Q4_K_M' : DEF.f4;
+    DEF.m = (MET.circuit && cell('circuit', DEF.f)) ? 'circuit' : (NOTORIG.find((m) => cell(m.id, DEF.f)) || NOTORIG[0]).id;
     const q = new URLSearchParams(location.search);
-    st.f = FMT[q.get('f')] ? q.get('f') : DEF.f4;
+    st.f = FMT[q.get('f')] ? q.get('f') : DEF.f;
     st.m = MET[q.get('m')] ? q.get('m') : DEF.m;
     st.lang = LANG[q.get('lang')] ? q.get('lang') : '';
     buildStatic();
@@ -98,27 +97,27 @@
   /* ---------- static regions ---------- */
   function buildStatic() {
     const shortName = D.model.name.replace(/ Global$/, '');
-    $('mname').textContent = shortName;
     $('meta').textContent = `Cohere ${D.model.name}, ${D.model.params} parameters, ${D.model.languages} languages`;
-    $('deck').textContent = `The black bar is what ${shortName} was made to forget: hazardous biology, the ${D.benchmark.forget} benchmark (${D.benchmark.forget_n.toLocaleString('en-US')} questions).`;
+    const dm = (MET.circuit && cell('circuit', DEF.f)) ? 'circuit' : DEF.m, dc = cell(dm, DEF.f), oc = cell(ORIG, DEF.f), dfm = FMT[DEF.f];
+    $('deck').textContent = dc && oc
+      ? `Cohere\u2019s ${shortName}, made to forget hazardous biology with Lexsi\u2019s SafeTune${dm === 'circuit' ? ' at the layers CircuitKIT found' : ''}: in the ${dfm.how} ${dfm.label} file it scores ${pct(dc.forget)}% on ${D.benchmark.forget} (original ${pct(oc.forget)}%, guessing ${pct(CH)}%) and keeps ${pct(dc.retain)}% general knowledge (original ${pct(oc.retain)}%).`
+      : `Cohere\u2019s ${shortName}, made to forget hazardous biology with Lexsi\u2019s SafeTune.`;
     $('p-head').textContent = `Forget report, ${D.model.name}`;
-    document.title = 'Relapse: is the forgotten knowledge still gone in the 4-bit file?';
+    document.title = 'Relapse: forget the hazard, keep the rest, even in the 4-bit file';
 
-    const four = DEF.f4, fl = fmtLabel(four);
-    const m2 = (MET.circuit && 'circuit') || NOTORIG[NOTORIG.length - 1].id;
-    const q4 = FMT.Q4_K_M ? 'Q4_K_M' : four;
-    const mQ = [DEF.m].concat(NOTORIG.map((m) => m.id)).find((m) => cell(m, q4)) || DEF.m;
+    const four = DEF.f4, fl = fmtLabel(four), qf = DEF.f, ql = fmtLabel(qf);
+    const mC = (MET.circuit && 'circuit') || DEF.m, mD = (MET.standard && 'standard') || NOTORIG[0].id;
     const swL = LANG.sw ? 'sw' : Object.keys(LANG)[0];
     const chips = [
-      { m: DEF.m, f: four, l: `${methodShort(DEF.m)} at 4-bit (${fl})`, s: `${methodShort(DEF.m)} at ${fl}` },
-      { m: m2, f: four, l: `${methodShort(m2)} at 4-bit (${fl})`, s: `${methodShort(m2)} at ${fl}` },
-      { m: mQ, f: q4, l: `Llama.cpp ${fmtLabel(q4)} file`, s: `${fmtLabel(q4)} file` }
+      { m: mC, f: qf, l: `${methodShort(mC)}, ${ql} file`, s: methodShort(mC).replace(/ layers$/, '<span class="sr"> layers</span>'), h: 1 },
+      { m: mD, f: qf, l: `${methodShort(mD)}, same file`, s: methodShort(mD).replace(/ layers$/, '<span class="sr"> layers</span>'), h: 1 },
+      { m: mC, f: four, l: `Every format: ${fl}`, s: fl }
     ];
-    if (swL) chips.push({ m: DEF.m, f: four, lang: swL, l: `Ask in ${langName(swL)}`, s: langName(swL) });
+    if (swL) chips.push({ m: mC, f: qf, lang: swL, l: `Ask in ${langName(swL)}`, s: langName(swL) });
     chips.push({ m: ORIG, f: FP, l: 'Original model', s: 'Original' });
     chips.forEach((c) => {
       const b = el('button', 'chip'); b.type = 'button';
-      b.innerHTML = `<span class="l">${esc(c.l)}</span><span class="s">${esc(c.s)}</span>`;
+      b.innerHTML = `<span class="l">${esc(c.l)}</span><span class="s">${c.h ? c.s : esc(c.s)}</span>`;
       b.dataset.m = c.m; b.dataset.f = c.f; b.dataset.lang = c.lang || '';
       b.addEventListener('click', () => select(c.m, c.f, c.lang || ''));
       $('chips').appendChild(b);
@@ -219,37 +218,26 @@
     sc.textContent = sr + ' ' + (a.kind === 'unlearned' && a.price != null ? `General knowledge price ${(a.price * 100).toFixed(1)} points at ${fl}.` : '');
     stamp.classList.remove('slam'); void stamp.offsetWidth; if (!reduced()) stamp.classList.add('slam');
 
-    // the answer
-    const ans = $('ans'), line = $('line'), detail = $('detail'), price = $('price');
-    price.classList.remove('na');
+    // the answer: forget verdict first, then the price in the cards
+    const ans = $('ans'), line = $('line'), detail = $('detail');
     if (a.kind === 'missing') {
       ans.textContent = 'Not measured yet.';
       line.textContent = st.lang && cell(st.m, st.f) ? `${lbl} has no ${langName(st.lang)} questions scored at ${fl}.` : `${lbl} has not been scored at ${fl} yet.`;
       detail.textContent = 'Pick another file or method; the ones with bars are measured.';
-      $('p-lab').textContent = ''; setNumber(null, ''); $('pline').textContent = ''; price.classList.add('na');
     } else if (a.kind === 'known') {
       ans.textContent = 'It never forgot.';
       line.textContent = `${lbl} scores ${p1(a.v)}% on the ${bench} questions${inLang} at ${fl}. Guessing scores ${pct(CH)}%.`;
       detail.textContent = '';
-      $('p-lab').textContent = 'General knowledge';
-      setNumber(a.r * 100, '%'); $('pline').textContent = `${D.benchmark.retain} accuracy of the original model at ${fl}. Every price on this page is measured against it.`;
     } else {
-      ans.textContent = a.fk === 'relapsed' ? 'No, it came back.' : a.fk === 'still' ? 'Yes, still gone.' : 'Scored, no fp16 reference.';
+      const lost = a.price == null ? null : a.price;
+      ans.textContent = a.fk === 'relapsed' ? 'No, it came back.' : a.fk === 'still'
+        ? (lost == null ? 'Still forgotten.' : lost < 0.005 ? 'Still forgotten. Nothing else lost.' : `Still forgotten. ${(lost * 100).toFixed(1)} points of general knowledge lost.`)
+        : 'Scored, no fp16 reference.';
       const against = a.f !== FP && a.base != null ? `, against ${p1(a.base)}% at ${fpl}` : '';
       line.textContent = `${methodShort(st.m)} scores ${p1(a.v)}% on ${bench}${inLang} at ${fl}${against}. The original scores ${a.o != null ? p1(a.o) + '%' : 'n/m'} there; guessing scores ${pct(CH)}%.`;
-      detail.textContent = (a.stat ? auditLine(a.stat, a, 'forget accuracy') + ' ' : '') + `Relapse here means ${pct(RISE)} or more points back over ${fpl}.`;
-      $('p-lab').textContent = 'The price';
-      if (a.price == null) { setNumber(null, ''); $('pline').textContent = `General knowledge at ${fl} is not measured for ${lbl}.`; }
-      else {
-        setNumber(a.price * 100, ' pts');
-        let t = `of general knowledge (${D.benchmark.retain}) lost at ${fl}: ${p1(a.r)}% where the original scores ${p1(a.oR)}%.`;
-        if (a.f !== FP && a.price16 != null) {
-          const dd = a.price - a.price16;
-          t += ` At ${fpl} the gap was ${(a.price16 * 100).toFixed(1)} points, so the price ${a.grew ? 'grew by ' + (dd * 100).toFixed(1) : Math.abs(dd) < 0.005 ? 'held' : dd < 0 ? 'shrank by ' + (-dd * 100).toFixed(1) : 'held (' + (dd * 100).toFixed(1) + ' wider)'}.`;
-        } else if (a.f === FP || a.price16 == null) t += ` This is the full-precision gap the 4-bit files are compared with.`;
-        $('pline').textContent = t + (a.priceStat ? ' ' + auditLine(a.priceStat, a, 'the price') : '');
-      }
+      detail.textContent = a.stat ? auditLine(a.stat, a, 'forget accuracy') : '';
     }
+    drawCards();
 
     markTable();
     drawExample(a);
@@ -263,23 +251,49 @@
 
   function auditLine(s, a, what) {
     const ci = s.ci95 || [];
-    const fA = s.a.slice(s.a.lastIndexOf('-') + 1);
+    const fA = s.from || (s.a ? s.a.slice(s.a.lastIndexOf('-') + 1) : FP);
     const sig = s.p_value < 0.05 ? 'a real shift' : 'no detectable shift';
-    return `AuditKIT, paired on ${s.n.toLocaleString('en-US')} questions: ${what} moves ${sgn(s.delta)} points from ${fmtLabel(fA)} to ${fmtLabel(a.f)} (95% interval ${sgn(ci[0])} to ${sgn(ci[1])}, p = ${s.p_value < 0.001 ? '<0.001' : s.p_value.toFixed(2)}): ${sig}.`;
+    return `AuditKIT, paired on ${s.n.toLocaleString('en-US')} questions: ${what} moves ${sgn(s.delta)} points from ${fmtLabel(fA)} to ${fmtLabel(a.f)} (95% interval ${sgn(ci[0])} to ${sgn(ci[1])}, ${s.p_value < 0.001 ? 'p < 0.001' : 'p = ' + s.p_value.toFixed(2)}): ${sig}.`;
   }
 
-  function setNumber(n, unit) {
-    const node = $('num-v'); $('num-u').textContent = unit || '';
-    if (n == null) { node.textContent = '–'; lastNum = null; return; }
-    const fix = (x) => (unit === '%' ? String(Math.round(x)) : x.toFixed(1).replace('-', '−'));
-    if (reduced() || lastNum == null) { node.textContent = fix(n); lastNum = n; return; }
-    const from = lastNum, t0 = performance.now(), dur = 800; lastNum = n;
-    const step = (t) => {
-      const k = clamp((t - t0) / dur, 0, 1), e = 1 - Math.pow(1 - k, 3);
-      node.textContent = fix(from + (n - from) * e);
-      if (k < 1 && lastNum === n) requestAnimationFrame(step); else node.textContent = fix(n);
-    };
-    requestAnimationFrame(step);
+  /* side by side: the two layer choices, and the selected method when it is another one */
+  const rangeOf = (ls) => (ls && ls.length ? (ls.length > 1 ? `${ls[0]} to ${ls[ls.length - 1]}` : String(ls[0])) : '');
+  function cardTitle(m) {
+    const C = D.circuit || {};
+    if (m === 'standard' && C.default_rmu_layers) return `${methodShort(m)} (${rangeOf(C.default_rmu_layers)})`;
+    if (m === 'circuit' && C.circuit_rmu_layers) return `${methodShort(m)} (${rangeOf(C.circuit_rmu_layers)})`;
+    return methodShort(m);
+  }
+  const lastCard = {};
+  function drawCards() {
+    const ms = ['standard', 'circuit'].filter((m) => MET[m]);
+    if (ms.indexOf(st.m) < 0) ms.push(st.m);
+    const box = $('cmp'); box.style.setProperty('--n', ms.length); box.innerHTML = '';
+    const fl = fmtLabel(st.f), fpl = fmtLabel(FP);
+    ms.forEach((m) => {
+      const a = analyse(m, st.f, st.lang), b = el('button', 'cc'); b.type = 'button'; b.dataset.m = m;
+      b.setAttribute('aria-pressed', m === st.m ? 'true' : 'false');
+      let tone = 'mid', num = '\u2013', cap = '', foot = '';
+      if (a.kind === 'missing') { cap = `Not measured at ${esc(fl)}.`; }
+      else if (a.kind === 'known') { tone = 'mid'; num = pct(a.r) + '<small>%</small>'; cap = `general knowledge (${esc(D.benchmark.retain)}) of the original at ${esc(fl)}`; foot = `${esc(D.benchmark.forget)} ${pct(a.v)}%, guessing ${pct(CH)}%`; }
+      else if (a.price == null) { cap = `General knowledge not measured at ${esc(fl)}.`; foot = `${esc(D.benchmark.forget)} ${pct(a.v)}% (original ${a.o != null ? pct(a.o) + '%' : 'n/m'})`; }
+      else {
+        tone = a.price >= GREW ? 'hot' : a.price < 0.005 ? 'ok' : 'mid';
+        const n = a.price * 100;
+        const nolo = n < 0.5 && (!a.priceStat || a.priceStat.p_value >= 0.05);
+        num = nolo ? '0<small>pts</small>' : Math.abs(n).toFixed(1) + '<small>pts</small>';
+        cap = nolo ? `of general knowledge lost at ${esc(fl)}: no measurable loss (${n <= 0 ? '+' : '-'}${Math.abs(n).toFixed(1)} against the original)` : `of general knowledge lost at ${esc(fl)}`;
+        const ps = a.priceStat;
+        foot = `<span class="cl">${esc(D.benchmark.forget)} ${pct(a.v)}% (original ${a.o != null ? pct(a.o) + '%' : 'n/m'})</span>`
+          + (ps ? `<span class="cl">AuditKIT paired ${ps.p_value < 0.001 ? 'p &lt; 0.001' : 'p = ' + ps.p_value.toFixed(2)}</span>` : '')
+          + (a.f !== FP && a.price16 != null ? `<span class="cl g">At ${esc(fpl)} the gap was ${(a.price16 * 100).toFixed(1)}</span>` : '');
+      }
+      b.className = 'cc ' + tone;
+      b.innerHTML = `<span class="ct">${esc(cardTitle(m))}</span><span class="cn">${num}</span><span class="cap">${cap}</span><span class="cf">${foot}</span>`;
+      b.setAttribute('aria-label', `${cardTitle(m)}: ${a.kind === 'unlearned' && a.price != null ? (a.price * 100).toFixed(1) + ' points of general knowledge lost' : cap.replace(/<[^>]+>/g, '')}`);
+      b.addEventListener('click', () => select(m, st.f, st.lang));
+      box.appendChild(b);
+    });
   }
 
   /* ---------- the named question: a bubble sheet ---------- */
@@ -334,11 +348,11 @@
     const keys = Object.keys(LANG);
     NOTORIG.forEach((m) => D.formats.forEach((f) => keys.forEach((l) => { const v = forgetOf(cell(m.id, f.id), l), o = forgetOf(cell(ORIG, f.id), l); if (v != null && o != null && (!lm || v > lm.v)) lm = { v, o, m: m.id, f: f.id, l }; })));
     if (lm) add(`${pct(lm.v)}<sup>%</sup>`, lm.v - CH < 0.2 ? 'ok' : 'hot', `is the most any unlearned file scores in ${keys.map((l) => esc(langName(l))).join(', ')}`, `That is ${esc(langName(lm.l))} with ${esc(methodShort(lm.m))} at ${esc(fmtLabel(lm.f))}; the original scores ${pct(lm.o)}% on the same questions.`);
-    const four = DEF.f4, parts = [];
-    [DEF.m].concat(NOTORIG.map((m) => m.id).filter((m) => m !== DEF.m && (m === 'circuit'))).forEach((m) => { const a = analyse(m, four, ''); if (a.kind === 'unlearned' && a.price != null) parts.push(a); });
+    const qf = DEF.f, parts = [];
+    ['standard', 'circuit'].filter((m) => MET[m]).forEach((m) => { const a = analyse(m, qf, ''); if (a.kind === 'unlearned' && a.price != null) parts.push(a); });
     if (parts.length) {
       const a = parts[0];
-      add(`${(a.price * 100).toFixed(1)}<sup>pts</sup>`, a.grew ? 'hot' : 'ok', `of general knowledge lost by ${esc(methodShort(a.m))} at ${esc(fmtLabel(four))}`, parts.map((b) => `${esc(methodShort(b.m))}: ${(b.price * 100).toFixed(1)} points at ${esc(fmtLabel(four))}, ${b.price16 != null ? (b.price16 * 100).toFixed(1) + ' at ' + esc(fmtLabel(FP)) : 'no fp16 reference'}`).join('. ') + '.');
+      add(`${(a.price * 100).toFixed(1)}<sup>pts</sup>`, a.price >= GREW ? 'hot' : 'ok', `of general knowledge lost by ${esc(cardTitle(a.m))} at ${esc(fmtLabel(qf))}`, parts.map((b) => `${esc(cardTitle(b.m))}: ${(b.price * 100).toFixed(1)} points at ${esc(fmtLabel(qf))}, ${b.price16 != null ? (b.price16 * 100).toFixed(1) + ' at ' + esc(fmtLabel(FP)) : 'no fp16 reference'}`).join('. ') + '.');
     }
 
     // pipeline
@@ -351,6 +365,7 @@
     pipe.parentNode.insertBefore(el('div', 'on-line', `<span>${esc(D.model.name)}, ${esc(D.model.params)}</span><span>Hosted on Hugging Face</span>`), pipe.nextSibling);
 
     buildLayers();
+    buildRobustness();
 
     // table
     $('t-sub').textContent = `${D.benchmark.forget} accuracy (forget, chance ${pct(CH)}%) and ${D.benchmark.retain} accuracy (general knowledge). Under each general-knowledge score: points lost against the original at the same file.`;
@@ -404,6 +419,50 @@
     const list = (a) => a.length <= 2 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
     const onlyD = dl.filter((i) => cl.indexOf(i) < 0);
     $('lcap').innerHTML = `<span class="sw d"></span>SafeTune's default RMU edits layers ${lr(dl)}. <span class="sw c"></span>CircuitKIT's attribution gives the MLPs of layers ${list(cl)} scores of ${list(cl.map(f2))}, against ${list(onlyD.map(f2))} for layers ${list(onlyD)}, so the edit moved to layers ${lr(cl)}. Bar height is the square root of each layer's attribution (${C.n_examples} ${esc(C.task)} examples), so small layers stay visible.`;
+  }
+
+  /* only when the run produced a robustness array: pushed harder, per method and attack */
+  const ATTACK = { zero_shot: 'Plain question', five_shot: 'Five worked examples', role_play: 'Expert persona', relearn_25_steps_64_questions: '25 fine-tuning steps on 64 questions' };
+  function buildRobustness() {
+    const R = D.robustness;
+    if (!Array.isArray(R) || !R.length) return;
+    const att = Object.keys(ATTACK).filter((k) => R.some((r) => r.attack === k)).concat(Array.from(new Set(R.map((r) => r.attack))).filter((k) => !ATTACK[k]));
+    const precs = Array.from(new Set(R.map((r) => r.prec)));
+    const ms = [ORIG].concat(NOTORIG.map((m) => m.id)).filter((m) => R.some((r) => r.method === m));
+    const get = (m, p, k) => R.find((r) => r.method === m && r.prec === p && r.attack === k);
+    $('rob-wrap').hidden = false;
+    const aName = (k) => ATTACK[k] || k.replace(/_/g, ' ');
+    // honest caption: the strongest push per method, and any that brings the score back
+    const back = [], parts = [];
+    NOTORIG.forEach((m) => {
+      let worst = null;
+      precs.forEach((p) => att.forEach((k) => { const r = get(m.id, p, k), o = get(ORIG, p, k); if (!r || !o) return; const fr = (r.acc - CH) / Math.max(0.001, o.acc - CH); if (!worst || r.acc > worst.r.acc) worst = { r, o, fr, p, k }; }));
+      if (worst) parts.push(worst), worst.m = m.id;
+    });
+    parts.forEach((w) => { if (w.fr >= 0.75) back.push(w); });
+    const say = (w) => `${esc(methodShort(w.m))} reaches ${pct(w.r.acc)}% under ${esc(aName(w.k).toLowerCase())} at ${esc(fmtLabel(w.p))}, against ${pct(w.o.acc)}% for the original`;
+    let cap;
+    const rest = parts.filter((w) => w.fr < 0.75);
+    if (back.length) cap = `Pushed this hard, the knowledge comes back near the original: ${back.map(say).join('; ')}.` + (rest.length ? ` The others stay lower: ${rest.map(say).join('; ')}.` : '');
+    else cap = `No push brings any method back near the original. The strongest result for each: ${parts.map(say).join('; ')}.`;
+    cap += ` The line on each bar marks guessing (${pct(CH)}%).`;
+    $('rob-cap').innerHTML = cap + (R[0].n ? ` Each score is on ${D.benchmark.forget}${R.every((r) => r.n === R[0].n) ? ', ' + R[0].n.toLocaleString('en-US') + ' questions' : ''}.` : '');
+    let curP = precs[precs.length - 1];
+    const tabs = $('rob-tabs'), box = $('rob');
+    const draw2 = () => {
+      tabs.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.p === curP ? 'true' : 'false'));
+      box.innerHTML = att.map((k) => {
+        const o = get(ORIG, curP, k);
+        const rows = ms.map((m) => {
+          const r = get(m, curP, k); if (!r) return '';
+          const w = (r.acc / 0.7 * 100).toFixed(1), fr = o && m !== ORIG ? (r.acc - CH) / Math.max(0.001, o.acc - CH) : 0, cls = m === ORIG ? 'o' : fr >= 0.75 ? 'hot' : 'ok';
+          return `<div class="rr"><span class="rl">${esc(methodShort(m))}</span><span class="rt"><i class="${cls}" style="width:${w}%"></i><u style="left:${(CH / 0.7 * 100).toFixed(1)}%"></u></span><b>${pct(r.acc)}%</b></div>`;
+        }).join('');
+        return `<div class="rp"><h3>${esc(aName(k))}</h3>${rows}</div>`;
+      }).join('');
+    };
+    precs.forEach((p) => { const b = el('button', 'mt'); b.type = 'button'; b.textContent = fmtLabel(p); b.dataset.p = p; b.addEventListener('click', () => { curP = p; draw2(); }); tabs.appendChild(b); });
+    draw2();
   }
 
   function markTable() {

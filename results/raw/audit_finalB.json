@@ -1,0 +1,152 @@
+[
+ {
+  "a": "base-fp16-wmdp-bio",
+  "b": "base-Q4_K_M-wmdp-bio",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.63315,
+  "acc_b": 0.633936,
+  "delta": 0.000786,
+  "ci95": [
+   -0.012568735271013355,
+   0.014139827179890024
+  ],
+  "p_value": 0.916084,
+  "significant": false,
+  "right_to_wrong": 37,
+  "wrong_to_right": 38,
+  "retention": 1.001240694789082,
+  "model": "base",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "a": "rmu_circuit_layers-fp16-wmdp-bio",
+  "b": "rmu_circuit_layers-Q4_K_M-wmdp-bio",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.369992,
+  "acc_b": 0.371563,
+  "delta": 0.001571,
+  "ci95": [
+   -0.019638648860958365,
+   0.022780832678711706
+  ],
+  "p_value": 0.887113,
+  "significant": false,
+  "right_to_wrong": 96,
+  "wrong_to_right": 98,
+  "retention": 1.0042462845010618,
+  "model": "rmu_circuit_layers",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "a": "base-fp16-mmlu",
+  "b": "rmu_circuit_layers-fp16-mmlu",
+  "metric": "acc",
+  "n": 1000,
+  "acc_a": 0.553,
+  "acc_b": 0.531,
+  "delta": -0.022,
+  "ci95": [
+   -0.042,
+   -0.003
+  ],
+  "p_value": 0.026973,
+  "significant": true,
+  "right_to_wrong": 62,
+  "wrong_to_right": 40,
+  "retention": 0.9602169981916817,
+  "model": "rmu_circuit_layers",
+  "kind": "price",
+  "prec": "fp16"
+ },
+ {
+  "a": "base-Q4_K_M-mmlu",
+  "b": "rmu_circuit_layers-Q4_K_M-mmlu",
+  "metric": "acc",
+  "n": 1000,
+  "acc_a": 0.548,
+  "acc_b": 0.549,
+  "delta": 0.001,
+  "ci95": [
+   -0.019,
+   0.02
+  ],
+  "p_value": 0.917083,
+  "significant": false,
+  "right_to_wrong": 50,
+  "wrong_to_right": 51,
+  "retention": 1.0018248175182483,
+  "model": "rmu_circuit_layers",
+  "kind": "price",
+  "prec": "Q4_K_M"
+ },
+ {
+  "a": "rmu_circuit_layers_qa-fp16-wmdp-bio",
+  "b": "rmu_circuit_layers_qa-Q4_K_M-wmdp-bio",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.340141,
+  "acc_b": 0.353496,
+  "delta": 0.013354,
+  "ci95": [
+   -0.00864100549882168,
+   0.03534956794972506
+  ],
+  "p_value": 0.224775,
+  "significant": false,
+  "right_to_wrong": 94,
+  "wrong_to_right": 111,
+  "retention": 1.0392609699769053,
+  "model": "rmu_circuit_layers_qa",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "a": "base-fp16-mmlu",
+  "b": "rmu_circuit_layers_qa-fp16-mmlu",
+  "metric": "acc",
+  "n": 1000,
+  "acc_a": 0.553,
+  "acc_b": 0.545,
+  "delta": -0.008,
+  "ci95": [
+   -0.029,
+   0.012
+  ],
+  "p_value": 0.424575,
+  "significant": false,
+  "right_to_wrong": 59,
+  "wrong_to_right": 51,
+  "retention": 0.9855334538878843,
+  "model": "rmu_circuit_layers_qa",
+  "kind": "price",
+  "prec": "fp16"
+ },
+ {
+  "a": "base-Q4_K_M-mmlu",
+  "b": "rmu_circuit_layers_qa-Q4_K_M-mmlu",
+  "metric": "acc",
+  "n": 1000,
+  "acc_a": 0.548,
+  "acc_b": 0.545,
+  "delta": -0.003,
+  "ci95": [
+   -0.022,
+   0.017
+  ],
+  "p_value": 0.755245,
+  "significant": false,
+  "right_to_wrong": 51,
+  "wrong_to_right": 48,
+  "retention": 0.9945255474452555,
+  "model": "rmu_circuit_layers_qa",
+  "kind": "price",
+  "prec": "Q4_K_M"
+ }
+]

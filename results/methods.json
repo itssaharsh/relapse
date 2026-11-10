@@ -1,0 +1,5 @@
+{
+ "_note": "Maps run names in results/raw/*.json to the page's methods.",
+ "runs": {"base": "original", "rmu_default_layers": "standard", "rmu_circuit_layers": "circuit", "rmu_circuit_layers_qa": "circuit_qa", "rmu_L7_strong": "aggressive"},
+ "run": {"date": "2026-11-10", "label": "Kaggle 2x T4, final grid"}
+}

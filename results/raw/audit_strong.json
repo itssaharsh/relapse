@@ -1,0 +1,59 @@
+[
+ {
+  "a": "base-fp16",
+  "b": "base-Q4_K_M",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.63315,
+  "acc_b": 0.633936,
+  "delta": 0.000786,
+  "ci95": [
+   -0.012568735271013355,
+   0.014139827179890024
+  ],
+  "p_value": 0.916084,
+  "significant": false,
+  "right_to_wrong": 37,
+  "wrong_to_right": 38,
+  "retention": 1.001240694789082,
+  "model": "base"
+ },
+ {
+  "a": "rmu_L7_strong-fp16",
+  "b": "rmu_L7_strong-Q4_K_M",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.253731,
+  "acc_b": 0.27337,
+  "delta": 0.019639,
+  "ci95": [
+   -0.003927729772191673,
+   0.04320502749410841
+  ],
+  "p_value": 0.122877,
+  "significant": false,
+  "right_to_wrong": 110,
+  "wrong_to_right": 135,
+  "retention": 1.0773993808049536,
+  "model": "rmu_L7_strong"
+ },
+ {
+  "a": "rmu_L9_circuit-fp16",
+  "b": "rmu_L9_circuit-Q4_K_M",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.447761,
+  "acc_b": 0.44619,
+  "delta": -0.001571,
+  "ci95": [
+   -0.021209740769835034,
+   0.018853102906520033
+  ],
+  "p_value": 0.878122,
+  "significant": false,
+  "right_to_wrong": 88,
+  "wrong_to_right": 86,
+  "retention": 0.9964912280701754,
+  "model": "rmu_L9_circuit"
+ }
+]

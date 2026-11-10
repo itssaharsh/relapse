@@ -77,7 +77,7 @@ def fq_nf4(w: torch.Tensor, bs: int = 64) -> torch.Tensor:
     x = w.reshape(-1, bs)
     am = x.abs().max(dim=1, keepdim=True).values.clamp_min(1e-12)
     code = _NF4.to(w.device, w.dtype)
-    q = (x.div(am).unsqueeze(-1) - code).abs().argmin(dim=-1)
+    q = torch.bucketize(x.div(am).contiguous(), (code[1:] + code[:-1]) / 2)  # nearest code, no [N, 64, 16] tensor
     return (code[q] * am).reshape(w.shape)
 
 

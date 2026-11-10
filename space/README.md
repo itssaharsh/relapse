@@ -15,4 +15,4 @@ A static Space. It shows a recorded run: Cohere Tiny Aya made to forget hazardou
 
 Everything on the page is drawn from `data/results.json`. Replace that file and the page, its verdicts and its sentences follow.
 
-Deep links: `?m=<method>&f=<format>`, for example `?m=fix&f=Q4_K_M`.
+Deep links: `?m=<method>&f=<format>&lang=<probe>`, for example `?m=circuit&f=NF4&lang=sw`.

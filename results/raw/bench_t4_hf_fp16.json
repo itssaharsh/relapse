@@ -1,0 +1,23 @@
+[
+ {
+  "batch": 1,
+  "prompt_tokens_per_req": 403,
+  "new_tokens": 150,
+  "seconds": 9.58,
+  "output_tok_per_s": 15.7
+ },
+ {
+  "batch": 8,
+  "prompt_tokens_per_req": 448,
+  "new_tokens": 1200,
+  "seconds": 10.64,
+  "output_tok_per_s": 112.8
+ },
+ {
+  "batch": 32,
+  "prompt_tokens_per_req": 456,
+  "new_tokens": 4800,
+  "seconds": 32.24,
+  "output_tok_per_s": 148.9
+ }
+]

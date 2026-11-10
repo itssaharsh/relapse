@@ -63,3 +63,4 @@ storage_state*.json
 /PROMPTS.md
 /docs/memory/
 design/
+build/

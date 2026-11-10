@@ -40,21 +40,26 @@
   </section>
 
   <section class="result" aria-label="Result">
-    <div class="n" id="num"><span id="num-v" aria-hidden="true"></span><sup aria-hidden="true">%</sup></div>
+    <p class="ans" id="ans"></p>
     <p class="line" id="line"></p>
     <p class="small" id="detail"></p>
-    <p class="mm" id="mm"></p>
+    <div class="price" id="price">
+      <p class="p-lab" id="p-lab"></p>
+      <div class="n"><span id="num-v" aria-hidden="true"></span><span class="u" id="num-u" aria-hidden="true"></span></div>
+      <p class="pline" id="pline"></p>
+    </div>
   </section>
  </div>
  <div class="col">
   <section class="paper-wrap" aria-labelledby="paper-t">
-    <div class="stamp" id="stamp" role="status"></div>
+    <div class="stamps" id="stamps" role="status"><div class="stamp" id="stamp"></div><div class="tag2" id="tag2"></div></div>
     <div class="paper" id="paper">
       <div class="p-head"><b id="p-head">Forget report</b></div>
       <h2 class="p-title" id="paper-t">What the biology answers still know</h2>
       <p class="p-sub" id="p-sub"></p>
       <div class="methods" role="group" aria-label="Method" id="methods"></div>
       <div class="ladder" id="ladder"></div>
+      <div class="langs" id="langs" role="group" aria-label="Language"></div>
       <p class="key" id="key"></p>
       <p class="file" id="file"></p>
     </div>
@@ -81,6 +86,13 @@
 
     <h3 class="how-t" id="how-t">How the check is made</h3>
     <ol class="pipe" id="pipe" aria-labelledby="how-t"></ol>
+
+    <div class="layer-wrap" id="layer-wrap" hidden>
+      <h3 class="how-t" id="l-head">Where the biology lives in the model</h3>
+      <div class="lbars" id="lbars" role="img"></div>
+      <div class="laxis" id="laxis" aria-hidden="true"></div>
+      <p class="t-sub" id="lcap"></p>
+    </div>
 
     <div class="table-wrap">
       <h2 id="t-head">Every file, every method</h2>

@@ -2,7 +2,9 @@
 
 *Unlearning on Cohere's Tiny Aya with Lexsi Labs' open-source safety stack, measured in the files people actually download.*
 
-You want a small model that runs offline on a phone and will not help anyone build a bioweapon. Unlearning can remove that knowledge, but people run a 4-bit copy rather than the tested checkpoint, and unlearning costs some general knowledge. We measured both on [Tiny Aya Global](https://huggingface.co/CohereLabs/tiny-aya-global) (3.35B parameters, 70 languages) and found a recipe where the 4-bit file keeps the forgetting and gives up nothing measurable for it, in two training seeds.
+Unlearning at the layers CircuitKIT found took Tiny Aya's score on 1,273 hazardous-biology questions (WMDP-bio) from 63.4% to 37.1% in the 4-bit llama.cpp file, while its general knowledge stayed at 54.9% against the original's 54.8% (MMLU, 1,000 questions). A second seed and a 16-run sweep agree.
+
+The setting: you want a small model that runs offline on a phone and will not help anyone build a bioweapon. Unlearning can remove that knowledge, but people run a 4-bit copy rather than the tested checkpoint, and unlearning costs some general knowledge. We measured both on Cohere Labs' [Tiny Aya Global](https://huggingface.co/CohereLabs/tiny-aya-global) (3.35B parameters, 70 languages) with four Lexsi Labs repos, and published every model, dataset and log on Hugging Face.
 
 **What worked.** [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT)'s attribution showed where Tiny Aya's answers to hazardous-biology questions run, and we put [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s RMU edit there. On WMDP-bio (1,273 four-choice questions; 25% is guessing) the model fell from 63.4% to 37.1% in the llama.cpp Q4_K_M file, with MMLU at 54.9% against the original's 54.8% (+0.1 points, [AuditKIT](https://github.com/Lexsi-Labs/AuditKIT) p = 0.92). The second seed forgot less (45.3%) and again cost nothing measurable in that file (+0.6, p = 0.45).
 

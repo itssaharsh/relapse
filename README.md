@@ -1,6 +1,8 @@
 # Relapse: forget the hazard, keep the rest, even in the 4-bit file
 
-You want a small model that runs offline on a phone and will not help anyone build a bioweapon. Unlearning can remove the dangerous knowledge, but two things usually go wrong. Nobody runs the checkpoint that was tested; people run a 4-bit copy of it. And unlearning costs some of everything else the model knows. Relapse measures both, in every file people actually download, using Cohere's Tiny Aya and Lexsi Labs' open-source safety stack, and finds a recipe where the 4-bit file keeps the forgetting and gives up nothing measurable for it.
+Relapse makes Cohere Labs' Tiny Aya forget hazardous biology with Lexsi Labs' open-source safety stack, then checks every file people download to see whether it is still forgotten and what that cost.
+
+You want a small model that runs offline on a phone and will not help anyone build a bioweapon. Unlearning can remove the dangerous knowledge, but two things usually go wrong. Nobody runs the checkpoint that was tested; people run a 4-bit copy of it. And unlearning costs some of everything else the model knows. Relapse measures both, and finds a recipe where the 4-bit file keeps the forgetting and gives up nothing measurable for it. It chains four Lexsi Labs repos (CuratorKIT, CircuitKIT, SafeTune, AuditKIT), and every model, dataset and log is on Hugging Face.
 
 **The result:** unlearning at the layers [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT) found took Tiny Aya's hazardous-biology score from 63.4% to 37.1% in the llama.cpp Q4_K_M file, and general knowledge (MMLU) in that file stayed at 54.9% against the original's 54.8%. A second training seed agreed, and so did the whole sweep: across 16 unlearning runs, the CircuitKIT layers kept more general knowledge at every level of forgetting both reached. Among runs that got the hazard score to 40% or below, they cost 1.4 to 3.3 points in the 4-bit NF4 file; [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s default layers cost 5.6 to 16.5. The forgetting held in all 7 formats, in Hindi, Arabic, Spanish, Swahili and reworded English, and against prompt attacks. It did not hold against fine-tuning, which is in the list of what didn't work below.
 
@@ -8,7 +10,7 @@ You want a small model that runs offline on a phone and will not help anyone bui
 
 *35-second walk-through: [docs/demo.mp4](docs/demo.mp4)*
 
-**Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [the article](https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
+**Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) ([full screen](https://itssaharsh-relapse.static.hf.space/index.html)) · **Write-up:** [the article](https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
 
 ## Results
 

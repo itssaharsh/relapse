@@ -492,7 +492,12 @@
     $('fr-wrap').hidden = false;
     let cur = precs.indexOf('NF4') >= 0 ? 'NF4' : precs[0], tableOn = false, active = null;
     const famName = { default: methodShort('standard') || 'Default layers', circuit: methodShort('circuit') || 'CircuitKIT layers', original: 'Original' };
-    const lowName = (f) => (f === 'default' ? famName.default.toLowerCase() : famName[f]);
+    const FAMS = D.families || {};
+    const famLabel = (f) => (f === 'original' ? 'Original' : (FAMS[f] && FAMS[f].label) || famName[f] || f);
+    const ctl = (f) => famLabel(f).replace(/^Control:\s*/i, '');
+    const lowName = (f) => (f === 'default' ? famName.default.toLowerCase() : famName[f] || ctl(f).toLowerCase());
+    const order = ['default', 'circuit', 'deeper', 'shallower'].concat(Array.from(new Set(P.map((p) => p.family))).filter((f) => ['original', 'default', 'circuit', 'deeper', 'shallower'].indexOf(f) < 0));
+    const controls = order.filter((f) => f !== 'default' && f !== 'circuit');
     const nameOf = (p) => HEAD[p.id] || (p.seed === 1 ? 'seed 2' : '') || '';
     const xs = P.map((p) => p.forget).concat([CH]), ys = P.map((p) => p.retain);
     const x0 = Math.floor((Math.min.apply(null, xs) - 0.015) * 20) / 20, x1 = Math.ceil((Math.max.apply(null, xs) + 0.015) * 20) / 20;
@@ -502,14 +507,24 @@
     $('fr-view').addEventListener('click', () => { tableOn = !tableOn; draw(); });
 
     const sentence = () => {
-      const fl = fmtLabel(cur), pts = (f) => P.filter((x) => x.prec === cur && x.family === f && x.forget <= THRESH);
-      const rangeTxt = (f) => { const a = pts(f); if (!a.length) return `no ${lowName(f)} run got there`; const v = a.map((x) => x.price * 100), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); return `${lowName(f)} cost ${lo.toFixed(1)} to ${hi.toFixed(1)} points of general knowledge (${a.length} run${a.length > 1 ? 's' : ''})`; };
+      const fl = fmtLabel(cur), all = (f) => P.filter((x) => x.prec === cur && x.family === f), pts = (f) => all(f).filter((x) => x.forget <= THRESH);
+      const pf = (x) => (x < 0 ? '\u2212' : '') + Math.abs(x).toFixed(1);
+      const span = (a) => { const v = a.map((x) => x.price * 100), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); return pf(lo) === pf(hi) ? `${pf(lo)} points` : `${pf(lo)} to ${pf(hi)} points`; };
+      const rangeTxt = (f) => { const a = pts(f); return a.length ? `${lowName(f)} cost ${span(a)} of general knowledge (${a.length} run${a.length > 1 ? 's' : ''})` : `no ${lowName(f)} run got there`; };
       const d = pts('default'), c = pts('circuit');
       let t = `Among runs that got ${D.benchmark.forget} to ${pct(THRESH)}% or below at ${fl}, ${rangeTxt('default')}; ${rangeTxt('circuit')}.`;
+      const others = [['default', d]], missed = [];
+      controls.forEach((f) => {
+        const al = all(f); if (!al.length) return;
+        const a = pts(f);
+        if (a.length) { others.push([f, a]); t += ` ${ctl(f).charAt(0).toUpperCase() + ctl(f).slice(1)}: ${span(a)} (${a.length} run${a.length > 1 ? 's' : ''}).`; }
+        else { const best = al.reduce((m, x) => (x.forget < m.forget ? x : m)); missed.push(f); t += ` No run at ${ctl(f).toLowerCase()} got to ${pct(THRESH)}% or below; its closest run reached ${pct(best.forget)}% for ${pf(best.price * 100)} points.`; }
+      });
       let cheaper = false;
-      if (d.length && c.length) {
-        const dMin = Math.min.apply(null, d.map((x) => x.price)), cMax = Math.max.apply(null, c.map((x) => x.price));
-        if (cMax < dMin) { cheaper = true; t += ' The dearest CircuitKIT run costs less than the cheapest default run.'; }
+      if (c.length && d.length) {
+        const cMax = Math.max.apply(null, c.map((x) => x.price));
+        cheaper = others.every(([, a]) => a.length && cMax < Math.min.apply(null, a.map((x) => x.price)));
+        if (cheaper) t += ` The dearest CircuitKIT run costs less than the cheapest run of every other family that got there.`;
       }
       return { t, cheaper };
     };
@@ -518,16 +533,16 @@
       tabs.querySelectorAll('.mt').forEach((b) => b.setAttribute('aria-pressed', b.dataset.p === cur ? 'true' : 'false'));
       $('fr-view').setAttribute('aria-pressed', tableOn ? 'true' : 'false'); $('fr-view').textContent = tableOn ? 'View as chart' : 'View as table';
       const s = sentence();
-      $('fr-head').textContent = s.cheaper ? 'Every run we made: the CircuitKIT layers keep more at the same level of forgetting' : 'Every run we made: what each choice of layers costs at each level of forgetting';
+      $('fr-head').textContent = s.cheaper ? 'Every run we made: the CircuitKIT layers keep more at the same level of forgetting' : 'Every run we made, by where the edit was placed';
       $('fr-take').textContent = s.t;
       const pts = P.filter((p) => p.prec === cur);
       $('fr-chart').hidden = tableOn; $('fr-table').hidden = !tableOn;
       if (tableOn) {
-        const rows = pts.slice().sort((a, b) => (a.family < b.family ? -1 : a.family > b.family ? 1 : a.forget - b.forget));
-        $('fr-table').innerHTML = `<table><thead><tr><th class="rh" scope="col">Run</th><th scope="col">Layers</th><th scope="col">Seed</th><th scope="col">4-bit aware</th><th scope="col">${esc(D.benchmark.forget)}</th><th scope="col">${esc(D.benchmark.retain)}</th><th scope="col">Price, points</th></tr></thead><tbody>${rows.map((p) => `<tr><th scope="row" class="rh">${esc(HEAD[p.id] || p.id)}</th><td>${p.family === 'original' ? 'none' : esc(famName[p.family])}</td><td>${p.seed + 1}</td><td>${p.qa ? 'yes' : 'no'}</td><td>${p1(p.forget)}%</td><td>${p1(p.retain)}%</td><td>${(p.price * 100).toFixed(1)}</td></tr>`).join('')}</tbody></table>`;
+        const rows = pts.slice().sort((a, b) => (order.indexOf(a.family) + 1 || 9) - (order.indexOf(b.family) + 1 || 9) || a.forget - b.forget);
+        $('fr-table').innerHTML = `<table><thead><tr><th class="rh" scope="col">Run</th><th scope="col">Family</th><th scope="col">Seed</th><th scope="col">4-bit aware</th><th scope="col">${esc(D.benchmark.forget)}</th><th scope="col">${esc(D.benchmark.retain)}</th><th scope="col">Price, points</th></tr></thead><tbody>${rows.map((p) => `<tr><th scope="row" class="rh">${esc(HEAD[p.id] || p.id)}</th><td>${esc(famLabel(p.family))}</td><td>${p.seed + 1}</td><td>${p.qa ? 'yes' : 'no'}</td><td>${p1(p.forget)}%</td><td>${p1(p.retain)}%</td><td>${(p.price * 100).toFixed(1)}</td></tr>`).join('')}</tbody></table>`;
         return;
       }
-      render(pts);
+      render(pts); drawKey();
     }
 
     function render(pts) {
@@ -545,12 +560,14 @@
       // marks
       const lab = [];
       pts.forEach((p, i) => {
-        const cx = X(p.forget), cy = Y(p.retain), col = p.family === 'default' ? 'var(--hot)' : p.family === 'circuit' ? 'var(--ok)' : 'var(--bar)';
-        const hollow = p.seed === 1, fill = hollow ? 'var(--paper)' : col, sw = hollow ? 2.5 : 2, st2 = hollow ? col : 'var(--paper)';
+        const cx = X(p.forget), cy = Y(p.retain), isCtl = controls.indexOf(p.family) >= 0, col = p.family === 'default' ? 'var(--hot)' : p.family === 'circuit' ? 'var(--ok)' : isCtl ? 'var(--paper-ink-muted)' : 'var(--bar)';
+        const hollow = p.seed === 1, fill = hollow ? 'var(--paper)' : isCtl ? 'oklch(88% .01 70)' : col, sw = hollow ? 2.5 : isCtl ? 2 : 2, st2 = hollow || isCtl ? col : 'var(--paper)';
         const label = `${HEAD[p.id] || (p.family === 'original' ? 'Original' : p.id)}${p.seed === 1 ? ', seed 2' : ''}${p.qa ? ', 4-bit aware' : ''}: ${esc(D.benchmark.forget)} ${p1(p.forget)}%, ${esc(D.benchmark.retain)} ${p1(p.retain)}%, price ${(p.price * 100).toFixed(1)} points`;
         let shape;
         if (p.family === 'circuit') shape = `<rect x="${cx - 6}" y="${cy - 6}" width="12" height="12" rx="2" fill="${fill}" stroke="${st2}" stroke-width="${sw}"/>`;
         else if (p.family === 'original') shape = `<path d="M${cx} ${cy - 8}L${cx + 8} ${cy}L${cx} ${cy + 8}L${cx - 8} ${cy}Z" fill="${fill}" stroke="${st2}" stroke-width="${sw}"/>`;
+        else if (p.family === 'deeper') shape = `<path d="M${cx} ${cy - 8}L${cx + 8} ${cy + 6}L${cx - 8} ${cy + 6}Z" fill="${fill}" stroke="${st2}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+        else if (p.family === 'shallower') shape = `<path d="M${cx - 8} ${cy - 6}L${cx + 8} ${cy - 6}L${cx} ${cy + 8}Z" fill="${fill}" stroke="${st2}" stroke-width="${sw}" stroke-linejoin="round"/>`;
         else shape = `<circle cx="${cx}" cy="${cy}" r="6.5" fill="${fill}" stroke="${st2}" stroke-width="${sw}"/>`;
         if (p.qa) shape += `<circle cx="${cx}" cy="${cy}" r="1.9" fill="${hollow ? col : 'var(--paper)'}"/>`;
         g += `<g class="pt" tabindex="0" role="img" data-i="${i}" aria-label="${esc(label)}"><circle class="hit" cx="${cx}" cy="${cy}" r="14"/>${shape}</g>`;
@@ -573,7 +590,7 @@
         const p = pts[i]; if (!p) return;
         box.querySelectorAll('.pt').forEach((n) => n.classList.toggle('on', +n.dataset.i === i));
         const nm = HEAD[p.id] || (p.family === 'original' ? 'Original' : p.id);
-        tip.innerHTML = `<b>${esc(nm)}</b><span>${p.family === 'original' ? 'no unlearning' : esc(famName[p.family]) + (p.seed === 1 ? ', seed 2' : '') + (p.qa ? ', 4-bit aware' : '')}</span><span>${esc(D.benchmark.forget)} ${p1(p.forget)}%</span><span>${esc(D.benchmark.retain)} ${p1(p.retain)}%</span><span>Price ${(p.price * 100).toFixed(1)} points</span>`;
+        tip.innerHTML = `<b>${esc(nm)}</b><span>${p.family === 'original' ? 'no unlearning' : esc(famLabel(p.family)) + (p.seed === 1 ? ', seed 2' : '') + (p.qa ? ', 4-bit aware' : '')}</span><span>${esc(D.benchmark.forget)} ${p1(p.forget)}%</span><span>${esc(D.benchmark.retain)} ${p1(p.retain)}%</span><span>Price ${(p.price * 100).toFixed(1)} points</span>`;
         tip.hidden = false;
         const cx = X(p.forget), cy = Y(p.retain), flip = cx > W * 0.6;
         tip.style.left = (cx / W * 100) + '%'; tip.style.top = (cy / H * 100) + '%';
@@ -590,15 +607,23 @@
       box.querySelectorAll('.pt').forEach((n) => { n.addEventListener('focus', () => show(+n.dataset.i)); n.addEventListener('blur', hide); n.addEventListener('keydown', (e) => { if (e.key === 'Escape') { hide(); n.blur(); } }); });
     }
 
-    // legend: shape and fill carry identity, not colour alone
+    // legend: shape and fill carry identity, not colour alone; only families present at the selected format
     const ic = (svg) => `<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">${svg}</svg>`;
-    $('fr-key').innerHTML = [
-      ic('<circle cx="9" cy="9" r="6.5" fill="var(--hot)" stroke="var(--paper)" stroke-width="2"/>') + esc(famName.default),
-      ic('<rect x="3" y="3" width="12" height="12" rx="2" fill="var(--ok)" stroke="var(--paper)" stroke-width="2"/>') + esc(famName.circuit),
-      ic('<path d="M9 1L17 9L9 17L1 9Z" fill="var(--bar)"/>') + 'Original',
-      ic('<circle cx="9" cy="9" r="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.5"/>') + 'Hollow: second seed',
-      ic('<circle cx="9" cy="9" r="6.5" fill="var(--ink)"/><circle cx="9" cy="9" r="2" fill="var(--paper)"/>') + 'Dot: trained through a 4-bit quantizer'
-    ].map((x) => `<li>${x}</li>`).join('');
+    const ICON = {
+      default: '<circle cx="9" cy="9" r="6.5" fill="var(--hot)" stroke="var(--paper)" stroke-width="2"/>',
+      circuit: '<rect x="3" y="3" width="12" height="12" rx="2" fill="var(--ok)" stroke="var(--paper)" stroke-width="2"/>',
+      original: '<path d="M9 1L17 9L9 17L1 9Z" fill="var(--bar)"/>',
+      deeper: '<path d="M9 2L16 15L2 15Z" fill="oklch(88% .01 70)" stroke="var(--paper-ink-muted)" stroke-width="2" stroke-linejoin="round"/>',
+      shallower: '<path d="M2 3L16 3L9 16Z" fill="oklch(88% .01 70)" stroke="var(--paper-ink-muted)" stroke-width="2" stroke-linejoin="round"/>'
+    };
+    const drawKey = () => {
+      const have = (f) => P.some((p) => p.prec === cur && p.family === f);
+      const items = order.filter(have).map((f) => ic(ICON[f] || '<circle cx="9" cy="9" r="5" fill="oklch(88% .01 70)" stroke="var(--paper-ink-muted)" stroke-width="2"/>') + esc(famLabel(f)));
+      items.push(ic(ICON.original) + 'Original');
+      if (P.some((p) => p.prec === cur && p.seed === 1)) items.push(ic('<circle cx="9" cy="9" r="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.5"/>') + 'Hollow: second seed');
+      if (P.some((p) => p.prec === cur && p.qa)) items.push(ic('<circle cx="9" cy="9" r="6.5" fill="var(--ink)"/><circle cx="9" cy="9" r="2" fill="var(--paper)"/>') + 'Dot: trained through a 4-bit quantizer');
+      $('fr-key').innerHTML = items.map((x) => `<li>${x}</li>`).join('');
+    };
     let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!tableOn) draw(); }, 150); });
     draw();
   }

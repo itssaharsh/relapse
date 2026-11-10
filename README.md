@@ -70,7 +70,10 @@ Four Lexsi repositories in one pipeline, on a Cohere model, with every artifact 
 
 The formats are made the way people make them: the bf16 checkpoint, llama.cpp's `convert_hf_to_gguf.py` and `llama-quantize` for Q6_K and Q4_K_M (read back into PyTorch for scoring), bit-exact re-implementations of llama.cpp's Q8_0 and Q4_0 and of bitsandbytes' NF4 for the rest. The quantization code is in [`kaggle/common.py`](kaggle/common.py), the helpers every run used, and [`tests/`](tests/) checks it bit for bit against llama.cpp's own reference code.
 
-## Metrics, and why these
+## Model, data and metrics, and why these
+
+- **Tiny Aya Global** is the hackathon's model and the one Cohere ships as GGUF files for phones, so its 4-bit files are what people will run. Global is the balanced variant across its 70 languages.
+- **Hazardous biology** is the standard unlearning target for safety: the WMDP benchmark and its bio forget corpus were built for it, and SafeTune's RMU comes from the same work. Wikitext is RMU's usual retain set.
 
 - **WMDP-bio accuracy** is the standard measure of hazardous biology knowledge in the unlearning literature (the RMU paper uses it). It is multiple choice, so it needs no judge model and gives the same answer every run.
 - **MMLU accuracy** on a fixed sample of 1,000 questions is the standard measure of what unlearning costs.
@@ -78,6 +81,10 @@ The formats are made the way people make them: the bf16 checkpoint, llama.cpp's 
 - **The same questions in four languages and reworded** test whether the forgetting is about the knowledge or about the English wording.
 - **Paired comparisons** (the same questions before and after) with AuditKIT's bootstrap give the interval and p-value for "did it come back".
 - **Attacks** test whether the knowledge is gone or only hidden: five worked examples in the prompt, an expert persona, and a short fine-tune on held-out questions.
+
+## What you get
+
+The model to ship is the CircuitKIT-layer one. Compared with the original Tiny Aya in the same Q4_K_M file, it answers 37.1% of the hazardous-biology questions where the original answers 63.4%, and it keeps the original's general knowledge (54.9% against 54.8%). It behaves the same in every other format and in the four other languages we tested, and prompt attacks do not bring the knowledge back. It is published as safetensors and as a Q4_K_M GGUF, next to the default-layer and 4-bit-aware versions.
 
 ## Cost
 

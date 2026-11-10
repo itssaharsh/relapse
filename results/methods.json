@@ -276,5 +276,88 @@
     15
    ]
   }
+ },
+ "fix_runs": {
+  "X10-12_lr4.5e-4": {
+   "id": "plain",
+   "label": "Plain RMU (the run that relapses)",
+   "kind": "baseline",
+   "share": 0,
+   "steps": 300,
+   "seed": 0,
+   "export": "x10_lr4.5e-4"
+  },
+  "X10-12_lr4.5e-4_qa": {
+   "id": "edited",
+   "label": "Only the three edited matrices rounded, on half the steps",
+   "kind": "ablation",
+   "share": 0,
+   "steps": 300,
+   "seed": 0,
+   "export": "x10_lr4.5e-4_qa"
+  },
+  "X10-12_lr4.5e-4_file": {
+   "id": "file_half",
+   "label": "Whole model seen as its Q4_0 file on half the steps",
+   "kind": "fix",
+   "share": 0.5,
+   "steps": 300,
+   "seed": 0,
+   "export": "x10_lr4.5e-4_file-half"
+  },
+  "X10-12_lr4.5e-4_file_nb600": {
+   "id": "file_half_2x",
+   "label": "Half the steps, trained twice as long",
+   "kind": "fix",
+   "share": 0.5,
+   "steps": 600,
+   "seed": 0,
+   "export": "x10_lr4.5e-4_file-half_nb600"
+  },
+  "X10-12_lr4.5e-4_file_p1": {
+   "id": "file_all",
+   "label": "Whole model seen as its Q4_0 file on every step",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 300,
+   "seed": 0,
+   "export": "x10_lr4.5e-4_file"
+  },
+  "X10-12_lr4.5e-4_file_p1_nb600": {
+   "id": "file_all_2x",
+   "label": "Every step, trained twice as long",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 600,
+   "seed": 0,
+   "export": "x10_lr4.5e-4_file_nb600"
+  },
+  "X10-12_lr1e-3_file_p1": {
+   "id": "file_all_lr",
+   "label": "Every step, higher learning rate",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 300,
+   "seed": 0,
+   "export": "x10_lr1e-3_file"
+  },
+  "X10-12_lr4.5e-4_s1": {
+   "id": "plain_s1",
+   "label": "Plain RMU, second seed",
+   "kind": "baseline2",
+   "share": 0,
+   "steps": 300,
+   "seed": 1,
+   "export": "x10_lr4.5e-4_s1"
+  },
+  "X10-12_lr4.5e-4_file_p1_s1": {
+   "id": "file_all_s1",
+   "label": "Every step, second seed",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 300,
+   "seed": 1,
+   "export": "x10_lr4.5e-4_file_s1"
+  }
  }
 }

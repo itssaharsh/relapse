@@ -8,6 +8,7 @@ You want a small model that runs offline on a phone and will not help anyone bui
 
 - **The recipe that worked.** At the layers [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT) pointed to (7 to 9), [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s RMU took Tiny Aya's hazardous-biology score from 63% to about 37% in every file format. Head to head in the llama.cpp Q4_K_M file it kept 5.6 more points of general knowledge than the same edit at SafeTune's default layers (p = 0.001), and 3.9 more in a second training seed (p = 0.006). The forgetting held in all 7 formats, in four other languages and against prompt attacks.
 - **The relapse.** Three layers deeper (10 to 12) the same edit looked as good at full precision, then came partly back in real llama.cpp files: 7.4 points of the hazard score in Q4_0 and 3.5 in Q4_K_M (p = 0.005 or less). Nothing in its full-precision scores shows this. The file-by-file audit does.
+- **The repair.** Training that placement with the model shown as its 4-bit file removes the relapse (41.5% at full precision, 41.0% in Q4_0), at a higher cost in general knowledge. Rounding only the edited weights during training does not.
 - **What didn't work** is listed further down. A control at shallower layers did as well as CircuitKIT's pick, so we cannot credit the attribution score itself, and fine-tuning on the topic brings the knowledge back.
 
 [![Relapse: the forget report for the CircuitKIT layers, the default layers and the deeper layers that relapse](docs/demo.gif)](https://huggingface.co/spaces/itssaharsh/relapse)
@@ -59,6 +60,27 @@ The table's 4-bit columns are bit-exact round trips of the decoder weights, like
 
 **Where it shows up.** We rounded one part of the model at a time to Q4_0 and left the rest at fp16. Rounding only the 70 matrices in the layers in front of the edit brought back 5.5 of the 7.7 points (4.0 of 5.0 in the second run). Rounding only the three edited matrices brought back 1.1 and 0.5, the other matrices inside layers 10 to 12 brought back 1.0 and 2.9, and the layers behind the edit 0.6 and -0.1. The parts do not add up to the whole, so this says where most of the relapse appears, not why. It does rule out the simplest story, a small edit being rounded away: against the Q4_0 rounding error in the same three matrices, the layer-10-to-12 edits are 0.95 to 3.25 times its size, and the CircuitKIT-layer edits that hold are 0.78 to 1.01. The largest of them relapsed least.
 
+**Can it be trained away?** Yes, by training on the file. We retrained the layer-10-to-12 edit with the model shown as its Q4_0 file during training: every decoder weight is replaced by its Q4_0 round trip, in the model being edited and in the frozen reference it is held to, and SafeTune's RMU loop is otherwise unchanged. Same settings as the run that relapses:
+
+<!-- fix:start -->
+| Training at layers 10 to 12 | fp16 (WMDP-bio / MMLU) | Q4_0 | NF4 | WMDP-bio change, fp16 to Q4_0 |
+|---|---|---|---|---|
+| Plain RMU (the run that relapses) | 41.6% / 53.9% | 49.3% / 53.3% | 42.2% / 50.6% | +7.7 |
+| Only the three edited matrices rounded, on half the steps | 32.1% / 51.0% | 38.6% / 51.8% | 30.2% / 50.0% | +6.5 |
+| Whole model seen as its Q4_0 file on half the steps | 37.5% / 51.8% | 40.9% / 51.3% | 37.5% / 50.2% | +3.5 |
+| Half the steps, trained twice as long | 28.7% / 49.6% | 32.0% / 48.3% | 27.8% / 47.3% | +3.3 |
+| Whole model seen as its Q4_0 file on every step | 49.1% / 52.8% | 49.1% / 53.0% | 47.9% / 50.0% | 0.0 |
+| Every step, trained twice as long | 41.5% / 50.6% | 41.0% / 48.9% | 35.3% / 47.2% | -0.5 |
+| Every step, higher learning rate | 26.1% / 44.2% | 27.0% / 43.8% | 26.7% / 42.3% | +0.9 |
+| Plain RMU, second seed | 50.9% / 51.7% | 55.5% / 52.5% | 53.0% / 51.3% | +4.6 |
+<!-- fix:end -->
+
+- Rounding only the three edited matrices did not help: 6.5 points still came back. That fits the test above, which put most of the relapse in the layers in front of the edit.
+- With the whole model shown as its file on half the steps, about half the relapse remained (3.5 points, and 3.3 when trained twice as long).
+- With the file on every step it was gone in all three first-seed runs: the hazard score moved -0.5 to +0.9 points from fp16 to Q4_0.
+
+It is not free. The every-step run that matches the plain run at fp16 (41.5% against 41.6%) needed twice the steps and lost 4.8 points of general knowledge at fp16 and 6.6 in the Q4_0 file, where the plain run lost 1.5 and 2.2. So training on the file makes this placement honest, not better: what it shows at fp16 is what the file does. The CircuitKIT layers are still the recipe to use.
+
 **The sweep.** We ran 12 RMU settings at the default layers and 9 at the CircuitKIT layers. Among the runs that got WMDP-bio to 40% or below, the default layers cost 3.8 to 19.9 points of general knowledge at fp16, 4.9 to 14.1 in Q4_0 and 3.9 to 16.5 in NF4. The CircuitKIT layers cost 0.9 to 2.7, 2.2 to 3.5 and 1.4 to 3.3. The ranges stay apart for cut-offs from 35% to 42%; from 43% they overlap in Q4_0. The first 8 runs at each were not tuned identically: the default layers got learning rates from 2e-5 to 3e-4 and one lower retain weight, the CircuitKIT layers got 1e-4 to 2e-4, one higher retain weight and one stronger steering setting, and runs used 250 or 300 batches. The four budget-matched default runs above are the check on that.
 
 ![Every run: general knowledge kept against hazardous biology still answered, in the 4-bit NF4 file](docs/tradeoff.png)
@@ -86,7 +108,7 @@ These are the steps that led to the recipe above. All runs are in [`results/raw/
 - **SafeTune's RMU defaults barely moved Tiny Aya.** With retain weight 1200, learning rate 5e-5 and 150 batches, WMDP-bio went from 63.3% to 62.5%. A retain weight of 100 with 250 to 300 batches is what worked.
 - **Pushing harder at the default layers forgot everything and broke the model.** At learning rate 1e-4 the score reached 25.4% (guessing), but MMLU fell to 43.5% and kept falling at 4-bit (36.2% in NF4). That is the "Aggressive" column.
 - **SafeTune's NPO was not selective on Tiny Aya.** At learning rate 2e-4 it only reached 58.6%. At 5e-4 it reached 24.7% but took MMLU down to 23.4%, which is guessing too.
-- **Training through a 4-bit quantizer did nothing at the default layers** (38.9% against 38.7%, same MMLU). At the CircuitKIT layers it forgot a little more in both pairs we ran (34.0% against 36.8%, and 32.4% against 33.6%). That is well inside the seed-to-seed spread, so we do not claim an effect. It is the "CircuitKIT + 4-bit aware" column.
+- **Rounding only the edited weights during training did nothing.** At the default layers it changed nothing (38.9% against 38.7%, same MMLU). At layers 10 to 12, where there is a relapse to repair, 6.5 of the 7.7 points still came back; showing the whole model as its file is what worked. At the CircuitKIT layers it forgot a little more in both pairs we ran (34.0% against 36.8%, and 32.4% against 33.6%). That is well inside the seed-to-seed spread, so we do not claim an effect. It is the "CircuitKIT + 4-bit aware" column.
 - **We did not find a relapse where we first looked.** In the 21 runs at the default and CircuitKIT layers no 4-bit file brought the knowledge back, so for those the question became what the file pays for the forgetting. The relapse showed up only when a control moved the edit deeper.
 - **CircuitKIT's attribution did not rank the layer windows.** Layers 3 to 5 have the least MLP attribution of the windows we ran (0.13) and did as well as layers 7 to 9 (0.30). The default layers sit between them (0.23) and cost the most. Layers 10 to 12 score the same as 3 to 5 and are the ones that relapse. Layers 13 to 15 (0.15) forgot the least.
 - **The default layers' cost grew at 4-bit in one seed only.** In the first seed it went from 3.8 points at fp16 to 5.5 in Q4_K_M and 6.4 in NF4. In the second it stayed at 3.7, 3.3 and 3.0. What held in both seeds is the gap between the two recipes.
@@ -98,7 +120,7 @@ These are the steps that led to the recipe above. All runs are in [`results/raw/
 1. Open the [Space](https://huggingface.co/spaces/itssaharsh/relapse). It opens on the CircuitKIT-layer model in the llama.cpp Q4_K_M file: still forgotten, nothing else lost, with the default layers' cost in the same file beside it.
 2. Click **Default layers, same file**: the same forgetting now costs 5.5 points of general knowledge, and the page turns from green to red.
 3. Click **Deeper layers, Q4_0 file**: the stamp says RELAPSED. Click the fp16 row above it to see the same model at full precision, where nothing looks wrong.
-4. Scroll once: the layer windows side by side, the chart of every run, then the prompt and fine-tuning attacks.
+4. Scroll once: the layer windows side by side, the attempts to train the relapse away, the chart of every run, then the prompt and fine-tuning attacks.
 
 Every number on the page comes from [`space/data/results.json`](space/data/results.json), which [`scripts/build_results.py`](scripts/build_results.py) rebuilds from the raw runs.
 
@@ -189,6 +211,7 @@ Limits that change how to read the headline:
 - CircuitKIT's window was one of two that worked, and the other has the least attribution of all, so the results do not show that attribution is the reason. Its faithfulness check ran on only 4 examples. The three control windows have 2 to 4 runs each.
 - We do not know why the default layers cost more, or why rounding the layers in front of the edit undoes part of it at layers 10 to 12 and not at the windows on either side.
 - The deeper-layer model shown on the page and in the headline is the run with the largest rise of the four at that window.
+- The repair was tried at layers 10 to 12 only, costs more general knowledge than plain RMU there, and uses the Q4_0 round trip in training; other 4-bit formats were only scored.
 - Knowledge is measured by multiple choice, not by open generation.
 - The forgetting does not survive fine-tuning.
 - Costs are measured against the original in the same format. Running the same evaluation twice can differ by 1 to 3 questions, which is why a grid score and an AuditKIT score for the same model can differ by 0.1 to 0.2 points.

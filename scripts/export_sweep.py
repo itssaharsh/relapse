@@ -48,8 +48,25 @@ RUNS = {
     "x10_lr4.5e-4_s1": ("changed_ctrl_depth2.pt", "X10-12_lr4.5e-4_s1", "10-12", 4.5e-4, 100, 3, 300),
     "x13_lr8e-4": ("changed_ctrl_depth2.pt", "X13-15_lr8e-4", "13-15", 8e-4, 100, 3, 300),
     "x13_lr2e-3": ("changed_ctrl_depth2.pt", "X13-15_lr2e-3", "13-15", 2e-3, 100, 3, 300),
+    # attempts to train the relapse away at layers 10 to 12 (FILE_VIEW says what training saw)
+    "x10_lr4.5e-4_qa": ("changed_fix_edited.pt", "X10-12_lr4.5e-4_qa", "10-12", 4.5e-4, 100, 3, 300),
+    "x10_lr4.5e-4_file-half": ("changed_fix_file.pt", "X10-12_lr4.5e-4_file", "10-12", 4.5e-4, 100, 3, 300),
+    "x10_lr4.5e-4_file-half_nb600": ("changed_fix_file_nb600.pt", "X10-12_lr4.5e-4_file_nb600", "10-12", 4.5e-4, 100, 3, 600),
+    "x10_lr4.5e-4_file": ("changed_fix_file_p1.pt", "X10-12_lr4.5e-4_file_p1", "10-12", 4.5e-4, 100, 3, 300),
+    "x10_lr4.5e-4_file_nb600": ("changed_fix_file_p1_nb600.pt", "X10-12_lr4.5e-4_file_p1_nb600", "10-12", 4.5e-4, 100, 3, 600),
+    "x10_lr1e-3_file": ("changed_fix_file_p1_lr1e-3.pt", "X10-12_lr1e-3_file_p1", "10-12", 1e-3, 100, 3, 300),
+    "x10_lr4.5e-4_file_s1": ("changed_fix_file_p1_s1.pt", "X10-12_lr4.5e-4_file_p1_s1", "10-12", 4.5e-4, 100, 3, 300),
 }
 PREFIX = {"d": "default-layers_", "c": "circuitkit-layers_"}   # other windows: layers-<first>-<last>_
+
+
+def saw(i: str) -> str:
+    """What the training run saw of 4-bit rounding."""
+    if "_file-half" in i:
+        return "whole model as its Q4_0 file, half the steps"
+    if "_file" in i:
+        return "whole model as its Q4_0 file, every step"
+    return "edited weights, half the steps" if (i.endswith("_qa") or "_qa_" in i) else "no"
 
 
 def fname(i: str) -> str:
@@ -61,20 +78,26 @@ def main(src: str, out: str) -> None:
     os.makedirs(out, exist_ok=True)
     res = json.load(open(os.path.join(ROOT, "space", "data", "results.json")))
     pts = {(p["id"], p["prec"]): p for p in res["frontier"]}
+    for r in res.get("fix", []):
+        pts.setdefault((r["export"], r["prec"]), r)
     cache: dict = {}
     rows = []
     for i, (f, key, layers, lr, alpha, mult, nb) in RUNS.items():
-        path = glob.glob(os.path.join(src, "**", f), recursive=True)[0]
+        hits = glob.glob(os.path.join(src, "**", f), recursive=True)
+        if not hits:
+            print("missing", f, "- skipped", i)
+            continue
+        path = hits[0]
         if path not in cache:
             cache.clear()
             cache[path] = torch.load(path, map_location="cpu")
         tensors = {n: t.to(torch.float16).contiguous() for n, t in cache[path][key].items()}   # fp16: the precision the fp16 rows were scored at
         meta = {"base_model": "CohereLabs/tiny-aya-global", "method": "SafeTune RMU", "layers": layers, "lr": str(lr),
                 "retain_weight": str(alpha), "steering_multiplier": str(mult), "batches": str(nb),
-                "four_bit_aware": str(i.endswith("_qa") or "_qa_" in i), "seed": "1" if i.endswith("_s1") else "0"}
+                "four_bit_aware": str(saw(i) != "no"), "training_saw_4bit": saw(i), "seed": "1" if i.endswith("_s1") else "0"}
         save_file(tensors, os.path.join(out, fname(i)), metadata=meta)
         cell = lambda prec: (f"{100 * pts[(i, prec)]['forget']:.1f}% / {100 * pts[(i, prec)]['retain']:.1f}%" if (i, prec) in pts else "not run")
-        rows.append(f"| `{fname(i)}` | {layers} | {lr:g} | {alpha} | {mult} | {'yes' if meta['four_bit_aware'] == 'True' else 'no'} | {meta['seed']} | {cell('fp16')} | {cell('Q4_0')} | {cell('NF4')} |")
+        rows.append(f"| `{fname(i)}` | {layers} | {lr:g} | {alpha} | {mult} | {saw(i)} | {nb} | {meta['seed']} | {cell('fp16')} | {cell('Q4_0')} | {cell('NF4')} |")
         print("wrote", fname(i))
     base = pts[("original", "fp16")]
     card = f"""---
@@ -86,15 +109,17 @@ datasets: [cais/wmdp, cais/mmlu]
 
 # Relapse: every unlearning run of the sweep
 
-All {len(RUNS)} [SafeTune](https://github.com/Lexsi-Labs/SafeTune) RMU runs behind
+All {len(rows)} [SafeTune](https://github.com/Lexsi-Labs/SafeTune) RMU runs behind
 [Relapse](https://huggingface.co/spaces/itssaharsh/relapse), one small file each. RMU edits only three MLP down-projection
 matrices, so a file holds those three tensors in fp16 (the scores below were computed from the fp32 values they were
 rounded from). The runs put the same edit at five layer windows: SafeTune's default (5 to 7), the one
 [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT)'s attribution ranked first (7 to 9), and three controls (3 to 5,
 10 to 12, 13 to 15).
 
-**The `layers-10-12_*` files are the relapse.** They look unlearned at fp16 and give part of the hazard score back in the
-Q4_0 column. They are here as test cases for an unlearning audit, not as models to use.
+**The plain `layers-10-12_*` files are the relapse.** They look unlearned at fp16 and give part of the hazard score back in the
+Q4_0 column. They are here as test cases for an unlearning audit, not as models to use. The `layers-10-12_*_file*` files are
+the repair attempts: the same edit trained with the whole model shown as its Q4_0 file, on half the steps or on every step.
+On every step, the fp16 and Q4_0 columns agree.
 
 Apply a file to [CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/tiny-aya-global) with
 `python scripts/patch_checkpoint.py --base <tiny-aya-global dir> --delta <file>.safetensors --out <dir>` from
@@ -103,8 +128,8 @@ Apply a file to [CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/t
 Scores are WMDP-bio (forget, lower is better; guessing is 25%) / MMLU (keep, higher is better). The original scores
 {100 * base['forget']:.1f}% / {100 * base['retain']:.1f}% at fp16.
 
-| File | Layers | Learning rate | Retain weight | Steering multiplier | 4-bit aware | Seed (0 first, 1 second) | fp16 | Q4_0 | NF4 |
-|---|---|---|---|---|---|---|---|---|---|
+| File | Layers | Learning rate | Retain weight | Steering multiplier | Training saw 4-bit rounding | Batches | Seed (0 first, 1 second) | fp16 | Q4_0 | NF4 |
+|---|---|---|---|---|---|---|---|---|---|---|
 """ + "\n".join(rows) + """
 
 Four of these are also published as full checkpoints with GGUF files in the

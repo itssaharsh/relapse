@@ -381,6 +381,7 @@
 
     buildLayers();
     buildWindows();
+    buildFix();
     buildRobustness();
     buildFrontier();
 
@@ -476,6 +477,50 @@
       li.setAttribute('aria-label', `Layers ${lr(w)}, ${role(w)}: ${c ? `${f1(c.lo)} to ${f1(c.hi)} points of general knowledge lost` : 'no run reached the cut-off'}; ${s ? `hazard score moves ${sg1(s.mean)} points on average from ${fmtLabel(FP)} to ${fmtLabel(prec)}` : 'not scored in a 4-bit file'}.`);
       box.appendChild(li);
     });
+  }
+
+  /* trying to train the relapse away: each variant's hazard score at fp16 and in the 4-bit file, on one axis */
+  function buildFix() {
+    const F = D.fix;
+    if (!Array.isArray(F) || !F.length) return;
+    const prec = 'Q4_0', ids = Array.from(new Set(F.map((r) => r.id)));
+    const get = (id, p) => F.find((r) => r.id === id && r.prec === p);
+    const rows = ids.map((id) => ({ a: get(id, FP), b: get(id, prec) })).filter((x) => x.a && x.b);
+    const base = rows.find((x) => x.a.kind === 'baseline'), fixes = rows.filter((x) => x.a.kind === 'fix');
+    if (!base || !fixes.length) return;
+    $('fix-wrap').hidden = false;
+    const f1 = (x) => (x * 100).toFixed(1), sg1 = (x) => (Math.abs(x) < 0.0005 ? '' : x < 0 ? '\u2212' : '+') + Math.abs(x * 100).toFixed(1);
+    const full = fixes.filter((x) => x.a.share >= 1), half = fixes.filter((x) => x.a.share > 0 && x.a.share < 1), abl = rows.filter((x) => x.a.kind === 'ablation');
+    const gone = full.filter((x) => Math.abs(x.b.shift) < GREW);
+    const best = fixes.reduce((m, x) => (x.b.shift < m.b.shift ? x : m));
+    const fl = fmtLabel(prec), fpl = fmtLabel(FP);
+    $('fix-head').textContent = gone.length && gone.length === full.length ? `Train on the file you ship and the relapse is gone`
+      : best.b.shift < base.b.shift - GREW ? `Training on the 4-bit file shrinks the relapse from ${f1(base.b.shift)} to ${f1(best.b.shift)} points`
+      : 'Training on the 4-bit file did not shrink the relapse';
+    const rng = (xs) => { const v = xs.map((x) => x.b.shift * 100), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); return lo.toFixed(1) === hi.toFixed(1) ? sg1(lo / 100) : `${sg1(lo / 100)} to ${sg1(hi / 100)}`; };
+    let t = `At layers ${rangeOf((D.families.deeper || {}).layers)} plain RMU gave back ${f1(base.b.shift)} points of the hazard score in the ${fl} file. We retrained it with the model shown as its ${fl} file during training.`;
+    if (abl.length) t += ` Rounding only the three edited matrices changed little (${rng(abl)} points).`;
+    if (half.length) t += ` Showing the whole model as its file on half the steps left ${rng(half)}.`;
+    if (full.length) t += ` On every step: ${rng(full)} (${full.length} run${full.length > 1 ? 's' : ''}${full.some((x) => x.a.seed) ? ', two seeds' : ''}).`;
+    if (gone.length) {
+      const m = gone.reduce((q, x) => (Math.abs(x.a.forget - base.a.forget) < Math.abs(q.a.forget - base.a.forget) ? x : q));
+      t += ` It is not free: the one closest to the plain run at ${fpl} (${f1(m.a.forget)}% against ${f1(base.a.forget)}%) scores ${f1(m.b.forget)}% in the file${m.a.steps > base.a.steps ? `, after ${m.a.steps} steps instead of ${base.a.steps},` : ''} and lost ${f1(m.b.price)} points of general knowledge there. The plain run lost ${f1(base.b.price)}.`;
+    }
+    $('fix-take').textContent = t;
+    const lo = 0.20, hi = Math.max(0.56, Math.ceil(Math.max.apply(null, rows.map((x) => Math.max(x.a.forget, x.b.forget))) * 20) / 20 + 0.02);
+    const X = (v) => (clamp((v - lo) / (hi - lo), 0, 1) * 100).toFixed(2) + '%';
+    const box = $('fixes');
+    rows.forEach((x) => {
+      const d = x.b.shift, tone = d >= RISE - 1e-9 ? 'hot' : d >= GREW ? 'mid' : 'ok';
+      const a = Math.min(x.a.forget, x.b.forget), w = Math.abs(x.b.forget - x.a.forget);
+      const r = el('div', 'fx'); r.setAttribute('role', 'listitem');
+      r.innerHTML = `<span class="fx-l">${esc(x.a.label)}<em>${x.a.steps ? x.a.steps + ' steps \u00b7 ' : ''}${f1(x.b.price)} points of general knowledge lost in the file</em></span>`
+        + `<span class="fx-t" aria-hidden="true"><u style="left:${X(CH)}"></u><s class="${tone}" style="left:${X(a)};width:${(w / (hi - lo) * 100).toFixed(2)}%"></s><i style="left:${X(x.a.forget)}"></i><b class="${tone}" style="left:${X(x.b.forget)}"></b></span>`
+        + `<span class="fx-n ${tone === 'mid' ? '' : tone}">${sg1(d)}<small>${f1(x.a.forget)}% at ${esc(fpl)}, ${f1(x.b.forget)}% in ${esc(fl)}</small></span>`;
+      r.setAttribute('aria-label', `${x.a.label}: ${f1(x.a.forget)} percent at ${fpl}, ${f1(x.b.forget)} percent in ${fl}, ${sg1(d)} points`);
+      box.appendChild(r);
+    });
+    $('fix-key').innerHTML = `<span><i></i>${esc(D.benchmark.forget)} at ${esc(fpl)}</span><span><b></b>in the ${esc(fl)} file</span><span>The bar between them is what came back. The line marks guessing (${pct(CH)}%). All runs: layers ${rangeOf((D.families.deeper || {}).layers)}${rows.some((x) => x.a.seed) ? '' : ', same seed'}.</span>`;
   }
 
   /* only when the run produced a robustness array: pushed harder, per method and attack */

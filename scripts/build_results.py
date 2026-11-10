@@ -76,6 +76,7 @@ def build(rows: list[dict], methods: dict, template: dict) -> dict:
     out["families"] = methods.get("families", {})
     out["recipes"] = load_recipes()
     out["windows"] = load_windows(out["frontier"], out["families"])
+    out["fix"] = load_fix(methods, out["frontier"])
     rob = load_robustness(methods)
     if rob:
         out["robustness"] = rob
@@ -166,6 +167,42 @@ def load_windows(frontier: list[dict], families: dict, cut: float = 0.40) -> lis
                 row["shift"][prec] = {"n": len(d), "mean": round(sum(d) / len(d), 6), "lo": min(d), "hi": max(d)}
         out.append(row)
     return out
+
+
+def load_fix(methods: dict, frontier: list[dict]) -> list[dict]:
+    """Attempts to train the relapse away at the window that relapses: the plain run and each variant, per format,
+    with how far the hazard score moved from that run's fp16 value and what the run cost against the original."""
+    spec = methods.get("fix_runs", {})
+    base = {p["prec"]: p for p in frontier if p["family"] == "original"}
+    rows: dict = {}
+    for f in sorted(glob.glob(os.path.join(RAW, "sweep_*.json"))):
+        for r in json.load(open(f)):
+            if r.get("model") in spec and "wmdp-bio" in r and "mmlu" in r:
+                rows.setdefault(r["model"], {}).setdefault(norm_prec(r.get("prec", "fp16")), r)
+    out = []
+    for name, meta in spec.items():
+        d = rows.get(name, {})
+        if "fp16" not in d:
+            continue
+        for prec in FORMATS:
+            if prec in d:
+                r = d[prec]
+                out.append({"id": meta["id"], "label": meta["label"], "kind": meta["kind"], "share": meta.get("share"), "steps": meta.get("steps"), "seed": meta.get("seed", 0), "export": meta.get("export"), "prec": prec,
+                            "forget": round(r["wmdp-bio"], 6), "retain": round(r["mmlu"], 6),
+                            "shift": round(r["wmdp-bio"] - d["fp16"]["wmdp-bio"], 6),
+                            "price": round(base[prec]["retain"] - r["mmlu"], 6) if prec in base else None})
+    return out
+
+
+def fix_table(rows: list[dict]) -> str:
+    ids = list(dict.fromkeys(r["id"] for r in rows))
+    get = lambda i, prec: next((r for r in rows if r["id"] == i and r["prec"] == prec), None)
+    cell = lambda r: "not run" if r is None else f"{pct(r['forget'])} / {pct(r['retain'])}"
+    back = lambda r: "not run" if r is None else ("0.0" if abs(r["shift"]) < 0.0005 else f"{100 * r['shift']:+.1f}")
+    out = ["| Training at layers 10 to 12 | fp16 (WMDP-bio / MMLU) | Q4_0 | NF4 | WMDP-bio change, fp16 to Q4_0 |", "|---|---|---|---|---|"]
+    for i in ids:
+        out.append(f"| {get(i, 'fp16')['label']} | {cell(get(i, 'fp16'))} | {cell(get(i, 'Q4_0'))} | {cell(get(i, 'NF4'))} | {back(get(i, 'Q4_0'))} |")
+    return "\n".join(out)
 
 
 def windows_table(rows: list[dict]) -> str:
@@ -291,6 +328,8 @@ def main() -> None:
             txt = fill(txt, "recipes", recipes_table(res["recipes"]))
         if res.get("windows"):
             txt = fill(txt, "windows", windows_table(res["windows"]))
+        if res.get("fix"):
+            txt = fill(txt, "fix", fix_table(res["fix"]))
         open(doc, "w").write(txt)
     print(f"wrote {OUT} ({sum(len(v) for v in res['grid'].values())} cells)")
     print(table(res))

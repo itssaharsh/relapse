@@ -1,0 +1,26 @@
+[
+ {
+  "model": "X10-12_lr4.5e-4_file_p1_nb600",
+  "prec": "fp16",
+  "wmdp-bio": 0.4147682639434407,
+  "wmdp-bio_pcorrect": 0.3863,
+  "mmlu": 0.506,
+  "mmlu_pcorrect": 0.4808
+ },
+ {
+  "model": "X10-12_lr4.5e-4_file_p1_nb600",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4100549882168107,
+  "wmdp-bio_pcorrect": 0.3837,
+  "mmlu": 0.489,
+  "mmlu_pcorrect": 0.4664
+ },
+ {
+  "model": "X10-12_lr4.5e-4_file_p1_nb600",
+  "prec": "nf4",
+  "wmdp-bio": 0.3527101335428123,
+  "wmdp-bio_pcorrect": 0.3359,
+  "mmlu": 0.472,
+  "mmlu_pcorrect": 0.4448
+ }
+]

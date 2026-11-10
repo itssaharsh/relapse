@@ -52,6 +52,9 @@ def allowed():
                 for k in ("wmdp-bio", "mmlu", "acc"):
                     if isinstance(r, dict) and isinstance(r.get(k), float):
                         pct |= {round(100 * r[k], 1), float(round(100 * r[k]))}
+    for r in RES.get("fix", []):                                 # attempts to train the relapse away
+        pts |= {round(abs(100 * r["shift"]), 1)} | ({round(abs(100 * r["price"]), 1)} if r.get("price") is not None else set())
+        pct |= {round(100 * r["forget"], 1), round(100 * r["retain"], 1)}
     loc = json.load(open(os.path.join(ROOT, "results", "raw", "locate_relapse.json")))   # one part of the model rounded at a time
     ref = {r["model"]: r["wmdp-bio"] for r in loc if r["part"] == "none"}
     pts |= {round(abs(100 * (r["wmdp-bio"] - ref[r["model"]])), 1) for r in loc}
@@ -71,7 +74,7 @@ def test_every_number_in_the_write_up_is_measured():
     bad = []
     for doc in ("README.md", os.path.join("docs", "ARTICLE.md")):
         text = open(os.path.join(ROOT, doc)).read()
-        text = re.sub(r"<!-- (results|recipes|windows):start -->.*?<!-- (results|recipes|windows):end -->", "", text, flags=re.S)  # generated tables
+        text = re.sub(r"<!-- (results|recipes|windows|fix):start -->.*?<!-- (results|recipes|windows|fix):end -->", "", text, flags=re.S)  # generated tables
         for x in re.findall(r"(?<![\d.$])(\d+(?:\.\d+)?)%", text):
             if float(x) not in pct:
                 bad.append(f"{doc}: {x}%")
@@ -155,7 +158,7 @@ def test_attribution_and_edit_size_claims():
     assert (w["shallower"], w["default"], w["circuit"], w["deeper"], w["deepest"]) == (0.13, 0.23, 0.30, 0.13, 0.15)
     rows = json.load(open(os.path.join(ROOT, "results", "raw", "edit_vs_rounding.json")))
     ids = {p["id"]: (p["family"], p["seed"]) for p in RES["frontier"]}
-    rng = lambda fam: [r["mean"] for r in rows if ids[r["id"]][0] == fam]
+    rng = lambda fam: [r["mean"] for r in rows if ids.get(r["id"], ("",))[0] == fam]
     sent = f"the layer-10-to-12 edits are {min(rng('deeper')):.2f} to {max(rng('deeper')):.2f} times its size, and the CircuitKIT-layer edits that hold are {min(rng('circuit')):.2f} to {max(rng('circuit')):.2f}"
     for doc in DOCS:
         assert sent in read(doc), (doc, sent)
@@ -171,6 +174,19 @@ def test_circuitkit_window_claim():
 
 def test_generated_tables_are_filled_in():
     for doc in DOCS:
-        for name in ("recipes", "windows") + (("results",) if doc == "README.md" else ()):
+        for name in ("recipes", "windows", "fix") + (("results",) if doc == "README.md" else ()):
             body = re.search(rf"<!-- {name}:start -->(.*?)<!-- {name}:end -->", read(doc), flags=re.S).group(1)
             assert body.count("\n|") >= 4, (doc, name)
+
+
+def test_fix_claims():
+    """Rounding the edited matrices alone leaves the relapse; the file on half the steps leaves about half; on every step, none."""
+    q = {r["id"]: r for r in RES["fix"] if r["prec"] == "Q4_0"}
+    full = [r for r in q.values() if r["kind"] == "fix" and r["share"] >= 1]
+    half = [r for r in q.values() if r["kind"] == "fix" and 0 < r["share"] < 1]
+    assert q["plain"]["shift"] > 0.07 and q["edited"]["shift"] > 0.05
+    assert all(0.02 < r["shift"] < 0.05 for r in half) and all(abs(r["shift"]) < 0.02 for r in full) and len(full) >= 3
+    lo, hi = min(r["shift"] for r in full if not r["seed"]), max(r["shift"] for r in full if not r["seed"])
+    sent = f"the hazard score moved {100 * lo:+.1f} to {100 * hi:+.1f} points from fp16 to Q4_0"
+    for doc in DOCS:
+        assert sent in read(doc), (doc, sent)

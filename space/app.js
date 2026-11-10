@@ -366,7 +366,7 @@
         if (a.kind === 'missing') { h += '<td class="f na">not measured</td><td class="na">not measured</td>'; return; }
         const word = a.kind === 'unlearned' ? (a.fk === 'relapsed' ? 'relapsed' : a.fk === 'still' ? 'still gone' : '') : '';
         const tn = a.kind === 'known' ? 'known' : a.fk === 'relapsed' ? 'hot' : 'ok';
-        const pr = a.kind === 'unlearned' && a.price != null ? `<em>price ${(a.price * 100).toFixed(1)}</em>` : '';
+        const pr = a.kind === 'unlearned' && a.price != null ? (a.price < 0.0005 ? '<em>no cost</em>' : `<em>price ${(a.price * 100).toFixed(1)}</em>`) : '';
         const rt = a.kind === 'unlearned' ? (a.grew === true ? 'hot' : a.grew === false ? 'ok' : '') : '';
         h += `<td class="f ${tn}">${pct(a.v)}%${word ? `<em>${word}</em>` : ''}</td><td class="${rt}">${pct(a.r)}%${pr}</td>`;
       });
@@ -400,7 +400,10 @@
     $('l-head').textContent = `Where the biology answers live in ${D.model.name.replace(/ Global$/, '')}`;
     const ax = $('laxis'); [0, 5, 10, 15, 20, 25, 30, 35].filter((i) => i < v.length).forEach((i) => { const s = el('span', '', String(i)); s.style.left = (i / v.length * 100) + '%'; ax.appendChild(s); });
     box.setAttribute('aria-label', `Attribution per layer for ${v.length} layers. Default layers ${lr(dl)}, CircuitKIT layers ${lr(cl)}.`);
-    $('lcap').innerHTML = `<span class="sw d"></span>SafeTune default layers ${lr(dl)} hold ${p1(sum(dl) / tot)}% of the attribution. <span class="sw c"></span>The layers CircuitKIT found, ${lr(cl)}, hold ${p1(sum(cl) / tot)}%. Bar height is the square root of each layer's attribution (${C.n_examples} ${esc(C.task)} examples), so small layers stay visible.`;
+    const f2 = (i) => v[i].toFixed(2);
+    const list = (a) => a.length <= 2 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+    const onlyD = dl.filter((i) => cl.indexOf(i) < 0);
+    $('lcap').innerHTML = `<span class="sw d"></span>SafeTune's default RMU edits layers ${lr(dl)}. <span class="sw c"></span>CircuitKIT's attribution gives the MLPs of layers ${list(cl)} scores of ${list(cl.map(f2))}, against ${list(onlyD.map(f2))} for layers ${list(onlyD)}, so the edit moved to layers ${lr(cl)}. Bar height is the square root of each layer's attribution (${C.n_examples} ${esc(C.task)} examples), so small layers stay visible.`;
   }
 
   function markTable() {

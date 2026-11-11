@@ -1,9 +1,10 @@
 # tests and the results builder (CPU is enough)
-torch>=2.4
-numpy
-gguf>=0.10
-datasets
-huggingface_hub>=1.0
-safetensors
-pytest
 # the Kaggle runs also install: safetune==0.1.13 auditkit==1.1.6 circuitkit==0.2.1 curatorkit bitsandbytes peft sacrebleu
+datasets
+gguf>=0.10
+huggingface_hub>=1.0
+markdown
+numpy
+pytest
+safetensors
+torch>=2.4

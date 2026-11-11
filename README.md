@@ -15,7 +15,7 @@ You want a small model that runs offline on a phone and will not help anyone bui
 
 *67-second walk-through: [docs/demo.mp4](docs/demo.mp4)*
 
-**Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) ([full screen](https://itssaharsh-relapse.static.hf.space/index.html)) · **Write-up:** [the article](https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
+**Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) ([full screen](https://itssaharsh-relapse.static.hf.space/index.html)) · **Write-up:** [on Hugging Face](https://huggingface.co/spaces/itssaharsh/relapse-article) ([same text on GitHub](https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md)) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
 
 ## Results
 

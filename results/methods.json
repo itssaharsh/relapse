@@ -23,7 +23,7 @@
   "repo": "https://github.com/itssaharsh/relapse",
   "models": "https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models",
   "datasets": "https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets",
-  "article": "https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md"
+  "article": "https://huggingface.co/spaces/itssaharsh/relapse-article"
  },
  "frontier_runs": {
   "rmu_lr2e-5": {

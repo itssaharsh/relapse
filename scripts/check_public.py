@@ -10,7 +10,7 @@ MODELS = ["tiny-aya-global-unlearn-bio-default-layers", "tiny-aya-global-unlearn
           "tiny-aya-global-unlearn-bio-circuitkit-4bit-aware", "tiny-aya-global-unlearn-bio-deeper-layers",
           "tiny-aya-global-unlearn-bio-deeper-layers-file-trained"]
 SWEEP = "tiny-aya-global-unlearn-bio-sweep"   # the edited tensors of every run
-N_RUNS = 30
+N_RUNS = 38   # sweep runs plus the repair runs
 DATASETS = ["relapse-runs", "relapse-wmdp-bio-probes"]
 COLLECTIONS = ["relapse-unlearned-tiny-aya-models", "relapse-runs-logs-and-probe-sets"]
 PAGES = [f"https://huggingface.co/spaces/{USER}/relapse", f"https://{USER}-relapse.static.hf.space/index.html",

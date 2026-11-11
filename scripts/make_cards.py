@@ -88,7 +88,9 @@ AuditKIT paired bootstrap on the 1,273 WMDP-bio questions, fp16 against real lla
 """ + "\n".join(lines) + (f"""
 
 In the Q4_K_M file it keeps {pct(RES['grid'][method]['Q4_K_M']['retain'])} on MMLU, {abs(100 * price['delta']):.1f} points below the original in the same file.""" if price else "") + """
-In a second training seed the same recipe shrank the rise without removing it; see the write-up.
+Over two seeds the recipe took the rise out of the Q4_0 file in four of five runs. It repairs the format it trains on:
+in NF4, which training never showed, this model scores """ + pct(RES["grid"][method].get("NF4", {}).get("forget")) + """ and the other runs moved by up to 7 points in either
+direction. See the write-up.
 """
         formats_note = "Q4_K_M and Q4_0 are real llama.cpp files, both in this repository; NF4 is a bit-exact weight round trip. The other formats were not scored for this model."
         limits = """A research artifact for studying unlearning and quantization. Knowledge is measured with multiple-choice questions

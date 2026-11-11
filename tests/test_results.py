@@ -181,18 +181,27 @@ def test_generated_tables_are_filled_in():
 
 def test_fix_claims():
     """Rounding the edited matrices alone leaves the relapse; the file on half the steps leaves about half; on every step
-    none in the first seed, less in the second."""
-    q = {r["id"]: r for r in RES["fix"] if r["prec"] == "Q4_0"}
+    it is gone in the first seed and in four of five runs overall; NF4, which training never showed, is not repaired."""
+    rows = RES["fix"]
+    q = {r["id"]: r for r in rows if r["prec"] == "Q4_0"}
+    nf4 = {r["id"]: r for r in rows if r["prec"] == "NF4"}
     full = [r for r in q.values() if r["kind"] == "fix" and r["share"] >= 1]
     half = [r for r in q.values() if r["kind"] == "fix" and 0 < r["share"] < 1]
-    first, second = [r for r in full if not r["seed"]], [r for r in full if r["seed"] and r["steps"] == 300]
+    first = [r for r in full if not r["seed"]]
+    s300 = next(r for r in full if r["seed"] and r["steps"] == 300)
+    s600 = next(r for r in full if r["seed"] and r["steps"] == 600)
     assert q["plain"]["shift"] > 0.07 and q["edited"]["shift"] > 0.05
     assert all(0.02 < r["shift"] < 0.05 for r in half) and all(abs(r["shift"]) < 0.02 for r in first) and len(first) == 3
+    assert len(full) == 5 and sum(r["shift"] < 0.02 for r in full) == 4            # "four of five runs"
     lo, hi = min(r["shift"] for r in first), max(r["shift"] for r in first)
-    sents = [f"the hazard score moved {100 * lo:+.1f} to {100 * hi:+.1f} points from fp16 to Q4_0",
-             f"In a second seed it shrank from {100 * q['plain_s1']['shift']:.1f} points to {100 * second[0]['shift']:.1f}"]
+    n = [nf4[r["id"]]["shift"] for r in full]
     real = RES["grid"]["deeper_file"]
-    sents.append(f"scores {100 * real['Q4_0']['forget']:.1f}% in Q4_0 and {100 * real['Q4_K_M']['forget']:.1f}% in Q4_K_M, against {100 * real['fp16']['forget']:.1f}% at fp16")
+    sents = [f"the hazard score moved {100 * lo:+.1f} to {100 * hi:+.1f} points from fp16 to Q4_0",
+             f"In a second seed it shrank from {100 * q['plain_s1']['shift']:.1f} points to {100 * s300['shift']:.1f}",
+             f"a second-seed run trained twice as long moved {100 * s600['shift']:+.1f}",
+             f"the five every-step runs moved between {100 * min(n):+.1f} and {100 * max(n):+.1f} points from fp16",
+             f"The two plain runs moved {100 * nf4['plain']['shift']:.1f} and {100 * nf4['plain_s1']['shift']:.1f}",
+             f"scores {100 * real['Q4_0']['forget']:.1f}% in Q4_0 and {100 * real['Q4_K_M']['forget']:.1f}% in Q4_K_M, against {100 * real['fp16']['forget']:.1f}% at fp16"]
     for doc in DOCS:
         for sent in sents:
             assert sent in read(doc), (doc, sent)

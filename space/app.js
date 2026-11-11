@@ -491,7 +491,7 @@
     $('fix-wrap').hidden = false;
     const f1 = (x) => (x * 100).toFixed(1), sg1 = (x) => (Math.abs(x) < 0.0005 ? '' : x < 0 ? '\u2212' : '+') + Math.abs(x * 100).toFixed(1);
     const full = fixes.filter((x) => x.a.share >= 1), half = fixes.filter((x) => x.a.share > 0 && x.a.share < 1), abl = rows.filter((x) => x.a.kind === 'ablation');
-    const gone = full.filter((x) => Math.abs(x.b.shift) < GREW);
+    const gone = full.filter((x) => x.b.shift < GREW);          // a relapse is knowledge coming back; a file that forgets more is not one
     const best = fixes.reduce((m, x) => (x.b.shift < m.b.shift ? x : m));
     const fl = fmtLabel(prec), fpl = fmtLabel(FP);
     $('fix-head').textContent = gone.length && gone.length === full.length ? `Train on the file you ship and the relapse is gone`
@@ -506,10 +506,15 @@
     if (full0.length) t += ` On every step: ${rng(full0)} (${full0.length} run${full0.length > 1 ? 's' : ''}).`;
     fullS.forEach((x) => {
       const b2 = rows.find((y) => y.a.kind === 'baseline2' && y.a.seed === x.a.seed);
-      t += ` In a second seed${x.a.steps > base.a.steps ? `, ${x.a.steps} steps` : ''}: ${sg1(x.b.shift)}${b2 ? `, where plain RMU gave back ${f1(b2.b.shift)}` : ''}.`;
+      t += ` In a second seed${x.a.steps > base.a.steps ? `, ${x.a.steps} steps` : ''}: ${sg1(x.b.shift)}${b2 && b2.a.steps === x.a.steps ? `, where plain RMU gave back ${f1(b2.b.shift)}` : ''}.`;
     });
     if (gone.length) {
       const m = gone.reduce((q, x) => (Math.abs(x.a.forget - base.a.forget) < Math.abs(q.a.forget - base.a.forget) ? x : q));
+      const other = D.formats.map((f) => f.id).filter((p) => p !== FP && p !== prec && full.every((x) => get(x.a.id, p)))[0];
+      if (other) {
+        const v = full.map((x) => get(x.a.id, other).shift * 100), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v);
+        if (hi >= GREW * 100 || lo <= -GREW * 100) t += ` It repairs the format it trained on: in ${fmtLabel(other)}, which training never showed, the same runs moved ${sg1(lo / 100)} to ${sg1(hi / 100)} points.`;
+      }
       t += ` It is not free: the one closest to the plain run at ${fpl} (${f1(m.a.forget)}% against ${f1(base.a.forget)}%) scores ${f1(m.b.forget)}% in the file${m.a.steps > base.a.steps ? `, after ${m.a.steps} steps instead of ${base.a.steps},` : ''} and lost ${f1(m.b.price)} points of general knowledge there. The plain run lost ${f1(base.b.price)}.`;
     }
     $('fix-take').textContent = t;

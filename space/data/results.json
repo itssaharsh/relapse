@@ -4364,6 +4364,48 @@
    "retain": 0.516,
    "shift": 0.023566,
    "price": 0.011
+  },
+  {
+   "id": "file_all_2x_s1",
+   "label": "Every step, twice as long, second seed",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 600,
+   "seed": 1,
+   "export": "x10_lr4.5e-4_file_nb600_s1",
+   "prec": "fp16",
+   "forget": 0.325216,
+   "retain": 0.451,
+   "shift": 0.0,
+   "price": 0.103
+  },
+  {
+   "id": "file_all_2x_s1",
+   "label": "Every step, twice as long, second seed",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 600,
+   "seed": 1,
+   "export": "x10_lr4.5e-4_file_nb600_s1",
+   "prec": "Q4_0",
+   "forget": 0.300079,
+   "retain": 0.413,
+   "shift": -0.025137,
+   "price": 0.142
+  },
+  {
+   "id": "file_all_2x_s1",
+   "label": "Every step, twice as long, second seed",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 600,
+   "seed": 1,
+   "export": "x10_lr4.5e-4_file_nb600_s1",
+   "prec": "NF4",
+   "forget": 0.396701,
+   "retain": 0.46,
+   "shift": 0.071485,
+   "price": 0.067
   }
  ]
 }

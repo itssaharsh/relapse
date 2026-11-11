@@ -106,6 +106,23 @@ Real files agree, for the one model we built them for (first seed, 600 steps). A
 
 It is not free. The every-step run that matches the plain run at fp16 (41.5% against 41.6%) needed twice the steps and lost 4.8 points of general knowledge at fp16 and 6.0 in its real Q4_K_M file, where the plain run lost 1.5 and 2.3. We did not run plain RMU for 600 steps, so part of that cost may be the longer training. The longer second-seed run forgot more (32.5% at fp16) and lost 10.3 points. So training on the file makes this placement honest, not better: what it shows at fp16 is what the file does. The CircuitKIT layers are still the recipe to use.
 
+**Two more models.** We ran the three placements on Tiny Aya Fire and Tiny Aya Earth with the settings from Global, unchanged and untuned, one run each:
+
+<!-- variants:start -->
+| Model | Placement | fp16 (WMDP-bio / MMLU) | Q4_0 | NF4 | MMLU points lost: fp16 / Q4_0 / NF4 |
+|---|---|---|---|---|---|
+| Tiny Aya Earth | Original | 63.7% / 55.7% | 62.9% / 55.7% | 62.1% / 53.5% |  |
+| Tiny Aya Earth | Default layers (5 to 7) | 36.4% / 51.9% | 35.6% / 49.7% | 34.6% / 49.4% | 3.8 / 6.0 / 4.1 |
+| Tiny Aya Earth | CircuitKIT layers (7 to 9) | 36.5% / 56.0% | 35.3% / 55.0% | 36.8% / 51.9% | -0.3 / 0.7 / 1.6 |
+| Tiny Aya Earth | Deeper layers (10 to 12) | 37.2% / 52.9% | 36.8% / 51.9% | 46.1% / 50.8% | 2.8 / 3.8 / 2.7 |
+| Tiny Aya Fire | Original | 64.3% / 57.4% | 63.2% / 59.1% | 62.7% / 56.1% |  |
+| Tiny Aya Fire | Default layers (5 to 7) | 37.2% / 53.4% | 33.7% / 49.0% | 33.5% / 51.6% | 4.0 / 10.1 / 4.5 |
+| Tiny Aya Fire | CircuitKIT layers (7 to 9) | 34.3% / 56.2% | 32.9% / 54.2% | 34.2% / 55.2% | 1.2 / 4.9 / 0.9 |
+| Tiny Aya Fire | Deeper layers (10 to 12) | 49.5% / 54.9% | 50.4% / 56.6% | 51.6% / 54.5% | 2.5 / 2.5 / 1.6 |
+<!-- variants:end -->
+
+The recipe carried over. On both models the CircuitKIT layers forgot as much as the default layers and lost less general knowledge in all three formats (Earth: -0.3 to 1.6 points against 3.8 to 6.0; Fire: 0.9 to 4.9 against 4.0 to 10.1). The relapse did not carry over in the same form. At layers 10 to 12 neither model's Q4_0 score rose by more than 0.9 points, but Earth's NF4 score rose 9.0 points (37.2% to 46.1%), and Fire forgot little there (49.5%). So which placement gives knowledge back, and in which format, depends on the model. The file-by-file check is what finds it.
+
 **Every run we made.** We ran 12 RMU settings at the default layers and 9 at the CircuitKIT layers. Among the runs that got WMDP-bio to 40% or below, the default layers cost 3.8 to 19.9 points of general knowledge at fp16, 4.9 to 14.1 in Q4_0 and 3.9 to 16.5 in NF4. The CircuitKIT layers cost 0.9 to 2.7, 2.2 to 3.5 and 1.4 to 3.3. The ranges stay apart for cut-offs from 35% to 42%; from 43% they overlap in Q4_0. The first 8 runs at each were not tuned identically: the default layers got learning rates from 2e-5 to 3e-4 and one lower retain weight, the CircuitKIT layers got 1e-4 to 2e-4, one higher retain weight and one stronger steering setting, and runs used 250 or 300 batches. The four budget-matched default runs are the check on that.
 
 ![Every run: general knowledge kept against hazardous biology still answered, in the 4-bit NF4 file](https://raw.githubusercontent.com/itssaharsh/relapse/main/docs/tradeoff.png)
@@ -173,7 +190,7 @@ Prices were read on 2026-11-09. A served T4 costs roughly what the cheapest clos
 
 ## Limits
 
-- One model. The two headline recipes have two seeds; the rest of the sweep has one, and all first-seed runs share the same data order.
+- Most of the work is on one model, Tiny Aya Global; two sibling models have one untuned run per placement. The two headline recipes have two seeds; the rest of the sweep has one, and all first-seed runs share the same data order.
 - Settings were chosen on the same WMDP-bio and MMLU questions that are reported. The second seed is the only check outside that selection.
 - CircuitKIT's window was one of two that worked; a shallower control with less attribution did as well. The three control windows have 2 to 4 runs each.
 - We do not know why the default layers cost more, or why rounding the layers in front of the edit undoes part of it at layers 10 to 12 and not at the windows on either side.
@@ -202,3 +219,4 @@ The Kaggle scripts that produced the runs, the unlearned models (safetensors and
 - 2026-11-10, after an independent review: the headline is now the paired comparison between the two recipes, not the one file format with the lowest cost; the CircuitKIT attribution is described by what it shows (the best three-layer window, not 2 to 4 times more signal); the fine-tuning result says which models came back further; the limits name the selection on the reported questions.
 - 2026-11-10, controls: four budget-matched runs at the default layers, the same edit at layers 3 to 5, 10 to 12 and 13 to 15, real llama.cpp files with AuditKIT tests for the deeper models, and a test that rounds one part of the model at a time. This added the relapse and where it comes from, the finding that a shallower window does as well as CircuitKIT's, and the unrelated-questions control for fine-tuning. The earlier statement that no file brought the knowledge back now applies outside layers 10 to 12 only. A second independent review then tightened the wording: what "worked" means, which tests ran on which models, and what the one-part-at-a-time test does and does not show.
 - 2026-11-10, the repair: eight more runs at layers 10 to 12, seven of which train with the model seen as its Q4_0 file. On every step the relapse is gone in four of five runs over two seeds (checked in real llama.cpp files for one), but not in NF4, a format training never showed; on half the steps about half of it remains; rounding only the edited weights leaves it.
+- 2026-11-11, two more models: the three placements on Tiny Aya Fire and Earth, untuned. The CircuitKIT layers cost less than the default on both; the relapse at layers 10 to 12 shows up differently (in NF4 on Earth, not in Q4_0).

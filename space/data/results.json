@@ -4437,5 +4437,223 @@
    "shift": 0.071485,
    "price": 0.067
   }
+ ],
+ "variants": [
+  {
+   "variant": "earth",
+   "role": "original",
+   "prec": "fp16",
+   "forget": 0.637078,
+   "retain": 0.557,
+   "price": 0.0,
+   "shift": 0.0
+  },
+  {
+   "variant": "earth",
+   "role": "default",
+   "prec": "fp16",
+   "forget": 0.363708,
+   "retain": 0.519,
+   "price": 0.038,
+   "shift": 0.0
+  },
+  {
+   "variant": "earth",
+   "role": "circuit",
+   "prec": "fp16",
+   "forget": 0.365279,
+   "retain": 0.56,
+   "price": -0.003,
+   "shift": 0.0
+  },
+  {
+   "variant": "earth",
+   "role": "deeper",
+   "prec": "fp16",
+   "forget": 0.371563,
+   "retain": 0.529,
+   "price": 0.028,
+   "shift": 0.0
+  },
+  {
+   "variant": "earth",
+   "role": "original",
+   "prec": "Q4_0",
+   "forget": 0.629222,
+   "retain": 0.557,
+   "price": 0.0,
+   "shift": -0.007855
+  },
+  {
+   "variant": "earth",
+   "role": "default",
+   "prec": "Q4_0",
+   "forget": 0.355852,
+   "retain": 0.497,
+   "price": 0.06,
+   "shift": -0.007855
+  },
+  {
+   "variant": "earth",
+   "role": "circuit",
+   "prec": "Q4_0",
+   "forget": 0.353496,
+   "retain": 0.55,
+   "price": 0.007,
+   "shift": -0.011783
+  },
+  {
+   "variant": "earth",
+   "role": "deeper",
+   "prec": "Q4_0",
+   "forget": 0.367636,
+   "retain": 0.519,
+   "price": 0.038,
+   "shift": -0.003928
+  },
+  {
+   "variant": "earth",
+   "role": "original",
+   "prec": "NF4",
+   "forget": 0.620581,
+   "retain": 0.535,
+   "price": 0.0,
+   "shift": -0.016496
+  },
+  {
+   "variant": "earth",
+   "role": "default",
+   "prec": "NF4",
+   "forget": 0.346426,
+   "retain": 0.494,
+   "price": 0.041,
+   "shift": -0.017282
+  },
+  {
+   "variant": "earth",
+   "role": "circuit",
+   "prec": "NF4",
+   "forget": 0.368421,
+   "retain": 0.519,
+   "price": 0.016,
+   "shift": 0.003142
+  },
+  {
+   "variant": "earth",
+   "role": "deeper",
+   "prec": "NF4",
+   "forget": 0.461115,
+   "retain": 0.508,
+   "price": 0.027,
+   "shift": 0.089552
+  },
+  {
+   "variant": "fire",
+   "role": "original",
+   "prec": "fp16",
+   "forget": 0.642577,
+   "retain": 0.574,
+   "price": 0.0,
+   "shift": 0.0
+  },
+  {
+   "variant": "fire",
+   "role": "default",
+   "prec": "fp16",
+   "forget": 0.372349,
+   "retain": 0.534,
+   "price": 0.04,
+   "shift": 0.0
+  },
+  {
+   "variant": "fire",
+   "role": "circuit",
+   "prec": "fp16",
+   "forget": 0.343284,
+   "retain": 0.562,
+   "price": 0.012,
+   "shift": 0.0
+  },
+  {
+   "variant": "fire",
+   "role": "deeper",
+   "prec": "fp16",
+   "forget": 0.494894,
+   "retain": 0.549,
+   "price": 0.025,
+   "shift": 0.0
+  },
+  {
+   "variant": "fire",
+   "role": "original",
+   "prec": "Q4_0",
+   "forget": 0.632364,
+   "retain": 0.591,
+   "price": 0.0,
+   "shift": -0.010212
+  },
+  {
+   "variant": "fire",
+   "role": "default",
+   "prec": "Q4_0",
+   "forget": 0.336999,
+   "retain": 0.49,
+   "price": 0.101,
+   "shift": -0.03535
+  },
+  {
+   "variant": "fire",
+   "role": "circuit",
+   "prec": "Q4_0",
+   "forget": 0.329144,
+   "retain": 0.542,
+   "price": 0.049,
+   "shift": -0.01414
+  },
+  {
+   "variant": "fire",
+   "role": "deeper",
+   "prec": "Q4_0",
+   "forget": 0.503535,
+   "retain": 0.566,
+   "price": 0.025,
+   "shift": 0.008641
+  },
+  {
+   "variant": "fire",
+   "role": "original",
+   "prec": "NF4",
+   "forget": 0.626866,
+   "retain": 0.561,
+   "price": 0.0,
+   "shift": -0.015711
+  },
+  {
+   "variant": "fire",
+   "role": "default",
+   "prec": "NF4",
+   "forget": 0.335428,
+   "retain": 0.516,
+   "price": 0.045,
+   "shift": -0.036921
+  },
+  {
+   "variant": "fire",
+   "role": "circuit",
+   "prec": "NF4",
+   "forget": 0.341712,
+   "retain": 0.552,
+   "price": 0.009,
+   "shift": -0.001571
+  },
+  {
+   "variant": "fire",
+   "role": "deeper",
+   "prec": "NF4",
+   "forget": 0.516104,
+   "retain": 0.545,
+   "price": 0.016,
+   "shift": 0.02121
+  }
  ]
 }

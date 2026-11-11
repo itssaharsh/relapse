@@ -382,6 +382,7 @@
     buildLayers();
     buildWindows();
     buildFix();
+    buildVariants();
     buildRobustness();
     buildFrontier();
 
@@ -477,6 +478,31 @@
       li.setAttribute('aria-label', `Layers ${lr(w)}, ${role(w)}: ${c ? `${f1(c.lo)} to ${f1(c.hi)} points of general knowledge lost` : 'no run reached the cut-off'}; ${s ? `hazard score moves ${sg1(s.mean)} points on average from ${fmtLabel(FP)} to ${fmtLabel(prec)}` : 'not scored in a 4-bit file'}.`);
       box.appendChild(li);
     });
+  }
+
+  /* the same placements on sibling models, settings unchanged */
+  function buildVariants() {
+    const V = D.variants;
+    if (!Array.isArray(V) || !V.length) return;
+    $('var-wrap').hidden = false;
+    const vs = Array.from(new Set(V.map((r) => r.variant))), precs = D.formats.map((f) => f.id).filter((p) => V.some((r) => r.prec === p));
+    const names = { original: 'Original', default: 'Default layers', circuit: 'CircuitKIT layers', deeper: 'Deeper layers' };
+    const get = (v, role, p) => V.find((r) => r.variant === v && r.role === role && r.prec === p);
+    const cap = (x) => x.charAt(0).toUpperCase() + x.slice(1);
+    const wins = vs.filter((v) => precs.every((p) => get(v, 'circuit', p).price < get(v, 'default', p).price));
+    $('var-head').textContent = wins.length === vs.length ? `The recipe carried over to ${vs.length} more models, untuned` : `The same three placements on ${vs.length} more models`;
+    $('var-sub').textContent = `${vs.map((v) => D.model.name.replace(/ Global$/, '') + ' ' + cap(v)).join(' and ')}, with the settings from ${D.model.name}, one run each. Each cell: ${D.benchmark.forget} / ${D.benchmark.retain}, and under it the points of general knowledge lost against that model's original in the same format.`;
+    let h = '<thead><tr><th class="rh" scope="col">Model and placement</th>' + precs.map((p) => `<th scope="col">${esc(fmtLabel(p))}</th>`).join('') + '</tr></thead><tbody>';
+    vs.forEach((v) => Object.keys(names).forEach((role) => {
+      h += `<tr><th scope="row" class="rh">${esc(cap(v))}<span>${names[role]}</span></th>`;
+      precs.forEach((p) => {
+        const r = get(v, role, p); if (!r) { h += '<td class="na">not measured</td>'; return; }
+        const back = role !== 'original' && r.shift >= RISE - 1e-9, paid = role !== 'original' && r.price >= PAID - 1e-9;
+        h += `<td class="${back || paid ? 'hot' : ''}">${pct(r.forget)}% / ${pct(r.retain)}%${role === 'original' ? '' : `<em>${back ? `${(r.shift * 100).toFixed(1)} came back` : `price ${(r.price * 100).toFixed(1)}`}</em>`}</td>`;
+      });
+      h += '</tr>';
+    }));
+    $('var-grid').innerHTML = h + '</tbody>';
   }
 
   /* trying to train the relapse away: each variant's hazard score at fp16 and in the 4-bit file, on one axis */

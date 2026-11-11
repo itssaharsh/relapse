@@ -77,6 +77,7 @@ def build(rows: list[dict], methods: dict, template: dict) -> dict:
     out["recipes"] = load_recipes()
     out["windows"] = load_windows(out["frontier"], out["families"])
     out["fix"] = load_fix(methods, out["frontier"])
+    out["variants"] = load_variants()
     rob = load_robustness(methods)
     if rob:
         out["robustness"] = rob
@@ -192,6 +193,35 @@ def load_fix(methods: dict, frontier: list[dict]) -> list[dict]:
                             "shift": round(r["wmdp-bio"] - d["fp16"]["wmdp-bio"], 6),
                             "price": round(base[prec]["retain"] - r["mmlu"], 6) if prec in base else None})
     return out
+
+
+def load_variants() -> list[dict]:
+    """The same three placements on other Tiny Aya variants (results/raw/variant_<name>.json), settings unchanged from Global."""
+    roles = {"D5-7": "default", "C7-9": "circuit", "X10-12": "deeper"}
+    out = []
+    for f in sorted(glob.glob(os.path.join(RAW, "variant_*.json"))):
+        v = os.path.basename(f)[len("variant_"):-len(".json")]
+        rows = json.load(open(f))
+        base = {norm_prec(r["prec"]): r for r in rows if r["model"] == "base"}
+        fp = {r["model"]: r for r in rows if r["prec"] == "fp16"}
+        for r in rows:
+            prec = norm_prec(r["prec"])
+            role = "original" if r["model"] == "base" else next(k for n, k in roles.items() if n in r["model"])
+            out.append({"variant": v, "role": role, "prec": prec, "forget": round(r["wmdp-bio"], 6), "retain": round(r["mmlu"], 6),
+                        "price": round(base[prec]["mmlu"] - r["mmlu"], 6), "shift": round(r["wmdp-bio"] - fp[r["model"]]["wmdp-bio"], 6)})
+    return out
+
+
+def variants_table(rows: list[dict]) -> str:
+    names = {"original": "Original", "default": "Default layers (5 to 7)", "circuit": "CircuitKIT layers (7 to 9)", "deeper": "Deeper layers (10 to 12)"}
+    out = ["| Model | Placement | fp16 (WMDP-bio / MMLU) | Q4_0 | NF4 | MMLU points lost: fp16 / Q4_0 / NF4 |", "|---|---|---|---|---|---|"]
+    for v in dict.fromkeys(r["variant"] for r in rows):
+        for role in names:
+            g = {r["prec"]: r for r in rows if r["variant"] == v and r["role"] == role}
+            cell = lambda p: f"{pct(g[p]['forget'])} / {pct(g[p]['retain'])}"
+            cost = "" if role == "original" else " / ".join(f"{100 * g[p]['price']:.1f}" for p in ("fp16", "Q4_0", "NF4"))
+            out.append(f"| Tiny Aya {v.capitalize()} | {names[role]} | {cell('fp16')} | {cell('Q4_0')} | {cell('NF4')} | {cost} |")
+    return "\n".join(out)
 
 
 def fix_table(rows: list[dict]) -> str:
@@ -331,6 +361,8 @@ def main() -> None:
             txt = fill(txt, "windows", windows_table(res["windows"]))
         if res.get("fix"):
             txt = fill(txt, "fix", fix_table(res["fix"]))
+        if res.get("variants"):
+            txt = fill(txt, "variants", variants_table(res["variants"]))
         open(doc, "w").write(txt)
     print(f"wrote {OUT} ({sum(len(v) for v in res['grid'].values())} cells)")
     print(table(res))

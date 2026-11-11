@@ -55,6 +55,8 @@ def allowed():
     for r in RES.get("fix", []):                                 # attempts to train the relapse away
         pts |= {round(abs(100 * r["shift"]), 1)} | ({round(abs(100 * r["price"]), 1)} if r.get("price") is not None else set())
         pct |= {round(100 * r["forget"], 1), round(100 * r["retain"], 1)}
+    for r in RES.get("variants", []):                            # the same placements on sibling models
+        pts |= {round(abs(100 * r["price"]), 1), round(abs(100 * r["shift"]), 1)}
     loc = json.load(open(os.path.join(ROOT, "results", "raw", "locate_relapse.json")))   # one part of the model rounded at a time
     ref = {r["model"]: r["wmdp-bio"] for r in loc if r["part"] == "none"}
     pts |= {round(abs(100 * (r["wmdp-bio"] - ref[r["model"]])), 1) for r in loc}
@@ -74,7 +76,7 @@ def test_every_number_in_the_write_up_is_measured():
     bad = []
     for doc in ("README.md", os.path.join("docs", "ARTICLE.md")):
         text = open(os.path.join(ROOT, doc)).read()
-        text = re.sub(r"<!-- (results|recipes|windows|fix):start -->.*?<!-- (results|recipes|windows|fix):end -->", "", text, flags=re.S)  # generated tables
+        text = re.sub(r"<!-- (results|recipes|windows|fix|variants):start -->.*?<!-- (results|recipes|windows|fix|variants):end -->", "", text, flags=re.S)  # generated tables
         for x in re.findall(r"(?<![\d.$])(\d+(?:\.\d+)?)%", text):
             if float(x) not in pct:
                 bad.append(f"{doc}: {x}%")
@@ -174,7 +176,7 @@ def test_circuitkit_window_claim():
 
 def test_generated_tables_are_filled_in():
     for doc in DOCS:
-        for name in ("recipes", "windows", "fix") + (("results",) if doc == "README.md" else ()):
+        for name in ("recipes", "windows", "fix", "variants") + (("results",) if doc == "README.md" else ()):
             body = re.search(rf"<!-- {name}:start -->(.*?)<!-- {name}:end -->", read(doc), flags=re.S).group(1)
             assert body.count("\n|") >= 4, (doc, name)
 
@@ -205,3 +207,16 @@ def test_fix_claims():
     for doc in DOCS:
         for sent in sents:
             assert sent in read(doc), (doc, sent)
+
+
+def test_variant_claims():
+    """On both sibling models the CircuitKIT layers cost less than the default layers in every format scored."""
+    V = RES["variants"]
+    get = lambda v, role: {r["prec"]: r for r in V if r["variant"] == v and r["role"] == role}
+    for v in ("earth", "fire"):
+        d, c, x = get(v, "default"), get(v, "circuit"), get(v, "deeper")
+        assert all(c[p]["price"] < d[p]["price"] for p in d) and abs(c["fp16"]["forget"] - d["fp16"]["forget"]) < 0.035
+        assert x["Q4_0"]["shift"] < 0.0095
+        rng = lambda g: f"{100 * min(r['price'] for r in g.values()):.1f} to {100 * max(r['price'] for r in g.values()):.1f}"
+        for doc in DOCS:
+            assert f"{v.capitalize()}: {rng(c)}" in read(doc) and rng(d) in read(doc), (doc, v, rng(c), rng(d))

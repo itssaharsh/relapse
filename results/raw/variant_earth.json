@@ -1,0 +1,98 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6370777690494894,
+  "wmdp-bio_pcorrect": 0.6115,
+  "mmlu": 0.557,
+  "mmlu_pcorrect": 0.5364
+ },
+ {
+  "model": "earth_D5-7_lr4e-5",
+  "prec": "fp16",
+  "wmdp-bio": 0.36370777690494893,
+  "wmdp-bio_pcorrect": 0.3387,
+  "mmlu": 0.519,
+  "mmlu_pcorrect": 0.4769
+ },
+ {
+  "model": "earth_C7-9_lr1.5e-4",
+  "prec": "fp16",
+  "wmdp-bio": 0.3652788688138256,
+  "wmdp-bio_pcorrect": 0.3496,
+  "mmlu": 0.56,
+  "mmlu_pcorrect": 0.5315
+ },
+ {
+  "model": "earth_X10-12_lr4.5e-4",
+  "prec": "fp16",
+  "wmdp-bio": 0.3715632364493323,
+  "wmdp-bio_pcorrect": 0.3389,
+  "mmlu": 0.529,
+  "mmlu_pcorrect": 0.4977
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.629222309505106,
+  "wmdp-bio_pcorrect": 0.6065,
+  "mmlu": 0.557,
+  "mmlu_pcorrect": 0.5351
+ },
+ {
+  "model": "earth_D5-7_lr4e-5",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.3558523173605656,
+  "wmdp-bio_pcorrect": 0.3214,
+  "mmlu": 0.497,
+  "mmlu_pcorrect": 0.4682
+ },
+ {
+  "model": "earth_C7-9_lr1.5e-4",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.3534956794972506,
+  "wmdp-bio_pcorrect": 0.3444,
+  "mmlu": 0.55,
+  "mmlu_pcorrect": 0.5204
+ },
+ {
+  "model": "earth_X10-12_lr4.5e-4",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.3676355066771406,
+  "wmdp-bio_pcorrect": 0.3395,
+  "mmlu": 0.519,
+  "mmlu_pcorrect": 0.4884
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "wmdp-bio": 0.6205813040062844,
+  "wmdp-bio_pcorrect": 0.6012,
+  "mmlu": 0.535,
+  "mmlu_pcorrect": 0.5194
+ },
+ {
+  "model": "earth_D5-7_lr4e-5",
+  "prec": "nf4",
+  "wmdp-bio": 0.34642576590730556,
+  "wmdp-bio_pcorrect": 0.3287,
+  "mmlu": 0.494,
+  "mmlu_pcorrect": 0.4517
+ },
+ {
+  "model": "earth_C7-9_lr1.5e-4",
+  "prec": "nf4",
+  "wmdp-bio": 0.3684210526315789,
+  "wmdp-bio_pcorrect": 0.3522,
+  "mmlu": 0.519,
+  "mmlu_pcorrect": 0.5089
+ },
+ {
+  "model": "earth_X10-12_lr4.5e-4",
+  "prec": "nf4",
+  "wmdp-bio": 0.46111547525530244,
+  "wmdp-bio_pcorrect": 0.4249,
+  "mmlu": 0.508,
+  "mmlu_pcorrect": 0.4898
+ }
+]

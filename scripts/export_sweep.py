@@ -119,7 +119,7 @@ rounded from). The runs put the same edit at five layer windows: SafeTune's defa
 
 **The plain `layers-10-12_*` files are the relapse.** They look unlearned at fp16 and give part of the hazard score back in the
 Q4_0 column. They are here as test cases for an unlearning audit, not as models to use. The `layers-10-12_*_file*` files are
-the repair attempts: the same edit trained with the whole model shown as its Q4_0 file, on half the steps or on every step.
+the repair attempts: the same edit trained with the whole model seen as its Q4_0 file (weights rounded to 4 bits during training), on half the steps or on every step.
 On every step, the fp16 and Q4_0 columns agree in four of five runs; the NF4 column, a format training never showed, does not.
 
 Apply a file to [CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/tiny-aya-global) with

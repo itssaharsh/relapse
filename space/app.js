@@ -499,9 +499,9 @@
       : best.b.shift < base.b.shift - GREW ? `Training on the 4-bit file shrinks the relapse from ${f1(base.b.shift)} to ${f1(best.b.shift)} points`
       : 'Training on the 4-bit file did not shrink the relapse';
     const rng = (xs) => { const v = xs.map((x) => x.b.shift * 100), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); return lo.toFixed(1) === hi.toFixed(1) ? sg1(lo / 100) : `${sg1(lo / 100)} to ${sg1(hi / 100)}`; };
-    let t = `At layers ${rangeOf((D.families.deeper || {}).layers)} plain RMU gave back ${f1(base.b.shift)} points of the hazard score in the ${fl} file. We retrained it with the model shown as its ${fl} file during training.`;
+    let t = `At layers ${rangeOf((D.families.deeper || {}).layers)} plain RMU gave back ${f1(base.b.shift)} points of the hazard score in the ${fl} file. We retrained it with the model seen as its ${fl} file during training: weights rounded to 4 bits, so the edit is learned against what the downloaded file computes.`;
     if (abl.length) t += ` Rounding only the three edited matrices changed little (${rng(abl)} points).`;
-    if (half.length) t += ` Showing the whole model as its file on half the steps left ${rng(half)}.`;
+    if (half.length) t += ` With the whole model seen as its file on half the steps: ${rng(half)}.`;
     const full0 = full.filter((x) => !x.a.seed), fullS = full.filter((x) => x.a.seed);
     if (full0.length) t += ` On every step: ${rng(full0)} (${full0.length} run${full0.length > 1 ? 's' : ''}).`;
     fullS.forEach((x) => {
@@ -525,7 +525,7 @@
       const d = x.b.shift, tone = d >= RISE - 1e-9 ? 'hot' : d >= GREW ? 'mid' : 'ok';
       const a = Math.min(x.a.forget, x.b.forget), w = Math.abs(x.b.forget - x.a.forget);
       const r = el('div', 'fx'); r.setAttribute('role', 'listitem');
-      r.innerHTML = `<span class="fx-l">${esc(x.a.label)}<em>${x.a.steps ? x.a.steps + ' steps \u00b7 ' : ''}${f1(x.b.price)} points of general knowledge lost in the file</em></span>`
+      r.innerHTML = `<span class="fx-l">${esc(x.a.label)}<em>${x.a.steps ? x.a.steps + ' steps' + (x.a.file_steps ? `, ${x.a.file_steps} as the file` : '') + ' \u00b7 ' : ''}${f1(x.b.price)} points of general knowledge lost in the file</em></span>`
         + `<span class="fx-t" aria-hidden="true"><u style="left:${X(CH)}"></u><s class="${tone}" style="left:${X(a)};width:${(w / (hi - lo) * 100).toFixed(2)}%"></s><i style="left:${X(x.a.forget)}"></i><b class="${tone}" style="left:${X(x.b.forget)}"></b></span>`
         + `<span class="fx-n ${tone === 'mid' ? '' : tone}">${sg1(d)}<small>${f1(x.a.forget)}% at ${esc(fpl)}, ${f1(x.b.forget)}% in ${esc(fl)}</small></span>`;
       r.setAttribute('aria-label', `${x.a.label}: ${f1(x.a.forget)} percent at ${fpl}, ${f1(x.b.forget)} percent in ${fl}, ${sg1(d)} points`);

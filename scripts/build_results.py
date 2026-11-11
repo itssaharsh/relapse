@@ -187,7 +187,7 @@ def load_fix(methods: dict, frontier: list[dict]) -> list[dict]:
         for prec in FORMATS:
             if prec in d:
                 r = d[prec]
-                out.append({"id": meta["id"], "label": meta["label"], "kind": meta["kind"], "share": meta.get("share"), "steps": meta.get("steps"), "seed": meta.get("seed", 0), "export": meta.get("export"), "prec": prec,
+                out.append({"id": meta["id"], "label": meta["label"], "kind": meta["kind"], "share": meta.get("share"), "steps": meta.get("steps"), "seed": meta.get("seed", 0), "export": meta.get("export"), "file_steps": meta.get("file_steps"), "prec": prec,
                             "forget": round(r["wmdp-bio"], 6), "retain": round(r["mmlu"], 6),
                             "shift": round(r["wmdp-bio"] - d["fp16"]["wmdp-bio"], 6),
                             "price": round(base[prec]["retain"] - r["mmlu"], 6) if prec in base else None})
@@ -199,9 +199,10 @@ def fix_table(rows: list[dict]) -> str:
     get = lambda i, prec: next((r for r in rows if r["id"] == i and r["prec"] == prec), None)
     cell = lambda r: "not run" if r is None else f"{pct(r['forget'])} / {pct(r['retain'])}"
     back = lambda r: "not run" if r is None else ("0.0" if abs(r["shift"]) < 0.0005 else f"{100 * r['shift']:+.1f}")
-    out = ["| Training at layers 10 to 12 | fp16 (WMDP-bio / MMLU) | Q4_0 | NF4 | WMDP-bio change, fp16 to Q4_0 |", "|---|---|---|---|---|"]
+    out = ["| Training at layers 10 to 12 | Steps (of them as the file) | fp16 (WMDP-bio / MMLU) | Q4_0 | NF4 | WMDP-bio change, fp16 to Q4_0 (plus = came back) |", "|---|---|---|---|---|---|"]
     for i in ids:
-        out.append(f"| {get(i, 'fp16')['label']} | {cell(get(i, 'fp16'))} | {cell(get(i, 'Q4_0'))} | {cell(get(i, 'NF4'))} | {back(get(i, 'Q4_0'))} |")
+        a = get(i, "fp16")
+        out.append(f"| {a['label']} | {a['steps']} ({a.get('file_steps') or 0}) | {cell(a)} | {cell(get(i, 'Q4_0'))} | {cell(get(i, 'NF4'))} | {back(get(i, 'Q4_0'))} |")
     return "\n".join(out)
 
 

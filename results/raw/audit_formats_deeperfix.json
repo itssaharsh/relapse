@@ -1,0 +1,52 @@
+[
+ {
+  "n": 1273,
+  "acc_a": 0.63315,
+  "acc_b": 0.613511,
+  "delta": -0.019639,
+  "ci95": [
+   -0.03613511390416339,
+   -0.003142183817753339
+  ],
+  "p_value": 0.021978,
+  "right_to_wrong": 68,
+  "wrong_to_right": 43,
+  "model": "base",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_0"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.413983,
+  "acc_b": 0.405342,
+  "delta": -0.008641,
+  "ci95": [
+   -0.029850746268656716,
+   0.012568735271013355
+  ],
+  "p_value": 0.456543,
+  "right_to_wrong": 107,
+  "wrong_to_right": 96,
+  "model": "rmu_deeper_file",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_0"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.551,
+  "acc_b": 0.482,
+  "delta": -0.069,
+  "ci95": [
+   -0.099,
+   -0.039
+  ],
+  "p_value": 0.000999,
+  "right_to_wrong": 149,
+  "wrong_to_right": 80,
+  "model": "rmu_deeper_file",
+  "kind": "price",
+  "prec": "Q4_0"
+ }
+]

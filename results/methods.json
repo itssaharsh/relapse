@@ -11,7 +11,9 @@
   "rmu_deeper_lr4.5e-4": "deeper",
   "X10-12_lr4.5e-4": "deeper",
   "rmu_deeper_lr2e-4": "deeper_lo",
-  "X10-12_lr2e-4": "deeper_lo"
+  "X10-12_lr2e-4": "deeper_lo",
+  "rmu_deeper_file": "deeper_file",
+  "X10-12_lr4.5e-4_file_p1_nb600": "deeper_file"
  },
  "run": {
   "date": "2026-11-10",
@@ -358,6 +360,15 @@
    "steps": 300,
    "seed": 1,
    "export": "x10_lr4.5e-4_file_s1"
+  },
+  "X10-12_lr4.5e-4_file_p1_nb600_s1": {
+   "id": "file_all_2x_s1",
+   "label": "Every step, twice as long, second seed",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 600,
+   "seed": 1,
+   "export": "x10_lr4.5e-4_file_nb600_s1"
   }
  }
 }

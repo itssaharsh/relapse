@@ -103,11 +103,18 @@
    "family": "deeper"
   },
   {
+   "id": "deeper_file",
+   "label": "Deeper layers (10 to 12), trained with the model seen as its Q4_0 file",
+   "short": "Deeper, file-trained",
+   "family": "deeper"
+  },
+  {
    "id": "deeper_lo",
    "label": "Deeper layers (10 to 12), lower learning rate",
    "short": "Deeper, lower rate",
    "tab": false,
-   "family": "deeper"
+   "family": "deeper",
+   "readme": false
   },
   {
    "id": "standard_s1",
@@ -314,6 +321,36 @@
     "retain": 0.506,
     "forget_pcorrect": 0.3931,
     "retain_pcorrect": 0.469
+   }
+  },
+  "deeper_file": {
+   "fp16": {
+    "forget": 0.4148,
+    "retain": 0.506,
+    "forget_pcorrect": 0.3863,
+    "retain_pcorrect": 0.4808
+   },
+   "Q4_0": {
+    "forget": 0.4061,
+    "retain": 0.482,
+    "forget_pcorrect": 0.3797,
+    "retain_pcorrect": 0.4655,
+    "orig": {
+     "forget": 0.6135,
+     "retain": 0.552
+    }
+   },
+   "Q4_K_M": {
+    "forget": 0.4061,
+    "retain": 0.488,
+    "forget_pcorrect": 0.3636,
+    "retain_pcorrect": 0.4564
+   },
+   "NF4": {
+    "forget": 0.35271,
+    "retain": 0.472,
+    "forget_pcorrect": 0.3359,
+    "retain_pcorrect": 0.4448
    }
   },
   "standard": {
@@ -983,6 +1020,26 @@
      0.0336
     ]
    },
+   "deeper_file": {
+    "fp16": [
+     0.0146,
+     0.1619,
+     0.822,
+     0.0016
+    ],
+    "Q4_0": [
+     0.0402,
+     0.1259,
+     0.8336,
+     0.0003
+    ],
+    "Q4_K_M": [
+     0.2163,
+     0.2451,
+     0.4578,
+     0.0808
+    ]
+   },
    "standard": {
     "fp16": [
      0.874,
@@ -1398,6 +1455,64 @@
   {
    "metric": "acc",
    "n": 1273,
+   "acc_a": 0.413983,
+   "acc_b": 0.405342,
+   "delta": -0.008641,
+   "ci95": [
+    -0.029065200314218383,
+    0.012568735271013355
+   ],
+   "p_value": 0.402597,
+   "significant": false,
+   "right_to_wrong": 98,
+   "wrong_to_right": 87,
+   "model": "rmu_deeper_file",
+   "kind": "forget_holds",
+   "from": "fp16",
+   "to": "Q4_K_M",
+   "method": "deeper_file"
+  },
+  {
+   "metric": "acc",
+   "n": 1000,
+   "acc_a": 0.553,
+   "acc_b": 0.507,
+   "delta": -0.046,
+   "ci95": [
+    -0.075,
+    -0.017
+   ],
+   "p_value": 0.003996,
+   "significant": true,
+   "right_to_wrong": 128,
+   "wrong_to_right": 82,
+   "model": "rmu_deeper_file",
+   "kind": "price",
+   "prec": "fp16",
+   "method": "deeper_file"
+  },
+  {
+   "metric": "acc",
+   "n": 1000,
+   "acc_a": 0.548,
+   "acc_b": 0.488,
+   "delta": -0.06,
+   "ci95": [
+    -0.089,
+    -0.031
+   ],
+   "p_value": 0.000999,
+   "significant": true,
+   "right_to_wrong": 141,
+   "wrong_to_right": 81,
+   "model": "rmu_deeper_file",
+   "kind": "price",
+   "prec": "Q4_K_M",
+   "method": "deeper_file"
+  },
+  {
+   "metric": "acc",
+   "n": 1273,
    "acc_a": 0.387274,
    "acc_b": 0.372349,
    "delta": -0.014925,
@@ -1656,6 +1771,41 @@
    "kind": "price",
    "prec": "Q4_0",
    "method": "deeper"
+  },
+  {
+   "n": 1273,
+   "acc_a": 0.413983,
+   "acc_b": 0.405342,
+   "delta": -0.008641,
+   "ci95": [
+    -0.029850746268656716,
+    0.012568735271013355
+   ],
+   "p_value": 0.456543,
+   "right_to_wrong": 107,
+   "wrong_to_right": 96,
+   "model": "rmu_deeper_file",
+   "kind": "forget_holds",
+   "from": "fp16",
+   "to": "Q4_0",
+   "method": "deeper_file"
+  },
+  {
+   "n": 1000,
+   "acc_a": 0.551,
+   "acc_b": 0.482,
+   "delta": -0.069,
+   "ci95": [
+    -0.099,
+    -0.039
+   ],
+   "p_value": 0.000999,
+   "right_to_wrong": 149,
+   "wrong_to_right": 80,
+   "model": "rmu_deeper_file",
+   "kind": "price",
+   "prec": "Q4_0",
+   "method": "deeper_file"
   },
   {
    "metric": "acc",
@@ -4172,6 +4322,48 @@
    "retain": 0.513,
    "shift": 0.02121,
    "price": 0.014
+  },
+  {
+   "id": "file_all_s1",
+   "label": "Every step, second seed",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 300,
+   "seed": 1,
+   "export": "x10_lr4.5e-4_file_s1",
+   "prec": "fp16",
+   "forget": 0.495679,
+   "retain": 0.525,
+   "shift": 0.0,
+   "price": 0.029
+  },
+  {
+   "id": "file_all_s1",
+   "label": "Every step, second seed",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 300,
+   "seed": 1,
+   "export": "x10_lr4.5e-4_file_s1",
+   "prec": "Q4_0",
+   "forget": 0.520817,
+   "retain": 0.524,
+   "shift": 0.025137,
+   "price": 0.031
+  },
+  {
+   "id": "file_all_s1",
+   "label": "Every step, second seed",
+   "kind": "fix",
+   "share": 1.0,
+   "steps": 300,
+   "seed": 1,
+   "export": "x10_lr4.5e-4_file_s1",
+   "prec": "NF4",
+   "forget": 0.519246,
+   "retain": 0.516,
+   "shift": 0.023566,
+   "price": 0.011
   }
  ]
 }

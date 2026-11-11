@@ -180,13 +180,19 @@ def test_generated_tables_are_filled_in():
 
 
 def test_fix_claims():
-    """Rounding the edited matrices alone leaves the relapse; the file on half the steps leaves about half; on every step, none."""
+    """Rounding the edited matrices alone leaves the relapse; the file on half the steps leaves about half; on every step
+    none in the first seed, less in the second."""
     q = {r["id"]: r for r in RES["fix"] if r["prec"] == "Q4_0"}
     full = [r for r in q.values() if r["kind"] == "fix" and r["share"] >= 1]
     half = [r for r in q.values() if r["kind"] == "fix" and 0 < r["share"] < 1]
+    first, second = [r for r in full if not r["seed"]], [r for r in full if r["seed"] and r["steps"] == 300]
     assert q["plain"]["shift"] > 0.07 and q["edited"]["shift"] > 0.05
-    assert all(0.02 < r["shift"] < 0.05 for r in half) and all(abs(r["shift"]) < 0.02 for r in full) and len(full) >= 3
-    lo, hi = min(r["shift"] for r in full if not r["seed"]), max(r["shift"] for r in full if not r["seed"])
-    sent = f"the hazard score moved {100 * lo:+.1f} to {100 * hi:+.1f} points from fp16 to Q4_0"
+    assert all(0.02 < r["shift"] < 0.05 for r in half) and all(abs(r["shift"]) < 0.02 for r in first) and len(first) == 3
+    lo, hi = min(r["shift"] for r in first), max(r["shift"] for r in first)
+    sents = [f"the hazard score moved {100 * lo:+.1f} to {100 * hi:+.1f} points from fp16 to Q4_0",
+             f"In a second seed it shrank from {100 * q['plain_s1']['shift']:.1f} points to {100 * second[0]['shift']:.1f}"]
+    real = RES["grid"]["deeper_file"]
+    sents.append(f"scores {100 * real['Q4_0']['forget']:.1f}% in Q4_0 and {100 * real['Q4_K_M']['forget']:.1f}% in Q4_K_M, against {100 * real['fp16']['forget']:.1f}% at fp16")
     for doc in DOCS:
-        assert sent in read(doc), (doc, sent)
+        for sent in sents:
+            assert sent in read(doc), (doc, sent)

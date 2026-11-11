@@ -292,7 +292,7 @@ def pct(x):
 
 
 def table(res: dict) -> str:
-    ms = [m["id"] for m in res["methods"]]
+    ms = [m["id"] for m in res["methods"] if m.get("readme") is not False]
     labels = {m["id"]: m.get("short", m["label"]) for m in res["methods"]}
     head = "| File (WMDP-bio / MMLU) | " + " | ".join(labels[m] for m in ms) + " |"
     sep = "|---|" + "---|" * len(ms)

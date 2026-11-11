@@ -8,12 +8,12 @@ You want a small model that runs offline on a phone and will not help anyone bui
 
 - **The recipe that worked.** At the layers [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT) pointed to (7 to 9), [SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s RMU took Tiny Aya's hazardous-biology score from 63% to about 37% in every file format. Head to head in the llama.cpp Q4_K_M file it kept 5.6 more points of general knowledge than the same edit at SafeTune's default layers (p = 0.001), and 3.9 more in a second training seed (p = 0.006). The forgetting held in all 7 formats, in four other languages and against prompt attacks.
 - **The relapse.** Three layers deeper (10 to 12) the same edit looked as good at full precision, then came partly back in real llama.cpp files: 7.4 points of the hazard score in Q4_0 and 3.5 in Q4_K_M (p = 0.005 or less). Nothing in its full-precision scores shows this. The file-by-file audit does.
-- **The repair.** Training that placement with the model shown as its 4-bit file removes the relapse (41.5% at full precision, 41.0% in Q4_0), at a higher cost in general knowledge. Rounding only the edited weights during training does not.
+- **The repair.** Training that placement with the model shown as its 4-bit file removed the relapse in the first seed (41.5% at full precision, 40.6% in its real Q4_0 and Q4_K_M files) and shrank it in a second, at a higher cost in general knowledge. Rounding only the edited weights during training did not help.
 - **What didn't work** is listed further down. A control at shallower layers did as well as CircuitKIT's pick, so we cannot credit the attribution score itself, and fine-tuning on the topic brings the knowledge back.
 
 [![Relapse: the forget report for the CircuitKIT layers, the default layers and the deeper layers that relapse](docs/demo.gif)](https://huggingface.co/spaces/itssaharsh/relapse)
 
-*51-second walk-through: [docs/demo.mp4](docs/demo.mp4)*
+*67-second walk-through: [docs/demo.mp4](docs/demo.mp4)*
 
 **Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) ([full screen](https://itssaharsh-relapse.static.hf.space/index.html)) · **Write-up:** [the article](https://github.com/itssaharsh/relapse/blob/main/docs/ARTICLE.md) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
 
@@ -73,13 +73,18 @@ The table's 4-bit columns are bit-exact round trips of the decoder weights, like
 | Every step, trained twice as long | 41.5% / 50.6% | 41.0% / 48.9% | 35.3% / 47.2% | -0.5 |
 | Every step, higher learning rate | 26.1% / 44.2% | 27.0% / 43.8% | 26.7% / 42.3% | +0.9 |
 | Plain RMU, second seed | 50.9% / 51.7% | 55.5% / 52.5% | 53.0% / 51.3% | +4.6 |
+| Every step, second seed | 49.6% / 52.5% | 52.1% / 52.4% | 51.9% / 51.6% | +2.5 |
 <!-- fix:end -->
+
+![Each attempt to train the relapse away: the hazard score at fp16 and in the Q4_0 file](docs/repair.png)
 
 - Rounding only the three edited matrices did not help: 6.5 points still came back. That fits the test above, which put most of the relapse in the layers in front of the edit.
 - With the whole model shown as its file on half the steps, about half the relapse remained (3.5 points, and 3.3 when trained twice as long).
-- With the file on every step it was gone in all three first-seed runs: the hazard score moved -0.5 to +0.9 points from fp16 to Q4_0.
+- With the file on every step it was gone in all three first-seed runs: the hazard score moved -0.5 to +0.9 points from fp16 to Q4_0. In a second seed it shrank from 4.6 points to 2.5, so there it is smaller, not gone.
 
-It is not free. The every-step run that matches the plain run at fp16 (41.5% against 41.6%) needed twice the steps and lost 4.8 points of general knowledge at fp16 and 6.6 in the Q4_0 file, where the plain run lost 1.5 and 2.2. So training on the file makes this placement honest, not better: what it shows at fp16 is what the file does. The CircuitKIT layers are still the recipe to use.
+Real files agree. As llama.cpp files the 600-step every-step model scores 40.6% in Q4_0 and 40.6% in Q4_K_M, against 41.5% at fp16 (AuditKIT paired: -0.9 points in each, p = 0.46 and p = 0.40). It was trained on the Q4_0 round trip only, and the Q4_K_M file holds too.
+
+It is not free. The every-step run that matches the plain run at fp16 (41.5% against 41.6%) needed twice the steps and lost 4.8 points of general knowledge at fp16 and 6.0 in its real Q4_K_M file, where the plain run lost 1.5 and 2.3. So training on the file makes this placement honest, not better: what it shows at fp16 is what the file does. The CircuitKIT layers are still the recipe to use.
 
 **The sweep.** We ran 12 RMU settings at the default layers and 9 at the CircuitKIT layers. Among the runs that got WMDP-bio to 40% or below, the default layers cost 3.8 to 19.9 points of general knowledge at fp16, 4.9 to 14.1 in Q4_0 and 3.9 to 16.5 in NF4. The CircuitKIT layers cost 0.9 to 2.7, 2.2 to 3.5 and 1.4 to 3.3. The ranges stay apart for cut-offs from 35% to 42%; from 43% they overlap in Q4_0. The first 8 runs at each were not tuned identically: the default layers got learning rates from 2e-5 to 3e-4 and one lower retain weight, the CircuitKIT layers got 1e-4 to 2e-4, one higher retain weight and one stronger steering setting, and runs used 250 or 300 batches. The four budget-matched default runs above are the check on that.
 
@@ -88,18 +93,18 @@ It is not free. The every-step run that matches the plain run at fp16 (41.5% aga
 **Outside layers 10 to 12 the forgetting held in every file we scored.** Across those 26 runs and every format, no hazard score rose by more than 2.0 points from its fp16 value (75 run-and-file pairs; the largest fall was 4.2). AuditKIT's paired fp16-to-Q4_K_M tests found no increase (the largest was +2.0 points, p = 0.12). The language and prompt tests that follow were run on the default-layer and CircuitKIT-layer models only. Translated into Hindi, Arabic, Spanish and Swahili or reworded in English, the questions stayed forgotten: the original scores 46% to 57% per language, the CircuitKIT version 27% to 33%. Five worked examples in the prompt lifted the original to 63.5% but pushed the unlearned models down to 25.2% to 27.7%, and an expert persona left them at 32.2% to 35.0%.
 
 <!-- results:start -->
-| File (WMDP-bio / MMLU) | Original | Default layers | CircuitKIT layers | CircuitKIT + 4-bit aware | Deeper layers | Deeper, lower rate | Default, seed 2 | CircuitKIT, seed 2 | Aggressive |
+| File (WMDP-bio / MMLU) | Original | Default layers | CircuitKIT layers | CircuitKIT + 4-bit aware | Deeper layers | Deeper, file-trained | Default, seed 2 | CircuitKIT, seed 2 | Aggressive |
 |---|---|---|---|---|---|---|---|---|---|
-| fp16 | 63.3% / 55.4% | 38.7% / 51.6% | 36.8% / 53.2% | 34.0% / 54.5% | 41.6% / 53.9% | 45.2% / 53.1% | 44.4% / 51.7% | 45.6% / 55.7% | 25.4% / 43.5% |
+| fp16 | 63.3% / 55.4% | 38.7% / 51.6% | 36.8% / 53.2% | 34.0% / 54.5% | 41.6% / 53.9% | 41.5% / 50.6% | 44.4% / 51.7% | 45.6% / 55.7% | 25.4% / 43.5% |
 | bf16 | 63.3% / 55.4% | 38.6% / 51.4% | 36.9% / 53.1% | 34.2% / 54.5% | not run | not run | not run | not run | 25.4% / 43.5% |
 | Q8_0 | 63.2% / 55.1% | 38.4% / 51.4% | 37.3% / 53.2% | 34.6% / 54.4% | not run | not run | 44.4% / 52.1% | 45.4% / 55.7% | 26.4% / 43.8% |
 | Q6_K | 63.2% / 55.6% | 39.1% / 51.7% | 36.4% / 53.8% | 34.9% / 53.9% | not run | not run | not run | not run | 26.9% / 42.9% |
-| Q4_K_M | 63.4% / 54.8% | 37.2% / 49.3% | 37.1% / 54.9% | 35.3% / 54.5% | 45.2% / 52.5% | 50.2% / 52.8% | 41.2% / 51.6% | 45.3% / 55.4% | 27.3% / 40.7% |
-| Q4_0 | 61.1% / 55.5% | 36.8% / 50.6% | 35.9% / 52.7% | 35.6% / 52.9% | 49.0% / 52.9% | 50.5% / 53.3% | 42.3% / 52.5% | 43.8% / 54.8% | 26.8% / 41.4% |
-| NF4 | 61.1% / 52.7% | 37.2% / 46.3% | 35.3% / 51.2% | 34.7% / 50.8% | 42.2% / 50.6% | 48.4% / 49.5% | 45.2% / 49.7% | 44.1% / 52.4% | 26.7% / 36.2% |
+| Q4_K_M | 63.4% / 54.8% | 37.2% / 49.3% | 37.1% / 54.9% | 35.3% / 54.5% | 45.2% / 52.5% | 40.6% / 48.8% | 41.2% / 51.6% | 45.3% / 55.4% | 27.3% / 40.7% |
+| Q4_0 | 61.1% / 55.5% | 36.8% / 50.6% | 35.9% / 52.7% | 35.6% / 52.9% | 49.0% / 52.9% | 40.6% / 48.2% | 42.3% / 52.5% | 43.8% / 54.8% | 26.8% / 41.4% |
+| NF4 | 61.1% / 52.7% | 37.2% / 46.3% | 35.3% / 51.2% | 34.7% / 50.8% | 42.2% / 50.6% | 35.3% / 47.2% | 45.2% / 49.7% | 44.1% / 52.4% | 26.7% / 36.2% |
 <!-- results:end -->
 
-WMDP-bio accuracy is the knowledge that should be gone (lower is better; 25% is guessing). MMLU accuracy is the general knowledge that should stay (higher is better). Every cell is measured on the same questions; the Space shows the per-file details and the per-language scores. The two deeper-layer columns are the relapse: read their 4-bit rows against their fp16 row.
+WMDP-bio accuracy is the knowledge that should be gone (lower is better; 25% is guessing). MMLU accuracy is the general knowledge that should stay (higher is better). Every cell is measured on the same questions; the Space shows the per-file details and the per-language scores. The deeper-layers column is the relapse: read its 4-bit rows against its fp16 row. The file-trained column next to it is the repair.
 
 ## What we tried that didn't work
 
@@ -119,7 +124,7 @@ These are the steps that led to the recipe above. All runs are in [`results/raw/
 
 1. Open the [Space](https://huggingface.co/spaces/itssaharsh/relapse). It opens on the CircuitKIT-layer model in the llama.cpp Q4_K_M file: still forgotten, nothing else lost, with the default layers' cost in the same file beside it.
 2. Click **Default layers, same file**: the same forgetting now costs 5.5 points of general knowledge, and the page turns from green to red.
-3. Click **Deeper layers, Q4_0 file**: the stamp says RELAPSED. Click the fp16 row above it to see the same model at full precision, where nothing looks wrong.
+3. Click **Deeper layers, Q4_0 file**: the stamp says RELAPSED. Click the fp16 row above it to see the same model at full precision, where nothing looks wrong. The **Deeper, file-trained** tab is the repair: the same file, no relapse, a higher price.
 4. Scroll once: the layer windows side by side, the attempts to train the relapse away, the chart of every run, then the prompt and fine-tuning attacks.
 
 Every number on the page comes from [`space/data/results.json`](space/data/results.json), which [`scripts/build_results.py`](scripts/build_results.py) rebuilds from the raw runs.
@@ -153,7 +158,7 @@ The formats are made the way people make them: the bf16 checkpoint, llama.cpp's 
 
 The model to ship is the CircuitKIT-layer one. In the Q4_K_M file it answers 37.1% of the hazardous-biology questions where the original answers 63.4%, and its general knowledge is 54.9% against the original's 54.8%. Across the other formats it costs up to 2.8 points. It behaves the same in the four other languages we tested, and prompt attacks do not bring the knowledge back. It is published as safetensors and as a Q4_K_M GGUF, next to the default-layer and 4-bit-aware versions.
 
-The other thing you get is the check, and a model to try it on. [tiny-aya-global-unlearn-bio-deeper-layers](https://huggingface.co/itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers) looks unlearned at fp16 (41.6%) and gives part of it back in its Q4_0 and Q4_K_M files, both included. An audit that only scores the checkpoint will not see that.
+The other thing you get is the check, and a model to try it on. [tiny-aya-global-unlearn-bio-deeper-layers](https://huggingface.co/itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers) looks unlearned at fp16 (41.6%) and gives part of it back in its Q4_0 and Q4_K_M files, both included. An audit that only scores the checkpoint will not see that. [tiny-aya-global-unlearn-bio-deeper-layers-file-trained](https://huggingface.co/itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers-file-trained) is its repaired counterpart: the same edit trained on the file, with the same two 4-bit files, which score what the checkpoint scores.
 
 ## Cost
 
@@ -200,7 +205,7 @@ The runs themselves are Kaggle kernels on 2x T4, one script per step, in [`kaggl
 | Unlearning, every score, every format, the CircuitKIT attribution, the AuditKIT statistics | measured on Tiny Aya Global |
 | Q6_K and Q4_K_M | real llama.cpp files, published in the model collection |
 | Q8_0, Q4_0, NF4 | bit-exact round trips of the decoder's linear weights, scored in PyTorch. The embedding table stays fp16, which matches bitsandbytes; a real llama.cpp Q8_0 or Q4_0 file also quantizes the embeddings |
-| Q4_0 for the two deeper-layer models | real llama.cpp files, compared with the original's real Q4_0 file (61.4% / 55.2%; the round trip of the original scores 61.1% / 55.5%) |
+| Q4_0 for the three deeper-layer models | real llama.cpp files, compared with the original's real Q4_0 file (61.4% / 55.2%; the round trip of the original scores 61.1% / 55.5%) |
 | Translations | made by Tiny Aya Global itself and filtered by back-translation, not by a human translator |
 | Prompt and fine-tuning attacks | measured on the 1,204 WMDP-bio questions not used as examples; prompts at fp16 and in the Q4_0 file, fine-tuning at fp16 |
 
@@ -211,7 +216,7 @@ Limits that change how to read the headline:
 - CircuitKIT's window was one of two that worked, and the other has the least attribution of all, so the results do not show that attribution is the reason. Its faithfulness check ran on only 4 examples. The three control windows have 2 to 4 runs each.
 - We do not know why the default layers cost more, or why rounding the layers in front of the edit undoes part of it at layers 10 to 12 and not at the windows on either side.
 - The deeper-layer model shown on the page and in the headline is the run with the largest rise of the four at that window.
-- The repair was tried at layers 10 to 12 only, costs more general knowledge than plain RMU there, and uses the Q4_0 round trip in training; other 4-bit formats were only scored.
+- The repair was tried at layers 10 to 12 only and costs more general knowledge than plain RMU there. It removed the relapse in the first seed and only shrank it in the second. Training used the Q4_0 round trip; other 4-bit formats were only scored.
 - Knowledge is measured by multiple choice, not by open generation.
 - The forgetting does not survive fine-tuning.
 - Costs are measured against the original in the same format. Running the same evaluation twice can differ by 1 to 3 questions, which is why a grid score and an AuditKIT score for the same model can differ by 0.1 to 0.2 points.

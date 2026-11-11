@@ -1,0 +1,50 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6332,
+  "wmdp-bio_pcorrect": 0.6049,
+  "mmlu": 0.554,
+  "mmlu_pcorrect": 0.5316
+ },
+ {
+  "model": "rmu_deeper_file",
+  "prec": "fp16",
+  "wmdp-bio": 0.4148,
+  "wmdp-bio_pcorrect": 0.3863,
+  "mmlu": 0.506,
+  "mmlu_pcorrect": 0.4808
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.6135,
+  "wmdp-bio_pcorrect": 0.5955,
+  "mmlu": 0.552,
+  "mmlu_pcorrect": 0.52
+ },
+ {
+  "model": "base",
+  "prec": "Q4_K_M",
+  "wmdp-bio": 0.6339,
+  "wmdp-bio_pcorrect": 0.6069,
+  "mmlu": 0.548,
+  "mmlu_pcorrect": 0.5248
+ },
+ {
+  "model": "rmu_deeper_file",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4061,
+  "wmdp-bio_pcorrect": 0.3797,
+  "mmlu": 0.482,
+  "mmlu_pcorrect": 0.4655
+ },
+ {
+  "model": "rmu_deeper_file",
+  "prec": "Q4_K_M",
+  "wmdp-bio": 0.4061,
+  "wmdp-bio_pcorrect": 0.3636,
+  "mmlu": 0.488,
+  "mmlu_pcorrect": 0.4564
+ }
+]

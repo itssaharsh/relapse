@@ -30,7 +30,7 @@ def stat(method: str, to: str):
     return next((s for s in RES.get("stats", []) if s["method"] == method and s["kind"] == "forget_holds" and s.get("to") == to), None)
 
 
-def model_card(method: str, repo: str, layers: str, gguf: str | None, relapses: bool = False) -> str:
+def model_card(method: str, repo: str, layers: str, gguf: str | None, relapses: bool = False, repaired: bool = False) -> str:
     m = {x["id"]: x for x in RES["methods"]}[method]
     g = RES["grid"][method]["fp16"]
     n_runs = len({p["id"] for p in RES["frontier"] if p["family"] != "original"})
@@ -63,6 +63,36 @@ tried does not do this; see the write-up.
         formats_note = "Q4_K_M and Q4_0 are real llama.cpp files; NF4 is a bit-exact weight round trip. The other formats were not scored for this model."
         limits = """A research artifact for studying unlearning and quantization, published as a negative example: its forgetting does
 not hold in 4-bit files. Knowledge is measured with multiple-choice questions (WMDP-bio), not open generation. The license and the
+[Cohere Labs acceptable use policy](https://docs.cohere.com/docs/c4ai-acceptable-use-policy) of the base model apply (non-commercial)."""
+    elif repaired:
+        title = "Tiny Aya Global, unlearned at deeper layers and trained on its 4-bit file: the repair of the relapse"
+        lines = []
+        for to in ("Q4_0", "Q4_K_M"):
+            s, c = stat(method, to), RES["grid"][method].get(to)
+            if s and c:
+                lines.append(f"- **{to}**: {pct(c['forget'])}, {sg(s['delta'])} points from fp16 (95% interval {sg(s['ci95'][0])} to {sg(s['ci95'][1])}, {pv(s['p_value'])})")
+        price = next((x for x in RES.get("stats", []) if x["method"] == method and x["kind"] == "price" and x.get("prec") == "Q4_K_M"), None)
+        warn = f"""
+> **This is the repaired counterpart of
+> [{USER}/tiny-aya-global-unlearn-bio-deeper-layers](https://huggingface.co/{USER}/tiny-aya-global-unlearn-bio-deeper-layers),**
+> the model that looks unlearned at fp16 and gives part of it back in 4-bit files. Same layers, same settings, same seed.
+> Two things changed: during training every decoder weight, in the model being edited and in the frozen reference, was its
+> Q4_0 round trip, and it trained for 600 batches instead of 300. Its 4-bit files score what its checkpoint scores.
+> It costs more general knowledge than the model to use, which is
+> [{USER}/tiny-aya-global-unlearn-bio-circuitkit-layers](https://huggingface.co/{USER}/tiny-aya-global-unlearn-bio-circuitkit-layers).
+
+## No relapse
+
+AuditKIT paired bootstrap on the 1,273 WMDP-bio questions, fp16 against real llama.cpp files of the same model:
+
+""" + "\n".join(lines) + (f"""
+
+In the Q4_K_M file it keeps {pct(RES['grid'][method]['Q4_K_M']['retain'])} on MMLU, {abs(100 * price['delta']):.1f} points below the original in the same file.""" if price else "") + """
+In a second training seed the same recipe shrank the rise without removing it; see the write-up.
+"""
+        formats_note = "Q4_K_M and Q4_0 are real llama.cpp files, both in this repository; NF4 is a bit-exact weight round trip. The other formats were not scored for this model."
+        limits = """A research artifact for studying unlearning and quantization. Knowledge is measured with multiple-choice questions
+(WMDP-bio), not open generation, and like the other models here it was not built to survive fine-tuning on the topic. The license and the
 [Cohere Labs acceptable use policy](https://docs.cohere.com/docs/c4ai-acceptable-use-policy) of the base model apply (non-commercial)."""
     else:
         warn = ""
@@ -125,5 +155,5 @@ if __name__ == "__main__":
     os.makedirs(out, exist_ok=True)
     spec = json.load(open(os.path.join(ROOT, "results", "publish.json")))
     for s in spec["models"]:
-        open(os.path.join(out, s["repo"] + ".md"), "w").write(model_card(s["method"], s["repo"], s["layers"], s.get("gguf_name"), s.get("relapses", False)))
+        open(os.path.join(out, s["repo"] + ".md"), "w").write(model_card(s["method"], s["repo"], s["layers"], s.get("gguf_name"), s.get("relapses", False), s.get("repaired", False)))
         print("card", s["repo"])

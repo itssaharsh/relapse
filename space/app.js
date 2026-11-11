@@ -495,13 +495,19 @@
     const best = fixes.reduce((m, x) => (x.b.shift < m.b.shift ? x : m));
     const fl = fmtLabel(prec), fpl = fmtLabel(FP);
     $('fix-head').textContent = gone.length && gone.length === full.length ? `Train on the file you ship and the relapse is gone`
+      : gone.length ? `Trained on its own 4-bit file, the relapse is gone in ${gone.length} of ${full.length} runs`
       : best.b.shift < base.b.shift - GREW ? `Training on the 4-bit file shrinks the relapse from ${f1(base.b.shift)} to ${f1(best.b.shift)} points`
       : 'Training on the 4-bit file did not shrink the relapse';
     const rng = (xs) => { const v = xs.map((x) => x.b.shift * 100), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); return lo.toFixed(1) === hi.toFixed(1) ? sg1(lo / 100) : `${sg1(lo / 100)} to ${sg1(hi / 100)}`; };
     let t = `At layers ${rangeOf((D.families.deeper || {}).layers)} plain RMU gave back ${f1(base.b.shift)} points of the hazard score in the ${fl} file. We retrained it with the model shown as its ${fl} file during training.`;
     if (abl.length) t += ` Rounding only the three edited matrices changed little (${rng(abl)} points).`;
     if (half.length) t += ` Showing the whole model as its file on half the steps left ${rng(half)}.`;
-    if (full.length) t += ` On every step: ${rng(full)} (${full.length} run${full.length > 1 ? 's' : ''}${full.some((x) => x.a.seed) ? ', two seeds' : ''}).`;
+    const full0 = full.filter((x) => !x.a.seed), fullS = full.filter((x) => x.a.seed);
+    if (full0.length) t += ` On every step: ${rng(full0)} (${full0.length} run${full0.length > 1 ? 's' : ''}).`;
+    fullS.forEach((x) => {
+      const b2 = rows.find((y) => y.a.kind === 'baseline2' && y.a.seed === x.a.seed);
+      t += ` In a second seed${x.a.steps > base.a.steps ? `, ${x.a.steps} steps` : ''}: ${sg1(x.b.shift)}${b2 ? `, where plain RMU gave back ${f1(b2.b.shift)}` : ''}.`;
+    });
     if (gone.length) {
       const m = gone.reduce((q, x) => (Math.abs(x.a.forget - base.a.forget) < Math.abs(q.a.forget - base.a.forget) ? x : q));
       t += ` It is not free: the one closest to the plain run at ${fpl} (${f1(m.a.forget)}% against ${f1(base.a.forget)}%) scores ${f1(m.b.forget)}% in the file${m.a.steps > base.a.steps ? `, after ${m.a.steps} steps instead of ${base.a.steps},` : ''} and lost ${f1(m.b.price)} points of general knowledge there. The plain run lost ${f1(base.b.price)}.`;
@@ -520,7 +526,7 @@
       r.setAttribute('aria-label', `${x.a.label}: ${f1(x.a.forget)} percent at ${fpl}, ${f1(x.b.forget)} percent in ${fl}, ${sg1(d)} points`);
       box.appendChild(r);
     });
-    $('fix-key').innerHTML = `<span><i></i>${esc(D.benchmark.forget)} at ${esc(fpl)}</span><span><b></b>in the ${esc(fl)} file</span><span>The bar between them is what came back. The line marks guessing (${pct(CH)}%). All runs: layers ${rangeOf((D.families.deeper || {}).layers)}${rows.some((x) => x.a.seed) ? '' : ', same seed'}.</span>`;
+    $('fix-key').innerHTML = `<span><i></i>${esc(D.benchmark.forget)} at ${esc(fpl)}</span><span><b></b>in the ${esc(fl)} file</span><span>The bar between them is what came back. The line marks guessing (${pct(CH)}%). All runs: layers ${rangeOf((D.families.deeper || {}).layers)}${rows.some((x) => x.a.seed) ? '' : ', same seed'}, scored as round trips of the decoder weights${MET.deeper_file ? `; the ${esc(methodShort('deeper_file'))} tab at the top shows one of them as real files` : ''}.</span>`;
   }
 
   /* only when the run produced a robustness array: pushed harder, per method and attack */

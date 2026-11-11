@@ -56,6 +56,7 @@ RUNS = {
     "x10_lr4.5e-4_file_nb600": ("changed_fix_file_p1_nb600.pt", "X10-12_lr4.5e-4_file_p1_nb600", "10-12", 4.5e-4, 100, 3, 600),
     "x10_lr1e-3_file": ("changed_fix_file_p1_lr1e-3.pt", "X10-12_lr1e-3_file_p1", "10-12", 1e-3, 100, 3, 300),
     "x10_lr4.5e-4_file_s1": ("changed_fix_file_p1_s1.pt", "X10-12_lr4.5e-4_file_p1_s1", "10-12", 4.5e-4, 100, 3, 300),
+    "x10_lr4.5e-4_file_nb600_s1": ("changed_fix_file_p1_nb600_s1.pt", "X10-12_lr4.5e-4_file_p1_nb600_s1", "10-12", 4.5e-4, 100, 3, 600),
 }
 PREFIX = {"d": "default-layers_", "c": "circuitkit-layers_"}   # other windows: layers-<first>-<last>_
 

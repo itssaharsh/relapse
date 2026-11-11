@@ -18,7 +18,7 @@ NB = int(os.environ.get("NB", "300"))
 import torch.nn.utils.parametrize as parametrize
 PRECS = os.environ.get("PRECS", "fp16,Q4_0,nf4").split(",")
 random.seed(0); torch.manual_seed(0)
-MP = model_path("global")
+MP = model_path(os.environ.get("VARIANT", "global"))
 tok = AutoTokenizer.from_pretrained(MP)
 if tok.pad_token is None: tok.pad_token = tok.eos_token
 def batches(texts, n, bs=4, maxlen=512):

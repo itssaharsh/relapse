@@ -16,7 +16,7 @@ import shutil
 
 import numpy as np
 
-from analyze_map import ROOT, paired_p, sign_test
+from analyze_map import ROOT, download, paired_p, sign_test
 
 FRESH = tuple(range(41, 49))
 EFFECTIVE = (0.30, 0.55)
@@ -28,12 +28,12 @@ ARMS = {("file", 600): "repaired", ("file", 300): "file_300", ("plain", 600): "p
 
 
 def fetch(d: str) -> None:
-    from huggingface_hub import HfApi, hf_hub_download
+    from huggingface_hub import HfApi
     for f in HfApi().list_repo_files("itssaharsh/relapse-stage2", repo_type="dataset"):
         if f.endswith(".json") and (f.startswith("deep/") or f.startswith("real/deep_") or f.startswith("real/base_relapse/")):
             dst = os.path.join(d, f.split("/", 1)[1] if f.startswith("deep/") else f.replace("/", "_", 1))
             os.makedirs(os.path.dirname(dst), exist_ok=True)
-            shutil.copy(hf_hub_download("itssaharsh/relapse-stage2", f, repo_type="dataset", force_download=True), dst)
+            download(f, dst)
 
 
 def exact_interval(k: int, n: int, level: float = 0.95) -> list[float]:
@@ -59,7 +59,7 @@ def load_dir(d: str, source: str, rng: np.random.Generator) -> list[dict]:
     out = []
     for name in sorted({m for m, _ in rows if m != "base"}):
         g = NAME.match(name)
-        if not g or (name, "fp16") not in rows:
+        if not g or any((name, f) not in rows for f in ("fp16", "Q4_0", "nf4")):      # a run still being scored is left out
             continue
         fp = rows[(name, "fp16")]
         row = {"name": name, "source": source, "model": g["model"], "window": g["window"], "lr": g["lr"], "seed": int(g["seed"]),

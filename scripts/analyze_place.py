@@ -12,7 +12,7 @@ import os
 import re
 import shutil
 
-from analyze_map import HELD_OUT, MODELS, ROOT, sign_test
+from analyze_map import HELD_OUT, MODELS, ROOT, download, sign_test
 
 SEEDS = (31, 32)
 FORMATS = ("fp16", "Q4_0", "nf4")
@@ -22,8 +22,7 @@ NAME = re.compile(r".+_W(\d+-\d+)_lr([^_]+)_s\d+$")
 
 
 def fetch(d: str) -> None:
-    from huggingface_hub import hf_hub_download
-    get = lambda src, dst: shutil.copy(hf_hub_download("itssaharsh/relapse-stage2", src, repo_type="dataset", force_download=True), dst)
+    get = download
     for v in MODELS:
         os.makedirs(os.path.join(d, "circuitkit", v), exist_ok=True)
         for f in ("layer_importance.json", "tokenizer_check.json"):

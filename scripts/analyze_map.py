@@ -28,15 +28,27 @@ TARGET = 0.40
 N_BOOT = 10000
 
 
-def fetch() -> None:
+def download(path: str, dst: str, tries: int = 4) -> None:
+    """Copy one file from the private stage-2 repo, retrying when the hub answers with a transient error."""
+    import time
     from huggingface_hub import hf_hub_download
+    for i in range(tries):
+        try:
+            shutil.copy(hf_hub_download("itssaharsh/relapse-stage2", path, repo_type="dataset", force_download=True), dst)
+            return
+        except Exception:
+            if i == tries - 1:
+                raise
+            time.sleep(10 * (i + 1))
+
+
+def fetch() -> None:
     for v in MODELS:
         for s in SEEDS:
             run = f"{v}_seed{s}"
             os.makedirs(os.path.join(MAP, run), exist_ok=True)
             for f in ("results.json", "items.json"):
-                shutil.copy(hf_hub_download("itssaharsh/relapse-stage2", f"map/{run}/{f}", repo_type="dataset", force_download=True),
-                            os.path.join(MAP, run, f))
+                download(f"map/{run}/{f}", os.path.join(MAP, run, f))
 
 
 def paired_p(a: list[int], b: list[int], rng: np.random.Generator) -> tuple[float, float, float, float]:

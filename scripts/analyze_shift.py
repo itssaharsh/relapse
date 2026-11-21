@@ -14,7 +14,7 @@ import shutil
 
 import numpy as np
 
-from analyze_map import HELD_OUT, MODELS, ROOT, paired_p, sign_test
+from analyze_map import HELD_OUT, MODELS, ROOT, download, paired_p, sign_test
 
 SEEDS = (21, 22)
 WINDOWS = ("5-7", "7-9", "10-12")
@@ -26,13 +26,12 @@ NAME = re.compile(r".+_W(\d+-\d+)_lr([^_]+)_(official|outdated|both)_s\d+$")
 
 
 def fetch(d: str) -> None:
-    from huggingface_hub import hf_hub_download
     for v in MODELS:
         for s in SEEDS:
             run = f"{v}_seed{s}"
             os.makedirs(os.path.join(d, run), exist_ok=True)
             for f in ("results.json", "items.json"):
-                shutil.copy(hf_hub_download("itssaharsh/relapse-stage2", f"shift/{run}/{f}", repo_type="dataset", force_download=True), os.path.join(d, run, f))
+                download(f"shift/{run}/{f}", os.path.join(d, run, f))
 
 
 def in_range(x: float) -> bool:

@@ -75,7 +75,7 @@ Full results: [results/map/summary.json](https://github.com/itssaharsh/relapse/b
 
 ## What is running now
 
-- A real-file check of the two Base relapses, through llama.cpp.
+- A [pre-registered](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION_4.md) follow-up of the one relapse the map found (Tiny Aya Base, layers 10 to 12, Q4_0): eight fresh seeds, real llama.cpp files, where the relapse comes from, and whether training on the file repairs it.
 - A [pre-registered](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION_2.md) 180-run test of **pipeline relapse**: does a model unlearned through one tokenizer setting regain knowledge when deployed through another, and does training on both prevent it?
 - A [pre-registered](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION_3.md) test of **where to place the edit**, with CircuitKIT re-run through the official tokenizer on all five models and fresh seeds.
 

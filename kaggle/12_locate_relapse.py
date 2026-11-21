@@ -6,6 +6,7 @@
 #   edited        only the three edited matrices
 #   window_other  only the other matrices inside the window
 #   after         only the layers behind the window
+#   layers:a-b    only layers a to b;   all_but:a-b   every layer except a to b
 sh("pip install -q 'bitsandbytes>=0.45'", check=False)
 setup_llamacpp(build=False)
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -29,6 +30,9 @@ lo, hi = min(map(layer_of, edited)), max(map(layer_of, edited))
 log("window", lo, hi, "edited", edited, "runs", list(models))
 def in_part(n, part):
     l = layer_of(n)
+    if part.startswith("layers:") or part.startswith("all_but:"):      # "layers:13-18" rounds only those layers; "all_but:13-18" rounds every other layer
+        a, b = (int(x) for x in part.split(":")[1].split("-"))
+        return (a <= l <= b) == part.startswith("layers:")
     return {"none": False, "all": True, "before": l < lo, "after": l > hi, "edited": n in edited,
             "window_other": lo <= l <= hi and n not in edited}[part]
 sets = load_sets(SETS, mmlu_n=1000)

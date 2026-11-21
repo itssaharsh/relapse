@@ -143,25 +143,27 @@ def part_e(runs: list[dict]) -> dict:
     return {"R6": {"seeds_with_nf4_only_relapse": k, "of": len(FRESH), "interval95": exact_interval(k, len(FRESH)), "holds": k >= 1}, "per_seed": per_seed}
 
 
-def relapsing(runs: list[dict]) -> list[dict]:
-    return [r for r in runs if r["arm"] == "plain" and r["effective"] and r.get("Q4_0", {}).get("relapse")]
+def relapsing(runs: list[dict]) -> list[tuple[dict, str]]:
+    """Every effective plain run that relapses, with the format it relapses in."""
+    return [(r, f) for r in runs if r["arm"] == "plain" and r["effective"] for f in ("Q4_0", "nf4") if r.get(f, {}).get("relapse")]
 
 
 def part_d(runs: list[dict]) -> dict:
+    """The repair and its controls, each compared with the plain run in the format that relapsed (amendment 3 for NF4)."""
     rng = np.random.default_rng(1)
     out = []
-    for r in relapsing(runs):
-        entry = {"plain": r["name"], "plain_fp16": r["wmdp_fp16"], "plain_Q4_0": r["Q4_0"]["wmdp"], "plain_rise": r["Q4_0"]["delta"], "arms": {}}
+    for r, f in relapsing(runs):
+        entry = {"plain": r["name"], "format": f, "plain_fp16": r["wmdp_fp16"], "plain_file": r[f]["wmdp"], "plain_rise": r[f]["delta"], "arms": {}}
         for a in runs:
-            if a["arm"] == "plain" or (a["model"], a["window"], a["lr"], a["seed"]) != (r["model"], r["window"], r["lr"], r["seed"]) or "Q4_0" not in a:
+            if a["arm"] == "plain" or (a["model"], a["window"], a["lr"], a["seed"]) != (r["model"], r["window"], r["lr"], r["seed"]) or f not in a:
                 continue
-            d, lo, hi, p = paired_p(r["items"]["Q4_0"]["wmdp-bio"], a["items"]["Q4_0"]["wmdp-bio"], rng)
-            m, mlo, mhi, mp = paired_p(r["items"]["Q4_0"]["mmlu"], a["items"]["Q4_0"]["mmlu"], rng)
-            entry["arms"][a["arm"]] = {"name": a["name"], "fp16": a["wmdp_fp16"], "Q4_0": a["Q4_0"]["wmdp"], "own_rise": a["Q4_0"]["delta"], "own_rise_p": a["Q4_0"]["p"], "relapses": a["Q4_0"]["relapse"],
-                                       "nf4": a["nf4"]["wmdp"] if "nf4" in a else None, "wmdp_Q4_0_vs_plain": {"delta": d, "ci95": [lo, hi], "p": p}, "mmlu_Q4_0_vs_plain": {"delta": m, "ci95": [mlo, mhi], "p": mp},
-                                       "R5a": not a["Q4_0"]["relapse"], "R5b": bool(d < 0 and p < 0.05), "R5c": bool(-m <= MAX_COST)}
+            d, lo, hi, p = paired_p(r["items"][f]["wmdp-bio"], a["items"][f]["wmdp-bio"], rng)
+            m, mlo, mhi, mp = paired_p(r["items"][f]["mmlu"], a["items"][f]["mmlu"], rng)
+            entry["arms"][a["arm"]] = {"name": a["name"], "fp16": a["wmdp_fp16"], "file": a[f]["wmdp"], "own_rise": a[f]["delta"], "own_rise_p": a[f]["p"], "relapses": a[f]["relapse"],
+                                       "wmdp_file_vs_plain": {"delta": d, "ci95": [lo, hi], "p": p}, "mmlu_file_vs_plain": {"delta": m, "ci95": [mlo, mhi], "p": mp},
+                                       "R5a": not a[f]["relapse"], "R5b": bool(d < 0 and p < 0.05), "R5c": bool(-m <= MAX_COST)}
         out.append(entry)
-    rep = [e["arms"]["repaired"] for e in out if "repaired" in e["arms"]]
+    rep = [e["arms"][k] for e in out for k in ("repaired", "repaired_nf4") if k in e["arms"] and (k == "repaired_nf4") == (e["format"] == "nf4")]
     return {"relapsing_runs": len(out), "repaired_runs": len(rep), "R5a_holds_in": sum(x["R5a"] for x in rep), "R5b_holds_in": sum(x["R5b"] for x in rep), "R5c_holds_in": sum(x["R5c"] for x in rep), "runs": out}
 
 
@@ -223,10 +225,10 @@ def main() -> None:
     D = res["part_d"]
     print("R5", {k: v for k, v in D.items() if k != "runs"})
     for e in D["runs"]:
-        print("  ", e["plain"], "fp16", round(100 * e["plain_fp16"], 1), "Q4_0", round(100 * e["plain_Q4_0"], 1))
+        print("  ", e["plain"], "relapses in", e["format"], "fp16", round(100 * e["plain_fp16"], 1), "file", round(100 * e["plain_file"], 1))
         for arm, x in e["arms"].items():
-            print("     ", arm, "fp16", round(100 * x["fp16"], 1), "Q4_0", round(100 * x["Q4_0"], 1), "own rise", round(100 * x["own_rise"], 1), "| vs plain in Q4_0: wmdp", round(100 * x["wmdp_Q4_0_vs_plain"]["delta"], 1),
-                  "p", round(x["wmdp_Q4_0_vs_plain"]["p"], 4), "mmlu", round(100 * x["mmlu_Q4_0_vs_plain"]["delta"], 1), "| R5a", x["R5a"], "R5b", x["R5b"], "R5c", x["R5c"])
+            print("     ", arm, "fp16", round(100 * x["fp16"], 1), "file", round(100 * x["file"], 1), "own rise", round(100 * x["own_rise"], 1), "| vs plain in the file: wmdp", round(100 * x["wmdp_file_vs_plain"]["delta"], 1),
+                  "p", round(x["wmdp_file_vs_plain"]["p"], 4), "mmlu", round(100 * x["mmlu_file_vs_plain"]["delta"], 1), "| R5a", x["R5a"], "R5b", x["R5b"], "R5c", x["R5c"])
 
 
 if __name__ == "__main__":

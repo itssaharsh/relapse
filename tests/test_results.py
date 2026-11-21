@@ -3,6 +3,7 @@ import json
 import os
 import re
 
+from analyze_map import TARGET
 from build_corrected import build
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -36,6 +37,11 @@ def allowed():
     for m in ("rmu_deeper", "rmu_deeper_file"):
         for p in ("fp16", "Q4_0", "Q4_K_M"):
             pts.add(round(abs(100 * (by[(m, p)]["wmdp-bio"] - by[(m, "fp16")]["wmdp-bio"])), 1))
+    m = json.load(open(os.path.join(ROOT, "results", "map", "summary.json")))    # the pre-registered map
+    pct.add(100 * TARGET)
+    for r in m["runs"]:
+        pts |= {round(100 * r[f]["delta"], 1) for f in ("Q4_0", "nf4") if r.get(f, {}).get("relapse")}
+    pv.add(round(m["all_five"]["H4"]["p"], 3))
     return pct, pts, pv
 
 

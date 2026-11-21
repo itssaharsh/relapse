@@ -62,9 +62,28 @@ It forgets 8.2 to 11.9 points more in every file (p = 0.001 in each). The genera
 
 **A finding from the mistake itself.** The original model scored the same under both tokenizer settings, but the unlearned models moved by as much as 10.5 points (default layers +8.8, CircuitKIT layers -1.2, layers 10 to 12 +10.5). Unlearning measured through one preprocessing pipeline may not hold through another, so an audit should pin the exact tokenizer it was trained and tested with.
 
+## What the pre-registered test found
+
+We [registered](results/PREREGISTRATION.md) a 150-run test before starting it, using the **official tokenizer**: five Tiny Aya models, five layer placements, three strengths and two fresh seeds, with Water and Base held out. Of the 150 runs, 109 forgot enough to count.
+
+**107 of those 109 did not relapse in Q4_0 or NF4.** With the correct tokenizer, RMU forgetting almost always survived 4-bit compression. The two relapses are both Tiny Aya Base, seed 12, layers 10 to 12, in Q4_0 only (+5.7 and +6.0 points). The relapse we reported on Global in Stage 1 was caused by the tokenizer.
+
+| Registered hypothesis | Result |
+|---|---|
+| H1: a relapse tends to appear in one format, not both | Holds, but on only 2 relapses |
+| H2: a single-format audit misses relapses in both directions | **Failed.** Q4_0 only: 2. NF4 only: 0 |
+| H3: layers 7 to 9 cost less general knowledge than 5 to 7 at equal forgetting | **Could not be tested.** No model and seed reached the 40% comparison point at both placements |
+| H4: layers 10 to 12 relapse more than layers 7 to 9 | **Failed.** 2 of 12 against 0 of 30, p = 0.077 |
+
+Full results: [results/map/summary.json](results/map/summary.json).
+
 ## What is running now
 
-A [pre-registered](results/PREREGISTRATION.md) experiment of 150 runs, trained and scored with the **official tokenizer**: five Tiny Aya models, five layer placements, three strengths and two fresh seeds, with Water and Base held out as untouched test models. Its hypotheses were committed before the runs started. This page will be updated from those results, including any hypothesis that fails.
+- A real-file check of the two Base relapses, through llama.cpp.
+- A [pre-registered](results/PREREGISTRATION_2.md) 180-run test of **pipeline relapse**: does a model unlearned through one tokenizer setting regain knowledge when deployed through another, and does training on both prevent it?
+- A [pre-registered](results/PREREGISTRATION_3.md) test of **where to place the edit**, with CircuitKIT re-run through the official tokenizer on all five models and fresh seeds.
+
+Their analysis scripts were committed before their results were read. This page will be updated from them, including any hypothesis that fails.
 
 ## How it works
 

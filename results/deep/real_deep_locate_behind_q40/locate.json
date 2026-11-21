@@ -1,0 +1,254 @@
+[
+ {
+  "model": "base",
+  "part": "none",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 0,
+  "wmdp-bio": 0.600942655145326,
+  "wmdp-bio_pcorrect": 0.4735
+ },
+ {
+  "model": "base_W10-12_lr0.0002_s12",
+  "part": "none",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 0,
+  "wmdp-bio": 0.47368421052631576,
+  "wmdp-bio_pcorrect": 0.3607
+ },
+ {
+  "model": "base_W10-12_lr0.001_s12",
+  "part": "none",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 0,
+  "wmdp-bio": 0.46818538884524746,
+  "wmdp-bio_pcorrect": 0.37
+ },
+ {
+  "model": "base",
+  "part": "layers:13-16",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.612725844461901,
+  "wmdp-bio_pcorrect": 0.4779
+ },
+ {
+  "model": "base_W10-12_lr0.0002_s12",
+  "part": "layers:13-16",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.49096622152395913,
+  "wmdp-bio_pcorrect": 0.3625
+ },
+ {
+  "model": "base_W10-12_lr0.001_s12",
+  "part": "layers:13-16",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.46897093479968577,
+  "wmdp-bio_pcorrect": 0.37
+ },
+ {
+  "model": "base",
+  "part": "layers:17-20",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.6205813040062844,
+  "wmdp-bio_pcorrect": 0.4838
+ },
+ {
+  "model": "base_W10-12_lr0.0002_s12",
+  "part": "layers:17-20",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.5153181461115475,
+  "wmdp-bio_pcorrect": 0.3762
+ },
+ {
+  "model": "base_W10-12_lr0.001_s12",
+  "part": "layers:17-20",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.5003927729772192,
+  "wmdp-bio_pcorrect": 0.3852
+ },
+ {
+  "model": "base",
+  "part": "layers:21-24",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.605655930871956,
+  "wmdp-bio_pcorrect": 0.4709
+ },
+ {
+  "model": "base_W10-12_lr0.0002_s12",
+  "part": "layers:21-24",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.48625294579732914,
+  "wmdp-bio_pcorrect": 0.3591
+ },
+ {
+  "model": "base_W10-12_lr0.001_s12",
+  "part": "layers:21-24",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.4799685781618225,
+  "wmdp-bio_pcorrect": 0.3707
+ },
+ {
+  "model": "base",
+  "part": "layers:25-28",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.6111547525530243,
+  "wmdp-bio_pcorrect": 0.4749
+ },
+ {
+  "model": "base_W10-12_lr0.0002_s12",
+  "part": "layers:25-28",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.48625294579732914,
+  "wmdp-bio_pcorrect": 0.3615
+ },
+ {
+  "model": "base_W10-12_lr0.001_s12",
+  "part": "layers:25-28",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.4783974862529458,
+  "wmdp-bio_pcorrect": 0.3711
+ },
+ {
+  "model": "base",
+  "part": "layers:29-32",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.6072270227808326,
+  "wmdp-bio_pcorrect": 0.4761
+ },
+ {
+  "model": "base_W10-12_lr0.0002_s12",
+  "part": "layers:29-32",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.48860958366064416,
+  "wmdp-bio_pcorrect": 0.3625
+ },
+ {
+  "model": "base_W10-12_lr0.001_s12",
+  "part": "layers:29-32",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 28,
+  "wmdp-bio": 0.48232521602513745,
+  "wmdp-bio_pcorrect": 0.3718
+ },
+ {
+  "model": "base",
+  "part": "layers:33-35",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 21,
+  "wmdp-bio": 0.6103692065985861,
+  "wmdp-bio_pcorrect": 0.4747
+ },
+ {
+  "model": "base_W10-12_lr0.0002_s12",
+  "part": "layers:33-35",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 21,
+  "wmdp-bio": 0.47368421052631576,
+  "wmdp-bio_pcorrect": 0.3616
+ },
+ {
+  "model": "base_W10-12_lr0.001_s12",
+  "part": "layers:33-35",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 21,
+  "wmdp-bio": 0.4603299293008641,
+  "wmdp-bio_pcorrect": 0.3706
+ }
+]

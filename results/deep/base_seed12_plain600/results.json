@@ -1,0 +1,98 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.600942655145326,
+  "wmdp-bio_pcorrect": 0.4735,
+  "mmlu": 0.576,
+  "mmlu_pcorrect": 0.4583
+ },
+ {
+  "model": "base_W10-12_lr0.0002_plain_nb600_s12",
+  "prec": "fp16",
+  "wmdp-bio": 0.4752553024351925,
+  "wmdp-bio_pcorrect": 0.3556,
+  "mmlu": 0.546,
+  "mmlu_pcorrect": 0.4317
+ },
+ {
+  "model": "base_W10-12_lr0.00045_plain_nb600_s12",
+  "prec": "fp16",
+  "wmdp-bio": 0.43283582089552236,
+  "wmdp-bio_pcorrect": 0.323,
+  "mmlu": 0.529,
+  "mmlu_pcorrect": 0.42
+ },
+ {
+  "model": "base_W10-12_lr0.001_plain_nb600_s12",
+  "prec": "fp16",
+  "wmdp-bio": 0.3150039277297722,
+  "wmdp-bio_pcorrect": 0.2763,
+  "mmlu": 0.48,
+  "mmlu_pcorrect": 0.3861
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.6190102120974077,
+  "wmdp-bio_pcorrect": 0.4792,
+  "mmlu": 0.583,
+  "mmlu_pcorrect": 0.4623
+ },
+ {
+  "model": "base_W10-12_lr0.0002_plain_nb600_s12",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.5129615082482325,
+  "wmdp-bio_pcorrect": 0.3734,
+  "mmlu": 0.549,
+  "mmlu_pcorrect": 0.4369
+ },
+ {
+  "model": "base_W10-12_lr0.00045_plain_nb600_s12",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4744697564807541,
+  "wmdp-bio_pcorrect": 0.3392,
+  "mmlu": 0.551,
+  "mmlu_pcorrect": 0.4301
+ },
+ {
+  "model": "base_W10-12_lr0.001_plain_nb600_s12",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.2859387274155538,
+  "wmdp-bio_pcorrect": 0.2669,
+  "mmlu": 0.489,
+  "mmlu_pcorrect": 0.3983
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "wmdp-bio": 0.5978004713275726,
+  "wmdp-bio_pcorrect": 0.4574,
+  "mmlu": 0.569,
+  "mmlu_pcorrect": 0.443
+ },
+ {
+  "model": "base_W10-12_lr0.0002_plain_nb600_s12",
+  "prec": "nf4",
+  "wmdp-bio": 0.4422623723487824,
+  "wmdp-bio_pcorrect": 0.3434,
+  "mmlu": 0.522,
+  "mmlu_pcorrect": 0.4207
+ },
+ {
+  "model": "base_W10-12_lr0.00045_plain_nb600_s12",
+  "prec": "nf4",
+  "wmdp-bio": 0.38727415553809896,
+  "wmdp-bio_pcorrect": 0.3083,
+  "mmlu": 0.512,
+  "mmlu_pcorrect": 0.4053
+ },
+ {
+  "model": "base_W10-12_lr0.001_plain_nb600_s12",
+  "prec": "nf4",
+  "wmdp-bio": 0.3424980361351139,
+  "wmdp-bio_pcorrect": 0.2866,
+  "mmlu": 0.461,
+  "mmlu_pcorrect": 0.3715
+ }
+]

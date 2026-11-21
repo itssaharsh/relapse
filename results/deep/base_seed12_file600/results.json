@@ -1,0 +1,98 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.600942655145326,
+  "wmdp-bio_pcorrect": 0.4735,
+  "mmlu": 0.576,
+  "mmlu_pcorrect": 0.4583
+ },
+ {
+  "model": "base_W10-12_lr0.0002_file_nb600_s12",
+  "prec": "fp16",
+  "wmdp-bio": 0.4846818538884525,
+  "wmdp-bio_pcorrect": 0.3573,
+  "mmlu": 0.551,
+  "mmlu_pcorrect": 0.4348
+ },
+ {
+  "model": "base_W10-12_lr0.00045_file_nb600_s12",
+  "prec": "fp16",
+  "wmdp-bio": 0.3762765121759623,
+  "wmdp-bio_pcorrect": 0.301,
+  "mmlu": 0.533,
+  "mmlu_pcorrect": 0.4129
+ },
+ {
+  "model": "base_W10-12_lr0.001_file_nb600_s12",
+  "prec": "fp16",
+  "wmdp-bio": 0.29379418695993714,
+  "wmdp-bio_pcorrect": 0.2736,
+  "mmlu": 0.511,
+  "mmlu_pcorrect": 0.3997
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.6190102120974077,
+  "wmdp-bio_pcorrect": 0.4792,
+  "mmlu": 0.583,
+  "mmlu_pcorrect": 0.4623
+ },
+ {
+  "model": "base_W10-12_lr0.0002_file_nb600_s12",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.5027494108405341,
+  "wmdp-bio_pcorrect": 0.3627,
+  "mmlu": 0.552,
+  "mmlu_pcorrect": 0.4389
+ },
+ {
+  "model": "base_W10-12_lr0.00045_file_nb600_s12",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.3244304791830322,
+  "wmdp-bio_pcorrect": 0.2853,
+  "mmlu": 0.519,
+  "mmlu_pcorrect": 0.4149
+ },
+ {
+  "model": "base_W10-12_lr0.001_file_nb600_s12",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.27336999214454044,
+  "wmdp-bio_pcorrect": 0.257,
+  "mmlu": 0.512,
+  "mmlu_pcorrect": 0.3963
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "wmdp-bio": 0.5978004713275726,
+  "wmdp-bio_pcorrect": 0.4574,
+  "mmlu": 0.569,
+  "mmlu_pcorrect": 0.443
+ },
+ {
+  "model": "base_W10-12_lr0.0002_file_nb600_s12",
+  "prec": "nf4",
+  "wmdp-bio": 0.46582875098193244,
+  "wmdp-bio_pcorrect": 0.3464,
+  "mmlu": 0.535,
+  "mmlu_pcorrect": 0.4234
+ },
+ {
+  "model": "base_W10-12_lr0.00045_file_nb600_s12",
+  "prec": "nf4",
+  "wmdp-bio": 0.3527101335428123,
+  "wmdp-bio_pcorrect": 0.296,
+  "mmlu": 0.5,
+  "mmlu_pcorrect": 0.3935
+ },
+ {
+  "model": "base_W10-12_lr0.001_file_nb600_s12",
+  "prec": "nf4",
+  "wmdp-bio": 0.3110761979575805,
+  "wmdp-bio_pcorrect": 0.2744,
+  "mmlu": 0.483,
+  "mmlu_pcorrect": 0.3794
+ }
+]

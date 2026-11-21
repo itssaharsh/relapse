@@ -27,13 +27,37 @@ NAME = re.compile(r"^(?P<model>[a-z]+)_W(?P<window>\d+-\d+)_lr(?P<lr>[^_]+)(?:_(
 ARMS = {("file", 600): "repaired", ("file", 300): "file_300", ("plain", 600): "plain_600", ("editq", 300): "edited_only", ("plain", 300): "rerun", ("filenf", 600): "repaired_nf4", ("filenf", 300): "file_nf4_300"}
 
 
+RAW_RUN = re.compile(r"audit_(.+)_(fp16|nf4|Q4_0|Q4_K_M)_(wmdp-bio|mmlu)\.json$")
+
+
 def fetch(d: str) -> None:
-    from huggingface_hub import HfApi
-    for f in HfApi().list_repo_files("itssaharsh/relapse-stage2", repo_type="dataset"):
-        if f.endswith(".json") and (f.startswith("deep/") or f.startswith("real/deep_") or f.startswith("real/base_relapse/")):
-            dst = os.path.join(d, f.split("/", 1)[1] if f.startswith("deep/") else f.replace("/", "_", 1))
-            os.makedirs(os.path.dirname(dst), exist_ok=True)
-            download(f, dst)
+    """Copy the result files. AuditKIT's saved runs hold the question text, so they stay out of this repository:
+    the paired comparisons are computed here and only those are written (real_files.json)."""
+    import sys
+    from huggingface_hub import HfApi, hf_hub_download
+    files = [f for f in HfApi().list_repo_files("itssaharsh/relapse-stage2", repo_type="dataset")
+             if f.endswith(".json") and (f.startswith("deep/") or f.startswith("real/deep_") or f.startswith("real/base_relapse/"))]
+    raw = {}
+    for f in files:
+        m = RAW_RUN.search(f)
+        if m:
+            raw[(os.path.dirname(f), m.group(1), m.group(2), m.group(3))] = f
+            continue
+        dst = os.path.join(d, f.split("/", 1)[1] if f.startswith("deep/") else f.replace("/", "_", 1))
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        download(f, dst)
+    sys.path.insert(0, os.path.join(ROOT, "kaggle"))
+    from auditkit.report import RunResult
+    from auditkit_mcq import audit_compare
+    run = lambda f: RunResult.load(hf_hub_download("itssaharsh/relapse-stage2", f, repo_type="dataset"))
+    out = {}
+    for (folder, name, prec, k), f in sorted(raw.items()):
+        if prec == "fp16" or k != "wmdp-bio" or (folder, name, "fp16", k) not in raw:
+            continue
+        c = audit_compare(run(raw[(folder, name, "fp16", k)]), run(f))
+        out.setdefault(folder.split("/")[-1], {}).setdefault(name, {})[prec] = {
+            "fp16": c["acc_a"], "file": c["acc_b"], "rise": c["delta"], "ci95": c["ci95"], "p": c["p_value"], "relapse": bool(c["delta"] >= RISE and c["p_value"] < 0.05)}
+    json.dump(out, open(os.path.join(d, "real_files.json"), "w"), indent=1)
 
 
 def exact_interval(k: int, n: int, level: float = 0.95) -> list[float]:
@@ -164,25 +188,9 @@ def part_c(d: str) -> dict:
 
 
 def part_b(d: str) -> dict:
-    """Real llama.cpp files, compared with AuditKIT's paired bootstrap on the saved per-question runs."""
-    out = {}
-    files = sorted(glob.glob(os.path.join(d, "real_*audit_*_fp16_wmdp-bio.json")) + glob.glob(os.path.join(d, "real_*", "audit_*_fp16_wmdp-bio.json")))
-    if not files:
-        return out
-    import sys
-    sys.path.insert(0, os.path.join(ROOT, "kaggle"))
-    from auditkit.report import RunResult
-    from auditkit_mcq import audit_compare
-    for f in files:
-        name = re.search(r"audit_(.+)_fp16_wmdp-bio\.json$", os.path.basename(f)).group(1)
-        res = {}
-        for prec in ("Q4_0", "Q4_K_M", "nf4"):
-            g = f.replace("_fp16_wmdp-bio.json", f"_{prec}_wmdp-bio.json")
-            if os.path.exists(g):
-                c = audit_compare(RunResult.load(f), RunResult.load(g))
-                res[prec] = {"fp16": c["acc_a"], "file": c["acc_b"], "rise": c["delta"], "ci95": c["ci95"], "p": c["p_value"], "relapse": bool(c["delta"] >= RISE and c["p_value"] < 0.05)}
-        out[name] = res
-    return out
+    """Real llama.cpp files, compared with AuditKIT's paired bootstrap on the saved per-question runs (see fetch)."""
+    p = os.path.join(d, "real_files.json")
+    return json.load(open(p)) if os.path.exists(p) else {}
 
 
 def main() -> None:
@@ -205,8 +213,9 @@ def main() -> None:
     for sd, v in res["part_e"]["per_seed"].items():
         print("  seed", sd, {k: x for k, x in v.items() if k != "changes"}, [(c["lr"], round(100 * c["fp16"], 1), round(100 * c["Q4_0"], 1), round(100 * c["nf4"], 1)) for c in v["changes"]])
     print("R3 real files:")
-    for n, v in res["part_b_real_files"].items():
-        print("  ", n, {p: (round(100 * x["fp16"], 1), round(100 * x["file"], 1), round(100 * x["rise"], 1), round(x["p"], 4), x["relapse"]) for p, x in v.items()})
+    for tag, models in res["part_b_real_files"].items():
+        for n, v in models.items():
+            print("  ", tag, n, {p: (round(100 * x["fp16"], 1), round(100 * x["file"], 1), round(100 * x["rise"], 1), round(x["p"], 4), x["relapse"]) for p, x in v.items()})
     print("R4", res["part_c"]["R4"])
     for prec, by in res["part_c"]["by_format"].items():
         for n, v in by.items():

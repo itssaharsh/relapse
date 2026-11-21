@@ -1,0 +1,10 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6331500392772977,
+  "wmdp-bio_pcorrect": 0.6107,
+  "mmlu": 0.554,
+  "mmlu_pcorrect": 0.5394
+ }
+]

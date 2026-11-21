@@ -14,8 +14,8 @@ OUT_REPO, OUT_DIR = "itssaharsh/relapse-stage2", "/tmp/kg/working"
 _o.makedirs(OUT_DIR, exist_ok=True); _o.makedirs("/tmp/kg/input/run", exist_ok=True)
 snapshot_download(f"CohereLabs/tiny-aya-{V}", local_dir=f"/tmp/kg/input/models/cohere-labs/tiny-aya/transformers/{V}/1",
                   allow_patterns=["*.safetensors", "*.json", "tokenizer*", "special_tokens*"])
-_sh.copy(hf_hub_download(_o.environ.get("PT_REPO", "itssaharsh/relapse-backup"), _o.environ["PT_PATH"], repo_type=_o.environ.get("PT_TYPE", "model")),
-         "/tmp/kg/input/run/" + _o.path.basename(_o.environ["PT_PATH"]))
+for _p in _o.environ["PT_PATH"].split(","):
+    _sh.copy(hf_hub_download(_o.environ.get("PT_REPO", "itssaharsh/relapse-backup"), _p, repo_type=_o.environ.get("PT_TYPE", "model")), "/tmp/kg/input/run/" + _o.path.basename(_p))
 _sh.copy(hf_hub_download("itssaharsh/relapse-backup", "dl/final_a/bin/llama-quantize"), "/tmp/kg/input/run/llama-quantize")
 _gitsha, _sha = _o.environ["REPO_COMMIT"], _o.environ["LLAMA_COMMIT"]
 urllib.request.urlretrieve(f"https://raw.githubusercontent.com/itssaharsh/relapse/{_gitsha}/" + "kaggle" + "/auditkit_mcq.py", "/tmp/kg/input/run/auditkit_mcq.py")

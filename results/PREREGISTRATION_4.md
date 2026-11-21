@@ -54,3 +54,13 @@ R5a to R5c are evaluated per relapsing run, and the number of runs where each ho
 ## Rules
 
 Nothing is rerun or dropped because of its result. A job that fails for a technical reason is rerun with the same settings, and the failure is reported. If no fresh seed relapses, R1 is reported as failed, and Parts B to D are reported for seed 12 alone and labelled as one seed. A hypothesis that fails is reported as failed, in the main text.
+
+## Amendment 1 (2026-11-21, written before any Part E run was started): the NF4 direction
+
+Parts A to D follow a relapse that appears in Q4_0 and not in NF4. The map also contains a hint of the opposite: Tiny Aya Fire, layers 13–15, seed 12, learning rate 2e-3 rose by 4.2 points in NF4 (p = 0.002) and did not rise in Q4_0. That is under the 5-point line, so it does not count as a relapse.
+
+**Part E.** Tiny Aya Fire, layers 13–15, learning rates 1e-3 and 2e-3, seeds 41 to 48, same fixed settings and formats as Part A.
+
+**R6: a relapse in the other direction exists.** At least one fresh seed has an effective run that relapses in NF4 and does not relapse in Q4_0. We report the share of such seeds with an exact 95% interval.
+
+If R1 and R6 both hold, a single-format audit can miss a relapse in either direction (the claim that hypothesis H2 of the first pre-registration failed to support).

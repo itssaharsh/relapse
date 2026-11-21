@@ -100,10 +100,23 @@ def part_a(runs: list[dict]) -> dict:
     k = sum(v["relapses_Q4_0"] > 0 for v in per_seed.values())
     p = sign_test(int(wins), int(wins + losses))
     others = [{"name": r["name"], "effective": r["effective"], "wmdp_fp16": r["wmdp_fp16"], **{f: {x: r[f][x] for x in ("delta", "p", "relapse")} for f in ("Q4_0", "nf4")}}
-              for r in runs if r["model"] != "base" and r["arm"] == "plain" and r["source"] == "new"]
+              for r in runs if r["model"] != "base" and r["window"] == "10-12" and r["arm"] == "plain" and r["source"] == "new"]
     return {"R1": {"relapsing_seeds_Q4_0": k, "of": len(FRESH), "interval95": exact_interval(k, len(FRESH)), "relapsing_seeds_nf4": sum(v["relapses_nf4"] > 0 for v in per_seed.values()), "holds": k >= 1},
             "R2": {"Q4_0_change_larger": int(wins), "nf4_change_larger": int(losses), "seeds_without_effective_run": sum(v["effective"] == 0 for v in per_seed.values()), "p": p, "holds": bool(p < 0.05 and wins > losses)},
             "per_seed": per_seed, "other_models": {"runs": len(others), "effective": sum(o["effective"] for o in others), "relapsing": [o for o in others if o["effective"] and (o["Q4_0"]["relapse"] or o["nf4"]["relapse"])], "all": others}}
+
+
+def part_e(runs: list[dict]) -> dict:
+    """Amendment 1: Tiny Aya Fire at layers 13-15, the NF4 direction."""
+    fresh = [r for r in runs if r["model"] == "fire" and r["window"] == "13-15" and r["arm"] == "plain" and r["seed"] in FRESH and r["source"] == "new"]
+    per_seed = {}
+    for s in FRESH:
+        eff = [r for r in fresh if r["seed"] == s and r["effective"]]
+        per_seed[s] = {"runs": sum(r["seed"] == s for r in fresh), "effective": len(eff), "nf4_only": sum(r["nf4"]["relapse"] and not r["Q4_0"]["relapse"] for r in eff),
+                       "Q4_0_only": sum(r["Q4_0"]["relapse"] and not r["nf4"]["relapse"] for r in eff), "both": sum(r["Q4_0"]["relapse"] and r["nf4"]["relapse"] for r in eff),
+                       "changes": [{"lr": r["lr"], "fp16": r["wmdp_fp16"], "Q4_0": r["Q4_0"]["delta"], "nf4": r["nf4"]["delta"], "p_nf4": r["nf4"]["p"]} for r in eff]}
+    k = sum(v["nf4_only"] > 0 for v in per_seed.values())
+    return {"R6": {"seeds_with_nf4_only_relapse": k, "of": len(FRESH), "interval95": exact_interval(k, len(FRESH)), "holds": k >= 1}, "per_seed": per_seed}
 
 
 def relapsing(runs: list[dict]) -> list[dict]:
@@ -180,7 +193,7 @@ def main() -> None:
     if a.fetch:
         fetch(a.dir)
     runs = load(a.dir)
-    res = {"part_a": part_a(runs), "part_b_real_files": part_b(a.dir), "part_c": part_c(a.dir), "part_d": part_d(runs),
+    res = {"part_a": part_a(runs), "part_b_real_files": part_b(a.dir), "part_c": part_c(a.dir), "part_d": part_d(runs), "part_e": part_e(runs),
            "runs": [{k: v for k, v in r.items() if k != "items"} for r in runs]}
     json.dump(res, open(os.path.join(a.dir, "summary.json"), "w"), indent=1)
     A = res["part_a"]
@@ -188,6 +201,9 @@ def main() -> None:
     for s, v in A["per_seed"].items():
         print("  seed", s, {k: (round(x, 4) if isinstance(x, float) else x) for k, v2 in [(0, 0)] for k, x in v.items()})
     print("other models:", A["other_models"]["runs"], "runs,", A["other_models"]["effective"], "effective, relapsing:", [o["name"] for o in A["other_models"]["relapsing"]])
+    print("R6", res["part_e"]["R6"])
+    for sd, v in res["part_e"]["per_seed"].items():
+        print("  seed", sd, {k: x for k, x in v.items() if k != "changes"}, [(c["lr"], round(100 * c["fp16"], 1), round(100 * c["Q4_0"], 1), round(100 * c["nf4"], 1)) for c in v["changes"]])
     print("R3 real files:")
     for n, v in res["part_b_real_files"].items():
         print("  ", n, {p: (round(100 * x["fp16"], 1), round(100 * x["file"], 1), round(100 * x["rise"], 1), round(x["p"], 4), x["relapse"]) for p, x in v.items()})

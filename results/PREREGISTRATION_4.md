@@ -68,3 +68,7 @@ If R1 and R6 both hold, a single-format audit can miss a relapse in either direc
 ## Amendment 2 (2026-11-21, before its run was started): an exact rerun of seed 12
 
 The seed-12 runs in the map were trained on a T4 GPU. We train the same three runs again, with the same seed and settings, on a different GPU type (L4). RMU training is sensitive to tiny numerical differences, so this shows whether the relapse belongs to the seed or to one particular training run. It is reported separately and does not count towards R1.
+
+## Amendment 3 (2026-11-21, before its runs were started): cause and repair of the NF4 relapse
+
+Part E found one relapse in the NF4 direction (Tiny Aya Fire, layers 13–15, seed 44, learning rate 2e-3: +5.3 points in NF4, no rise in Q4_0). We apply Parts B, C and D to it, with NF4 in the place of Q4_0: real llama.cpp files are scored for reference; one part of the model at a time is rounded to NF4; and the repaired run is trained with the model and its frozen reference seen as their NF4 copies on every step for 600 batches, with plain RMU for 600 batches as the control. R5a to R5c are evaluated in NF4 for this run.

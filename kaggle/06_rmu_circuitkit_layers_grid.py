@@ -57,7 +57,7 @@ for c in CONFIGS:
     detach = None
     if c.get("pq_file"):   # the whole truncated model, and the frozen reference, seen as the Q4_0 file on a fraction of the steps
         detach = attach_file_view(model, frozen, {f"layers.{l}.mlp.down_proj" for l in UPD}, c["pq_file"], seed=SD,
-                                  qdev="cuda:1" if torch.cuda.device_count() > 1 else None)
+                                  qdev="cuda:1" if torch.cuda.device_count() > 1 else None, kind=c.get("pq_kind", "q4_0"))
     rc = RMUConfig(layer_id=L, update_layer_ids=UPD, steering_coeff=c["mult"] * anorm, alpha=c["alpha"], lr=c["lr"], max_num_batches=NB)
     t1 = time.time()
     rmu_unlearn(model, retain_batches=RB, forget_batches=FB, frozen_model=frozen, config=rc)

@@ -212,7 +212,7 @@ class FakeQuantSTE(torch.nn.Module):
 
 # ---------- the model seen as its 4-bit file during training ----------
 class FileView:
-    """Shared switch. When on, every decoder linear weight is seen after its Q4_0 round trip."""
+    """Shared switch. When on, every decoder linear weight is seen after its 4-bit round trip (Q4_0 unless another kind is given)."""
     on = False
 class SwapQ(torch.nn.Module):
     """Parametrization for a weight that is not trained: swap in its stored Q4_0 round trip while the view is on."""
@@ -221,25 +221,25 @@ class SwapQ(torch.nn.Module):
     def forward(self, W):
         return self.wq.to(W.device, W.dtype) if self.view.on else W
 class EditQ(torch.nn.Module):
-    """Parametrization for a trained weight: Q4_0 round trip on the fly while the view is on, straight-through gradient."""
-    def __init__(self, view):
-        super().__init__(); self.view = view
+    """Parametrization for a trained weight: 4-bit round trip on the fly while the view is on, straight-through gradient."""
+    def __init__(self, view, kind="q4_0"):
+        super().__init__(); self.view = view; self.fq = FQ[kind]
     def forward(self, W):
-        return W + (fq_q4_0(W.detach()) - W.detach()) if self.view.on else W
+        return W + (self.fq(W.detach()) - W.detach()) if self.view.on else W
 def proj_linears(m):
     return [(n, mod) for n, mod in m.named_modules() if isinstance(mod, torch.nn.Linear) and n.endswith("_proj") and "layers." in n]
-def attach_file_view(model, frozen, edited, p, seed=0, qdev=None):
-    """Train `model` against `frozen` with both seen as their Q4_0 file on a fraction p of the steps.
+def attach_file_view(model, frozen, edited, p, seed=0, qdev=None, kind="q4_0"):
+    """Train `model` against `frozen` with both seen as their 4-bit file (`kind`: q4_0 or nf4) on a fraction p of the steps.
     `edited` = names of the trained linears in `model`. One coin per step: it is flipped on every second forward of `model`
     (RMU runs the updated model twice per step, then the frozen one). Returns detach(), which restores plain weights."""
     import torch.nn.utils.parametrize as P
     view = FileView(); qdev = qdev or next(frozen.parameters()).device
     with torch.no_grad():
-        bufs = {n: fq_q4_0(mod.weight.detach().float()).half().to(qdev) for n, mod in proj_linears(frozen)}
+        bufs = {n: FQ[kind](mod.weight.detach().float()).half().to(qdev) for n, mod in proj_linears(frozen)}
     fm, mm = proj_linears(frozen), proj_linears(model)
     assert [n for n, _ in fm] == [n for n, _ in mm] and set(edited) <= set(bufs), "models differ or an edited name is missing"
     for n, mod in fm: P.register_parametrization(mod, "weight", SwapQ(bufs[n], view), unsafe=True)
-    for n, mod in mm: P.register_parametrization(mod, "weight", EditQ(view) if n in edited else SwapQ(bufs[n], view), unsafe=True)
+    for n, mod in mm: P.register_parametrization(mod, "weight", EditQ(view, kind) if n in edited else SwapQ(bufs[n], view), unsafe=True)
     coin, calls, seen = random.Random(1000 + seed), [0], [0, 0]
     def flip(_m, _a):
         if calls[0] % 2 == 0:

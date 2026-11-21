@@ -23,8 +23,8 @@ EFFECTIVE = (0.30, 0.55)
 RISE = 0.05
 MAX_COST = 0.03
 PARTS = ("all", "before", "edited", "window_other", "after")
-NAME = re.compile(r"^(?P<model>[a-z]+)_W(?P<window>\d+-\d+)_lr(?P<lr>[^_]+)(?:_(?P<arm>file|plain|editq)_nb(?P<nb>\d+))?_s(?P<seed>\d+)$")
-ARMS = {("file", 600): "repaired", ("file", 300): "file_300", ("plain", 600): "plain_600", ("editq", 300): "edited_only", ("plain", 300): "rerun"}
+NAME = re.compile(r"^(?P<model>[a-z]+)_W(?P<window>\d+-\d+)_lr(?P<lr>[^_]+)(?:_(?P<arm>file|filenf|plain|editq)_nb(?P<nb>\d+))?_s(?P<seed>\d+)$")
+ARMS = {("file", 600): "repaired", ("file", 300): "file_300", ("plain", 600): "plain_600", ("editq", 300): "edited_only", ("plain", 300): "rerun", ("filenf", 600): "repaired_nf4", ("filenf", 300): "file_nf4_300"}
 
 
 def fetch(d: str) -> None:

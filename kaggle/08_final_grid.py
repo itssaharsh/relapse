@@ -8,7 +8,7 @@ RUNS = json.loads(os.environ.get("RUNS", "[]"))   # [{"name": "...", "file": "ch
 SIM = os.environ.get("SIM", "fp16,bf16,Q8_0,Q4_0,nf4").split(",")
 REAL = os.environ.get("REAL", "Q6_K,Q4_K_M").split(",")
 AUDIT = os.environ.get("AUDIT", "fp16,Q4_K_M").split(",")
-MP = model_path("global")
+MP = model_path(os.environ.get("VARIANT", "global"))
 tok = AutoTokenizer.from_pretrained(MP)
 if tok.pad_token is None: tok.pad_token = tok.eos_token
 model = AutoModelForCausalLM.from_pretrained(MP, dtype=torch.float16, device_map={"": 0}).eval()

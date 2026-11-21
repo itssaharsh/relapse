@@ -5,8 +5,8 @@ import shutil
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 from safetune.interventions.unlearn.rmu import rmu_unlearn, RMUConfig
 SEED = int(os.environ.get("SEED", "1"))
-CFGS = [{"name": "rmu_default_layers_seed1", "layer": 7, "lr": 4e-5, "nb": 250},
-        {"name": "rmu_circuit_layers_seed1", "layer": 9, "lr": 1.5e-4, "nb": 300}]
+CFGS = [{"name": f"rmu_default_layers_seed{SEED}", "layer": 7, "lr": 4e-5, "nb": 250},
+        {"name": f"rmu_circuit_layers_seed{SEED}", "layer": 9, "lr": 1.5e-4, "nb": 300}]
 MP = model_path("global")
 tok = AutoTokenizer.from_pretrained(MP)
 if tok.pad_token is None: tok.pad_token = tok.eos_token
@@ -37,9 +37,9 @@ for c in CFGS:
     rmu_unlearn(m, retain_batches=RB, forget_batches=FB, frozen_model=frozen,
                 config=RMUConfig(layer_id=L, update_layer_ids=UPD, steering_coeff=3 * sum(norms) / len(norms), alpha=100, lr=c["lr"], max_num_batches=c["nb"]))
     trained[c["name"]] = {"model." + n: p.detach().float().cpu().clone() for n, p in m.named_parameters() if any(f"layers.{l}.mlp.down_proj" in n for l in UPD)}
-    torch.save(trained, "/kaggle/working/changed_seed1.pt"); log("trained", c["name"])
+    torch.save(trained, f"/kaggle/working/changed_seed{SEED}.pt"); log("trained", c["name"])
     del m, frozen, FB, RB; gc.collect(); torch.cuda.empty_cache()
-TAG = "seed1"
+TAG = f"seed{SEED}"
 SIM = os.environ.get("SIM", "fp16,Q8_0,Q4_0,nf4").split(",")
 REAL = os.environ.get("REAL", "Q4_K_M").split(",")
 AUDIT = os.environ.get("AUDIT", "fp16,Q4_K_M").split(",")

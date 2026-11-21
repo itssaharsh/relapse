@@ -88,7 +88,7 @@ def set_tensors(get, names, prec, chunk=8):
             outs = list(ex.map(lambda n: roundtrip(get(n), prec).to(torch.float16), part))
             with torch.no_grad():
                 for n, t in zip(part, outs): params[n].copy_(t)
-results = []
+results, items = [], {}
 for prec in PRECS:
     set_tensors(lambda n: master[n], master.keys(), prec)
     for name, d in ([] if os.environ.get("SKIP_BASE") == "1" else [("base", {})]) + list(changed.items()):
@@ -98,8 +98,10 @@ for prec in PRECS:
             acc, preds, probs = mcq_eval(model, tok, v)
             row[k] = acc
             row[k + "_pcorrect"] = round(sum(p[a] for p, (_, a) in zip(probs, v)) / len(v), 4)
+            if os.environ.get("SAVE_ITEMS") == "1": items[f"{name}|{prec}|{k}"] = [int(x == y[1]) for x, y in zip(preds, v)]   # right or wrong, per question
         results.append(row); log(row)
         if d: set_tensors(lambda n: master[n], d.keys(), prec)
         json.dump(results, open("/kaggle/working/results.json", "w"), indent=1)
+        if items: json.dump(items, open("/kaggle/working/items.json", "w"))
 torch.save(changed, "/kaggle/working/" + os.environ.get("OUT", "changed_rmu4.pt"))
 print(json.dumps(results, indent=1))

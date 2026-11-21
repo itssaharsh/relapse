@@ -11,6 +11,10 @@ V, S = _o.environ["VARIANT"], int(_o.environ["SEED"])
 RUN = f"{V}_seed{S}" + _o.environ.get("RUN_SUFFIX", "")
 LADDER = {(3, 5): (1.5e-5, 3e-5, 6e-5), (5, 7): (2e-5, 4e-5, 7e-5), (7, 9): (1e-4, 1.5e-4, 2.5e-4),
           (10, 12): (2e-4, 4.5e-4, 1e-3), (13, 15): (1e-3, 2e-3, 4e-3)}
+SHIFT = {(5, 7): (4e-5, 7e-5), (7, 9): (1.5e-4, 2.5e-4), (10, 12): (4.5e-4, 1e-3)}
+if _o.environ.get("EXPERIMENT") == "shift" and "CONFIGS" not in _o.environ:
+    _o.environ["CONFIGS"] = _j.dumps([{"name": f"{V}_W{a}-{b}_lr{lr:g}_{t}_s{S}", "layer": b, "alpha": 100, "lr": lr, "mult": 3, "seed": S, "train_tok": t}
+                                      for t in ("official", "outdated", "both") for (a, b), lrs in SHIFT.items() for lr in lrs])
 if "CONFIGS" not in _o.environ:
     _o.environ["CONFIGS"] = _j.dumps([{"name": f"{V}_W{a}-{b}_lr{lr:g}_s{S}", "layer": b, "alpha": 100, "lr": lr, "mult": 3, "seed": S}
                                       for (a, b), lrs in LADDER.items() for lr in lrs])
@@ -37,11 +41,11 @@ def _push(names):
         if _o.path.exists(p):
             for i in range(4):
                 try:
-                    _api.upload_file(path_or_fileobj=p, path_in_repo=f"map/{RUN}/{n}", repo_id=OUT_REPO, repo_type="dataset", commit_message=f"{RUN}: {n}"); break
+                    _api.upload_file(path_or_fileobj=p, path_in_repo=f"{_o.environ.get('OUT_ROOT', 'map')}/{RUN}/{n}", repo_id=OUT_REPO, repo_type="dataset", commit_message=f"{RUN}: {n}"); break
                 except Exception as e:
                     print("upload retry", n, repr(e)[:160], flush=True); _t.sleep(20)
 def _loop():
     while True:
         _t.sleep(900); _push(["results.json", "items.json"])
 threading.Thread(target=_loop, daemon=True).start()
-atexit.register(lambda: _push(["results.json", "items.json", "changed_map.pt"]))
+atexit.register(lambda: _push(["results.json", "items.json", _o.environ["OUT"]]))

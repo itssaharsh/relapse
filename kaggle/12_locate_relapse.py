@@ -13,7 +13,7 @@ RUNS = json.loads(os.environ.get("RUNS", "[]"))   # [{"name": "...", "file": "ch
 PREC = os.environ.get("PREC", "Q4_0")
 PARTS = os.environ.get("PARTS", "none,all,before,edited,window_other,after").split(",")
 SETS = os.environ.get("SETS", "wmdp-bio").split(",")
-MP = model_path("global")
+MP = model_path(os.environ.get("VARIANT", "global"))
 tok = AutoTokenizer.from_pretrained(MP)
 if tok.pad_token is None: tok.pad_token = tok.eos_token
 model = AutoModelForCausalLM.from_pretrained(MP, dtype=torch.float16, device_map={"": 0}).eval()
@@ -41,7 +41,7 @@ def set_tensors(get, names, prec_of, chunk=8):
             outs = list(ex.map(lambda n: roundtrip(get(n), prec_of(n)).to(torch.float16), part))
             with torch.no_grad():
                 for n, t in zip(part, outs): params[n].copy_(t)
-results = []
+results, items = [], {}
 for part in PARTS:
     prec_of = lambda n: PREC if in_part(n, part) else "fp16"
     set_tensors(lambda n: master[n], master.keys(), prec_of)
@@ -52,7 +52,8 @@ for part in PARTS:
             acc, preds, probs = mcq_eval(model, tok, v)
             row[k] = acc
             row[k + "_pcorrect"] = round(sum(p[a] for p, (_, a) in zip(probs, v)) / len(v), 4)
+            items[f"{name}|{part}|{k}"] = [int(x == y[1]) for x, y in zip(preds, v)]   # right or wrong, per question
         results.append(row); log(row)
         if d: set_tensors(lambda n: master[n], d.keys(), prec_of)
-        json.dump(results, open("/kaggle/working/locate.json", "w"), indent=1)
+        json.dump(results, open("/kaggle/working/locate.json", "w"), indent=1); json.dump(items, open("/kaggle/working/locate_items.json", "w"))
 print(json.dumps(results, indent=1))

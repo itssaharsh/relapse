@@ -69,8 +69,9 @@ LLAMA = "/tmp/llama.cpp"
 def setup_llamacpp(build=True):
     if not os.path.exists(LLAMA):
         sh(f"git clone --depth 1 https://github.com/ggml-org/llama.cpp {LLAMA}")
-        # tiny-aya-global's tokenizer hashes differently from tiny-aya-base under transformers 5.x;
-        # it is the same tokenizer family, so map an unknown hash to the tiny_aya pre-tokenizer.
+        # Kaggle's Tiny Aya copy predates Cohere's Sep 30 2026 tokenizer fix, so under transformers v5 its text is split
+        # differently and the hash is unknown. Map it to tiny_aya so the GGUF carries the right pre-tokenizer.
+        # Scoring with that copy is wrong: use the official tokenizer files (see results/correct_tokenizer/).
         bp = f"{LLAMA}/conversion/base.py"
         src = open(bp).read()
         src = src.replace('raise NotImplementedError("BPE pre-tokenizer was not recognized - update get_vocab_base_pre()")',

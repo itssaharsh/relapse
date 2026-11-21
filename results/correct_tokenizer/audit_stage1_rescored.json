@@ -1,0 +1,552 @@
+[
+ {
+  "n": 1273,
+  "acc_a": 0.63315,
+  "acc_b": 0.624509,
+  "delta": -0.008641,
+  "ci95": [
+   -0.024351924587588374,
+   0.007069913589945012
+  ],
+  "p_value": 0.288711,
+  "right_to_wrong": 56,
+  "wrong_to_right": 45,
+  "model": "base",
+  "method": "original",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_0"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.63315,
+  "acc_b": 0.603299,
+  "delta": -0.029851,
+  "ci95": [
+   -0.046347211311861744,
+   -0.014139827179890024
+  ],
+  "p_value": 0.001998,
+  "right_to_wrong": 74,
+  "wrong_to_right": 36,
+  "model": "base",
+  "method": "original",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "NF4"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.63315,
+  "acc_b": 0.632364,
+  "delta": -0.000786,
+  "ci95": [
+   -0.014139827179890024,
+   0.01178318931657502
+  ],
+  "p_value": 0.894106,
+  "right_to_wrong": 37,
+  "wrong_to_right": 36,
+  "model": "base",
+  "method": "original",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.475255,
+  "acc_b": 0.430479,
+  "delta": -0.044776,
+  "ci95": [
+   -0.06677140612725845,
+   -0.022780832678711706
+  ],
+  "p_value": 0.000999,
+  "right_to_wrong": 133,
+  "wrong_to_right": 76,
+  "model": "rmu_default_layers",
+  "method": "standard",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_0"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.475255,
+  "acc_b": 0.464258,
+  "delta": -0.010998,
+  "ci95": [
+   -0.03456402199528672,
+   0.01178318931657502
+  ],
+  "p_value": 0.33966,
+  "right_to_wrong": 121,
+  "wrong_to_right": 107,
+  "model": "rmu_default_layers",
+  "method": "standard",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "NF4"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.475255,
+  "acc_b": 0.450118,
+  "delta": -0.025137,
+  "ci95": [
+   -0.046347211311861744,
+   -0.004713275726630008
+  ],
+  "p_value": 0.01998,
+  "right_to_wrong": 108,
+  "wrong_to_right": 76,
+  "model": "rmu_default_layers",
+  "method": "standard",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.554,
+  "acc_b": 0.531,
+  "delta": -0.023,
+  "ci95": [
+   -0.041,
+   -0.005
+  ],
+  "p_value": 0.015984,
+  "right_to_wrong": 55,
+  "wrong_to_right": 32,
+  "model": "rmu_default_layers",
+  "method": "standard",
+  "kind": "price",
+  "prec": "fp16"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.552,
+  "acc_b": 0.531,
+  "delta": -0.021,
+  "ci95": [
+   -0.04,
+   -0.002
+  ],
+  "p_value": 0.028971,
+  "right_to_wrong": 59,
+  "wrong_to_right": 38,
+  "model": "rmu_default_layers",
+  "method": "standard",
+  "kind": "price",
+  "prec": "Q4_0"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.535,
+  "acc_b": 0.499,
+  "delta": -0.036,
+  "ci95": [
+   -0.055,
+   -0.017
+  ],
+  "p_value": 0.000999,
+  "right_to_wrong": 66,
+  "wrong_to_right": 30,
+  "model": "rmu_default_layers",
+  "method": "standard",
+  "kind": "price",
+  "prec": "NF4"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.547,
+  "acc_b": 0.517,
+  "delta": -0.03,
+  "ci95": [
+   -0.051,
+   -0.01
+  ],
+  "p_value": 0.005994,
+  "right_to_wrong": 70,
+  "wrong_to_right": 40,
+  "model": "rmu_default_layers",
+  "method": "standard",
+  "kind": "price",
+  "prec": "Q4_K_M"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.355852,
+  "acc_b": 0.341712,
+  "delta": -0.01414,
+  "ci95": [
+   -0.036920659858601726,
+   0.00864100549882168
+  ],
+  "p_value": 0.213786,
+  "right_to_wrong": 115,
+  "wrong_to_right": 97,
+  "model": "rmu_circuit_layers",
+  "method": "circuit",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_0"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.355852,
+  "acc_b": 0.360566,
+  "delta": 0.004713,
+  "ci95": [
+   -0.016496465043205028,
+   0.02513747054202671
+  ],
+  "p_value": 0.644356,
+  "right_to_wrong": 85,
+  "wrong_to_right": 91,
+  "model": "rmu_circuit_layers",
+  "method": "circuit",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "NF4"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.355852,
+  "acc_b": 0.368421,
+  "delta": 0.012569,
+  "ci95": [
+   -0.009426551453260016,
+   0.03456402199528672
+  ],
+  "p_value": 0.283716,
+  "right_to_wrong": 97,
+  "wrong_to_right": 113,
+  "model": "rmu_circuit_layers",
+  "method": "circuit",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.554,
+  "acc_b": 0.542,
+  "delta": -0.012,
+  "ci95": [
+   -0.03,
+   0.005
+  ],
+  "p_value": 0.194805,
+  "right_to_wrong": 47,
+  "wrong_to_right": 35,
+  "model": "rmu_circuit_layers",
+  "method": "circuit",
+  "kind": "price",
+  "prec": "fp16"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.552,
+  "acc_b": 0.525,
+  "delta": -0.027,
+  "ci95": [
+   -0.046,
+   -0.008
+  ],
+  "p_value": 0.006993,
+  "right_to_wrong": 63,
+  "wrong_to_right": 36,
+  "model": "rmu_circuit_layers",
+  "method": "circuit",
+  "kind": "price",
+  "prec": "Q4_0"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.535,
+  "acc_b": 0.516,
+  "delta": -0.019,
+  "ci95": [
+   -0.037,
+   -0.002
+  ],
+  "p_value": 0.034965,
+  "right_to_wrong": 50,
+  "wrong_to_right": 31,
+  "model": "rmu_circuit_layers",
+  "method": "circuit",
+  "kind": "price",
+  "prec": "NF4"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.547,
+  "acc_b": 0.538,
+  "delta": -0.009,
+  "ci95": [
+   -0.028,
+   0.01
+  ],
+  "p_value": 0.35964,
+  "right_to_wrong": 51,
+  "wrong_to_right": 42,
+  "model": "rmu_circuit_layers",
+  "method": "circuit",
+  "kind": "price",
+  "prec": "Q4_K_M"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.520817,
+  "acc_b": 0.523959,
+  "delta": 0.003142,
+  "ci95": [
+   -0.018853102906520033,
+   0.02513747054202671
+  ],
+  "p_value": 0.744256,
+  "right_to_wrong": 99,
+  "wrong_to_right": 103,
+  "model": "rmu_deeper",
+  "method": "withdrawn",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_0"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.520817,
+  "acc_b": 0.507463,
+  "delta": -0.013354,
+  "ci95": [
+   -0.03456402199528672,
+   0.007855459544383346
+  ],
+  "p_value": 0.204795,
+  "right_to_wrong": 102,
+  "wrong_to_right": 85,
+  "model": "rmu_deeper",
+  "method": "withdrawn",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "NF4"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.520817,
+  "acc_b": 0.527887,
+  "delta": 0.00707,
+  "ci95": [
+   -0.01178318931657502,
+   0.025923016496465043
+  ],
+  "p_value": 0.465534,
+  "right_to_wrong": 69,
+  "wrong_to_right": 78,
+  "model": "rmu_deeper",
+  "method": "withdrawn",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.581304,
+  "acc_b": 0.571877,
+  "delta": -0.009427,
+  "ci95": [
+   -0.029850746268656716,
+   0.010997643362136685
+  ],
+  "p_value": 0.343656,
+  "right_to_wrong": 91,
+  "wrong_to_right": 79,
+  "model": "rmu_deeper_file",
+  "method": "withdrawn",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_0"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.581304,
+  "acc_b": 0.559309,
+  "delta": -0.021995,
+  "ci95": [
+   -0.04241948153967007,
+   -0.002356637863315004
+  ],
+  "p_value": 0.033966,
+  "right_to_wrong": 96,
+  "wrong_to_right": 68,
+  "model": "rmu_deeper_file",
+  "method": "withdrawn",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "NF4"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.581304,
+  "acc_b": 0.57502,
+  "delta": -0.006284,
+  "ci95": [
+   -0.02199528672427337,
+   0.009426551453260016
+  ],
+  "p_value": 0.43956,
+  "right_to_wrong": 58,
+  "wrong_to_right": 50,
+  "model": "rmu_deeper_file",
+  "method": "withdrawn",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.475255,
+  "acc_b": 0.355852,
+  "delta": -0.119403,
+  "ci95": [
+   -0.15082482325216026,
+   -0.08798114689709348
+  ],
+  "p_value": 0.000999,
+  "right_to_wrong": 288,
+  "wrong_to_right": 136,
+  "kind": "recipe",
+  "set": "wmdp-bio",
+  "prec": "fp16",
+  "a": "default layers",
+  "b": "CircuitKIT layers"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.531,
+  "acc_b": 0.542,
+  "delta": 0.011,
+  "ci95": [
+   -0.008,
+   0.031
+  ],
+  "p_value": 0.281718,
+  "right_to_wrong": 42,
+  "wrong_to_right": 53,
+  "kind": "recipe",
+  "set": "mmlu",
+  "prec": "fp16",
+  "a": "default layers",
+  "b": "CircuitKIT layers"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.430479,
+  "acc_b": 0.341712,
+  "delta": -0.088767,
+  "ci95": [
+   -0.11940298507462686,
+   -0.05813040062843677
+  ],
+  "p_value": 0.000999,
+  "right_to_wrong": 257,
+  "wrong_to_right": 144,
+  "kind": "recipe",
+  "set": "wmdp-bio",
+  "prec": "Q4_0",
+  "a": "default layers",
+  "b": "CircuitKIT layers"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.531,
+  "acc_b": 0.525,
+  "delta": -0.006,
+  "ci95": [
+   -0.027,
+   0.015
+  ],
+  "p_value": 0.561439,
+  "right_to_wrong": 60,
+  "wrong_to_right": 54,
+  "kind": "recipe",
+  "set": "mmlu",
+  "prec": "Q4_0",
+  "a": "default layers",
+  "b": "CircuitKIT layers"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.464258,
+  "acc_b": 0.360566,
+  "delta": -0.103692,
+  "ci95": [
+   -0.13432835820895522,
+   -0.07227022780832679
+  ],
+  "p_value": 0.000999,
+  "right_to_wrong": 282,
+  "wrong_to_right": 150,
+  "kind": "recipe",
+  "set": "wmdp-bio",
+  "prec": "NF4",
+  "a": "default layers",
+  "b": "CircuitKIT layers"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.499,
+  "acc_b": 0.516,
+  "delta": 0.017,
+  "ci95": [
+   -0.003,
+   0.037
+  ],
+  "p_value": 0.07992,
+  "right_to_wrong": 43,
+  "wrong_to_right": 60,
+  "kind": "recipe",
+  "set": "mmlu",
+  "prec": "NF4",
+  "a": "default layers",
+  "b": "CircuitKIT layers"
+ },
+ {
+  "n": 1273,
+  "acc_a": 0.450118,
+  "acc_b": 0.368421,
+  "delta": -0.081697,
+  "ci95": [
+   -0.11390416339355852,
+   -0.04948939512961508
+  ],
+  "p_value": 0.000999,
+  "right_to_wrong": 277,
+  "wrong_to_right": 173,
+  "kind": "recipe",
+  "set": "wmdp-bio",
+  "prec": "Q4_K_M",
+  "a": "default layers",
+  "b": "CircuitKIT layers"
+ },
+ {
+  "n": 1000,
+  "acc_a": 0.517,
+  "acc_b": 0.538,
+  "delta": 0.021,
+  "ci95": [
+   0.0,
+   0.043
+  ],
+  "p_value": 0.061938,
+  "right_to_wrong": 49,
+  "wrong_to_right": 70,
+  "kind": "recipe",
+  "set": "mmlu",
+  "prec": "Q4_K_M",
+  "a": "default layers",
+  "b": "CircuitKIT layers"
+ }
+]

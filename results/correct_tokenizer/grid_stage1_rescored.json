@@ -1,0 +1,162 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6332,
+  "wmdp-bio_pcorrect": 0.6107,
+  "mmlu": 0.554,
+  "mmlu_pcorrect": 0.5394
+ },
+ {
+  "model": "rmu_default_layers",
+  "prec": "fp16",
+  "wmdp-bio": 0.4753,
+  "wmdp-bio_pcorrect": 0.4464,
+  "mmlu": 0.531,
+  "mmlu_pcorrect": 0.5119
+ },
+ {
+  "model": "rmu_circuit_layers",
+  "prec": "fp16",
+  "wmdp-bio": 0.3566,
+  "wmdp-bio_pcorrect": 0.3514,
+  "mmlu": 0.543,
+  "mmlu_pcorrect": 0.5253
+ },
+ {
+  "model": "rmu_deeper",
+  "prec": "fp16",
+  "wmdp-bio": 0.5216,
+  "wmdp-bio_pcorrect": 0.499,
+  "mmlu": 0.547,
+  "mmlu_pcorrect": 0.5311
+ },
+ {
+  "model": "rmu_deeper_file",
+  "prec": "fp16",
+  "wmdp-bio": 0.5813,
+  "wmdp-bio_pcorrect": 0.5545,
+  "mmlu": 0.53,
+  "mmlu_pcorrect": 0.5194
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.6253,
+  "wmdp-bio_pcorrect": 0.6003,
+  "mmlu": 0.553,
+  "mmlu_pcorrect": 0.5273
+ },
+ {
+  "model": "rmu_default_layers",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4305,
+  "wmdp-bio_pcorrect": 0.413,
+  "mmlu": 0.531,
+  "mmlu_pcorrect": 0.5047
+ },
+ {
+  "model": "rmu_circuit_layers",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.3409,
+  "wmdp-bio_pcorrect": 0.336,
+  "mmlu": 0.525,
+  "mmlu_pcorrect": 0.5075
+ },
+ {
+  "model": "rmu_deeper",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.5247,
+  "wmdp-bio_pcorrect": 0.5012,
+  "mmlu": 0.536,
+  "mmlu_pcorrect": 0.5207
+ },
+ {
+  "model": "rmu_deeper_file",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.5719,
+  "wmdp-bio_pcorrect": 0.5462,
+  "mmlu": 0.535,
+  "mmlu_pcorrect": 0.511
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "wmdp-bio": 0.6033,
+  "wmdp-bio_pcorrect": 0.5863,
+  "mmlu": 0.535,
+  "mmlu_pcorrect": 0.5117
+ },
+ {
+  "model": "rmu_default_layers",
+  "prec": "nf4",
+  "wmdp-bio": 0.4643,
+  "wmdp-bio_pcorrect": 0.4414,
+  "mmlu": 0.499,
+  "mmlu_pcorrect": 0.4861
+ },
+ {
+  "model": "rmu_circuit_layers",
+  "prec": "nf4",
+  "wmdp-bio": 0.3606,
+  "wmdp-bio_pcorrect": 0.3444,
+  "mmlu": 0.517,
+  "mmlu_pcorrect": 0.4982
+ },
+ {
+  "model": "rmu_deeper",
+  "prec": "nf4",
+  "wmdp-bio": 0.5059,
+  "wmdp-bio_pcorrect": 0.4934,
+  "mmlu": 0.525,
+  "mmlu_pcorrect": 0.5044
+ },
+ {
+  "model": "rmu_deeper_file",
+  "prec": "nf4",
+  "wmdp-bio": 0.5593,
+  "wmdp-bio_pcorrect": 0.5339,
+  "mmlu": 0.514,
+  "mmlu_pcorrect": 0.4938
+ },
+ {
+  "model": "base",
+  "prec": "Q4_K_M",
+  "wmdp-bio": 0.6324,
+  "wmdp-bio_pcorrect": 0.6114,
+  "mmlu": 0.547,
+  "mmlu_pcorrect": 0.5371
+ },
+ {
+  "model": "rmu_default_layers",
+  "prec": "Q4_K_M",
+  "wmdp-bio": 0.4501,
+  "wmdp-bio_pcorrect": 0.4256,
+  "mmlu": 0.516,
+  "mmlu_pcorrect": 0.503
+ },
+ {
+  "model": "rmu_circuit_layers",
+  "prec": "Q4_K_M",
+  "wmdp-bio": 0.3684,
+  "wmdp-bio_pcorrect": 0.3495,
+  "mmlu": 0.538,
+  "mmlu_pcorrect": 0.5188
+ },
+ {
+  "model": "rmu_deeper",
+  "prec": "Q4_K_M",
+  "wmdp-bio": 0.5279,
+  "wmdp-bio_pcorrect": 0.5087,
+  "mmlu": 0.541,
+  "mmlu_pcorrect": 0.528
+ },
+ {
+  "model": "rmu_deeper_file",
+  "prec": "Q4_K_M",
+  "wmdp-bio": 0.575,
+  "wmdp-bio_pcorrect": 0.5579,
+  "mmlu": 0.525,
+  "mmlu_pcorrect": 0.5124
+ }
+]

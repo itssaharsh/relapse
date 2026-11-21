@@ -1,5 +1,7 @@
 # Kaggle runs
 
+> **Outdated tokenizer.** The Stage 1 runs below used Kaggle's copy of Tiny Aya, whose tokenizer setting predates Cohere's Sep 30, 2026 fix and splits text differently from training under `transformers` v5. Their results are superseded. Run new work with the official tokenizer files, as [`../hf_jobs/`](../hf_jobs/) does.
+
 Every number in Relapse comes from these scripts, run as Kaggle kernels on 2x T4 (16 GB each, no bf16) with internet on.
 Each kernel is `common.py` followed by one numbered script (`./make_kernel.sh 05_rmu_default_layers_grid.py > run.py`); `00_baseline_wmdp.py` and `02_circuitkit_wmdp_layers.py` are standalone.
 

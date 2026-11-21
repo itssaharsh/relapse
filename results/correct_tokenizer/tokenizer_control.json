@@ -1,0 +1,50 @@
+[
+ {
+  "model": "base",
+  "tokenizer": "current_official",
+  "wmdp-bio": 0.6331500392772977,
+  "mmlu": 0.554
+ },
+ {
+  "model": "base",
+  "tokenizer": "kaggle_copy",
+  "wmdp-bio": 0.6331500392772977,
+  "mmlu": 0.554
+ },
+ {
+  "model": "rmu_default_layers",
+  "tokenizer": "current_official",
+  "wmdp-bio": 0.4752553024351925,
+  "mmlu": 0.531
+ },
+ {
+  "model": "rmu_default_layers",
+  "tokenizer": "kaggle_copy",
+  "wmdp-bio": 0.38727415553809896,
+  "mmlu": 0.516
+ },
+ {
+  "model": "rmu_circuit_layers",
+  "tokenizer": "current_official",
+  "wmdp-bio": 0.3566378633150039,
+  "mmlu": 0.543
+ },
+ {
+  "model": "rmu_circuit_layers",
+  "tokenizer": "kaggle_copy",
+  "wmdp-bio": 0.3684210526315789,
+  "mmlu": 0.532
+ },
+ {
+  "model": "rmu_deeper",
+  "tokenizer": "current_official",
+  "wmdp-bio": 0.5216025137470542,
+  "mmlu": 0.547
+ },
+ {
+  "model": "rmu_deeper",
+  "tokenizer": "kaggle_copy",
+  "wmdp-bio": 0.41633935585231735,
+  "mmlu": 0.539
+ }
+]

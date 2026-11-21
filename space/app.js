@@ -165,7 +165,7 @@
   /* ---------- draw ---------- */
   const priceText = (a) => (a.price != null ? `${Math.max(0, a.price * 100).toFixed(1)} pts lost` : 'Price unknown');
   const stampText = (a) => (a.kind === 'unlearned' ? (a.fk === 'relapsed' ? 'Relapsed' : priceText(a)) : a.kind === 'known' ? 'Not unlearned' : 'Not measured');
-  const tagText = (a) => (a.kind !== 'unlearned' ? '' : a.fk === 'relapsed' ? `${(a.back * 100).toFixed(1)} pts came back` : ({ still: 'Still forgotten', slipped: 'Part came back', unref: 'No fp16 reference' }[a.fk]));
+  const tagText = (a) => (a.kind !== 'unlearned' ? '' : a.fk === 'relapsed' ? `${(a.back * 100).toFixed(1)} pts came back` : ({ still: 'Forgetting held', slipped: 'Part came back', unref: 'No fp16 reference' }[a.fk]));
 
   function draw(first) {
     const a = analyse(st.m, st.f, st.lang);
@@ -213,7 +213,7 @@
       lv.innerHTML = v == null ? '<span class="nm2">not measured</span>' : `<b>${pct(v)}%</b>${st.m !== ORIG && ov != null ? `<span>original ${pct(ov)}%</span>` : ''}`;
       b.setAttribute('aria-label', `${l ? LANG[l] : bench}: ${v == null ? 'not measured' : pct(v) + ' percent' + (st.m !== ORIG && ov != null ? ', original ' + pct(ov) + ' percent' : '')}`);
     });
-    $('key').innerHTML = `Top bar: ${esc(st.lang ? langName(st.lang) + ' questions' : bench)}, from chance (${pct(CH)}%) to the original model. Black = knowledge gone. <span class="x">Lower bar: general knowledge (${esc(D.benchmark.retain)}); the hatched part is what unlearning cost against the original at the same file. The page turns red when that cost is ${(PAID * 100).toFixed(0)} points or more, or when ${(RISE * 100).toFixed(0)} points or more of the hazard score come back from ${esc(fpl)}.</span>`;
+    $('key').innerHTML = `Top bar: ${esc(st.lang ? langName(st.lang) + ' questions' : bench)}, from chance (${pct(CH)}%) to the original model. Black = how far the score fell toward guessing. <span class="x">Lower bar: general knowledge (${esc(D.benchmark.retain)}); the hatched part is what unlearning cost against the original at the same file. The page turns red when that cost is ${(PAID * 100).toFixed(0)} points or more, or when ${(RISE * 100).toFixed(0)} points or more of the hazard score come back from ${esc(fpl)}.</span>`;
 
     // stamps
     const stamps = $('stamps'), stamp = $('stamp'), tag = $('tag2');
@@ -237,7 +237,7 @@
     } else {
       const lost = a.price == null ? null : a.price;
       ans.textContent = a.fk === 'relapsed' ? `Relapsed. ${(a.back * 100).toFixed(1)} points of the hazard score came back in this file.` : a.fk === 'slipped' ? `Mostly forgotten. ${(a.back * 100).toFixed(1)} points came back in this file.` : a.fk === 'still'
-        ? (lost == null ? 'Still forgotten.' : lost < 0.005 ? 'Still forgotten. No measurable loss in this file.' : `Still forgotten. ${(lost * 100).toFixed(1)} points of general knowledge lost.`)
+        ? (lost == null ? 'Forgetting held.' : lost < 0.005 ? 'Forgetting held. No measurable loss in this file.' : `Forgetting held. ${(lost * 100).toFixed(1)} points of general knowledge lost.`)
         : 'Scored, no fp16 reference.';
       const against = a.f !== FP && a.base != null ? `, against ${p1(a.base)}% at ${fpl}` : '';
       const pr = D.formats.map((f) => analyse(st.m, f.id, '')).filter((x) => x.kind === 'unlearned' && x.price != null).map((x) => x.price * 100);
@@ -357,7 +357,7 @@
       const back = cells.filter((a) => a.fk === 'relapsed'), slip = cells.filter((a) => a.fk === 'slipped');
       const nm = (a) => `${esc(methodShort(a.m))} at ${esc(fmtLabel(a.f))} (${p1(a.base)}% at ${esc(fmtLabel(FP))}, ${p1(a.v)}% in the file)`;
       const backTxt = (back.length ? ` Relapsed, ${(RISE * 100).toFixed(0)} points or more back: ${back.map(nm).join('; ')}.` : '') + (slip.length ? ` A smaller, statistically clear rise: ${slip.map(nm).join('; ')}.` : '');
-      add(`${still}<sup>of ${cells.length}</sup>`, still === cells.length ? 'ok' : 'hot', `measured unlearned files are still forgotten`, `${cells.length} method and file pairs scored on ${esc(D.benchmark.forget)}.${backTxt} The highest${back.length || slip.length ? ' of the rest' : ''} is ${p1(maxF.v)}% (${esc(methodShort(maxF.m))}, ${esc(fmtLabel(maxF.f))}), against ${pct(maxF.o)}% for the original and ${pct(CH)}% for guessing.`);
+      add(`${still}<sup>of ${cells.length}</sup>`, still === cells.length ? 'ok' : 'hot', `unlearned files kept their forgetting from ${esc(fmtLabel(FP))}`, `${cells.length} method and file pairs scored on ${esc(D.benchmark.forget)}.${backTxt} The highest${back.length || slip.length ? ' of the rest' : ''} is ${p1(maxF.v)}% (${esc(methodShort(maxF.m))}, ${esc(fmtLabel(maxF.f))}), against ${pct(maxF.o)}% for the original and ${pct(CH)}% for guessing.`);
     }
     let lm = null;
     const keys = Object.keys(LANG);
@@ -398,7 +398,7 @@
       D.methods.forEach((m) => {
         const a = analyse(m.id, f.id, '');
         if (a.kind === 'missing') { h += '<td class="f na">not measured</td><td class="na">not measured</td>'; return; }
-        const word = a.kind === 'unlearned' ? (a.fk === 'relapsed' ? 'relapsed' : a.fk === 'slipped' ? 'part came back' : a.fk === 'still' ? 'still gone' : '') : '';
+        const word = a.kind === 'unlearned' ? (a.fk === 'relapsed' ? 'relapsed' : a.fk === 'slipped' ? 'part came back' : a.fk === 'still' ? 'held' : '') : '';
         const tn = a.kind === 'known' ? 'known' : a.fk === 'relapsed' ? 'hot' : 'ok';
         const pr = a.kind === 'unlearned' && a.price != null ? (a.price < 0.0005 ? '<em>no cost</em>' : `<em>price ${(a.price * 100).toFixed(1)}</em>`) : '';
         const rt = a.kind === 'unlearned' ? (a.paid === true ? 'hot' : a.paid === false ? 'ok' : '') : '';

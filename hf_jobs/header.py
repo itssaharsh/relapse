@@ -15,6 +15,10 @@ SHIFT = {(5, 7): (4e-5, 7e-5), (7, 9): (1.5e-4, 2.5e-4), (10, 12): (4.5e-4, 1e-3
 if _o.environ.get("EXPERIMENT") == "shift" and "CONFIGS" not in _o.environ:
     _o.environ["CONFIGS"] = _j.dumps([{"name": f"{V}_W{a}-{b}_lr{lr:g}_{t}_s{S}", "layer": b, "alpha": 100, "lr": lr, "mult": 3, "seed": S, "train_tok": t}
                                       for t in ("official", "outdated", "both") for (a, b), lrs in SHIFT.items() for lr in lrs])
+PLACE_LR = lambda a: (1.5e-5, 3e-5, 6e-5, 1e-4, 2e-4) if a <= 4 else (4e-5, 7e-5, 1.5e-4, 3e-4, 6e-4) if a <= 6 else (1.5e-4, 2.5e-4, 5e-4, 1e-3, 2e-3)
+if _o.environ.get("EXPERIMENT") == "place" and "CONFIGS" not in _o.environ:    # results/PREREGISTRATION_3.md; PICK is the model's CircuitKIT window
+    _wins = sorted({(3, 5), (5, 7), (7, 9), tuple(int(x) for x in _o.environ["PICK"].split("-"))})
+    _o.environ["CONFIGS"] = _j.dumps([{"name": f"{V}_W{a}-{b}_lr{lr:g}_s{S}", "layer": b, "alpha": 100, "lr": lr, "mult": 3, "seed": S} for a, b in _wins for lr in PLACE_LR(a)])
 if "CONFIGS" not in _o.environ:
     _o.environ["CONFIGS"] = _j.dumps([{"name": f"{V}_W{a}-{b}_lr{lr:g}_s{S}", "layer": b, "alpha": 100, "lr": lr, "mult": 3, "seed": S}
                                       for (a, b), lrs in LADDER.items() for lr in lrs])

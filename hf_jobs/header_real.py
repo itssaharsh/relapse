@@ -1,7 +1,7 @@
 # /// script
 # requires-python = ">=3.11,<3.14"
 # dependencies = ["torch", "transformers==5.20.2", "accelerate", "datasets", "huggingface_hub", "bitsandbytes>=0.45",
-#                 "auditkit==1.1.6", "numpy", "safetensors", "sentencepiece", "protobuf", "pyyaml", "tqdm", "psutil"]
+#                 "auditkit==1.1.6", "peft", "numpy", "safetensors", "sentencepiece", "protobuf", "pyyaml", "tqdm", "psutil"]
 # ///
 # Real llama.cpp files + AuditKIT for saved runs, on Hugging Face Jobs.
 # Built by hf_jobs/build_real.sh from this header, kaggle/common.py and kaggle/08_final_grid.py.

@@ -18,7 +18,7 @@ _sh.copy(hf_hub_download(_o.environ.get("PT_REPO", "itssaharsh/relapse-backup"),
          "/tmp/kg/input/run/" + _o.path.basename(_o.environ["PT_PATH"]))
 _sh.copy(hf_hub_download("itssaharsh/relapse-backup", "dl/final_a/bin/llama-quantize"), "/tmp/kg/input/run/llama-quantize")
 _gitsha, _sha = _o.environ["REPO_COMMIT"], _o.environ["LLAMA_COMMIT"]
-urllib.request.urlretrieve(f"https://raw.githubusercontent.com/itssaharsh/relapse/{_gitsha}/kaggle/auditkit_mcq.py", "/tmp/kg/input/run/auditkit_mcq.py")
+urllib.request.urlretrieve(f"https://raw.githubusercontent.com/itssaharsh/relapse/{_gitsha}/" + "kaggle" + "/auditkit_mcq.py", "/tmp/kg/input/run/auditkit_mcq.py")
 with urllib.request.urlopen(f"https://codeload.github.com/ggml-org/llama.cpp/tar.gz/{_sha}", timeout=300) as r:
     tarfile.open(fileobj=io.BytesIO(r.read()), mode="r:gz").extractall("/tmp/_lc", filter="data")
 _sh.move(f"/tmp/_lc/llama.cpp-{_sha}", "/tmp/llama.cpp")

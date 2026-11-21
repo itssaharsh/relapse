@@ -64,3 +64,7 @@ Parts A to D follow a relapse that appears in Q4_0 and not in NF4. The map also 
 **R6: a relapse in the other direction exists.** At least one fresh seed has an effective run that relapses in NF4 and does not relapse in Q4_0. We report the share of such seeds with an exact 95% interval.
 
 If R1 and R6 both hold, a single-format audit can miss a relapse in either direction (the claim that hypothesis H2 of the first pre-registration failed to support).
+
+## Amendment 2 (2026-11-21, before its run was started): an exact rerun of seed 12
+
+The seed-12 runs in the map were trained on a T4 GPU. We train the same three runs again, with the same seed and settings, on a different GPU type (L4). RMU training is sensitive to tiny numerical differences, so this shows whether the relapse belongs to the seed or to one particular training run. It is reported separately and does not count towards R1.

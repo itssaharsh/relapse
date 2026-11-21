@@ -1,0 +1,6 @@
+{
+ "official_class": "TokenizersBackend",
+ "circuitkit_class": "TokenizersBackend",
+ "identical_prompts": 300,
+ "of": 300
+}

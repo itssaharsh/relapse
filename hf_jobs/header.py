@@ -1,7 +1,7 @@
 # /// script
 # requires-python = ">=3.11,<3.14"
 # dependencies = ["torch", "transformers==5.20.2", "accelerate", "datasets", "huggingface_hub", "bitsandbytes>=0.45",
-#                 "safetune==0.1.13", "numpy", "safetensors", "sentencepiece", "protobuf", "pyyaml", "tqdm", "psutil"]
+#                 "safetune==0.1.13", "peft", "numpy", "safetensors", "sentencepiece", "protobuf", "pyyaml", "tqdm", "psutil"]
 # ///
 # Relapse map on Hugging Face Jobs: one Tiny Aya variant, one seed, every layer window at three strengths.
 # Built by hf_jobs/build.sh from this header, kaggle/common.py and kaggle/06_rmu_circuitkit_layers_grid.py.

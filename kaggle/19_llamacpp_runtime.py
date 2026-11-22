@@ -4,7 +4,9 @@
 import shutil, numpy as np
 setup_llamacpp(build=True)
 subprocess.run(["uv", "pip", "install", "--python", sys.executable, "llama-cpp-python"], check=True)
+import llama_cpp
 from llama_cpp import Llama
+log("llama-cpp-python", llama_cpp.__version__)
 from transformers import AutoTokenizer, AutoModelForCausalLM
 KEY = os.environ.get("KEY", "base")
 MP = model_path(os.environ["VARIANT"])
@@ -31,8 +33,9 @@ for prec in os.environ.get("PRECS", "Q4_0,f16").split(","):
         ids = llm.tokenize(prompt.encode(), add_bos=True, special=False)
         same += int(ids == tok(prompt).input_ids)
         llm.reset(); llm.eval(ids)
-        lg = np.array(llm.eval_logits[-1])
+        lg = np.asarray(llm.scores[llm.n_tokens - 1])      # the logits after the last prompt token
         right.append(int(int(np.argmax(lg[letters])) == ans))
+        if i < 5: log(prec, "question", i, "answer", LET[ans], "letter logits", [round(float(x), 2) for x in lg[letters]], "top tokens", [llm.detokenize([int(t)]).decode(errors="replace") for t in np.argsort(-lg)[:5]])
         if i % 100 == 0: log(prec, i, "running accuracy", round(sum(right) / len(right), 4), "same tokens", same)
     row = {"model": KEY, "prec": prec, "runtime": "llama.cpp", "wmdp-bio": sum(right) / len(right), "n": len(right), "prompts_tokenized_like_official": same, "letter_ids": letters, "hf_letter_ids": letter_ids(tok)}
     results.append(row); per[f"{KEY}|{prec}"] = right; log(row)

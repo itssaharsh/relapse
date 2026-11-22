@@ -86,11 +86,10 @@ Our first runs used a copy of Tiny Aya whose tokenizer setting predates a fix pu
 \subsection{Compression rarely undoes RMU}
 \label{sec:map}
 
-We pre-registered a map of \mapRuns{} runs: five models, five windows, three strengths and two fresh seeds. Of these, \mapEffective{} were \emph{effective} (fp16 \wmdp{} between 30\% and 55\%). \textbf{\mapHeld{} of the \mapEffective{} did not relapse in either 4-bit format} (Table~\ref{tab:map}). On average, moving to 4-bit changed \wmdp{} by \mapMeanQ{} points in \fq{} and \mapMeanN{} in \nf{}, so the compressed copy forgot slightly \emph{more}. The two relapses (+\mapRelapseLow{} and +\mapRelapseHigh{} points) are both Tiny Aya Base, seed 12, layers 10--12, in \fq{} only.
+We pre-registered a map of \mapRuns{} runs: five models, five windows, three strengths and two fresh seeds. Of these, \mapEffective{} were \emph{effective} (fp16 \wmdp{} between 30\% and 55\%). \textbf{\mapHeld{} of the \mapEffective{} did not relapse in either 4-bit format} (Figure~\ref{fig:map}). On average, moving to 4-bit changed \wmdp{} by \mapMeanQ{} points in \fq{} and \mapMeanN{} in \nf{}, so the compressed copy forgot slightly \emph{more}. The two relapses (+\mapRelapseLow{} and +\mapRelapseHigh{} points) are both Tiny Aya Base, seed 12, layers 10--12, in \fq{} only.
 
 Two of our four hypotheses failed and one could not be evaluated. A single-format audit did not miss relapses in both directions, because no run relapsed in \nf{} alone. Layers 10--12 did not relapse significantly more than layers 7--9 (\mapHfourA{} against \mapHfourB{}, $p=\mapHfourP$; held-out models \mapHeldHfourA{} against \mapHeldHfourB{}, $p=\mapHeldHfourP$). Our test of cost at equal forgetting could not be evaluated, because all \mapHthreeN{} model-and-seed pairs failed to bracket the 40\% comparison point at both windows. The remaining hypothesis, that relapses tend to appear in one format, holds only on these two cases and we do not rely on it.
 
-\input{table_map}
 
 \begin{figure}[t]
 \centering
@@ -131,6 +130,8 @@ Earlier work explains relapse under quantization by parameter updates too small 
 
 \textbf{What reliably works} is cheaper: score every format before release, and ship one that holds.
 
+\input{table_check}
+
 \subsection{The tokenizer is a second route to relapse}
 \label{sec:shift}
 
@@ -147,7 +148,7 @@ The correction above rests on four sets of weights, all of Tiny Aya Global. We p
 
 SafeTune's default edits layers 5--7. We re-ran CircuitKIT's EAP-IG through the official tokenizer on all five models and registered three comparisons on fresh seeds, each on the lowest \wmdp{} a window reaches while losing at most 3 MMLU points.
 
-\textbf{Earlier layers forget more at the same cost.} Layers 3--5 beat the default in \placeQTwoWins{} of 10 model-and-seed pairs ($p=\placeQTwoP$; \placeQTwoWinsQ{} of 10 in \fq{}, \placeQTwoWinsN{} of 10 in \nf{}), reaching \placeShallowMean\% on average against \placeDefaultMean\%.
+\textbf{Earlier layers forget more at the same general-knowledge cost.} Layers 3--5 beat the default in \placeQTwoWins{} of 10 model-and-seed pairs ($p=\placeQTwoP$; \placeQTwoWinsQ{} of 10 in \fq{}, \placeQTwoWinsN{} of 10 in \nf{}), reaching \placeShallowMean\% on average against \placeDefaultMean\%.
 
 \textbf{CircuitKIT's pick per model is unstable.} Each model's own top window beat the default in only \placeQThreeWins{} of 10 pairs ($p=\placeQThreeP$), so that hypothesis failed. It won on Global, Earth and Base, where the top window is 3--5. It lost on Water, where layers 2--4 led 3--5 by \placeWaterMargin\% of the attribution and barely unlearned, and on one Fire seed, where the top window was 10--12. Layers 7--9, our Stage 1 choice, beat the default in \placeQOneWins{} of 10 ($p=\placeQOneP$), which also failed.
 
@@ -162,7 +163,6 @@ Table~\ref{tab:check} gives the full check of the \chkModels{} final runs at lay
 
 \textbf{What it costs, and what breaks it.} Benign biology (four MMLU biology subjects) fell by \chkBenignLow--\chkBenignHigh{} points, \chkBenignMean{} on average: the forgetting is not confined to hazardous questions. A fine-tune of 25 LoRA steps on 64 held-out hazard questions raised the score by at least 5 points on \chkFtUp{} of \chkModels{} models and restored Tiny Aya Base to \chkFtBase\%. As others have found \citep{lucki2024adversarial}, RMU hides knowledge more than it removes it.
 
-\input{table_check}
 
 \section{What Did Not Work}
 \label{sec:fail}

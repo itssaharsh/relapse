@@ -50,28 +50,18 @@ def test_every_number_in_the_write_up_is_measured():
     pts |= {round(p, 1) for p in pct}
     bad = []
     for doc in DOCS:
-        text = re.sub(r"<!-- (scores|recipes):start -->.*?<!-- (scores|recipes):end -->", "", read(doc), flags=re.S)
+        text = re.sub(r"<!-- (scores|recipes|stage2):start -->.*?<!-- (scores|recipes|stage2):end -->", "", read(doc), flags=re.S)
         bad += [f"{doc}: {x}%" for x in re.findall(r"(?<![\d.$])(\d+(?:\.\d+)?)%", text) if float(x) not in pct]
         bad += [f"{doc}: {x} points" for x in re.findall(r"(?<![\d.$])(\d+\.\d+) points?", text) if float(x) not in pts]
         bad += [f"{doc}: p = {x}" for x in re.findall(r"p = (0\.\d+)", text) if float(x) not in pv]
     assert not bad, bad
 
 
-def test_generated_tables_are_filled_in():
-    for doc in DOCS:
-        for name in ("scores", "recipes"):
-            body = re.search(rf"<!-- {name}:start -->(.*?)<!-- {name}:end -->", read(doc), flags=re.S).group(1)
-            assert body.count("\n|") >= 5, (doc, name)
-
-
-def test_the_circuitkit_claims():
-    w = [r for r in RES["recipes"] if r["set"] == "wmdp-bio"]
-    m = [r for r in RES["recipes"] if r["set"] == "mmlu"]
-    assert all(r["delta"] < 0 and r["p_value"] < 0.002 for r in w) and len(w) == 4        # forgets more in every file
-    assert all(r["p_value"] > 0.05 for r in m) and len(m) == 4                             # general knowledge: no significant difference
-    gap = [-100 * r["delta"] for r in w]
-    for doc in DOCS:
-        assert f"{min(gap):.1f} to {max(gap):.1f} points more" in read(doc)
+def test_stage2_block_is_rebuilt_from_the_results():
+    from build_readme import REPO, block
+    text = block()
+    assert "<!-- stage2:start -->\n" + text + "<!-- stage2:end -->" in read("README.md")
+    assert "<!-- stage2:start -->\n" + text.replace("](results/", "](" + REPO + "results/") + "<!-- stage2:end -->" in read(os.path.join("docs", "ARTICLE.md"))
 
 
 def test_withdrawn_claims_stay_withdrawn():

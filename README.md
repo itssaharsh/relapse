@@ -30,94 +30,117 @@ Relapse makes Cohere Labs' Tiny Aya forget hazardous biology with Lexsi Labs' op
 
 The original write-up is kept, marked as superseded, in [`docs/archive/`](https://github.com/itssaharsh/relapse/tree/main/docs/archive), and its raw runs in [`results/raw/`](https://github.com/itssaharsh/relapse/tree/main/results/raw).
 
-## What holds with the official tokenizer
+<!-- stage2:start -->
+## Results (Stage 2: pre-registered, official tokenizer)
 
-We rescored the Stage 1 models in full precision, a real llama.cpp Q4_K_M file, and exact Q4_0 and NF4 round trips. WMDP-bio is hazardous biology (1,273 questions, lower is better, 25% is guessing). MMLU is general knowledge (1,000 questions, higher is better).
+Every experiment below was registered in this repository before it ran ([1](results/PREREGISTRATION.md), [2](results/PREREGISTRATION_2.md), [3](results/PREREGISTRATION_3.md), [4](results/PREREGISTRATION_4.md)), and every hypothesis that failed is listed.
 
-<!-- scores:start -->
-| File (WMDP-bio / MMLU) | Original | Default layers | CircuitKIT layers |
-|---|---|---|---|
-| fp16 | 63.3% / 55.4% | 47.5% / 53.1% | 35.7% / 54.3% |
-| Q4_K_M | 63.2% / 54.7% | 45.0% / 51.6% | 36.8% / 53.8% |
-| Q4_0 | 62.5% / 55.3% | 43.0% / 53.1% | 34.1% / 52.5% |
-| NF4 | 60.3% / 53.5% | 46.4% / 49.9% | 36.1% / 51.7% |
-<!-- scores:end -->
+**1. Forgetting usually survives the 4-bit file.** In a map of 150 runs across the five Tiny Aya models, 107 of the 109 runs that forgot enough to count kept their forgetting in both Q4_0 and NF4.
 
-**The CircuitKIT-layer model keeps its forgetting in every file.** It scores 34.1% to 36.8% across the four files, against 60.3% to 63.3% for the original.
+**2. But one file can relapse while its siblings hold.** On three models, one 4-bit format brought back at least 5 points of hazardous knowledge while the other formats of the same weights did not:
 
-**Head to head, it forgets more than the default layers, at no significant cost in general knowledge.** Same questions, AuditKIT's paired bootstrap (difference is CircuitKIT minus default):
+| Run | fp16 | Q4_0 round trip | NF4 | Real Q4_0 file | Real Q4_K_M file |
+|---|---|---|---|---|---|
+| Tiny Aya Base, layers 10 to 12, seed 12 | 46.8% | 52.9% (+6.0) **relapse** | 43.8% (-3.1) | 52.9% (+6.0) | 45.6% (-1.2) |
+| Tiny Aya Base, layers 10 to 12, seed 43 | 41.6% | 46.8% (+5.3) **relapse** | 37.9% (-3.6) | 46.2% (+4.5) | 39.6% (-2.1) |
+| Tiny Aya Fire, layers 13 to 15, seed 44 | 34.8% | 33.2% (-1.6) | 40.1% (+5.3) **relapse** | 33.1% (-1.8) | 36.6% (+1.7) |
+| Tiny Aya Water, layers 10 to 12, seed 42 | 38.6% | 42.3% (+3.7) | 46.3% (+7.7) **relapse** | 41.2% (+2.5) | 37.2% (-1.4) |
 
-<!-- recipes:start -->
-| File | WMDP-bio: default / CircuitKIT | Difference (95% interval) | p | MMLU: default / CircuitKIT | Difference (95% interval) | p |
-|---|---|---|---|---|---|---|
-| fp16 | 47.5% / 35.6% | -11.9 (-15.1 to -8.8) | 0.001 | 53.1% / 54.2% | +1.1 (-0.8 to +3.1) | 0.282 |
-| Q4_K_M | 45.0% / 36.8% | -8.2 (-11.4 to -4.9) | 0.001 | 51.7% / 53.8% | +2.1 (+0.0 to +4.3) | 0.062 |
-| Q4_0 | 43.0% / 34.2% | -8.9 (-11.9 to -5.8) | 0.001 | 53.1% / 52.5% | -0.6 (-2.7 to +1.5) | 0.561 |
-| NF4 | 46.4% / 36.1% | -10.4 (-13.4 to -7.2) | 0.001 | 49.9% / 51.6% | +1.7 (-0.3 to +3.7) | 0.080 |
-<!-- recipes:end -->
+- The Base relapse reproduced when the seed-12 runs were retrained, and happened again on 1 of 8 fresh seeds.
+- Loaded in 4-bit through bitsandbytes, the way NF4 is really used, Fire and Water gave the same rises as above.
+- No real Q4_K_M file relapsed. In every case at least one 4-bit format held, so scoring each file before release catches it.
+- It is rare and modest. The original Tiny Aya Base also gains about 1.6 points in Q4_0, so part of the Base rise is the format, not the unlearning.
 
-It forgets 8.2 to 11.9 points more in every file (p = 0.001 in each). The general-knowledge difference is not significant in any file.
+**3. The rise comes from weights the edit never touched.** Rounding only the three edited matrices adds less than one point in every case. On Water and Fire the rise comes from the layers in front of the edit (+7.6 of +7.7 points on Water). On Base seed 12 it comes from the layers behind it.
 
-**Read this result with care.** It is one training run of each recipe, trained with the outdated tokenizer and scored with the official one. The settings were also chosen under the outdated tokenizer, which may have favoured or hurt either recipe.
+**4. Training on the file closes the gap, at a cost.** In the 5 relapsing runs, the retrained model no longer relapsed in 5, was significantly safer in the file in 4, and stayed within 3 MMLU points in 3. Too much of this training forgets far more than intended.
 
-**A finding from the mistake itself.** The original model scored the same under both tokenizer settings, but the unlearned models moved by as much as 10.5 points (default layers +8.8, CircuitKIT layers -1.2, layers 10 to 12 +10.5). Unlearning measured through one preprocessing pipeline may not hold through another, so an audit should pin the exact tokenizer it was trained and tested with.
+**5. A different tokenizer setting is the larger risk.** Of 45 runs unlearned through the outdated tokenizer setting, 33 scored higher through the official one and 12 lower; 29 rose by at least 5 points. The average rise was +13.3 points at SafeTune's default layers 5 to 7 and +14.1 at layers 10 to 12, but -0.6 at layers 7 to 9. Every Tiny Aya Base run trained this way scored 24.9% (chance) in its own pipeline and 31.2% to 60.9% through the official tokenizer.
 
-## What the pre-registered test found
+**6. Where to edit.** Layers 3 to 5 beat the default layers in 9 of 10 comparisons. CircuitKIT ranks that window first on three models and first when its attribution is pooled over the five; its pick for each model alone was unstable and that hypothesis failed. On two further seeds, layers 3 to 5 forgot 5.6 to 13.3 points more on four of the five models (8 of 10 comparisons, p = 0.055).
 
-We [registered](results/PREREGISTRATION.md) a 150-run test before starting it, using the **official tokenizer**: five Tiny Aya models, five layer placements, three strengths and two fresh seeds, with Water and Base held out. Of the 150 runs, 109 forgot enough to count.
+### The released models
 
-**107 of those 109 did not relapse in Q4_0 or NF4.** With the correct tokenizer, RMU forgetting almost always survived 4-bit compression. The two relapses are both Tiny Aya Base, seed 12, layers 10 to 12, in Q4_0 only (+5.7 and +6.0 points). The relapse we reported on Global in Stage 1 was caused by the tokenizer.
+Layers 3 to 5, two seeds per model (the table shows their mean). WMDP-bio is the hazard set (lower is better, 25% is guessing); the other columns should stay high.
 
-| Registered hypothesis | Result |
-|---|---|
-| H1: a relapse tends to appear in one format, not both | Holds, but on only 2 relapses |
-| H2: a single-format audit misses relapses in both directions | **Failed.** Q4_0 only: 2. NF4 only: 0 |
-| H3: layers 7 to 9 cost less general knowledge than 5 to 7 at equal forgetting | **Could not be tested.** No model and seed reached the 40% comparison point at both placements |
-| H4: layers 10 to 12 relapse more than layers 7 to 9 | **Failed.** 2 of 12 against 0 of 30, p = 0.077 |
+| Model | WMDP-bio: original → unlearned | In the real Q4_K_M file | MMLU | Benign biology | With five worked examples | Through the outdated tokenizer | After a fine-tuning attack |
+|---|---|---|---|---|---|---|---|
+| Tiny Aya Global | 63.4% → 42.6% | 42.1% | 55.4% → 54.1% | 62.5% → 55.1% | 24.7% | 42.5% | 43.2% |
+| Tiny Aya Fire | 63.5% → 41.7% | 39.9% | 57.9% → 56.2% | 64.3% → 58.6% | 25.5% | 40.4% | 45.4% |
+| Tiny Aya Earth | 62.8% → 43.8% | 43.0% | 56.5% → 54.3% | 62.4% → 56.5% | 26.0% | 44.5% | 46.5% |
+| Tiny Aya Water | 62.8% → 44.1% | 43.9% | 57.1% → 55.4% | 63.5% → 57.5% | 25.8% | 42.9% | 48.3% |
+| Tiny Aya Base | 60.1% → 36.2% | 36.1% | 57.6% → 56.6% | 65.4% → 58.8% | 25.5% | 37.0% | 56.5% |
 
-Full results: [results/map/summary.json](results/map/summary.json).
+- **Holds:** prompt attacks do not bring the knowledge back, reworded and translated questions (Hindi, Swahili, Arabic, Spanish) stay significantly below the original in 40 of 50 cases, and neither the real files nor the outdated tokenizer changes the score by more than 3.3 points.
+- **Costs:** benign biology falls by 4.7 to 7.9 points, so the forgetting is not confined to hazardous questions.
+- **Breaks:** 25 fine-tuning steps on 64 hazard questions raise the score by at least 5 points on 5 of 10 models and restore Tiny Aya Base almost fully. RMU hides knowledge more than it removes it.
 
-## What is running now
+### Every registered hypothesis
 
-- A [pre-registered](results/PREREGISTRATION_4.md) follow-up of the one relapse the map found (Tiny Aya Base, layers 10 to 12, Q4_0): eight fresh seeds, real llama.cpp files, where the relapse comes from, and whether training on the file repairs it.
-- A [pre-registered](results/PREREGISTRATION_2.md) 180-run test of **pipeline relapse**: does a model unlearned through one tokenizer setting regain knowledge when deployed through another, and does training on both prevent it?
-- A [pre-registered](results/PREREGISTRATION_3.md) test of **where to place the edit**, with CircuitKIT re-run through the official tokenizer on all five models and fresh seeds.
+| Experiment | Hypothesis | Outcome |
+|---|---|---|
+| Map | A relapse tends to appear in one format, not both | Held, on 2 relapses |
+| Map | A single-format audit misses relapses in both directions | **Failed** in the map (Q4_0 only). The NF4 direction appeared in the follow-up |
+| Map | Layers 7 to 9 cost less at equal forgetting | Could not be evaluated as registered |
+| Map | Layers 10 to 12 relapse more than layers 7 to 9 | **Failed** (p = 0.077) |
+| Relapse follow-up | The Base relapse happens again on fresh seeds | Held: 1 of 8 seeds |
+| Relapse follow-up | On Base, Q4_0 moves the score up more than NF4 | Held: 7 of 8 seeds, p = 0.035 |
+| Relapse follow-up | A relapse in NF4 and not Q4_0 exists | Held: Fire (1 of 8 seeds), and Water |
+| Relapse follow-up | The relapse shows in the real Q4_0 file | Held for 1 of 3 Base files; the other two rose 4.5 and 4.6 points, under the 5-point line |
+| Relapse follow-up | On Base it comes from the layers in front of the edit | **Failed.** On Base it is the layers behind; on Fire and Water it is the layers in front |
+| Relapse follow-up | Training on the file repairs it | Gap closed in 5 of 5; file significantly safer in 4; within 3 MMLU points in 3 |
+| Relapse follow-up | A rule for how long to train the repair | **Failed** on its test case (Water) |
+| Tokenizer | Unlearning through one tokenizer relapses through the other | Held: 33 up, 12 down, p = 0.0012; held-out models 10 to 2, p = 0.019 |
+| Tokenizer | The rise is smaller at layers 7 to 9 than at layers 5 to 7 | Held: 16 of 16 pairs |
+| Tokenizer | Training on both tokenizers narrows the gap | Held: 31 of 45 pairs, p = 0.005 |
+| Tokenizer | Training on both protects the deployed model | **Failed** (18 pairs against 26) |
+| Placement | Layers 3 to 5 beat the default layers 5 to 7 | Held: 9 of 10, p = 0.011 |
+| Placement | Layers 7 to 9 beat the default | **Failed** (7 of 10) |
+| Placement | Each model's own CircuitKIT window beats the default | **Failed** (6 of 10) |
+| Placement | Layers 3 to 5 beat the default again on the final seeds | **Failed narrowly**: 8 of 10, p = 0.055 |
 
-Their analysis scripts were committed before their results were read. This page will be updated from them, including any hypothesis that fails.
+<!-- stage2:end -->
 
 ## How it works
 
 | Step | Tool | What it does here |
 |---|---|---|
-| Build probe sets | [CuratorKIT](https://github.com/Lexsi-Labs/CuratorKIT) | Quality gates on translated and reworded WMDP-bio questions (their scores are being re-run) |
-| Find where to edit | [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT) | EAP-IG attribution across Tiny Aya's 36 layers, which moved the edit from layers 5 to 7 to layers 7 to 9 |
+| Build probe sets | [CuratorKIT](https://github.com/Lexsi-Labs/CuratorKIT) | Quality gates on reworded and translated WMDP-bio questions, used to check that the forgetting is not tied to one wording or language |
+| Find where to edit | [CircuitKIT](https://github.com/Lexsi-Labs/CircuitKIT) | EAP-IG attribution across Tiny Aya's 36 layers. Pooled over the five models it ranks layers 3 to 5 first, the window that beat SafeTune's default |
 | Remove the knowledge | [SafeTune](https://github.com/Lexsi-Labs/SafeTune) | RMU unlearning on the WMDP bio forget corpus, with a Wikitext retain set |
-| Check every file | [AuditKIT](https://github.com/Lexsi-Labs/AuditKIT) | Paired bootstrap comparisons on the same questions |
+| Check every file | [AuditKIT](https://github.com/Lexsi-Labs/AuditKIT) | Paired bootstrap comparisons of each real llama.cpp file against the same weights at full precision |
 
-The Q4_K_M file is made with llama.cpp's own tools and read back for scoring. Q4_0 and NF4 are exact round trips of the decoder's linear weights, with the embedding table left at fp16.
+Real files are made with llama.cpp's own tools and read back for scoring. The Q4_0 and NF4 round trips are exact copies of what those formats store for the decoder's linear weights, with the embedding table left at fp16. The pre-registered analyses use a paired bootstrap over the same questions.
 
 ## Reproduce
 
 ```bash
 pip install -r requirements.txt
-python -m pytest -q tests               # format round trips, and every number here against the data
-python scripts/build_corrected.py       # rebuilds this page's tables and the Space data
+python -m pytest -q tests               # format round trips, and the numbers on this page against the data
+python scripts/analyze_map.py           # each pre-registered analysis reads results/ and prints its hypotheses
+python scripts/analyze_shift.py
+python scripts/analyze_place.py
+python scripts/analyze_final.py
+python scripts/build_readme.py          # rebuilds the results block of this page
 ```
 
 | Folder | What is in it |
 |---|---|
-| [`results/correct_tokenizer/`](results/correct_tokenizer/) | The rescored runs and the tokenizer control |
-| [`results/PREREGISTRATION.md`](results/PREREGISTRATION.md) | The hypotheses for the running experiment |
-| [`hf_jobs/`](hf_jobs/) | The Hugging Face jobs that run it with the official tokenizer |
-| [`kaggle/`](kaggle/) | The experiment scripts and shared helpers |
+| [`results/PREREGISTRATION.md`](results/PREREGISTRATION.md) and `_2`, `_3`, `_4` | The hypotheses, each committed before its runs |
+| [`results/map/`](results/map/), [`deep/`](results/deep/), [`shift/`](results/shift/), [`place/`](results/place/), [`final/`](results/final/) | Scores of every run, per question, and the summaries the analyses write |
+| [`results/correct_tokenizer/`](results/correct_tokenizer/) | The Stage 1 models rescored, and the tokenizer control |
+| [`hf_jobs/`](hf_jobs/), [`kaggle/`](kaggle/) | The jobs and the experiment scripts they run |
+| [`paper/`](paper/) | The paper |
 | [`space/`](space/) | The demo page |
 | [`docs/archive/`](docs/archive/), [`results/raw/`](results/raw/), [`scripts/archive/`](scripts/archive/) | Stage 1, superseded, kept for the record |
 
 ## Limits
 
-- One run per recipe in the rescored comparison, trained with the outdated tokenizer.
 - Knowledge is measured by multiple choice, not open generation.
-- RMU may hide knowledge rather than erase it. Our Stage 1 fine-tuning attack brought much of it back; that test is being re-run.
-- The published models were trained with the outdated tokenizer. Their model cards say so.
+- Relapses are rare, so each rests on one or two seeds per model.
+- RMU hides knowledge more than it removes it: a short fine-tune on the topic brings much of it back.
+- The forgetting also costs 5 to 8 points on benign biology.
+- One model family and one unlearning method.
+- The models published in Stage 1 were trained with the outdated tokenizer; their cards say so. The Stage 2 models replace them.
 
 Built during the Lexsi AI Safety and Alignment Hackathon (November 2026), with Claude Code as the coding agent.

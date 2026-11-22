@@ -76,3 +76,11 @@ Part E found one relapse in the NF4 direction (Tiny Aya Fire, layers 13–15, se
 ## Amendment 4 (2026-11-22, before its runs were started): the Water relapse
 
 The other-models runs of Part A found one more relapse: Tiny Aya Water, layers 10–12, seed 42, learning rate 1e-3 (+7.7 points in NF4, no rise in Q4_0). It gets the treatment of amendment 3: real llama.cpp files for reference, one part of the model rounded to NF4 at a time, and a repaired run trained on the NF4 copy for 600 batches with plain RMU for 600 batches as the control. For both NF4 relapses (Fire and Water) we also train on the NF4 copy for 300 batches, the control that Part D already has for Q4_0.
+
+## Amendment 5 (2026-11-22, written after the Base and Fire repairs were scored and before any Water repair result existed): choosing the dose
+
+What we had seen: training on the file for 600 batches removed the relapse in every case tried, but in three of four it also cost more than 3 MMLU points or pushed the model below the effective range. Training for 300 batches met all three criteria on Base seed 43 and did not repair Base seed 12.
+
+**Dose rule.** Of the two file-trained runs (300 and 600 batches), take the one with more batches whose MMLU in the relapsing format is within 3 points of the plain run's. The rule looks only at MMLU, never at the hazard questions. If neither qualifies, the repair is reported as failed for that run.
+
+**R7.** With the dose rule, the repaired run meets R5a, R5b and R5c. On the Base and Fire runs this is a description of data we had already seen. The Water run is the test.

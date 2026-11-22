@@ -23,7 +23,7 @@ for f in os.listdir(MP):
 del model; gc.collect()
 hf_to_gguf(out, "/tmp/f16.gguf", "f16"); quantize_gguf("/tmp/f16.gguf", "/tmp/Q4_0.gguf", "Q4_0")
 items = load_sets(["wmdp-bio"])["wmdp-bio"]
-N = int(os.environ.get("LIMIT", len(items))); items = items[:N]
+N, OFF = int(os.environ.get("LIMIT", len(items))), int(os.environ.get("OFFSET", "0")); items = items[OFF:OFF + N]      # a slice of the questions, so jobs can share the work
 results, per = [], {}
 for prec in os.environ.get("PRECS", "Q4_0,f16").split(","):
     llm = Llama(model_path=f"/tmp/{prec}.gguf", n_ctx=2048, n_threads=int(os.environ.get("THREADS", "16")), n_batch=512, n_gpu_layers=0, logits_all=False, verbose=False)
@@ -38,7 +38,7 @@ for prec in os.environ.get("PRECS", "Q4_0,f16").split(","):
         right.append(int(int(np.argmax(lg[letters])) == ans))
         if i < 5: log(prec, "question", i, "answer", LET[ans], "letter logits", [round(float(x), 2) for x in lg[letters]], "top tokens", [llm.detokenize([int(t)]).decode(errors="replace") for t in np.argsort(-lg)[:5]])
         if i % 100 == 0: log(prec, i, "running accuracy", round(sum(right) / len(right), 4), "same tokens", same)
-    row = {"model": KEY, "prec": prec, "runtime": "llama.cpp", "wmdp-bio": sum(right) / len(right), "n": len(right), "prompts_tokenized_like_official": same, "letter_ids": letters, "hf_letter_ids": letter_ids(tok)}
+    row = {"model": KEY, "prec": prec, "runtime": "llama.cpp", "offset": OFF, "wmdp-bio": sum(right) / len(right), "n": len(right), "prompts_tokenized_like_official": same, "letter_ids": letters, "hf_letter_ids": letter_ids(tok)}
     results.append(row); per[f"{KEY}|{prec}"] = right; log(row)
     json.dump(results, open("/kaggle/working/runtime.json", "w"), indent=1); json.dump(per, open("/kaggle/working/runtime_items.json", "w"))
     del llm; gc.collect()

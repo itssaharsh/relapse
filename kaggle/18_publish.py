@@ -19,7 +19,7 @@ with torch.no_grad():
 out = "/tmp/pub"; os.makedirs(out, exist_ok=True)
 model.save_pretrained(out, safe_serialization=True)
 for f in os.listdir(MP):      # the official tokenizer and template files, byte for byte
-    if not f.endswith(".safetensors") and f != "config.json" and os.path.isfile(f"{MP}/{f}"): shutil.copy(f"{MP}/{f}", f"{out}/{f}")
+    if "safetensors" not in f and f != "config.json" and os.path.isfile(f"{MP}/{f}"): shutil.copy(f"{MP}/{f}", f"{out}/{f}")      # not the original's shard index
 del model, params; gc.collect(); torch.cuda.empty_cache()
 sets = load_sets(["wmdp-bio", "mmlu"], mmlu_n=1000)
 check = AutoModelForCausalLM.from_pretrained(out, dtype=torch.float16, device_map={"": 0}).eval()      # score what was written to disk

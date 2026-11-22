@@ -8,7 +8,8 @@
 import atexit, glob as _g, io, json as _j, os as _o, shutil as _sh, subprocess as _sp, sys as _s, tarfile, urllib.request
 V, TAG = _o.environ["VARIANT"], _o.environ["TAG"]
 _o.environ["PATH"] = _o.path.dirname(_s.executable) + ":" + _o.environ.get("PATH", "")
-_sp.run("apt-get update -qq && apt-get install -y -qq libgomp1 libstdc++6", shell=True, check=False)
+_BUILD = _o.environ.get("BUILD_QUANTIZE") == "1"      # build llama-quantize from the pinned llama.cpp commit instead of using the saved Stage 1 binary
+_sp.run("apt-get update -qq && apt-get install -y -qq libgomp1 libstdc++6" + (" cmake build-essential" if _BUILD else ""), shell=True, check=False)
 from huggingface_hub import HfApi, hf_hub_download, snapshot_download
 OUT_REPO, OUT_DIR = "itssaharsh/relapse-stage2", "/tmp/kg/working"
 _o.makedirs(OUT_DIR, exist_ok=True); _o.makedirs("/tmp/kg/input/run", exist_ok=True)
@@ -16,7 +17,8 @@ snapshot_download(f"CohereLabs/tiny-aya-{V}", local_dir=f"/tmp/kg/input/models/c
                   allow_patterns=["*.safetensors", "*.json", "tokenizer*", "special_tokens*"])
 for _p in _o.environ["PT_PATH"].split(","):
     _sh.copy(hf_hub_download(_o.environ.get("PT_REPO", "itssaharsh/relapse-backup"), _p, repo_type=_o.environ.get("PT_TYPE", "model")), "/tmp/kg/input/run/" + _o.path.basename(_p))
-_sh.copy(hf_hub_download("itssaharsh/relapse-backup", "dl/final_a/bin/llama-quantize"), "/tmp/kg/input/run/llama-quantize")
+if not _BUILD:
+    _sh.copy(hf_hub_download("itssaharsh/relapse-backup", "dl/final_a/bin/llama-quantize"), "/tmp/kg/input/run/llama-quantize")
 _gitsha, _sha = _o.environ["REPO_COMMIT"], _o.environ["LLAMA_COMMIT"]
 urllib.request.urlretrieve(f"https://raw.githubusercontent.com/itssaharsh/relapse/{_gitsha}/" + "kaggle" + "/auditkit_mcq.py", "/tmp/kg/input/run/auditkit_mcq.py")
 with urllib.request.urlopen(f"https://codeload.github.com/ggml-org/llama.cpp/tar.gz/{_sha}", timeout=300) as r:

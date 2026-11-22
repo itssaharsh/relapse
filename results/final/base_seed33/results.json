@@ -1,0 +1,122 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.600942655145326,
+  "wmdp-bio_pcorrect": 0.4735,
+  "mmlu": 0.576,
+  "mmlu_pcorrect": 0.4583
+ },
+ {
+  "model": "base_W3-5_lr6e-05_s33",
+  "prec": "fp16",
+  "wmdp-bio": 0.391987431264729,
+  "wmdp-bio_pcorrect": 0.3122,
+  "mmlu": 0.568,
+  "mmlu_pcorrect": 0.4473
+ },
+ {
+  "model": "base_W5-7_lr0.0003_s33",
+  "prec": "fp16",
+  "wmdp-bio": 0.3762765121759623,
+  "wmdp-bio_pcorrect": 0.313,
+  "mmlu": 0.545,
+  "mmlu_pcorrect": 0.4314
+ },
+ {
+  "model": "base_W3-5_lr6e-05_s34",
+  "prec": "fp16",
+  "wmdp-bio": 0.3322859387274156,
+  "wmdp-bio_pcorrect": 0.2881,
+  "mmlu": 0.564,
+  "mmlu_pcorrect": 0.4442
+ },
+ {
+  "model": "base_W5-7_lr0.0003_s34",
+  "prec": "fp16",
+  "wmdp-bio": 0.2922230950510605,
+  "wmdp-bio_pcorrect": 0.2604,
+  "mmlu": 0.538,
+  "mmlu_pcorrect": 0.419
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.6190102120974077,
+  "wmdp-bio_pcorrect": 0.4792,
+  "mmlu": 0.583,
+  "mmlu_pcorrect": 0.4623
+ },
+ {
+  "model": "base_W3-5_lr6e-05_s33",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.38727415553809896,
+  "wmdp-bio_pcorrect": 0.3105,
+  "mmlu": 0.571,
+  "mmlu_pcorrect": 0.4484
+ },
+ {
+  "model": "base_W5-7_lr0.0003_s33",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.410840534171249,
+  "wmdp-bio_pcorrect": 0.3221,
+  "mmlu": 0.552,
+  "mmlu_pcorrect": 0.4342
+ },
+ {
+  "model": "base_W3-5_lr6e-05_s34",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.3315003927729772,
+  "wmdp-bio_pcorrect": 0.2893,
+  "mmlu": 0.57,
+  "mmlu_pcorrect": 0.4459
+ },
+ {
+  "model": "base_W5-7_lr0.0003_s34",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.2741555380989788,
+  "wmdp-bio_pcorrect": 0.2642,
+  "mmlu": 0.527,
+  "mmlu_pcorrect": 0.426
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "wmdp-bio": 0.5978004713275726,
+  "wmdp-bio_pcorrect": 0.4574,
+  "mmlu": 0.569,
+  "mmlu_pcorrect": 0.443
+ },
+ {
+  "model": "base_W3-5_lr6e-05_s33",
+  "prec": "nf4",
+  "wmdp-bio": 0.36213668499607227,
+  "wmdp-bio_pcorrect": 0.2986,
+  "mmlu": 0.552,
+  "mmlu_pcorrect": 0.4309
+ },
+ {
+  "model": "base_W5-7_lr0.0003_s33",
+  "prec": "nf4",
+  "wmdp-bio": 0.3935585231736057,
+  "wmdp-bio_pcorrect": 0.3119,
+  "mmlu": 0.555,
+  "mmlu_pcorrect": 0.4256
+ },
+ {
+  "model": "base_W3-5_lr6e-05_s34",
+  "prec": "nf4",
+  "wmdp-bio": 0.3330714846818539,
+  "wmdp-bio_pcorrect": 0.2829,
+  "mmlu": 0.546,
+  "mmlu_pcorrect": 0.4281
+ },
+ {
+  "model": "base_W5-7_lr0.0003_s34",
+  "prec": "nf4",
+  "wmdp-bio": 0.2914375490966222,
+  "wmdp-bio_pcorrect": 0.262,
+  "mmlu": 0.533,
+  "mmlu_pcorrect": 0.41
+ }
+]

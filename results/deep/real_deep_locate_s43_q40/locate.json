@@ -1,0 +1,146 @@
+[
+ {
+  "model": "base",
+  "part": "none",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 0,
+  "wmdp-bio": 0.600942655145326,
+  "wmdp-bio_pcorrect": 0.4735
+ },
+ {
+  "model": "base_W10-12_lr0.00045_s43",
+  "part": "none",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 0,
+  "wmdp-bio": 0.41555380989787905,
+  "wmdp-bio_pcorrect": 0.3109
+ },
+ {
+  "model": "base",
+  "part": "all",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 252,
+  "wmdp-bio": 0.6190102120974077,
+  "wmdp-bio_pcorrect": 0.4792
+ },
+ {
+  "model": "base_W10-12_lr0.00045_s43",
+  "part": "all",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 252,
+  "wmdp-bio": 0.46818538884524746,
+  "wmdp-bio_pcorrect": 0.3223
+ },
+ {
+  "model": "base",
+  "part": "before",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 70,
+  "wmdp-bio": 0.5946582875098193,
+  "wmdp-bio_pcorrect": 0.4599
+ },
+ {
+  "model": "base_W10-12_lr0.00045_s43",
+  "part": "before",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 70,
+  "wmdp-bio": 0.4218381775333857,
+  "wmdp-bio_pcorrect": 0.3137
+ },
+ {
+  "model": "base",
+  "part": "edited",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 3,
+  "wmdp-bio": 0.6087981146897093,
+  "wmdp-bio_pcorrect": 0.4726
+ },
+ {
+  "model": "base_W10-12_lr0.00045_s43",
+  "part": "edited",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 3,
+  "wmdp-bio": 0.422623723487824,
+  "wmdp-bio_pcorrect": 0.3127
+ },
+ {
+  "model": "base",
+  "part": "window_other",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 18,
+  "wmdp-bio": 0.6135113904163394,
+  "wmdp-bio_pcorrect": 0.4737
+ },
+ {
+  "model": "base_W10-12_lr0.00045_s43",
+  "part": "window_other",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 18,
+  "wmdp-bio": 0.43283582089552236,
+  "wmdp-bio_pcorrect": 0.3166
+ },
+ {
+  "model": "base",
+  "part": "after",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 161,
+  "wmdp-bio": 0.6284367635506677,
+  "wmdp-bio_pcorrect": 0.4899
+ },
+ {
+  "model": "base_W10-12_lr0.00045_s43",
+  "part": "after",
+  "prec": "Q4_0",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 161,
+  "wmdp-bio": 0.42498036135113904,
+  "wmdp-bio_pcorrect": 0.3126
+ }
+]

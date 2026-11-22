@@ -1,0 +1,26 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6276512175962293,
+  "mmlu": 0.571
+ },
+ {
+  "model": "base",
+  "prec": "nf4_bitsandbytes",
+  "wmdp-bio": 0.6213668499607227,
+  "mmlu": 0.55
+ },
+ {
+  "model": "water_W10-12_lr0.001_s42",
+  "prec": "fp16",
+  "wmdp-bio": 0.3857030636292223,
+  "mmlu": 0.524
+ },
+ {
+  "model": "water_W10-12_lr0.001_s42",
+  "prec": "nf4_bitsandbytes",
+  "wmdp-bio": 0.4626865671641791,
+  "mmlu": 0.516
+ }
+]

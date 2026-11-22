@@ -1,0 +1,88 @@
+[
+ {
+  "a": "base-fp16-wmdp-bio",
+  "b": "base-Q4_K_M-wmdp-bio",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.627651,
+  "acc_b": 0.644148,
+  "delta": 0.016496,
+  "ci95": [
+   0.003142183817753339,
+   0.030636292223095052
+  ],
+  "p_value": 0.022977,
+  "significant": true,
+  "right_to_wrong": 29,
+  "wrong_to_right": 50,
+  "retention": 1.0262828535669588,
+  "model": "base",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "a": "water_W10-12_lr0.001_s42-fp16-wmdp-bio",
+  "b": "water_W10-12_lr0.001_s42-Q4_K_M-wmdp-bio",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.386489,
+  "acc_b": 0.372349,
+  "delta": -0.01414,
+  "ci95": [
+   -0.03456402199528672,
+   0.006284367635506678
+  ],
+  "p_value": 0.18981,
+  "significant": false,
+  "right_to_wrong": 99,
+  "wrong_to_right": 81,
+  "retention": 0.9634146341463414,
+  "model": "water_W10-12_lr0.001_s42",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "a": "base-fp16-mmlu",
+  "b": "water_W10-12_lr0.001_s42-fp16-mmlu",
+  "metric": "acc",
+  "n": 1000,
+  "acc_a": 0.572,
+  "acc_b": 0.524,
+  "delta": -0.048,
+  "ci95": [
+   -0.075,
+   -0.022
+  ],
+  "p_value": 0.000999,
+  "significant": true,
+  "right_to_wrong": 117,
+  "wrong_to_right": 69,
+  "retention": 0.9160839160839161,
+  "model": "water_W10-12_lr0.001_s42",
+  "kind": "price",
+  "prec": "fp16"
+ },
+ {
+  "a": "base-Q4_K_M-mmlu",
+  "b": "water_W10-12_lr0.001_s42-Q4_K_M-mmlu",
+  "metric": "acc",
+  "n": 1000,
+  "acc_a": 0.562,
+  "acc_b": 0.515,
+  "delta": -0.047,
+  "ci95": [
+   -0.074,
+   -0.02
+  ],
+  "p_value": 0.002997,
+  "significant": true,
+  "right_to_wrong": 119,
+  "wrong_to_right": 72,
+  "retention": 0.9163701067615657,
+  "model": "water_W10-12_lr0.001_s42",
+  "kind": "price",
+  "prec": "Q4_K_M"
+ }
+]

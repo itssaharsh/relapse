@@ -1,0 +1,146 @@
+[
+ {
+  "model": "base",
+  "part": "none",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 0,
+  "wmdp-bio": 0.6276512175962293,
+  "wmdp-bio_pcorrect": 0.6165
+ },
+ {
+  "model": "water_W10-12_lr0.001_s42",
+  "part": "none",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 0,
+  "wmdp-bio": 0.3857030636292223,
+  "wmdp-bio_pcorrect": 0.3428
+ },
+ {
+  "model": "base",
+  "part": "all",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 252,
+  "wmdp-bio": 0.6213668499607227,
+  "wmdp-bio_pcorrect": 0.6072
+ },
+ {
+  "model": "water_W10-12_lr0.001_s42",
+  "part": "all",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 252,
+  "wmdp-bio": 0.4626865671641791,
+  "wmdp-bio_pcorrect": 0.4118
+ },
+ {
+  "model": "base",
+  "part": "before",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 70,
+  "wmdp-bio": 0.6268656716417911,
+  "wmdp-bio_pcorrect": 0.6109
+ },
+ {
+  "model": "water_W10-12_lr0.001_s42",
+  "part": "before",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 70,
+  "wmdp-bio": 0.46190102120974075,
+  "wmdp-bio_pcorrect": 0.4033
+ },
+ {
+  "model": "base",
+  "part": "edited",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 3,
+  "wmdp-bio": 0.6276512175962293,
+  "wmdp-bio_pcorrect": 0.6153
+ },
+ {
+  "model": "water_W10-12_lr0.001_s42",
+  "part": "edited",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 3,
+  "wmdp-bio": 0.3927729772191673,
+  "wmdp-bio_pcorrect": 0.3445
+ },
+ {
+  "model": "base",
+  "part": "window_other",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 18,
+  "wmdp-bio": 0.6300078554595444,
+  "wmdp-bio_pcorrect": 0.6158
+ },
+ {
+  "model": "water_W10-12_lr0.001_s42",
+  "part": "window_other",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 18,
+  "wmdp-bio": 0.4053417124901807,
+  "wmdp-bio_pcorrect": 0.3545
+ },
+ {
+  "model": "base",
+  "part": "after",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 161,
+  "wmdp-bio": 0.6252945797329144,
+  "wmdp-bio_pcorrect": 0.6142
+ },
+ {
+  "model": "water_W10-12_lr0.001_s42",
+  "part": "after",
+  "prec": "nf4",
+  "window": [
+   10,
+   12
+  ],
+  "n_rounded": 161,
+  "wmdp-bio": 0.3880597014925373,
+  "wmdp-bio_pcorrect": 0.3434
+ }
+]

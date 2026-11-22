@@ -1,0 +1,26 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6347211311861743,
+  "mmlu": 0.579
+ },
+ {
+  "model": "base",
+  "prec": "nf4_bitsandbytes",
+  "wmdp-bio": 0.6229379418695994,
+  "mmlu": 0.573
+ },
+ {
+  "model": "fire_W13-15_lr0.002_s44",
+  "prec": "fp16",
+  "wmdp-bio": 0.3479968578161822,
+  "mmlu": 0.551
+ },
+ {
+  "model": "fire_W13-15_lr0.002_s44",
+  "prec": "nf4_bitsandbytes",
+  "wmdp-bio": 0.401413982717989,
+  "mmlu": 0.527
+ }
+]

@@ -1,0 +1,38 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6276512175962293,
+  "mmlu": 0.571
+ },
+ {
+  "model": "water_W10-12_lr0.001_filenf_nb300_s42",
+  "prec": "fp16",
+  "wmdp-bio": 0.41633935585231735,
+  "mmlu": 0.536
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.6323644933228594,
+  "mmlu": 0.564
+ },
+ {
+  "model": "water_W10-12_lr0.001_filenf_nb300_s42",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4304791830322074,
+  "mmlu": 0.53
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "wmdp-bio": 0.6213668499607227,
+  "mmlu": 0.55
+ },
+ {
+  "model": "water_W10-12_lr0.001_filenf_nb300_s42",
+  "prec": "nf4",
+  "wmdp-bio": 0.4579732914375491,
+  "mmlu": 0.524
+ }
+]

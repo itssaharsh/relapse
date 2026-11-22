@@ -1,0 +1,20 @@
+{
+  "schema": "lexsi.provenance/1",
+  "library": "auditkit",
+  "version": "1.1.6",
+  "git_sha": null,
+  "created_at": "2026-11-22T00:07:04Z",
+  "base_model": "/tmp/kg/input/models/cohere-labs/tiny-aya/transformers/base/1",
+  "method": "evaluate",
+  "inputs": [
+    {
+      "kind": "model",
+      "ref": "/tmp/kg/input/models/cohere-labs/tiny-aya/transformers/base/1",
+      "provenance": null
+    }
+  ],
+  "params": {
+    "run_id": "base_W10-12_lr0.0002_file_nb600_s12-Q4_K_M-mmlu",
+    "fingerprint": "23e60006868080ca"
+  }
+}

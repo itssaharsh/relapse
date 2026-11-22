@@ -1,0 +1,152 @@
+[
+ {
+  "a": "base-fp16-wmdp-bio",
+  "b": "base-Q4_K_M-wmdp-bio",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.634721,
+  "acc_b": 0.621367,
+  "delta": -0.013354,
+  "ci95": [
+   -0.02749410840534171,
+   0.0007855459544383347
+  ],
+  "p_value": 0.061938,
+  "significant": false,
+  "right_to_wrong": 49,
+  "wrong_to_right": 32,
+  "retention": 0.9789603960396039,
+  "model": "base",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "a": "fire_W13-15_lr0.002_s44-fp16-wmdp-bio",
+  "b": "fire_W13-15_lr0.002_s44-Q4_K_M-wmdp-bio",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.348782,
+  "acc_b": 0.366064,
+  "delta": 0.017282,
+  "ci95": [
+   -0.004713275726630008,
+   0.03927729772191673
+  ],
+  "p_value": 0.112887,
+  "significant": false,
+  "right_to_wrong": 91,
+  "wrong_to_right": 113,
+  "retention": 1.0495495495495495,
+  "model": "fire_W13-15_lr0.002_s44",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "a": "base-fp16-mmlu",
+  "b": "fire_W13-15_lr0.002_s44-fp16-mmlu",
+  "metric": "acc",
+  "n": 1000,
+  "acc_a": 0.579,
+  "acc_b": 0.551,
+  "delta": -0.028,
+  "ci95": [
+   -0.055,
+   -0.001
+  ],
+  "p_value": 0.044955,
+  "significant": true,
+  "right_to_wrong": 108,
+  "wrong_to_right": 80,
+  "retention": 0.9516407599309156,
+  "model": "fire_W13-15_lr0.002_s44",
+  "kind": "price",
+  "prec": "fp16"
+ },
+ {
+  "a": "base-Q4_K_M-mmlu",
+  "b": "fire_W13-15_lr0.002_s44-Q4_K_M-mmlu",
+  "metric": "acc",
+  "n": 1000,
+  "acc_a": 0.561,
+  "acc_b": 0.529,
+  "delta": -0.032,
+  "ci95": [
+   -0.059,
+   -0.004
+  ],
+  "p_value": 0.024975,
+  "significant": true,
+  "right_to_wrong": 117,
+  "wrong_to_right": 85,
+  "retention": 0.9429590017825311,
+  "model": "fire_W13-15_lr0.002_s44",
+  "kind": "price",
+  "prec": "Q4_K_M"
+ },
+ {
+  "a": "fire_W13-15_lr0.001_s44-fp16-wmdp-bio",
+  "b": "fire_W13-15_lr0.001_s44-Q4_K_M-wmdp-bio",
+  "metric": "acc",
+  "n": 1273,
+  "acc_a": 0.457188,
+  "acc_b": 0.438335,
+  "delta": -0.018853,
+  "ci95": [
+   -0.03927729772191673,
+   0.0015710919088766694
+  ],
+  "p_value": 0.066933,
+  "significant": false,
+  "right_to_wrong": 99,
+  "wrong_to_right": 75,
+  "retention": 0.9587628865979382,
+  "model": "fire_W13-15_lr0.001_s44",
+  "kind": "forget_holds",
+  "from": "fp16",
+  "to": "Q4_K_M"
+ },
+ {
+  "a": "base-fp16-mmlu",
+  "b": "fire_W13-15_lr0.001_s44-fp16-mmlu",
+  "metric": "acc",
+  "n": 1000,
+  "acc_a": 0.579,
+  "acc_b": 0.56,
+  "delta": -0.019,
+  "ci95": [
+   -0.044,
+   0.005
+  ],
+  "p_value": 0.120879,
+  "significant": false,
+  "right_to_wrong": 86,
+  "wrong_to_right": 67,
+  "retention": 0.9671848013816927,
+  "model": "fire_W13-15_lr0.001_s44",
+  "kind": "price",
+  "prec": "fp16"
+ },
+ {
+  "a": "base-Q4_K_M-mmlu",
+  "b": "fire_W13-15_lr0.001_s44-Q4_K_M-mmlu",
+  "metric": "acc",
+  "n": 1000,
+  "acc_a": 0.561,
+  "acc_b": 0.544,
+  "delta": -0.017,
+  "ci95": [
+   -0.042,
+   0.007
+  ],
+  "p_value": 0.176823,
+  "significant": false,
+  "right_to_wrong": 84,
+  "wrong_to_right": 67,
+  "retention": 0.9696969696969697,
+  "model": "fire_W13-15_lr0.001_s44",
+  "kind": "price",
+  "prec": "Q4_K_M"
+ }
+]

@@ -38,3 +38,13 @@ Each is a one-sided sign test across the 10 model-and-seed pairs at fp16, α = 0
 **Q3.** Each model's re-derived CircuitKIT window has lower best safe forgetting than the default layers 5–7.
 
 The same comparisons in Q4_0 and NF4 are reported as secondary. A hypothesis that fails is reported as failed, in the main text.
+
+## Amendment 1 (2026-11-22, written after Q1 to Q3 were scored and before any of the runs below was started): the final models
+
+**What we had seen.** Q2 held (layers 3–5 beat the default in 9 of 10 pairs). Q1 and Q3 failed: each model's own CircuitKIT window beat the default on Global, Earth and Base, where it is 3–5, and lost on Water (2–4, ahead of 3–5 by 0.2% of the attribution) and on one Fire seed (10–12). Looking at the attributions afterwards, the window with the largest share of MLP attribution averaged over the five models is 3–5, and leaving any one model out gives 3–5 for four of the five. This family rule was formed after seeing the results, so the comparison below is its only test.
+
+**Runs.** For each of the five models, seeds 33 and 34 (not used before), two runs per seed: layers 3–5 and the default layers 5–7. Each uses the learning rate that the earlier seeds chose for that model and window by a fixed rule: among rates that lost at most 3 MMLU points on both seeds 31 and 32, the one with the lowest mean WMDP-bio. Everything else is as in the design above.
+
+**Q4.** On the fresh seeds, the 3–5 run scores lower on WMDP-bio than the 5–7 run of the same model and seed (one-sided sign test across the 10 pairs, α = 0.05; each pair is also compared with a paired bootstrap on the same questions), and loses at most 3 MMLU points against the original.
+
+The 3–5 runs of this amendment are the models we release. Their full check (benign biology, reworded and translated questions, prompt attacks, a fine-tuning attack, real llama.cpp files, both tokenizer settings) is reported whatever it shows.

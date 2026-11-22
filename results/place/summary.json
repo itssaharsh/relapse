@@ -1,0 +1,1107 @@
+{
+ "picks": {
+  "global": "3-5",
+  "fire": "10-12",
+  "earth": "3-5",
+  "water": "2-4",
+  "base": "3-5"
+ },
+ "results": {
+  "all_five": {
+   "fp16": {
+    "Q1 (7-9 vs 5-7)": {
+     "wins": 7,
+     "losses": 3,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.171875,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "global",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.4469756480754124,
+       "best_default": 0.49018067556952083
+      },
+      {
+       "model": "global",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.40062843676355064,
+       "best_default": 0.5231736056559309
+      },
+      {
+       "model": "fire",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.48939512961508247,
+       "best_default": 0.49410840534171246
+      },
+      {
+       "model": "fire",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.4461901021209741,
+       "best_default": 0.48939512961508247
+      },
+      {
+       "model": "earth",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.48625294579732914,
+       "best_default": 0.42969363707776903
+      },
+      {
+       "model": "earth",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.4579732914375491,
+       "best_default": 0.5043205027494109
+      },
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.4218381775333857,
+       "best_default": 0.4831107619795758
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.4053417124901807,
+       "best_default": 0.4988216810683425
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.38884524744697563,
+       "best_default": 0.3472113118617439
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.31421838177533384,
+       "best_default": 0.3118617439120189
+      }
+     ]
+    },
+    "Q2 (3-5 vs 5-7)": {
+     "wins": 9,
+     "losses": 1,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.0107421875,
+     "holds": true,
+     "strong": true,
+     "pairs": [
+      {
+       "model": "global",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.41555380989787905,
+       "best_default": 0.49018067556952083
+      },
+      {
+       "model": "global",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3629222309505106,
+       "best_default": 0.5231736056559309
+      },
+      {
+       "model": "fire",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.42419481539670073,
+       "best_default": 0.49410840534171246
+      },
+      {
+       "model": "fire",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3527101335428123,
+       "best_default": 0.48939512961508247
+      },
+      {
+       "model": "earth",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3982717989002357,
+       "best_default": 0.42969363707776903
+      },
+      {
+       "model": "earth",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.34171249018067557,
+       "best_default": 0.5043205027494109
+      },
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.410840534171249,
+       "best_default": 0.4831107619795758
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3479968578161822,
+       "best_default": 0.4988216810683425
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3448546739984289,
+       "best_default": 0.3472113118617439
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3157894736842105,
+       "best_default": 0.3118617439120189
+      }
+     ]
+    },
+    "Q3 (CircuitKIT window vs 5-7)": {
+     "wins": 6,
+     "losses": 4,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.376953125,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "global",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.41555380989787905,
+       "best_default": 0.49018067556952083
+      },
+      {
+       "model": "global",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3629222309505106,
+       "best_default": 0.5231736056559309
+      },
+      {
+       "model": "fire",
+       "seed": 31,
+       "chosen": "10-12",
+       "best_chosen": 0.5758051846032993,
+       "best_default": 0.49410840534171246
+      },
+      {
+       "model": "fire",
+       "seed": 32,
+       "chosen": "10-12",
+       "best_chosen": 0.3935585231736057,
+       "best_default": 0.48939512961508247
+      },
+      {
+       "model": "earth",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3982717989002357,
+       "best_default": 0.42969363707776903
+      },
+      {
+       "model": "earth",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.34171249018067557,
+       "best_default": 0.5043205027494109
+      },
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "2-4",
+       "best_chosen": 0.600942655145326,
+       "best_default": 0.4831107619795758
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "2-4",
+       "best_chosen": 0.598586017282011,
+       "best_default": 0.4988216810683425
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3448546739984289,
+       "best_default": 0.3472113118617439
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3157894736842105,
+       "best_default": 0.3118617439120189
+      }
+     ]
+    }
+   },
+   "Q4_0": {
+    "Q1 (7-9 vs 5-7)": {
+     "wins": 8,
+     "losses": 2,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.0546875,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "global",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.42105263157894735,
+       "best_default": 0.5113904163393559
+      },
+      {
+       "model": "global",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.37941869599371564,
+       "best_default": 0.5082482325216026
+      },
+      {
+       "model": "fire",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.45718774548311075,
+       "best_default": 0.4461901021209741
+      },
+      {
+       "model": "fire",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.43676355066771405,
+       "best_default": 0.4673998428908091
+      },
+      {
+       "model": "earth",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.4461901021209741,
+       "best_default": 0.394344069128044
+      },
+      {
+       "model": "earth",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.44069128043990574,
+       "best_default": 0.49803613511390415
+      },
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.4304791830322074,
+       "best_default": 0.46582875098193244
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.37549096622152395,
+       "best_default": 0.49803613511390415
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.3809897879025923,
+       "best_default": 0.41633935585231735
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.30557737627651216,
+       "best_default": 0.31893165750196384
+      }
+     ]
+    },
+    "Q2 (3-5 vs 5-7)": {
+     "wins": 10,
+     "losses": 0,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.0009765625,
+     "holds": true,
+     "strong": true,
+     "pairs": [
+      {
+       "model": "global",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3770620581304006,
+       "best_default": 0.5113904163393559
+      },
+      {
+       "model": "global",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.36370777690494893,
+       "best_default": 0.5082482325216026
+      },
+      {
+       "model": "fire",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.406127258444619,
+       "best_default": 0.4461901021209741
+      },
+      {
+       "model": "fire",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3534956794972506,
+       "best_default": 0.4673998428908091
+      },
+      {
+       "model": "earth",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.391987431264729,
+       "best_default": 0.394344069128044
+      },
+      {
+       "model": "earth",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.33699921445404557,
+       "best_default": 0.49803613511390415
+      },
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.391987431264729,
+       "best_default": 0.46582875098193244
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.34328358208955223,
+       "best_default": 0.49803613511390415
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3424980361351139,
+       "best_default": 0.41633935585231735
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3118617439120189,
+       "best_default": 0.31893165750196384
+      }
+     ]
+    },
+    "Q3 (CircuitKIT window vs 5-7)": {
+     "wins": 7,
+     "losses": 3,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.171875,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "global",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3770620581304006,
+       "best_default": 0.5113904163393559
+      },
+      {
+       "model": "global",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.36370777690494893,
+       "best_default": 0.5082482325216026
+      },
+      {
+       "model": "fire",
+       "seed": 31,
+       "chosen": "10-12",
+       "best_chosen": 0.5428122545168892,
+       "best_default": 0.4461901021209741
+      },
+      {
+       "model": "fire",
+       "seed": 32,
+       "chosen": "10-12",
+       "best_chosen": 0.3534956794972506,
+       "best_default": 0.4673998428908091
+      },
+      {
+       "model": "earth",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.391987431264729,
+       "best_default": 0.394344069128044
+      },
+      {
+       "model": "earth",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.33699921445404557,
+       "best_default": 0.49803613511390415
+      },
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "2-4",
+       "best_chosen": 0.5946582875098193,
+       "best_default": 0.46582875098193244
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "2-4",
+       "best_chosen": 0.5954438334642577,
+       "best_default": 0.49803613511390415
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3424980361351139,
+       "best_default": 0.41633935585231735
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3118617439120189,
+       "best_default": 0.31893165750196384
+      }
+     ]
+    }
+   },
+   "nf4": {
+    "Q1 (7-9 vs 5-7)": {
+     "wins": 7,
+     "losses": 3,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.171875,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "global",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.4540455616653574,
+       "best_default": 0.41555380989787905
+      },
+      {
+       "model": "global",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.3904163393558523,
+       "best_default": 0.5051060487038491
+      },
+      {
+       "model": "fire",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.41633935585231735,
+       "best_default": 0.4673998428908091
+      },
+      {
+       "model": "fire",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.42498036135113904,
+       "best_default": 0.49096622152395913
+      },
+      {
+       "model": "earth",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.4783974862529458,
+       "best_default": 0.4752553024351925
+      },
+      {
+       "model": "earth",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.4673998428908091,
+       "best_default": 0.5349567949725059
+      },
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.40298507462686567,
+       "best_default": 0.42812254516889237
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.3935585231736057,
+       "best_default": 0.5286724273369993
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.3566378633150039,
+       "best_default": 0.33699921445404557
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.31421838177533384,
+       "best_default": 0.3150039277297722
+      }
+     ]
+    },
+    "Q2 (3-5 vs 5-7)": {
+     "wins": 9,
+     "losses": 1,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.0107421875,
+     "holds": true,
+     "strong": true,
+     "pairs": [
+      {
+       "model": "global",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.4171249018067557,
+       "best_default": 0.41555380989787905
+      },
+      {
+       "model": "global",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.35506677140612725,
+       "best_default": 0.5051060487038491
+      },
+      {
+       "model": "fire",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.413197172034564,
+       "best_default": 0.4673998428908091
+      },
+      {
+       "model": "fire",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3479968578161822,
+       "best_default": 0.49096622152395913
+      },
+      {
+       "model": "earth",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.417910447761194,
+       "best_default": 0.4752553024351925
+      },
+      {
+       "model": "earth",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3479968578161822,
+       "best_default": 0.5349567949725059
+      },
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.41162608012568735,
+       "best_default": 0.42812254516889237
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.36135113904163396,
+       "best_default": 0.5286724273369993
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3087195600942655,
+       "best_default": 0.33699921445404557
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3126472898664572,
+       "best_default": 0.3150039277297722
+      }
+     ]
+    },
+    "Q3 (CircuitKIT window vs 5-7)": {
+     "wins": 5,
+     "losses": 5,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.623046875,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "global",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.4171249018067557,
+       "best_default": 0.41555380989787905
+      },
+      {
+       "model": "global",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.35506677140612725,
+       "best_default": 0.5051060487038491
+      },
+      {
+       "model": "fire",
+       "seed": 31,
+       "chosen": "10-12",
+       "best_chosen": 0.5027494108405341,
+       "best_default": 0.4673998428908091
+      },
+      {
+       "model": "fire",
+       "seed": 32,
+       "chosen": "10-12",
+       "best_chosen": 0.6025137470542027,
+       "best_default": 0.49096622152395913
+      },
+      {
+       "model": "earth",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.417910447761194,
+       "best_default": 0.4752553024351925
+      },
+      {
+       "model": "earth",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3479968578161822,
+       "best_default": 0.5349567949725059
+      },
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "2-4",
+       "best_chosen": 0.5498821681068342,
+       "best_default": 0.42812254516889237
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "2-4",
+       "best_chosen": 0.6025137470542027,
+       "best_default": 0.5286724273369993
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3087195600942655,
+       "best_default": 0.33699921445404557
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3126472898664572,
+       "best_default": 0.3150039277297722
+      }
+     ]
+    }
+   }
+  },
+  "held_out": {
+   "fp16": {
+    "Q1 (7-9 vs 5-7)": {
+     "wins": 2,
+     "losses": 2,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.6875,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.4218381775333857,
+       "best_default": 0.4831107619795758
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.4053417124901807,
+       "best_default": 0.4988216810683425
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.38884524744697563,
+       "best_default": 0.3472113118617439
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.31421838177533384,
+       "best_default": 0.3118617439120189
+      }
+     ]
+    },
+    "Q2 (3-5 vs 5-7)": {
+     "wins": 3,
+     "losses": 1,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.3125,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.410840534171249,
+       "best_default": 0.4831107619795758
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3479968578161822,
+       "best_default": 0.4988216810683425
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3448546739984289,
+       "best_default": 0.3472113118617439
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3157894736842105,
+       "best_default": 0.3118617439120189
+      }
+     ]
+    },
+    "Q3 (CircuitKIT window vs 5-7)": {
+     "wins": 1,
+     "losses": 3,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.9375,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "2-4",
+       "best_chosen": 0.600942655145326,
+       "best_default": 0.4831107619795758
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "2-4",
+       "best_chosen": 0.598586017282011,
+       "best_default": 0.4988216810683425
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3448546739984289,
+       "best_default": 0.3472113118617439
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3157894736842105,
+       "best_default": 0.3118617439120189
+      }
+     ]
+    }
+   },
+   "Q4_0": {
+    "Q1 (7-9 vs 5-7)": {
+     "wins": 4,
+     "losses": 0,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.0625,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.4304791830322074,
+       "best_default": 0.46582875098193244
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.37549096622152395,
+       "best_default": 0.49803613511390415
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.3809897879025923,
+       "best_default": 0.41633935585231735
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.30557737627651216,
+       "best_default": 0.31893165750196384
+      }
+     ]
+    },
+    "Q2 (3-5 vs 5-7)": {
+     "wins": 4,
+     "losses": 0,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.0625,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.391987431264729,
+       "best_default": 0.46582875098193244
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.34328358208955223,
+       "best_default": 0.49803613511390415
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3424980361351139,
+       "best_default": 0.41633935585231735
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3118617439120189,
+       "best_default": 0.31893165750196384
+      }
+     ]
+    },
+    "Q3 (CircuitKIT window vs 5-7)": {
+     "wins": 2,
+     "losses": 2,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.6875,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "2-4",
+       "best_chosen": 0.5946582875098193,
+       "best_default": 0.46582875098193244
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "2-4",
+       "best_chosen": 0.5954438334642577,
+       "best_default": 0.49803613511390415
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3424980361351139,
+       "best_default": 0.41633935585231735
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3118617439120189,
+       "best_default": 0.31893165750196384
+      }
+     ]
+    }
+   },
+   "nf4": {
+    "Q1 (7-9 vs 5-7)": {
+     "wins": 3,
+     "losses": 1,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.3125,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.40298507462686567,
+       "best_default": 0.42812254516889237
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.3935585231736057,
+       "best_default": 0.5286724273369993
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "7-9",
+       "best_chosen": 0.3566378633150039,
+       "best_default": 0.33699921445404557
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "7-9",
+       "best_chosen": 0.31421838177533384,
+       "best_default": 0.3150039277297722
+      }
+     ]
+    },
+    "Q2 (3-5 vs 5-7)": {
+     "wins": 4,
+     "losses": 0,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.0625,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.41162608012568735,
+       "best_default": 0.42812254516889237
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.36135113904163396,
+       "best_default": 0.5286724273369993
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3087195600942655,
+       "best_default": 0.33699921445404557
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3126472898664572,
+       "best_default": 0.3150039277297722
+      }
+     ]
+    },
+    "Q3 (CircuitKIT window vs 5-7)": {
+     "wins": 2,
+     "losses": 2,
+     "ties": 0,
+     "not_comparable": 0,
+     "p": 0.6875,
+     "holds": false,
+     "strong": false,
+     "pairs": [
+      {
+       "model": "water",
+       "seed": 31,
+       "chosen": "2-4",
+       "best_chosen": 0.5498821681068342,
+       "best_default": 0.42812254516889237
+      },
+      {
+       "model": "water",
+       "seed": 32,
+       "chosen": "2-4",
+       "best_chosen": 0.6025137470542027,
+       "best_default": 0.5286724273369993
+      },
+      {
+       "model": "base",
+       "seed": 31,
+       "chosen": "3-5",
+       "best_chosen": 0.3087195600942655,
+       "best_default": 0.33699921445404557
+      },
+      {
+       "model": "base",
+       "seed": 32,
+       "chosen": "3-5",
+       "best_chosen": 0.3126472898664572,
+       "best_default": 0.3150039277297722
+      }
+     ]
+    }
+   }
+  }
+ }
+}

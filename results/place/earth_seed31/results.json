@@ -1,0 +1,386 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "wmdp-bio": 0.6276512175962293,
+  "wmdp-bio_pcorrect": 0.6125,
+  "mmlu": 0.566,
+  "mmlu_pcorrect": 0.5497
+ },
+ {
+  "model": "earth_W3-5_lr1.5e-05_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.4375490966221524,
+  "wmdp-bio_pcorrect": 0.4351,
+  "mmlu": 0.561,
+  "mmlu_pcorrect": 0.5416
+ },
+ {
+  "model": "earth_W3-5_lr3e-05_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.413197172034564,
+  "wmdp-bio_pcorrect": 0.3976,
+  "mmlu": 0.552,
+  "mmlu_pcorrect": 0.5356
+ },
+ {
+  "model": "earth_W3-5_lr6e-05_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.4344069128043991,
+  "wmdp-bio_pcorrect": 0.4058,
+  "mmlu": 0.547,
+  "mmlu_pcorrect": 0.5327
+ },
+ {
+  "model": "earth_W3-5_lr0.0001_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.42498036135113904,
+  "wmdp-bio_pcorrect": 0.4067,
+  "mmlu": 0.539,
+  "mmlu_pcorrect": 0.5311
+ },
+ {
+  "model": "earth_W3-5_lr0.0002_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.3982717989002357,
+  "wmdp-bio_pcorrect": 0.3916,
+  "mmlu": 0.548,
+  "mmlu_pcorrect": 0.5303
+ },
+ {
+  "model": "earth_W5-7_lr4e-05_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.5310290652003142,
+  "wmdp-bio_pcorrect": 0.51,
+  "mmlu": 0.553,
+  "mmlu_pcorrect": 0.5366
+ },
+ {
+  "model": "earth_W5-7_lr7e-05_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.5278868813825609,
+  "wmdp-bio_pcorrect": 0.4984,
+  "mmlu": 0.546,
+  "mmlu_pcorrect": 0.5313
+ },
+ {
+  "model": "earth_W5-7_lr0.00015_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.49725058915946585,
+  "wmdp-bio_pcorrect": 0.4735,
+  "mmlu": 0.541,
+  "mmlu_pcorrect": 0.5248
+ },
+ {
+  "model": "earth_W5-7_lr0.0003_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.4721131186174391,
+  "wmdp-bio_pcorrect": 0.4487,
+  "mmlu": 0.535,
+  "mmlu_pcorrect": 0.5172
+ },
+ {
+  "model": "earth_W5-7_lr0.0006_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.42969363707776903,
+  "wmdp-bio_pcorrect": 0.4002,
+  "mmlu": 0.541,
+  "mmlu_pcorrect": 0.5147
+ },
+ {
+  "model": "earth_W7-9_lr0.00015_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.5239591516103692,
+  "wmdp-bio_pcorrect": 0.4877,
+  "mmlu": 0.552,
+  "mmlu_pcorrect": 0.5314
+ },
+ {
+  "model": "earth_W7-9_lr0.00025_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.4925373134328358,
+  "wmdp-bio_pcorrect": 0.4671,
+  "mmlu": 0.546,
+  "mmlu_pcorrect": 0.5305
+ },
+ {
+  "model": "earth_W7-9_lr0.0005_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.48860958366064416,
+  "wmdp-bio_pcorrect": 0.4673,
+  "mmlu": 0.556,
+  "mmlu_pcorrect": 0.5359
+ },
+ {
+  "model": "earth_W7-9_lr0.001_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.48625294579732914,
+  "wmdp-bio_pcorrect": 0.4635,
+  "mmlu": 0.563,
+  "mmlu_pcorrect": 0.5379
+ },
+ {
+  "model": "earth_W7-9_lr0.002_s31",
+  "prec": "fp16",
+  "wmdp-bio": 0.413197172034564,
+  "wmdp-bio_pcorrect": 0.3977,
+  "mmlu": 0.522,
+  "mmlu_pcorrect": 0.5037
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.6205813040062844,
+  "wmdp-bio_pcorrect": 0.6085,
+  "mmlu": 0.549,
+  "mmlu_pcorrect": 0.5396
+ },
+ {
+  "model": "earth_W3-5_lr1.5e-05_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4147682639434407,
+  "wmdp-bio_pcorrect": 0.4075,
+  "mmlu": 0.542,
+  "mmlu_pcorrect": 0.5333
+ },
+ {
+  "model": "earth_W3-5_lr3e-05_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.3974862529457973,
+  "wmdp-bio_pcorrect": 0.3788,
+  "mmlu": 0.533,
+  "mmlu_pcorrect": 0.5233
+ },
+ {
+  "model": "earth_W3-5_lr6e-05_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.391987431264729,
+  "wmdp-bio_pcorrect": 0.3792,
+  "mmlu": 0.527,
+  "mmlu_pcorrect": 0.5214
+ },
+ {
+  "model": "earth_W3-5_lr0.0001_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.3974862529457973,
+  "wmdp-bio_pcorrect": 0.3781,
+  "mmlu": 0.532,
+  "mmlu_pcorrect": 0.5241
+ },
+ {
+  "model": "earth_W3-5_lr0.0002_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.394344069128044,
+  "wmdp-bio_pcorrect": 0.3684,
+  "mmlu": 0.533,
+  "mmlu_pcorrect": 0.5217
+ },
+ {
+  "model": "earth_W5-7_lr4e-05_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.5192458758837392,
+  "wmdp-bio_pcorrect": 0.5005,
+  "mmlu": 0.541,
+  "mmlu_pcorrect": 0.528
+ },
+ {
+  "model": "earth_W5-7_lr7e-05_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4996072270227808,
+  "wmdp-bio_pcorrect": 0.4799,
+  "mmlu": 0.538,
+  "mmlu_pcorrect": 0.524
+ },
+ {
+  "model": "earth_W5-7_lr0.00015_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4673998428908091,
+  "wmdp-bio_pcorrect": 0.4503,
+  "mmlu": 0.539,
+  "mmlu_pcorrect": 0.5198
+ },
+ {
+  "model": "earth_W5-7_lr0.0003_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.45718774548311075,
+  "wmdp-bio_pcorrect": 0.4297,
+  "mmlu": 0.54,
+  "mmlu_pcorrect": 0.5112
+ },
+ {
+  "model": "earth_W5-7_lr0.0006_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.394344069128044,
+  "wmdp-bio_pcorrect": 0.375,
+  "mmlu": 0.524,
+  "mmlu_pcorrect": 0.4977
+ },
+ {
+  "model": "earth_W7-9_lr0.00015_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4988216810683425,
+  "wmdp-bio_pcorrect": 0.4634,
+  "mmlu": 0.549,
+  "mmlu_pcorrect": 0.5285
+ },
+ {
+  "model": "earth_W7-9_lr0.00025_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.46818538884524746,
+  "wmdp-bio_pcorrect": 0.4429,
+  "mmlu": 0.542,
+  "mmlu_pcorrect": 0.5256
+ },
+ {
+  "model": "earth_W7-9_lr0.0005_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4587588373919874,
+  "wmdp-bio_pcorrect": 0.4358,
+  "mmlu": 0.537,
+  "mmlu_pcorrect": 0.5248
+ },
+ {
+  "model": "earth_W7-9_lr0.001_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.4461901021209741,
+  "wmdp-bio_pcorrect": 0.4248,
+  "mmlu": 0.528,
+  "mmlu_pcorrect": 0.5118
+ },
+ {
+  "model": "earth_W7-9_lr0.002_s31",
+  "prec": "Q4_0",
+  "wmdp-bio": 0.40377062058130403,
+  "wmdp-bio_pcorrect": 0.3844,
+  "mmlu": 0.507,
+  "mmlu_pcorrect": 0.4901
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "wmdp-bio": 0.6197957580518461,
+  "wmdp-bio_pcorrect": 0.6069,
+  "mmlu": 0.556,
+  "mmlu_pcorrect": 0.5348
+ },
+ {
+  "model": "earth_W3-5_lr1.5e-05_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.4422623723487824,
+  "wmdp-bio_pcorrect": 0.4357,
+  "mmlu": 0.533,
+  "mmlu_pcorrect": 0.5233
+ },
+ {
+  "model": "earth_W3-5_lr3e-05_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.417910447761194,
+  "wmdp-bio_pcorrect": 0.3987,
+  "mmlu": 0.532,
+  "mmlu_pcorrect": 0.5166
+ },
+ {
+  "model": "earth_W3-5_lr6e-05_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.4194815396700707,
+  "wmdp-bio_pcorrect": 0.4016,
+  "mmlu": 0.524,
+  "mmlu_pcorrect": 0.5142
+ },
+ {
+  "model": "earth_W3-5_lr0.0001_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.4218381775333857,
+  "wmdp-bio_pcorrect": 0.4029,
+  "mmlu": 0.527,
+  "mmlu_pcorrect": 0.5129
+ },
+ {
+  "model": "earth_W3-5_lr0.0002_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.4289080911233307,
+  "wmdp-bio_pcorrect": 0.3958,
+  "mmlu": 0.532,
+  "mmlu_pcorrect": 0.5163
+ },
+ {
+  "model": "earth_W5-7_lr4e-05_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.5216025137470542,
+  "wmdp-bio_pcorrect": 0.5062,
+  "mmlu": 0.547,
+  "mmlu_pcorrect": 0.5205
+ },
+ {
+  "model": "earth_W5-7_lr7e-05_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.49725058915946585,
+  "wmdp-bio_pcorrect": 0.4821,
+  "mmlu": 0.54,
+  "mmlu_pcorrect": 0.5166
+ },
+ {
+  "model": "earth_W5-7_lr0.00015_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.4752553024351925,
+  "wmdp-bio_pcorrect": 0.4547,
+  "mmlu": 0.528,
+  "mmlu_pcorrect": 0.508
+ },
+ {
+  "model": "earth_W5-7_lr0.0003_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.4548311076197958,
+  "wmdp-bio_pcorrect": 0.4318,
+  "mmlu": 0.519,
+  "mmlu_pcorrect": 0.5011
+ },
+ {
+  "model": "earth_W5-7_lr0.0006_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.408483896307934,
+  "wmdp-bio_pcorrect": 0.3792,
+  "mmlu": 0.514,
+  "mmlu_pcorrect": 0.487
+ },
+ {
+  "model": "earth_W7-9_lr0.00015_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.5184603299293009,
+  "wmdp-bio_pcorrect": 0.4803,
+  "mmlu": 0.533,
+  "mmlu_pcorrect": 0.5167
+ },
+ {
+  "model": "earth_W7-9_lr0.00025_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.4925373134328358,
+  "wmdp-bio_pcorrect": 0.4669,
+  "mmlu": 0.54,
+  "mmlu_pcorrect": 0.5197
+ },
+ {
+  "model": "earth_W7-9_lr0.0005_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.4838963079340141,
+  "wmdp-bio_pcorrect": 0.4631,
+  "mmlu": 0.544,
+  "mmlu_pcorrect": 0.5234
+ },
+ {
+  "model": "earth_W7-9_lr0.001_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.4783974862529458,
+  "wmdp-bio_pcorrect": 0.4546,
+  "mmlu": 0.541,
+  "mmlu_pcorrect": 0.5199
+ },
+ {
+  "model": "earth_W7-9_lr0.002_s31",
+  "prec": "nf4",
+  "wmdp-bio": 0.4218381775333857,
+  "wmdp-bio_pcorrect": 0.4008,
+  "mmlu": 0.506,
+  "mmlu_pcorrect": 0.4878
+ }
+]

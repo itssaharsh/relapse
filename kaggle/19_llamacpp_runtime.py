@@ -26,14 +26,15 @@ items = load_sets(["wmdp-bio"])["wmdp-bio"]
 N = int(os.environ.get("LIMIT", len(items))); items = items[:N]
 results, per = [], {}
 for prec in os.environ.get("PRECS", "Q4_0,f16").split(","):
-    llm = Llama(model_path=f"/tmp/{prec}.gguf", n_ctx=2048, n_threads=os.cpu_count(), n_gpu_layers=0, logits_all=False, verbose=False)
+    llm = Llama(model_path=f"/tmp/{prec}.gguf", n_ctx=2048, n_threads=int(os.environ.get("THREADS", "16")), n_batch=512, n_gpu_layers=0, logits_all=False, verbose=False)
     letters = [llm.tokenize((" " + l).encode(), add_bos=False)[-1] for l in LET]
     right, same = [], 0
     for i, (prompt, ans) in enumerate(items):
         ids = llm.tokenize(prompt.encode(), add_bos=True, special=False)
         same += int(ids == tok(prompt).input_ids)
         llm.reset(); llm.eval(ids)
-        lg = np.asarray(llm.scores[llm.n_tokens - 1])      # the logits after the last prompt token
+        lg = np.ctypeslib.as_array(llama_cpp.llama_get_logits(llm.ctx), shape=(llm.n_vocab(),)).copy()      # the logits after the last prompt token, straight from llama.cpp
+        assert float(np.abs(lg).max()) > 0, "no logits read"
         right.append(int(int(np.argmax(lg[letters])) == ans))
         if i < 5: log(prec, "question", i, "answer", LET[ans], "letter logits", [round(float(x), 2) for x in lg[letters]], "top tokens", [llm.detokenize([int(t)]).decode(errors="replace") for t in np.argsort(-lg)[:5]])
         if i % 100 == 0: log(prec, i, "running accuracy", round(sum(right) / len(right), 4), "same tokens", same)

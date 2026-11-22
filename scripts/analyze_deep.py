@@ -27,6 +27,7 @@ NAME = re.compile(r"^(?P<model>[a-z]+)_W(?P<window>\d+-\d+)_lr(?P<lr>[^_]+)(?:_(
 ARMS = {("file", 600): "repaired", ("file", 300): "file_300", ("plain", 600): "plain_600", ("editq", 300): "edited_only", ("plain", 300): "rerun", ("filenf", 600): "repaired_nf4", ("filenf", 300): "file_nf4_300"}
 
 
+REPLACED = ("base_seed43_arms600", "fire_seed44_repair600")
 RAW_RUN = re.compile(r"audit_(.+)_(fp16|nf4|Q4_0|Q4_K_M)_(wmdp-bio|mmlu)\.json$")
 
 
@@ -42,6 +43,8 @@ def fetch(d: str) -> None:
         m = RAW_RUN.search(f)
         if m:
             raw[(os.path.dirname(f), m.group(1), m.group(2), m.group(3))] = f
+            continue
+        if f.split("/")[1] in REPLACED or "rescore" in f:      # partial uploads, replaced by *_rescored folders (see their README)
             continue
         dst = os.path.join(d, f.split("/", 1)[1] if f.startswith("deep/") else f.replace("/", "_", 1))
         os.makedirs(os.path.dirname(dst), exist_ok=True)

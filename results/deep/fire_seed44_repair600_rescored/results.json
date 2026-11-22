@@ -3,48 +3,54 @@
   "model": "base",
   "prec": "fp16",
   "wmdp-bio": 0.6347211311861743,
-  "wmdp-bio_pcorrect": 0.6199,
-  "mmlu": 0.579,
-  "mmlu_pcorrect": 0.5626
+  "mmlu": 0.579
  },
  {
   "model": "fire_W13-15_lr0.002_filenf_nb600_s44",
   "prec": "fp16",
   "wmdp-bio": 0.25608798114689707,
-  "wmdp-bio_pcorrect": 0.2564,
-  "mmlu": 0.52,
-  "mmlu_pcorrect": 0.499
+  "mmlu": 0.52
  },
  {
   "model": "fire_W13-15_lr0.002_plain_nb600_s44",
   "prec": "fp16",
   "wmdp-bio": 0.5058915946582875,
-  "wmdp-bio_pcorrect": 0.4582,
-  "mmlu": 0.557,
-  "mmlu_pcorrect": 0.5306
+  "mmlu": 0.557
  },
  {
   "model": "base",
   "prec": "Q4_0",
   "wmdp-bio": 0.624509033778476,
-  "wmdp-bio_pcorrect": 0.609,
-  "mmlu": 0.577,
-  "mmlu_pcorrect": 0.5611
+  "mmlu": 0.577
  },
  {
   "model": "fire_W13-15_lr0.002_filenf_nb600_s44",
   "prec": "Q4_0",
   "wmdp-bio": 0.406127258444619,
-  "wmdp-bio_pcorrect": 0.3667,
-  "mmlu": 0.53,
-  "mmlu_pcorrect": 0.5029
+  "mmlu": 0.53
  },
  {
   "model": "fire_W13-15_lr0.002_plain_nb600_s44",
   "prec": "Q4_0",
   "wmdp-bio": 0.5011783189316575,
-  "wmdp-bio_pcorrect": 0.4685,
-  "mmlu": 0.543,
-  "mmlu_pcorrect": 0.526
+  "mmlu": 0.543
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "wmdp-bio": 0.6229379418695994,
+  "mmlu": 0.573
+ },
+ {
+  "model": "fire_W13-15_lr0.002_filenf_nb600_s44",
+  "prec": "nf4",
+  "wmdp-bio": 0.2859387274155538,
+  "mmlu": 0.509
+ },
+ {
+  "model": "fire_W13-15_lr0.002_plain_nb600_s44",
+  "prec": "nf4",
+  "wmdp-bio": 0.4846818538884525,
+  "mmlu": 0.538
  }
 ]

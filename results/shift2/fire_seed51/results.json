@@ -1,0 +1,198 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.6347211311861743,
+  "mmlu": 0.579
+ },
+ {
+  "model": "base",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.6425765907305577,
+  "mmlu": 0.574
+ },
+ {
+  "model": "fire_W3-5_lr3e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.377847604084839,
+  "mmlu": 0.566
+ },
+ {
+  "model": "fire_W3-5_lr3e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.38727415553809896,
+  "mmlu": 0.572
+ },
+ {
+  "model": "fire_W3-5_lr6e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.3770620581304006,
+  "mmlu": 0.564
+ },
+ {
+  "model": "fire_W3-5_lr6e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.3715632364493323,
+  "mmlu": 0.571
+ },
+ {
+  "model": "fire_W5-7_lr4e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.5498821681068342,
+  "mmlu": 0.559
+ },
+ {
+  "model": "fire_W5-7_lr4e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.45247446975648076,
+  "mmlu": 0.53
+ },
+ {
+  "model": "fire_W5-7_lr7e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.5082482325216026,
+  "mmlu": 0.554
+ },
+ {
+  "model": "fire_W5-7_lr7e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.36213668499607227,
+  "mmlu": 0.521
+ },
+ {
+  "model": "fire_W7-9_lr0.00015_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.4336213668499607,
+  "mmlu": 0.562
+ },
+ {
+  "model": "fire_W7-9_lr0.00015_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.4265514532600157,
+  "mmlu": 0.58
+ },
+ {
+  "model": "fire_W7-9_lr0.00025_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.44540455616653574,
+  "mmlu": 0.559
+ },
+ {
+  "model": "fire_W7-9_lr0.00025_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.4147682639434407,
+  "mmlu": 0.562
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.624509033778476,
+  "mmlu": 0.577
+ },
+ {
+  "model": "fire_W3-5_lr3e-05_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.36684996072270226,
+  "mmlu": 0.567
+ },
+ {
+  "model": "fire_W3-5_lr6e-05_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.3519245875883739,
+  "mmlu": 0.565
+ },
+ {
+  "model": "fire_W5-7_lr4e-05_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.5153181461115475,
+  "mmlu": 0.57
+ },
+ {
+  "model": "fire_W5-7_lr7e-05_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.4791830322073841,
+  "mmlu": 0.567
+ },
+ {
+  "model": "fire_W7-9_lr0.00015_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.391987431264729,
+  "mmlu": 0.572
+ },
+ {
+  "model": "fire_W7-9_lr0.00025_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.396700706991359,
+  "mmlu": 0.561
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.6229379418695994,
+  "mmlu": 0.573
+ },
+ {
+  "model": "fire_W3-5_lr3e-05_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.3699921445404556,
+  "mmlu": 0.558
+ },
+ {
+  "model": "fire_W3-5_lr6e-05_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.35899450117831894,
+  "mmlu": 0.556
+ },
+ {
+  "model": "fire_W5-7_lr4e-05_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.5357423409269442,
+  "mmlu": 0.56
+ },
+ {
+  "model": "fire_W5-7_lr7e-05_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.5058915946582875,
+  "mmlu": 0.561
+ },
+ {
+  "model": "fire_W7-9_lr0.00015_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.389630793401414,
+  "mmlu": 0.556
+ },
+ {
+  "model": "fire_W7-9_lr0.00025_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.3880597014925373,
+  "mmlu": 0.568
+ }
+]

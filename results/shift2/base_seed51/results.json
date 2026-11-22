@@ -1,0 +1,198 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.600942655145326,
+  "mmlu": 0.576
+ },
+ {
+  "model": "base",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.6268656716417911,
+  "mmlu": 0.553
+ },
+ {
+  "model": "base_W3-5_lr3e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.36684996072270226,
+  "mmlu": 0.562
+ },
+ {
+  "model": "base_W3-5_lr3e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.25294579732914374,
+  "mmlu": 0.239
+ },
+ {
+  "model": "base_W3-5_lr6e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.35742340926944227,
+  "mmlu": 0.553
+ },
+ {
+  "model": "base_W3-5_lr6e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.25687352710133543,
+  "mmlu": 0.237
+ },
+ {
+  "model": "base_W5-7_lr4e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.4673998428908091,
+  "mmlu": 0.565
+ },
+ {
+  "model": "base_W5-7_lr4e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.2474469756480754,
+  "mmlu": 0.236
+ },
+ {
+  "model": "base_W5-7_lr7e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.38648860958366066,
+  "mmlu": 0.56
+ },
+ {
+  "model": "base_W5-7_lr7e-05_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.24587588373919875,
+  "mmlu": 0.231
+ },
+ {
+  "model": "base_W7-9_lr0.00015_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.3448546739984289,
+  "mmlu": 0.563
+ },
+ {
+  "model": "base_W7-9_lr0.00015_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.24823252160251374,
+  "mmlu": 0.236
+ },
+ {
+  "model": "base_W7-9_lr0.00025_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.33857030636292224,
+  "mmlu": 0.561
+ },
+ {
+  "model": "base_W7-9_lr0.00025_outdated_s51",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.24430479183032208,
+  "mmlu": 0.232
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.6190102120974077,
+  "mmlu": 0.583
+ },
+ {
+  "model": "base_W3-5_lr3e-05_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.3692065985860173,
+  "mmlu": 0.579
+ },
+ {
+  "model": "base_W3-5_lr6e-05_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.3582089552238806,
+  "mmlu": 0.576
+ },
+ {
+  "model": "base_W5-7_lr4e-05_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.4838963079340141,
+  "mmlu": 0.569
+ },
+ {
+  "model": "base_W5-7_lr7e-05_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.39512961508248234,
+  "mmlu": 0.563
+ },
+ {
+  "model": "base_W7-9_lr0.00015_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.34642576590730556,
+  "mmlu": 0.583
+ },
+ {
+  "model": "base_W7-9_lr0.00025_outdated_s51",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.31657501963864887,
+  "mmlu": 0.587
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.5978004713275726,
+  "mmlu": 0.569
+ },
+ {
+  "model": "base_W3-5_lr3e-05_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.37941869599371564,
+  "mmlu": 0.548
+ },
+ {
+  "model": "base_W3-5_lr6e-05_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.3644933228593873,
+  "mmlu": 0.544
+ },
+ {
+  "model": "base_W5-7_lr4e-05_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.45247446975648076,
+  "mmlu": 0.567
+ },
+ {
+  "model": "base_W5-7_lr7e-05_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.3809897879025923,
+  "mmlu": 0.555
+ },
+ {
+  "model": "base_W7-9_lr0.00015_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.3424980361351139,
+  "mmlu": 0.547
+ },
+ {
+  "model": "base_W7-9_lr0.00025_outdated_s51",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.3197172034564022,
+  "mmlu": 0.538
+ }
+]

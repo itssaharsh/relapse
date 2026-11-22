@@ -1,0 +1,198 @@
+[
+ {
+  "model": "base",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.6276512175962293,
+  "mmlu": 0.571
+ },
+ {
+  "model": "base",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.6323644933228594,
+  "mmlu": 0.568
+ },
+ {
+  "model": "water_W3-5_lr3e-05_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.39120188531029065,
+  "mmlu": 0.567
+ },
+ {
+  "model": "water_W3-5_lr3e-05_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.3644933228593873,
+  "mmlu": 0.571
+ },
+ {
+  "model": "water_W3-5_lr6e-05_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.35035349567949725,
+  "mmlu": 0.551
+ },
+ {
+  "model": "water_W3-5_lr6e-05_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.3220738413197172,
+  "mmlu": 0.557
+ },
+ {
+  "model": "water_W5-7_lr4e-05_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.49803613511390415,
+  "mmlu": 0.556
+ },
+ {
+  "model": "water_W5-7_lr4e-05_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.406127258444619,
+  "mmlu": 0.515
+ },
+ {
+  "model": "water_W5-7_lr7e-05_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.46190102120974075,
+  "mmlu": 0.555
+ },
+ {
+  "model": "water_W5-7_lr7e-05_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.3692065985860173,
+  "mmlu": 0.482
+ },
+ {
+  "model": "water_W7-9_lr0.00015_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.44147682639434405,
+  "mmlu": 0.57
+ },
+ {
+  "model": "water_W7-9_lr0.00015_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.4603299293008641,
+  "mmlu": 0.56
+ },
+ {
+  "model": "water_W7-9_lr0.00025_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "official",
+  "wmdp-bio": 0.4799685781618225,
+  "mmlu": 0.567
+ },
+ {
+  "model": "water_W7-9_lr0.00025_outdated_s52",
+  "prec": "fp16",
+  "score_tok": "outdated",
+  "wmdp-bio": 0.46111547525530244,
+  "mmlu": 0.559
+ },
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.6323644933228594,
+  "mmlu": 0.564
+ },
+ {
+  "model": "water_W3-5_lr3e-05_outdated_s52",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.3809897879025923,
+  "mmlu": 0.54
+ },
+ {
+  "model": "water_W3-5_lr6e-05_outdated_s52",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.34092694422623726,
+  "mmlu": 0.537
+ },
+ {
+  "model": "water_W5-7_lr4e-05_outdated_s52",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.4634721131186174,
+  "mmlu": 0.551
+ },
+ {
+  "model": "water_W5-7_lr7e-05_outdated_s52",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.44540455616653574,
+  "mmlu": 0.547
+ },
+ {
+  "model": "water_W7-9_lr0.00015_outdated_s52",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.4666142969363708,
+  "mmlu": 0.545
+ },
+ {
+  "model": "water_W7-9_lr0.00025_outdated_s52",
+  "prec": "Q4_0",
+  "score_tok": "official",
+  "wmdp-bio": 0.4713275726630008,
+  "mmlu": 0.547
+ },
+ {
+  "model": "base",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.6213668499607227,
+  "mmlu": 0.55
+ },
+ {
+  "model": "water_W3-5_lr3e-05_outdated_s52",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.38334642576590733,
+  "mmlu": 0.539
+ },
+ {
+  "model": "water_W3-5_lr6e-05_outdated_s52",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.34564021995286726,
+  "mmlu": 0.527
+ },
+ {
+  "model": "water_W5-7_lr4e-05_outdated_s52",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.47682639434406915,
+  "mmlu": 0.541
+ },
+ {
+  "model": "water_W5-7_lr7e-05_outdated_s52",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.46111547525530244,
+  "mmlu": 0.539
+ },
+ {
+  "model": "water_W7-9_lr0.00015_outdated_s52",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.4587588373919874,
+  "mmlu": 0.547
+ },
+ {
+  "model": "water_W7-9_lr0.00025_outdated_s52",
+  "prec": "nf4",
+  "score_tok": "official",
+  "wmdp-bio": 0.46582875098193244,
+  "mmlu": 0.542
+ }
+]

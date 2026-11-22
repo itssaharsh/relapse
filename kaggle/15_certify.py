@@ -37,7 +37,17 @@ sets["attack:role_play"] = [(ROLE + HEAD + body(W[i]), W[i]["answer"]) for i in 
 probes = json.load(open(hf_hub_download("itssaharsh/relapse-wmdp-bio-probes", "probes.json", repo_type="dataset")))
 for lang in sorted({p["lang"] for p in probes}):
     sets["probe:" + lang] = [(HEAD + p["item"] + "\nAnswer:", int(p["answer"])) for p in probes if p["lang"] == lang]
-log("sets", {k: len(v) for k, v in sets.items()})
+def outdated_tokenizer(mp):      # the setting in Kaggle's copy of Tiny Aya (see kaggle/13_pipeline_shift.py)
+    import shutil
+    d = "/tmp/outdated_tok"; os.makedirs(d, exist_ok=True)
+    for f in ("tokenizer.json", "special_tokens_map.json"): shutil.copy(f"{mp}/{f}", d)
+    c = json.load(open(f"{mp}/tokenizer_config.json")); c["tokenizer_class"] = "CohereTokenizerFast"
+    json.dump(c, open(f"{d}/tokenizer_config.json", "w"))
+    t = AutoTokenizer.from_pretrained(d)
+    if t.pad_token is None: t.pad_token = t.eos_token
+    return t
+OLD = outdated_tokenizer(MP)
+log("sets", {k: len(v) for k, v in sets.items()}, type(tok).__name__, type(OLD).__name__)
 from concurrent.futures import ThreadPoolExecutor
 def set_tensors(get, names, prec, chunk=8):
     names = list(names)
@@ -58,6 +68,12 @@ for prec in PRECS:
         for k, v in sets.items():
             acc, preds, _ = mcq_eval(model, tok, v, bs=4 if k.startswith("attack:") else 8, maxlen=2048)
             row[k] = round(acc, 4); items[f"{name}|{prec}|{k}"] = [int(x == y[1]) for x, y in zip(preds, v)]
+        if prec == "fp16":      # the same weights through the outdated tokenizer setting
+            _LETTER_IDS_KEEP = globals()["_LETTER_IDS"]; globals()["_LETTER_IDS"] = None
+            for k in ("wmdp-bio", "mmlu"):
+                acc, preds, _ = mcq_eval(model, OLD, sets[k], maxlen=2048)
+                row["outdated-tokenizer:" + k] = round(acc, 4); items[f"{name}|{prec}|outdated-tokenizer:{k}"] = [int(x == y[1]) for x, y in zip(preds, sets[k])]
+            globals()["_LETTER_IDS"] = _LETTER_IDS_KEEP
         results.append(row); log(row); save()
         if d: set_tensors(lambda n: master[n], d.keys(), prec)
 set_tensors(lambda n: master[n], master.keys(), "fp16")

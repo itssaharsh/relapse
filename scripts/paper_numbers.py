@@ -229,9 +229,40 @@ def place() -> tuple[dict, dict]:
     return nums, {}
 
 
+def check() -> tuple[dict, dict]:
+    """The full check of the released models (results/final/check.json)."""
+    path = os.path.join(ROOT, "results", "final", "check.json")
+    if not os.path.exists(path):
+        return {}, {}
+    d = json.load(open(path)); E = list(d.values())
+    cols = (("wmdp-bio", "WMDP"), ("mmlu", "MMLU"), ("benign-bio", "Benign bio"), ("attack:five_shot", "5-shot"), ("attack:role_play", "Role"), ("probe:en_para", "Reword"), ("probe:hi", "Hindi"), ("probe:sw", "Swahili"))
+    models = ("global", "fire", "earth", "water", "base")
+    mean = lambda v, f: np.mean([f(e) for e in E if e["model"] == v])
+    body = ""
+    for v in models:
+        body += f"{v.capitalize()} & " + " & ".join(f"{pct(mean(v, lambda e: e['fp16'][k]['original']))}\\,$\\to$\\,{pct(mean(v, lambda e: e['fp16'][k]['model']))}" for k, _ in cols)
+        body += f" & {pct(mean(v, lambda e: e['real_files']['wmdp-bio']['Q4_K_M']['file']))} & {pct(mean(v, lambda e: e['outdated_tokenizer']['outdated']))} & {pct(mean(v, lambda e: e['fine_tuning']['after_hazard_questions']))} \\\\\n"
+    tex = ("\\begin{table*}[t]\n\\centering\\small\\setlength{\\tabcolsep}{3.2pt}\n\\begin{tabular}{l" + "c" * len(cols) + "rrr}\n\\toprule\n & " + " & ".join(n for _, n in cols) +
+           " & \\qkm{} file & Old tok. & Fine-tuned \\\\\n\\midrule\n" + body + "\\bottomrule\n\\end{tabular}\n\\caption{The released models (layers 3--5, mean of two seeds): original\\,$\\to$\\,unlearned accuracy (\\%) at fp16 on the hazard set, general knowledge, benign biology, two prompt attacks and reworded or translated hazard questions; then \\wmdp{} in the real \\qkm{} file, through the outdated tokenizer, and after a 25-step fine-tuning attack.}\n\\label{tab:check}\n\\end{table*}\n")
+    rng_ = lambda f: (min(f(e) for e in E), max(f(e) for e in E))
+    ben = [100 * e["fp16"]["benign-bio"]["difference"] for e in E]
+    ft = [100 * (e["fine_tuning"]["after_hazard_questions"] - e["fine_tuning"]["before"]) for e in E]
+    real = [100 * e["real_files"]["wmdp-bio"][f]["change"] for e in E for f in ("Q4_0", "Q4_K_M")]
+    tok = [100 * e["outdated_tokenizer"]["difference"] for e in E]
+    probes = [k for k in E[0]["fp16"] if k.startswith("probe:")]
+    nums = {"chkModels": len(E), "chkWmdpLow": pct(rng_(lambda e: e["fp16"]["wmdp-bio"]["model"])[0]), "chkWmdpHigh": pct(rng_(lambda e: e["fp16"]["wmdp-bio"]["model"])[1]),
+            "chkMmluMax": f"{max(-100 * e['fp16']['mmlu']['difference'] for e in E):.1f}", "chkBenignLow": f"{min(-x for x in ben):.1f}", "chkBenignHigh": f"{max(-x for x in ben):.1f}", "chkBenignMean": f"{-np.mean(ben):.1f}",
+            "chkFiveHigh": pct(rng_(lambda e: e["fp16"]["attack:five_shot"]["model"])[1]), "chkRoleUp": sum(e["fp16"]["gain:role_play"]["difference"] > 0 and e["fp16"]["gain:role_play"]["p"] < 0.05 for e in E),
+            "chkFiveUp": sum(e["fp16"]["gain:five_shot"]["difference"] > 0 and e["fp16"]["gain:five_shot"]["p"] < 0.05 for e in E),
+            "chkProbeSig": sum(e["fp16"][k]["difference"] < 0 and e["fp16"][k]["p"] < 0.05 for e in E for k in probes), "chkProbeN": len(E) * len(probes),
+            "chkRealLow": signed(min(real)), "chkRealHigh": signed(max(real)), "chkTokLow": signed(min(tok)), "chkTokHigh": signed(max(tok)),
+            "chkFtUp": sum(x >= 5 for x in ft), "chkFtMax": f"{max(ft):.1f}", "chkFtBase": " and ".join(pct(e["fine_tuning"]["after_hazard_questions"]) for e in E if e["model"] == "base")}
+    return nums, {"table_check.tex": tex}
+
+
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place):
+    for part in (control, relapse_map, deep, shift, place, check):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         open(os.path.join(PAPER, name), "w").write(tex)

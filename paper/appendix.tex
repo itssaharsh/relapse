@@ -1,0 +1,180 @@
+% Appendix. \input after \appendix in main.tex. Uses \todo, \fq, \qkm, \nf, \wmdp from main.tex; \path comes from url.sty (loaded by hyperref).
+\newcommand{\costTotal}{about \$112 at the time of writing}
+
+\section{Kits and how they connect}
+\label{app:kits}
+
+Table~\ref{tab:kits} lists the four Lexsi Labs kits. CuratorKIT gates the probe sets, which our scorer reads. CircuitKIT picks a three-layer window per model, which the placement job passes to SafeTune. SafeTune's RMU returns three edited matrices, which are written into the full model, stored in each format and scored. The pre-registered analyses use a paired bootstrap over questions implemented in \path{scripts/analyze_map.py} (10,000 resamples); AuditKIT's paired bootstrap is used for every real-file comparison and for the rescoring of the Stage~1 models (Appendix~\ref{app:stats}).
+
+\begin{table*}[t]
+\centering\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.1\textwidth} l p{0.51\textwidth} >{\raggedright\arraybackslash}p{0.25\textwidth}@{}}
+\toprule
+Kit & Version & What it does here & Code \\
+\midrule
+SafeTune \citep{safetune} & 0.1.13 & \texttt{rmu\_unlearn} with \texttt{RMUConfig}. We set the loss layer $L$, the updated layers $L{-}2$ to $L$, steering, retain weight, learning rate and batches, and pass our tokenized batches, a frozen reference and the model cut to $L{+}1$ layers. Only the three \texttt{mlp.down\_proj} matrices are kept. & \path{kaggle/06}, \path{kaggle/13} \\
+CircuitKIT \citep{circuitkit} & 0.2.1 & EAP-IG \citep{hanna2024faith} on its built-in WMDP task (\texttt{wmdp-bio}, 64 questions of at most 80 tokens, 5 integration steps, heads and MLPs, fp16; transformer-lens 3.8.0). The window is the three consecutive layers within 1--12 with the largest summed absolute MLP score. A faithfulness report is saved, not used. & \path{hf_jobs/circuitkit_job.py} (Stage~1: \path{kaggle/02}) \\
+AuditKIT \citep{auditkit} & 1.1.6 & Multiple-choice runs on the in-memory model (\texttt{MCQAdapter} over the log-likelihoods of `` A''--`` D'', \texttt{Runner}, \texttt{Acc}), saved with provenance. \texttt{ak.compare} gives the paired p-value; our wrapper adds a 95\% interval and flip counts. & \path{kaggle/auditkit_mcq.py}, \path{kaggle/08}, \path{scripts/analyze_deep.py}, \path{scripts/analyze_certify.py} \\
+CuratorKIT \citep{curatorkit} & 0.1.24 & Per language, after our own gate: schema gate, length limits (5 to 2,048 tokens), exact and MinHash deduplication (0.9) and cleaning with HTML stripping off; writes a manifest, provenance and card. & \path{scripts/curate_probes.py} \\
+\bottomrule
+\end{tabular}
+\caption{The Lexsi Labs kits and their exact role. Script paths are relative to the repository root.}
+\label{tab:kits}
+\end{table*}
+
+As in Stage~1, CircuitKIT runs with two memory patches to transformer-lens, the tied unembedding reusing the embedding matrix, and a length filter that keeps the first 64 questions of at most 80 tokens; each job stops unless CircuitKIT's tokenizer gives the official token ids on 300 \wmdp{} questions. CuratorKIT is not pinned; its version is read from the provenance file it wrote.
+
+\section{Models and licenses}
+\label{app:models}
+
+\textbf{Tiny Aya.} Tiny Aya \citep{salamanca2026tinyaya} is a 3.35B-parameter decoder (\texttt{Cohere2ForCausalLM}) with 36 layers and a 262,144-token vocabulary. We use all five released variants: Base, the pretrained model, and Global, Fire, Water and Earth, post-trained from it (the Global and Earth cards name Base as their base model). Stage~2 jobs download \path{CohereLabs/tiny-aya-<variant>} from the main branch at job time, after Cohere's tokenizer fix of 30 September 2026; on 21 and 22 November 2026 these were revisions \texttt{af89d219b5} (Global), \texttt{73500c80fc} (Fire), \texttt{0624fafbe2} (Earth), \texttt{41a99216d1} (Water) and \texttt{d62ac17e24} (Base). The bfloat16 weights are loaded in fp16, since T4 GPUs lack bfloat16; that copy is our ``fp16''. Layers are numbered from 0, as in \texttt{transformers}.
+
+\textbf{Licenses.} The Hugging Face cards of all five variants give the license as CC-BY-NC-4.0 and gate downloads. The cards of Global and Earth (read on 21 November 2026) also require adherence to the Cohere Labs Acceptable Use Policy, and their gate asks the user to agree to the license and to non-commercial use. Our use is non-commercial research.
+
+\textbf{Derived models and artifacts.} The released Stage~2 models are public as \path{itssaharsh/relapse-tiny-aya-<variant>-unlearn-bio}: for each variant the seed-34 run at layers 3--5 (Section~\ref{sec:place}), with full-precision weights, the official tokenizer files, a real \qkm{} file and the scores of those files; they carry CC-BY-NC-4.0. The Stage~1 models \path{itssaharsh/tiny-aya-global-unlearn-bio-*} were trained through the outdated tokenizer setting, as their cards say. The demo Space \path{itssaharsh/relapse}, the datasets \path{itssaharsh/relapse-runs} and \path{itssaharsh/relapse-wmdp-bio-probes} and the code are public. No other model is used.
+
+\section{Datasets, splits and leak check}
+\label{app:data}
+
+\begin{table}[t]
+\centering\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.36\columnwidth} r >{\raggedright\arraybackslash}p{0.44\columnwidth}@{}}
+\toprule
+Data & Size & Role \\
+\midrule
+\wmdp{} test & 1,273 & Hazard score; attack split \\
+WMDP bio forget corpus & 1,200 & Forget texts per run \\
+Wikitext-2 raw, train & 1,200 & Retain texts per run \\
+MMLU \texttt{all}, test & 1,000 & General knowledge \\
+MMLU biology, test & 720 & Benign biology \\
+MMLU \texttt{all}, validation & 64 & Attack control \\
+Probes & 707 & Reworded, translated \\
+\bottomrule
+\end{tabular}
+\caption{Data and its role (300-batch runs). Only the gated forget corpus and Wikitext enter unlearning.}
+\label{tab:data}
+\end{table}
+
+Table~\ref{tab:data} lists the data, from \path{cais/wmdp} \citep{li2024wmdp}, \path{cais/wmdp-bio-forget-corpus}, \path{Salesforce/wikitext} (\texttt{wikitext-2-raw-v1}) and \path{cais/mmlu} \citep{hendrycks2021mmlu}. The MMLU sample is the first 1,000 of the \texttt{all} test split shuffled with \texttt{datasets} seed 0; benign biology is the full test set of college biology, high school biology, virology and medical genetics.
+
+\textbf{Unlearning data.} For seed $s$, forget and retain texts longer than 50 characters are shuffled with \texttt{random.Random(s)}, and the first $4\times$(number of batches) are cut to 2,000 characters and at most 512 tokens. The gated corpus is downloaded inside each job and never uploaded; jobs upload only scores and edited matrices.
+
+\textbf{Attack split.} The full check shuffles the 1,273 indices with \texttt{random.Random(0)}: the first 5 are the worked examples of the five-shot prompt, the next 64 train the fine-tuning attack, and the other 1,204 are scored under every prompt condition and after the attack. The Stage~1 attack scripts used the same split.
+
+\textbf{Probes.} In Stage~1, through Kaggle's copy and so the outdated tokenizer, Tiny Aya Global translated 200 \wmdp{} questions (sampled with \texttt{random.Random(0)}) into Hindi, Arabic, Spanish and Swahili and reworded them in English. A translation is kept if its back-translation scores chrF $\geq 35$ against the source, a rewording if it parses and differs from the source. After CuratorKIT, 187, 186, 119, 114 and 101 items remain (CuratorKIT removed none that our gate kept). No native speaker checked them.
+
+\textbf{What touches training.} RMU updates see only the forget corpus and Wikitext; no benchmark or probe question enters unlearning. The consolidation pilot trains on the same two corpora, with the unlearned model's own hidden states as targets. The fine-tuning attack trains LoRA adapters on 64 \wmdp{} (or 64 MMLU validation) questions, is scored on the disjoint 1,204, and its adapters are discarded.
+
+\textbf{Where scored questions influenced choices.} CircuitKIT reads 64 of the scored questions and decides placement, though it changes no weights. Stage~1 chose its settings on the scored questions, through the outdated tokenizer, and some of its learning rates reappear in the Stage~2 ladders (\path{results/methods.json}); fresh seeds and held-out models limit the effect. We did not check the forget corpus for text overlap with the questions.
+
+\section{Metrics and statistics}
+\label{app:stats}
+
+\textbf{Accuracy.} Each prompt is \emph{``The following are multiple choice questions (with answers) about \{subject\}.''}, a blank line, the question, options ``A.''--``D.'' on separate lines, and ``Answer:''. The prediction is the most probable of `` A''--`` D'' under a softmax over the logits of their last tokens at the final position. Batches of 8 (4 for attack sets) are left-padded and cut at 1,024 tokens (2,048 in the full check). Stage~2 scores through the official tokenizer; the pipeline experiment, the tokenizer control and the full check also score through the outdated one.
+
+\textbf{Definitions.} \emph{Cost}: the original's MMLU in a format minus the run's, in points. \emph{Effective run}: fp16 \wmdp{} in $[30\%, 55\%]$ (in the pipeline experiment, through the training tokenizer, or both). \emph{Relapse} in a format: \wmdp{} at least 5 points above the same weights at fp16, with two-sided paired $p<0.05$. \emph{Rise}: fp16 \wmdp{} through the official minus the outdated tokenizer; a \emph{pipeline relapse} is a rise of at least 5 points with $p<0.05$, and the \emph{gap} is its absolute value. \emph{Best safe forgetting} of a window: its lowest \wmdp{} among runs that cost at most 3 points in the same format. A \emph{relapsing seed} has an effective run that relapses.
+
+\textbf{Paired bootstrap.} The pre-registered analyses (\texttt{paired\_p} in \path{scripts/analyze_map.py}) take the per-question difference in correctness ($-1$, $0$ or $+1$) between two conditions, draw 10,000 resamples of the $n$ questions (multinomial draws over the three values) and record the mean difference $\delta^{*}$. The 95\% interval is the 2.5th to 97.5th percentile, and $p=\min\{1, 2\min[(\#\{\delta^{*}\leq 0\}+1)/10001, (\#\{\delta^{*}\geq 0\}+1)/10001]\}$, with NumPy's \texttt{default\_rng} at a fixed seed. The full check uses it too, except for real files. AuditKIT's paired bootstrap is used for every real-file comparison and for the rescoring of the Stage~1 models: \texttt{ak.compare} on saved AuditKIT runs gives the $p$-value (its default of 1,000 resamples of the zero-centred differences, seed 42, so $p\geq 0.001$), and our wrapper adds a percentile interval (10,000 resamples, seed 0).
+
+\textbf{Exact tests.} Sign tests are one-sided binomial tests with ties dropped: $p=P(X\geq w)$, $X\sim\mathrm{Bin}(w+l, 1/2)$ for $w$ wins and $l$ losses. Relapse shares between windows use a one-sided Fisher exact test, and shares of relapsing seeds a Clopper--Pearson 95\% interval. A hypothesis holds at $\alpha=0.05$; pre-registrations 1 to 3 call it strong only below a Bonferroni threshold (0.0125 for four hypotheses, 0.0167 for three).
+
+\textbf{Pre-registration.} Four documents in \path{results/} fix designs, definitions, hypotheses and tests before the runs they cover, and the analysis scripts were committed before their results were read; commit times are the record (Appendix~\ref{app:decl}), and pre-registration~4 lists what had been seen when it was written. Nothing is rerun or dropped because of its result, technical failures are rerun with the same settings and reported (Appendix~\ref{app:repro}), and failed hypotheses are reported in the main text. Every experiment uses new seeds. Water and Base are held out from the hypotheses of the map and the pipeline experiment, and their results are the confirmatory ones. Pre-registration~4 tests replication (R1, R2, R6) only on seeds 41--48, not on seed 12, where the relapse was first seen; the seed-12 rerun does not count towards R1. The window rule behind the final models was formed after the placement results, so its only test (Q4) uses fresh seeds 33 and 34. The full check of the released models was committed in advance without hypotheses (pre-registration~3, amendment~1). Exploratory: the activation-size job, the consolidation pilot, the bitsandbytes loading job, and the locate job's layer-range variants and its runs in the format that did not relapse.
+
+\section{Method details and hyperparameters}
+\label{app:method}
+
+\begin{table*}[t]
+\centering\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.1\textwidth} l >{\raggedright\arraybackslash}p{0.53\textwidth} >{\raggedleft\arraybackslash}p{0.05\textwidth}@{}}
+\toprule
+Experiment & Models & Seeds & Windows: learning rates & Runs \\
+\midrule
+Relapse map (PR1) & all five & 11, 12 & 3--5: 1.5e-5, 3e-5, 6e-5. 5--7: 2e-5, 4e-5, 7e-5. 7--9: 1e-4, 1.5e-4, 2.5e-4. 10--12: 2e-4, 4.5e-4, 1e-3. 13--15: 1e-3, 2e-3, 4e-3 & 150 \\
+Pipeline (PR2) & all five & 21, 22 & 5--7: 4e-5, 7e-5. 7--9: 1.5e-4, 2.5e-4. 10--12: 4.5e-4, 1e-3. Each trained through the official, outdated or both tokenizers & 180 \\
+Placement (PR3) & all five & 31, 32 & 3--5, 5--7, 7--9, and the model's CircuitKIT window if different. Start $\leq$4: 1.5e-5, 3e-5, 6e-5, 1e-4, 2e-4. Start 5--6: 4e-5, 7e-5, 1.5e-4, 3e-4, 6e-4. Start $\geq$7: 1.5e-4, 2.5e-4, 5e-4, 1e-3, 2e-3 & 15--20 per job \\
+Final models (PR3, am.~1) & all five & 33, 34 & 3--5 and 5--7, rates chosen on seeds 31 and 32: Global 2e-4, 7e-5; Fire 6e-5, 1.5e-4; Earth 2e-4, 1.5e-4; Water 2e-4, 1.5e-4; Base 6e-5, 3e-4 & 20 \\
+Base relapse (PR4, A) & Base & 41--48 & 10--12: 2e-4, 4.5e-4, 1e-3 & 24 \\
+Other models (PR4, A) & Global, Fire, Earth, Water & 41, 42 & 10--12: 4.5e-4, 1e-3, 2e-3 & 24 \\
+NF4 direction (PR4, E; am.~1) & Fire & 41--48 & 13--15: 1e-3, 2e-3 & 16 \\
+Seed-12 rerun (PR4, am.~2) & Base & 12 & 10--12: 2e-4, 4.5e-4, 1e-3, on an L4 & 3 \\
+Repair in \fq{} (PR4, D) & Base & 12, 43 & As the run (seed 12 at all three rates, seed 43 at 4.5e-4). Arms: trained on the \fq{} file for 600 or 300 batches, plain RMU for 600, edited matrices rounded & 16 \\
+Repair in \nf{} (PR4, am.~3--5) & Fire, Water & 44, 42 & As the run (Fire 13--15 at 2e-3, Water 10--12 at 1e-3). Arms: trained on the \nf{} copy for 600 or 300 batches, plain RMU for 600 & 6 \\
+\bottomrule
+\end{tabular}
+\caption{Stage~2 training experiments; PR$k$ is pre-registration $k$. All use the settings of Table~\ref{tab:rmu} and are scored at fp16 and in \fq{} and \nf{} round trips; the pipeline experiment also scores fp16 through the outdated tokenizer. In the first three rows one job covers one model and seed; in the fourth, one model and both seeds.}
+\label{tab:experiments}
+\end{table*}
+
+\begin{table}[t]
+\centering\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.25\columnwidth} >{\raggedright\arraybackslash}p{0.69\columnwidth}@{}}
+\toprule
+Setting & Value \\
+\midrule
+Edited matrices & \texttt{mlp.down\_proj} of layers $L{-}2$ to $L$ \\
+Loss layer & $L$, the top of the window \\
+Steering & $3\times$ the mean norm of the frozen model's layer-$L$ output on 8 forget batches \\
+Retain weight & $\alpha=100$ \\
+Batches & 300 of 4 forget and 4 retain texts (600 in the repaired and plain-600 arms of PR4) \\
+Precision & trained copy fp32, cut to $L{+}1$ layers; frozen reference fp16 \\
+Seed & data order; Python and PyTorch seeds \\
+Optimizer & SafeTune's: one \texttt{torch.optim.AdamW} step per batch \\
+\bottomrule
+\end{tabular}
+\caption{RMU settings of every Stage~2 run.}
+\label{tab:rmu}
+\end{table}
+
+\textbf{Jobs.} Tables~\ref{tab:experiments} and~\ref{tab:rmu} give the training experiments and their shared settings. A window $a$--$b$ has $L=b$; after training, the three edited matrices are copied into the full fp16 model. Pipeline runs come from \path{kaggle/13}, all other runs from \path{kaggle/06}; CircuitKIT ran once per model. A final model's learning rate is, among the rates that lost at most 3 MMLU points on both placement seeds, the one with the lowest mean \wmdp{}. Jobs that train no unlearning: the tokenizer control (\path{hf_jobs/tok_main.py}) and, in \path{kaggle/}, real files (08, which also rescored the Stage~1 models), locate (12), activation size (14), the full check (15), the bitsandbytes loader (17) and publishing (18).
+
+\textbf{Formats.} A \emph{round trip} stores and restores every two-dimensional decoder weight named \texttt{*\_proj.weight} (the seven projections of each layer); the tied embedding and the norms stay fp16. \fq{} uses llama.cpp's reference code in \texttt{gguf-py} (blocks of 32 weights, one fp16 scale each), which our PyTorch \fq{} quantizer for training matches bit for bit (\path{tests/test_precision.py}). \nf{} uses bitsandbytes' \texttt{quantize\_4bit} with block size 64 \citep{dettmers2023qlora}. To score a run, every target weight of the original is round-tripped and the edited matrices are replaced by their own round trips. \emph{Real files} \citep{llamacpp}: the original is converted to an f16 GGUF, the edited matrices are written into a copy, and \texttt{llama-quantize} makes \fq{} or \qkm{} files, which also quantize the embedding. Each tensor is dequantized with \texttt{gguf-py} into the PyTorch model and scored as above, which tests the stored weights, not llama.cpp's kernels or tokenizer. The converter and \texttt{gguf-py} come from the llama.cpp commit pinned in \path{hf_jobs/llama_cpp_commit.txt} (\texttt{582eab7}), patched to map an unrecognized pre-tokenizer hash to \texttt{tiny\_aya} (inactive when the hash is known). For the released models' real files, \texttt{llama-quantize} was built from that same commit inside the job. For the earlier real-file checks of the relapse cases, we used a static \texttt{llama-quantize} built during Stage~1 from llama.cpp's main branch of 10 November 2026. \nf{} \emph{as loaded} (\path{kaggle/17}): the edited model is saved, loaded through \texttt{transformers} with bitsandbytes 4-bit \nf{} and fp16 compute, and scored next to the same weights at fp16.
+
+\textbf{Tokenizer settings.} The \emph{official} setting is the tokenizer on \path{CohereLabs/tiny-aya-<variant>}, whose \texttt{tokenizer\_config.json} names \texttt{PreTrainedTokenizerFast}. The \emph{outdated} setting, used for all Stage~1 training and scoring, is Kaggle's copy (\path{cohere-labs/tiny-aya/transformers/global/1}): its \texttt{tokenizer.json} is byte-identical, but its \texttt{tokenizer\_class} is \texttt{CohereTokenizerFast}, which under \texttt{transformers} 5.20.2 loads \texttt{CohereTokenizer} and replaces the pre-tokenizer. A period before a blank line becomes three tokens instead of one, and numbers split into single digits; every \wmdp{} and MMLU prompt gets different token ids, and a \wmdp{} prompt averages 106.8 tokens instead of 100.9. The pipeline experiment and the full check rebuild it by changing only \texttt{tokenizer\_class}; the \emph{both} arm alternates the two settings step by step.
+
+\textbf{Pre-registration 4, parts C and D, and amendments 3 to 5.} Part C (\path{kaggle/12}) rounds one part at a time to the format that relapsed (\fq{} for Base; \nf{} for Fire and Water, amendments 3 and 4): everything, the layers in front of the window, the three edited matrices, the rest of the window, or the layers behind it. In part D's repaired run, every projection of the cut model and of its frozen reference is seen as its round trip in the relapsing format on every step for 600 batches (\texttt{attach\_file\_view} in \path{kaggle/common.py}), with trained matrices rounded on the fly and a straight-through gradient. The controls, with the same seed and learning rate, are that training for 300 batches, plain RMU for 600 and, for the \fq{} cases, RMU with only the edited matrices rounded: on half of the forward passes, to one of \fq{}, Q4\_1 or \nf{} chosen at random, with a straight-through gradient (the \texttt{pq} option; pre-registration~4 does not fix the share of passes or the formats). Amendment~5's dose rule takes, of the two file-trained runs, the one with more batches whose MMLU in the relapsing format is within 3 points of the plain run's; it was written after the Base and Fire repairs were scored and before any Water repair result existed, so Water is its only test. Table~\ref{tab:repair} gives every repair run of Section~\ref{sec:repair} with its controls, each scored in the format in which its plain run relapsed.
+
+\input{table_repair}
+
+\textbf{Full check and exploratory jobs.} \path{kaggle/14} records residual-stream norms after layers 5, 7, 9, 12 and 15. The full check (\path{kaggle/15}; \path{scripts/analyze_certify.py}) scores \wmdp{}, MMLU, benign biology, the probes and the 1,204 attack questions (plain, five-shot, persona) at fp16, \fq{} and \nf{}, and \wmdp{} and MMLU at fp16 through the outdated tokenizer. The fine-tuning attack at fp16 uses LoRA (rank 16, alpha 32, all seven projections), AdamW at $2\times10^{-4}$, 25 steps of 4 questions and cross-entropy over the four answer logits, with 64 MMLU validation questions as the control. The real-file job scores \fq{} and \qkm{} files of each released model. The consolidation pilot (\path{kaggle/16}) retrains only the edited matrices (AdamW, no weight decay) so that the model stored as \fq{} matches the full-precision unlearned model's final hidden states on forget and retain text. It ran 200 steps on batches of 4 texts of up to 256 tokens, at learning rates $10^{-5}$, $3\times10^{-5}$ and $10^{-4}$, on one L40S GPU; it did not work, and we report it as a negative result (Section~\ref{sec:fail}).
+
+\section{Compute and cost}
+\label{app:compute}
+
+Stage~1 ran on free Kaggle T4 GPUs (two per kernel, 16\,GB each). Stage~2 ran as 107 Hugging Face Jobs paid from the \$200 of finalist credits, \costTotal: 122.6 hours on \texttt{t4-medium} (one T4, \$0.60 per hour), 47.5 hours on \texttt{l4x1} (one L4, 24\,GB, \$0.80 per hour) and under \$1 on other hardware. The map, the tokenizer experiment and the placement experiment ran on T4s; the relapse follow-up (including amendment~2's rerun of the map's seed-12 runs, which had trained on a T4), the final models and their full checks ran on L4s; the consolidation pilot ran on one L40S. The map, pipeline and placement experiments use 10 jobs each and CircuitKIT 5; the rest ran the follow-up, the final models, their checks and reruns. A typical job took about 3.5 hours in the map, 4.5 in the tokenizer experiment, 4 in the placement experiment, and 20 to 60 minutes in the follow-up. 
+\section{Reproduction}
+\label{app:repro}
+
+Each job is a \texttt{uv} script whose header pins Python 3.11--3.13, \texttt{transformers} 5.20.2 and its kit; PyTorch, \texttt{datasets} and bitsandbytes ($\geq$0.45) are resolved at job time. A \path{hf_jobs/build*.sh} script joins a header, \path{kaggle/common.py} and one experiment script. \texttt{HF\_TOKEN} must have accepted the Tiny Aya and WMDP corpus gates and be able to write to the output repository. A map job:\par
+{\footnotesize
+\begin{verbatim}
+C=$(cat hf_jobs/llama_cpp_commit.txt)
+bash hf_jobs/build.sh job.py
+hf jobs uv run --flavor t4-medium -d \
+  --secrets HF_TOKEN --timeout <limit> \
+  -e VARIANT=water -e SEED=11 \
+  -e LLAMA_COMMIT=$C job.py
+\end{verbatim}
+}
+\noindent The pipeline job (\path{build_shift.sh}) adds \texttt{-e EXPERIMENT=shift -e OUT\_ROOT=shift}; placement adds \texttt{-e EXPERIMENT=place -e PICK=<a-b> -e OUT\_ROOT=place}. CircuitKIT runs as \texttt{hf jobs uv run ... -e VARIANT=<v>} \path{hf_jobs/circuitkit_job.py}. The real-file, locate, full-check, consolidation, bitsandbytes and publishing jobs each have a \path{build_*.sh} and read saved runs named by environment variables. Jobs write to the hard-coded \path{itssaharsh/relapse-stage2}, so a reproduction must change \texttt{OUT\_REPO}. By default the real-file header downloads the Stage~1 \texttt{llama-quantize} from the author's backup repository; with \texttt{-e BUILD\_QUANTIZE=1} it builds \texttt{llama-quantize} from the pinned commit inside the job, as for the released models' real files. Analyses and tests run on a CPU:\par
+{\footnotesize
+\begin{verbatim}
+pip install -r requirements.txt
+python -m pytest -q tests
+for a in map shift place deep \
+         final certify; do
+  python scripts/analyze_$a.py; done
+python scripts/paper_numbers.py
+\end{verbatim}
+}
+\noindent The result files of every experiment are in \path{results/}, so these analyses run from the public repository. With \texttt{--fetch} and \texttt{auditkit==1.1.6}, \path{analyze_deep.py} and \path{analyze_certify.py} instead download the job outputs from the private stage-2 repository and recompute the real-file comparisons from AuditKIT's saved runs, which hold question text and stay private. The tests check the \fq{} round trips, the training file view, the prompt layout, and that every number in the README and write-up traces to a result file.
+
+\textbf{Technical failures} (none changed a setting). (a)~Hugging Face limited uploads while more than 20 jobs were saving results. Two repair jobs, of two runs each, lost their per-question files and were re-scored from their saved weights by a second job (\path{results/deep/*_rescored}, each with a README); one job lost its results file, rebuilt from its per-question file; one repair run was retrained. (b)~The private storage limit was reached, so three final-model jobs (Fire, Earth and Water) were rerun with the same settings; the reruns are the ones reported. (c)~Some 4-bit scores of the tokenizer experiment were lost; no registered test used them. (d)~One Fire run of part~A (layers 10--12, seed 42, learning rate 2e-3) has \nf{} scores only in its per-question file, so the analysis leaves it out; it does not relapse in either format.
+
+\section{Declarations, use of language models, and changes since Stage 1}
+\label{app:decl}
+
+\textbf{Outside work.} One independent researcher did this work. None of it predates the hackathon: the first commit is dated 9 November 2026, inside the event window of 1 to 15 November, and the repository holds no earlier code. The kits are by Lexsi Labs, Tiny Aya by Cohere Labs, llama.cpp by its contributors, and the datasets by their authors; we changed none of them beyond the local patches in Appendices~\ref{app:kits} and~\ref{app:method}.
+
+\textbf{Use of language models.} The code, experiments and writing were done with Claude Code (Anthropic) as the coding agent, under the author's direction; the author is responsible for the content. Every number comes from saved result files through generated tables. No language model is used as a judge. Tiny Aya Global made the probe translations and rewordings.
+
+\textbf{Changes since the Stage~1 submission.} At 21:04 UTC on 21 November we committed the correction: Stage~1 used Kaggle's outdated tokenizer setting, so we withdrew the 4-bit relapse at layers 10--12 on Global, the repair by training on the 4-bit file and the claims built on them (that the relapse is format-specific and comes from rounding the layers in front of the edit), and stopped relying on any other Stage~1 number until it is re-run. Stage~1 material stays in \path{docs/archive/}, \path{scripts/archive/stage1/} and \path{results/raw/}, marked as superseded. Pre-registrations 1 to 4, their amendments and their analysis scripts were committed from 18:19 on 21 November to 02:31 on 22 November, each before the runs or results it covers; the results, with the failed hypotheses, from 22:12 on 21 November to 07:28 on 22 November.

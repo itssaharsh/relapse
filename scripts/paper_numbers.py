@@ -36,8 +36,8 @@ def describe(name: str) -> str:
     return f"{m['model'].capitalize()}, seed {m['seed']}, lr {lr_text(m['lr'])}"
 
 
-def table(columns: str, head: str, body: str, caption: str, label: str, sep: str = "3.5pt") -> str:
-    return ("\\begin{table}[t]\n\\centering\\small\\setlength{\\tabcolsep}{" + sep + "}\n\\begin{tabular}{" + columns + "}\n\\toprule\n" + head + "\\midrule\n" + body +
+def table(columns: str, head: str, body: str, caption: str, label: str, sep: str = "3.5pt", size: str = "\\small") -> str:
+    return ("\\begin{table}[t]\n\\centering" + size + "\\setlength{\\tabcolsep}{" + sep + "}\n\\begin{tabular}{" + columns + "}\n\\toprule\n" + head + "\\midrule\n" + body +
             "\\bottomrule\n\\end{tabular}\n\\caption{" + caption + "}\n\\label{" + label + "}\n\\end{table}\n")
 
 
@@ -61,7 +61,7 @@ def relapse_map() -> tuple[dict, dict]:
         body += f"{w.replace('-', '--')} & {len(rs)} & {count(rs, 'Q4_0')} & {count(rs, 'nf4')} \\\\\n"
     body += f"\\midrule\nAll & {len(eff)} & {count(eff, 'Q4_0')} & {count(eff, 'nf4')} \\\\\n"
     tex = table("lrrr", r"Layers & Effective runs & \fq{} relapses & \nf{} relapses \\" + "\n", body,
-                r"The pre-registered map, through the official tokenizer. A relapse is a rise of at least 5 points over fp16 with paired $p<0.05$.", "tab:map", "6pt")
+                r"The pre-registered map, through the official tokenizer. A relapse is a rise of at least 5 points over fp16 with paired $p<0.05$.", "tab:map", "4.5pt")
     delta = lambda f: np.array([100 * r[f]["delta"] for r in eff])
     rel = [(r, f) for r in eff for f in ("Q4_0", "nf4") if r[f]["relapse"]]
     shallow = [r for r in eff if r["window"] in ("3-5", "5-7", "7-9")]
@@ -112,21 +112,24 @@ def deep() -> tuple[dict, dict]:
     # every run that relapses in a format, the seed-12 runs and their retraining
     rows = [r for r in runs if r["arm"] in ("plain", "rerun") and r["effective"] and (r["arm"] == "rerun" or r["Q4_0"]["relapse"] or r["nf4"]["relapse"] or (r["seed"] == 12 and r["window"] == "10-12"))]
     cell = lambda r, f: f"{pct(r[f]['wmdp'])} ({signed(100 * r[f]['delta'])})" + ("$^{*}$" if r[f]["relapse"] else "")
-    body = "".join(f"{describe(r['name'])}{', retrained' if r['arm'] == 'rerun' else ''} & {pct(r['wmdp_fp16'])} & {cell(r, 'Q4_0')} & {cell(r, 'nf4')} \\\\\n"
+    compact = lambda r: f"{r['model'].capitalize()} {r['seed']}, lr {lr_text(r['lr'])}" + ("$^{\\dagger}$" if r["arm"] == "rerun" else "")
+    body = "".join(f"{compact(r)} & {pct(r['wmdp_fp16'])} & {cell(r, 'Q4_0')} & {cell(r, 'nf4')} \\\\\n"
                    for r in sorted(rows, key=lambda r: (r["model"], r["seed"], r["arm"], float(r["lr"]))))
-    tables["table_cases.tex"] = table("lrrr", r"Run & fp16 & \fq{} & \nf{} \\" + "\n", body,
-                                      r"\wmdp{} accuracy (\%) of the same weights at fp16 and after each 4-bit round trip, with the change in points. $^{*}$ marks a relapse. Base is edited at layers 10--12, Fire at layers 13--15.", "tab:cases")
+    tables["table_cases.tex"] = table("@{}lrrr@{}", r"Model, seed, lr & fp16 & \fq{} & \nf{} \\" + "\n", body,
+                                      r"\wmdp{} accuracy (\%) of the same weights at fp16 and after each 4-bit round trip, with the change in points. $^{*}$ marks a relapse; $^{\dagger}$ marks a seed-12 run retrained with the same settings on an L4 GPU. Base and Water are edited at layers 10--12, Fire at layers 13--15.", "tab:cases", "3pt")
     # real llama.cpp files, compared by AuditKIT
     real = [(n, v) for models in d["part_b_real_files"].values() for n, v in models.items()]
     if real:
         keep = [(t, n, v) for t, models in d["part_b_real_files"].items() if t != "deep_ladder_s12" for n, v in models.items() if not n.endswith("_base") and "file_nb" not in n and "Q4_K_M" in v]
         def short(n):
             m = NAME.search(n.replace("_x10", "_W10-12").replace("lr2e-4", "lr0.0002").replace("lr1e-3", "lr0.001"))
-            return f"{m['model'].split('_')[-1].capitalize()} {m['seed']}, lr {lr_text(m['lr'])}"
+            return f"{m['model'].split('_')[-1].capitalize()} {m['seed']}, {lr_text(m['lr'])}"
         rc = lambda v, f: f"{pct(v[f]['file'])} ({signed(100 * v[f]['rise'])})" + ("$^{*}$" if v[f]["relapse"] else "") if f in v else "--"
         body = "".join(f"{short(n)} & {pct(v['Q4_0']['fp16'])} & {rc(v, 'Q4_0')} & {rc(v, 'Q4_K_M')} & {rc(v, 'nf4')} \\\\\n" for t, n, v in sorted(keep, key=lambda x: short(x[1])))
-        tables["table_real.tex"] = table("lrrrr", r"Run & fp16 & \fq{} file & \qkm{} file & \nf{} \\" + "\n", body,
-                                         r"Real llama.cpp files of every relapsing run: \wmdp{} accuracy (\%) and change against fp16, compared with AuditKIT's paired bootstrap. \nf{} is the round trip, which the bitsandbytes loader reproduces. $^{*}$ marks a relapse.", "tab:real", "2.5pt")
+        tables["table_real.tex"] = table("@{}lrrrr@{}", r" & & \multicolumn{2}{c}{Real file} & Round trip \\" + "\n" + r"\cmidrule(lr){3-4}\cmidrule(l){5-5}" + "\n" + r"Model, seed, lr & fp16 & \fq{} & \qkm{} & \nf{} \\" + "\n", body,
+                                         r"Real llama.cpp files of every relapsing run of the map and the fresh seeds, and of the other Fire run of seed 44, built in the same job: \wmdp{} accuracy (\%) and change against fp16, compared with AuditKIT's paired bootstrap. \nf{} is the round trip, which the bitsandbytes loader reproduces. $^{*}$ marks a relapse.", "tab:real", "1.8pt", "\\footnotesize")
+        others = sorted(100 * v["Q4_0"]["rise"] for t, n, v in keep if "base" in n.lower() and not v["Q4_0"]["relapse"])
+        nums["realOtherRises"] = " and ".join(f"{x:.1f}" for x in others)
         rep_real = [v for t, models in d["part_b_real_files"].items() for n, v in models.items() if "file_nb600" in n]
         if rep_real:
             nums.update(repRealRise=signed(100 * rep_real[0]["Q4_0"]["rise"]), repRealP=f"{rep_real[0]['Q4_0']['p']:.2f}", repRealFile=pct(rep_real[0]["Q4_0"]["file"]))
@@ -136,7 +139,7 @@ def deep() -> tuple[dict, dict]:
                 nums.update({key + "Fp": pct(v["Q4_0"]["fp16"]), key + "File": pct(v["Q4_0"]["file"]), key + "Rise": signed(100 * v["Q4_0"]["rise"]), key + "P": f"{v['Q4_0']['p']:.3f}"})
     # where the rise comes from: one part of the model rounded at a time, for every relapse case
     C = d["part_c"]["by_format"]
-    parts = (("before", "Layers in front of the edit"), ("edited", "The three edited matrices"), ("window_other", "Other matrices in the window"), ("after", "Layers behind the edit"), ("all", "Whole model"))
+    parts = (("before", "In front of the edit"), ("edited", "Edited matrices"), ("window_other", "Rest of the window"), ("after", "Behind the edit"), ("all", "Whole model"))
     cases = []
     if "Q4_0" in C:
         s12 = [k for k in C["Q4_0"] if k.endswith("_s12") and all(p in C["Q4_0"][k] for p, _ in parts)]
@@ -147,8 +150,8 @@ def deep() -> tuple[dict, dict]:
             cases.append((label, {p: 100 * C[fmt][key][p]["rise"] for p, _ in parts}))
     if cases:
         body = "".join(f"{label} & " + " & ".join(signed(v[p]) for _, v in cases) + " \\\\\n" for p, label in parts)
-        tables["table_cause.tex"] = table("l" + "r" * len(cases), r" & \multicolumn{2}{c}{\fq{}} & \multicolumn{2}{c}{\nf{}} \\" + "\nPart rounded to 4 bits & " + " & ".join(n for n, _ in cases) + " \\\\\n", body,
-                                          r"Change in \wmdp{} (points) when only one part of the model is rounded to the format that relapses. Columns are the relapsing runs (model and seed; Base 12 is the mean of its three runs).", "tab:cause", "3pt")
+        tables["table_cause.tex"] = table("@{}l" + "r" * len(cases) + "@{}", r" & \multicolumn{2}{c}{\fq{}} & \multicolumn{2}{c}{\nf{}} \\" + "\nRounded part & " + " & ".join(n for n, _ in cases) + " \\\\\n", body,
+                                          r"Change in \wmdp{} (points) when only one part of the model is rounded to the format that relapses. Columns are the relapsing runs (model and seed; Base 12 is the mean of its three runs).", "tab:cause", "2.5pt", "\\footnotesize")
         nums.update(causeEditedMax=f"{max(v['edited'] for _, v in cases):.1f}", causeCases=len(cases) + 2)
         for n, v in cases:
             nums["cause" + n.replace(" ", "").replace("12", "A").replace("43", "B").replace("44", "").replace("42", "")] = f"{signed(v['before'])} in front, {signed(v['after'])} behind"
@@ -176,7 +179,7 @@ def deep() -> tuple[dict, dict]:
         rep += [e["arms"][k] for k in ("repaired", "repaired_nf4") if k in e["arms"] and (k == "repaired_nf4") == (e["format"] == "nf4")]
     if body:
         tables["table_repair.tex"] = table("lrrr", r"Training (batches) & fp16 & 4-bit file & MMLU \\" + "\n", body,
-                                           r"The repair and its controls, each with the seed and learning rate of the relapsing run. \wmdp{} (\%) at fp16 and in the relapsing format, with the change in points; MMLU is the difference from the plain run in that format. $^{*}$ marks a relapse.", "tab:repair")
+                                           r"The repair and its controls, each with the seed and learning rate of the relapsing run. \wmdp{} (\%) at fp16 and in the relapsing format, with the change in points; MMLU is the difference from the plain run in that format. $^{*}$ marks a relapse.", "tab:repair", "3.5pt", "\\footnotesize")
     nums.update(repN=len(rep), repA=sum(x["R5a"] for x in rep), repB=sum(x["R5b"] for x in rep), repC=sum(x["R5c"] for x in rep))
     return nums, tables
 
@@ -201,6 +204,11 @@ def shift() -> tuple[dict, dict]:
             "shiftPfourWins": A["P4"]["wins"], "shiftPfourLosses": A["P4"]["losses"], "shiftBothGap": signed(np.mean(rise(both))),
             "shiftBaseLab": f"{100 * np.mean([r['wmdp_outdated'] for r in base]):.1f}", "shiftBaseLow": f"{100 * min(r['wmdp_official'] for r in base):.1f}", "shiftBaseHigh": f"{100 * max(r['wmdp_official'] for r in base):.1f}",
             "shiftReverseEff": len(off), "shiftReverseRel": sum(-r["rise"] >= 0.05 and r["p"] < 0.05 for r in off), "shiftReverseMean": signed(-np.mean(rise(off)))}
+    orig = []
+    for v in ("global", "fire", "earth", "water", "base"):      # how far each original model moves between the two tokenizer settings
+        rows = {(r["model"], r["prec"], r["score_tok"]): r for r in json.load(open(os.path.join(ROOT, "results", "shift", f"{v}_seed21", "results.json")))}
+        orig.append(abs(rows[("base", "fp16", "official")]["wmdp-bio"] - rows[("base", "fp16", "outdated")]["wmdp-bio"]))
+    nums["shiftOrigMax"] = f"{100 * max(orig):.1f}"
     return nums, {}
 
 
@@ -214,6 +222,9 @@ def place() -> tuple[dict, dict]:
         for k, tag in (("Q1", "One"), ("Q2", "Two"), ("Q3", "Three")):
             nums.update({f"placeQ{tag}Wins": q("fp16", k)["wins"], f"placeQ{tag}Losses": q("fp16", k)["losses"], f"placeQ{tag}P": f"{q('fp16', k)['p']:.3f}"})
         nums.update(placeQTwoWinsQ=q("Q4_0", "Q2")["wins"], placeQTwoWinsN=q("nf4", "Q2")["wins"])
+        L = json.load(open(os.path.join(ROOT, "results", "place", "circuitkit", "water", "layer_importance.json")))["per_layer"]
+        share = {a: sum(L[str(l)]["mlp_abs"] for l in range(a, a + 3)) for a in range(1, 11)}
+        nums["placeWaterMargin"] = f"{100 * (share[2] - share[3]) / sum(share.values()):.1f}"
         pairs = q("fp16", "Q2")["pairs"]
         nums.update(placeShallowMean=pct(np.mean([x["best_chosen"] for x in pairs])), placeDefaultMean=pct(np.mean([x["best_default"] for x in pairs])))
     path = os.path.join(ROOT, "results", "final", "summary.json")
@@ -239,11 +250,15 @@ def check() -> tuple[dict, dict]:
     models = ("global", "fire", "earth", "water", "base")
     mean = lambda v, f: np.mean([f(e) for e in E if e["model"] == v])
     body = ""
-    for v in models:
-        body += f"{v.capitalize()} & " + " & ".join(f"{pct(mean(v, lambda e: e['fp16'][k]['original']))}\\,$\\to$\\,{pct(mean(v, lambda e: e['fp16'][k]['model']))}" for k, _ in cols)
+    for v in models:      # two rows per model: the original, then the unlearned model
+        body += f"{v.capitalize()} & original & " + " & ".join(pct(mean(v, lambda e: e['fp16'][k]['original'])) for k, _ in cols) + " & & & \\\\\n"
+        body += " & unlearned & " + " & ".join(pct(mean(v, lambda e: e['fp16'][k]['model'])) for k, _ in cols)
         body += f" & {pct(mean(v, lambda e: e['real_files']['wmdp-bio']['Q4_K_M']['file']))} & {pct(mean(v, lambda e: e['outdated_tokenizer']['outdated']))} & {pct(mean(v, lambda e: e['fine_tuning']['after_hazard_questions']))} \\\\\n"
-    tex = ("\\begin{table*}[t]\n\\centering\\small\\setlength{\\tabcolsep}{3.2pt}\n\\begin{tabular}{l" + "c" * len(cols) + "rrr}\n\\toprule\n & " + " & ".join(n for _, n in cols) +
-           " & \\qkm{} file & Old tok. & Fine-tuned \\\\\n\\midrule\n" + body + "\\bottomrule\n\\end{tabular}\n\\caption{The released models (layers 3--5, mean of two seeds): original\\,$\\to$\\,unlearned accuracy (\\%) at fp16 on the hazard set, general knowledge, benign biology, two prompt attacks and reworded or translated hazard questions; then \\wmdp{} in the real \\qkm{} file, through the outdated tokenizer, and after a 25-step fine-tuning attack.}\n\\label{tab:check}\n\\end{table*}\n")
+        body += "\\addlinespace[2pt]\n" if v != models[-1] else ""
+    tex = ("\\begin{table*}[t]\n\\centering\\footnotesize\\setlength{\\tabcolsep}{2.6pt}\n\\begin{tabular}{@{}ll" + "r" * len(cols) + "rrr@{}}\n\\toprule\n" +
+           " & & \\multicolumn{" + str(len(cols)) + "}{c}{At fp16} & \\multicolumn{3}{c}{\\wmdp{} of the unlearned model} \\\\\n" +
+           "\\cmidrule(lr){3-" + str(len(cols) + 2) + "}\\cmidrule(l){" + str(len(cols) + 3) + "-" + str(len(cols) + 5) + "}\nModel & & " + " & ".join(n for _, n in cols) +
+           " & \\qkm{} file & Old tok. & Fine-tuned \\\\\n\\midrule\n" + body + "\\bottomrule\n\\end{tabular}\n\\caption{The released models (layers 3--5, mean of two seeds): accuracy (\\%) of the original and the unlearned model at fp16 on the hazard set, general knowledge, benign biology, two prompt attacks and reworded or translated hazard questions; then the unlearned model's \\wmdp{} in the real \\qkm{} file, through the outdated tokenizer, and after a 25-step fine-tuning attack. Prompt attacks and the fine-tuning attack use the 1,204 hazard questions not used as examples or for training.}\n\\label{tab:check}\n\\end{table*}\n")
     rng_ = lambda f: (min(f(e) for e in E), max(f(e) for e in E))
     ben = [100 * e["fp16"]["benign-bio"]["difference"] for e in E]
     ft = [100 * (e["fine_tuning"]["after_hazard_questions"] - e["fine_tuning"]["before"]) for e in E]

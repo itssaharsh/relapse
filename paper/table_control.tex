@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering\small\setlength{\tabcolsep}{6pt}
+\begin{tabular}{lrrr}
+\toprule
+Same weights & Outdated & Official & Change \\
+\midrule
+Original & 63.3 & 63.3 & +0.0 \\
+RMU, layers 5--7 & 38.7 & 47.5 & +8.8 \\
+RMU, layers 7--9 & 36.8 & 35.7 & $-$1.2 \\
+RMU, layers 10--12 & 41.6 & 52.2 & +10.5 \\
+\bottomrule
+\end{tabular}
+\caption{\wmdp{} accuracy (\%) of the same weights on Global, scored in one job through each tokenizer setting. The weights were trained through the outdated setting. Lower is better.}
+\label{tab:control}
+\end{table}

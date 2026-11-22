@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{1.8pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+ & & \multicolumn{2}{c}{Real file} & Round trip \\
+\cmidrule(lr){3-4}\cmidrule(l){5-5}
+Model, seed, lr & fp16 & \fq{} & \qkm{} & \nf{} \\
+\midrule
+Base 12, 1e-3 & 46.8 & 52.9 (+6.0)$^{*}$ & 45.6 ($-$1.2) & 43.8 ($-$3.0) \\
+Base 12, 2e-4 & 47.4 & 52.1 (+4.6) & 45.3 ($-$2.1) & 45.5 ($-$2.0) \\
+Base 43, 4.5e-4 & 41.7 & 46.2 (+4.5) & 39.6 ($-$2.1) & 38.0 ($-$3.7) \\
+Fire 44, 1e-3 & 45.7 & 39.7 ($-$6.0) & 43.8 ($-$1.9) & 46.5 (+0.8) \\
+Fire 44, 2e-3 & 34.9 & 33.1 ($-$1.8) & 36.6 (+1.7) & 40.2 (+5.3)$^{*}$ \\
+Water 42, 1e-3 & 38.6 & 41.2 (+2.5) & 37.2 ($-$1.4) & 46.3 (+7.7)$^{*}$ \\
+\bottomrule
+\end{tabular}
+\caption{Real llama.cpp files of every relapsing run of the map and the fresh seeds, and of the other Fire run of seed 44, built in the same job: \wmdp{} accuracy (\%) and change against fp16, compared with AuditKIT's paired bootstrap. \nf{} is the round trip, which the bitsandbytes loader reproduces. $^{*}$ marks a relapse.}
+\label{tab:real}
+\end{table}

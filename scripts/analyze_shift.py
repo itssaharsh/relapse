@@ -61,7 +61,7 @@ def load(d: str) -> list[dict]:
                                     "both": in_range(off["wmdp-bio"]) and in_range(old["wmdp-bio"])}[tok]
                 row["pipeline_relapse"] = bool(tok == "outdated" and delta >= RISE and pval < 0.05)
                 for f in FOUR_BIT:
-                    if (name, f, "official") not in rows:      # the 4-bit rows are descriptive; a job cut short may lack them
+                    if (name, f, "official") not in rows or f"{name}|{f}|official|wmdp-bio" not in items:      # the 4-bit rows are descriptive; a job whose last upload failed may lack them
                         continue
                     d4, l4, h4, p4 = paired_p(items[f"{name}|fp16|official|wmdp-bio"], items[f"{name}|{f}|official|wmdp-bio"], rng)
                     row[f] = {"wmdp": rows[(name, f, "official")]["wmdp-bio"], "mmlu": rows[(name, f, "official")]["mmlu"], "delta": d4, "ci95": [l4, h4], "p": p4,

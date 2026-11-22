@@ -13,6 +13,10 @@ Base 12, lr 1e-3$^{\dagger}$ & 48.1 & 54.2 (+6.1)$^{*}$ & 44.2 ($-$3.8) \\
 Base 43, lr 4.5e-4 & 41.6 & 46.8 (+5.3)$^{*}$ & 37.9 ($-$3.6) \\
 Fire 44, lr 2e-3 & 34.8 & 33.2 ($-$1.6) & 40.1 (+5.3)$^{*}$ \\
 Water 42, lr 1e-3 & 38.6 & 42.3 (+3.7) & 46.3 (+7.7)$^{*}$ \\
+\midrule
+\emph{Original Base} & 60.1 & 61.9 (+1.8) & 59.8 ($-$0.3) \\
+\emph{Original Fire} & 63.5 & 62.5 ($-$1.0) & 62.3 ($-$1.2) \\
+\emph{Original Water} & 62.8 & 63.2 (+0.5) & 62.1 ($-$0.6) \\
 \bottomrule
 \end{tabular}
 \caption{\wmdp{} accuracy (\%) of the same weights at fp16 and after each 4-bit round trip, with the change in points. $^{*}$ marks a relapse; $^{\dagger}$ marks a seed-12 run retrained with the same settings on an L4 GPU. Base and Water are edited at layers 10--12, Fire at layers 13--15.}

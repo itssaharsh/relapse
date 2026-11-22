@@ -45,15 +45,16 @@ Every experiment below was registered in this repository before it ran ([1](http
 - The Base relapse reproduced when the seed-12 runs were retrained, and happened again on 1 of 8 fresh seeds.
 - Loaded in 4-bit through bitsandbytes, the way NF4 is really used, Fire and Water gave the same rises as above.
 - No real Q4_K_M file relapsed. In every case at least one 4-bit format held, so scoring each file before release catches it.
-- It is rare and modest. The original Tiny Aya Base also gains about 1.6 points in Q4_0, so part of the Base rise is the format, not the unlearning.
+- It is rare and modest, and on Base most of it is the format, not the unlearning: the original Tiny Aya Base also gains about 1.8 points in Q4_0, and net of that no Base run reaches 5 points. Fire and Water are the cases that survive this check (their originals fall slightly in NF4).
+- The 5-point line is a choice. Two of the three real Base files rose 4.5 and 4.6 points, just under it.
 
 **3. The rise comes from weights the edit never touched.** Rounding only the three edited matrices adds less than one point in every case. On Water and Fire the rise comes from the layers in front of the edit (+7.6 of +7.7 points on Water). On Base seed 12 it comes from the layers behind it.
 
-**4. Training on the file closes the gap, at a cost.** In the 5 relapsing runs, the retrained model no longer relapsed in 5, was significantly safer in the file in 4, and stayed within 3 MMLU points in 3. Too much of this training forgets far more than intended.
+**4. Training on the file closes the gap, at a cost.** In the 5 relapsing runs, the retrained model no longer relapsed in 5, was significantly safer in the file in 4, and stayed within 3 MMLU points in 3. But plain RMU trained for the same extra time did almost as well (4, 4 and 3 of 5), so we cannot separate the repair from longer training, and too much of either forgets far more than intended.
 
-**5. A different tokenizer setting is the larger risk.** Of 45 runs unlearned through the outdated tokenizer setting, 33 scored higher through the official one and 12 lower; 29 rose by at least 5 points. The average rise was +13.3 points at SafeTune's default layers 5 to 7 and +14.1 at layers 10 to 12, but -0.6 at layers 7 to 9. Every Tiny Aya Base run trained this way scored 24.9% (chance) in its own pipeline and 31.2% to 60.9% through the official tokenizer.
+**5. A different tokenizer setting is the larger risk.** Of 45 runs unlearned through the outdated tokenizer setting, 33 scored higher through the official one and 12 lower; 29 rose by at least 5 points. The average rise was +13.3 points at SafeTune's default layers 5 to 7 and +14.1 at layers 10 to 12, but -0.6 at layers 7 to 9. Every Tiny Aya Base run trained this way scored 24.9% (chance) in its own pipeline and 31.2% to 60.9% through the official tokenizer. The direction matters: runs unlearned through the official tokenizer and scored through the outdated one rose by only +1.4 points on average (6 of 47 relapsed).
 
-**6. Where to edit.** Layers 3 to 5 beat the default layers in 9 of 10 comparisons. CircuitKIT ranks that window first on three models and first when its attribution is pooled over the five; its pick for each model alone was unstable and that hypothesis failed. On two further seeds, layers 3 to 5 forgot 5.6 to 13.3 points more on four of the five models (8 of 10 comparisons, p = 0.055).
+**6. Where to edit.** Layers 3 to 5 beat the default layers in 9 of 10 comparisons. CircuitKIT ranks that window first on three models and first when its attribution is pooled over the five; its pick for each model alone was unstable and that hypothesis failed. On two further seeds, layers 3 to 5 forgot 5.6 to 13.3 points more on four of the five models (8 of 10 comparisons, p = 0.055, just short of our own line). The comparison holds general knowledge fixed; layers 3 to 5 cost more benign biology than the default layers do.
 
 ### The released models
 
@@ -82,13 +83,13 @@ Layers 3 to 5, two seeds per model (the table shows their mean). WMDP-bio is the
 | Relapse follow-up | The Base relapse happens again on fresh seeds | Held: 1 of 8 seeds |
 | Relapse follow-up | On Base, Q4_0 moves the score up more than NF4 | Held: 7 of 8 seeds, p = 0.035 |
 | Relapse follow-up | A relapse in NF4 and not Q4_0 exists | Held: Fire (1 of 8 seeds), and Water |
-| Relapse follow-up | The relapse shows in the real Q4_0 file | Held for 1 of 3 Base files; the other two rose 4.5 and 4.6 points, under the 5-point line |
+| Relapse follow-up | The relapse shows in the real Q4_0 file | Held only for the 1 Base file we had already seen; the two built afterwards rose 4.5 and 4.6 points, under the 5-point line |
 | Relapse follow-up | On Base it comes from the layers in front of the edit | **Failed.** On Base it is the layers behind; on Fire and Water it is the layers in front |
 | Relapse follow-up | Training on the file repairs it | Gap closed in 5 of 5; file significantly safer in 4; within 3 MMLU points in 3 |
 | Relapse follow-up | A rule for how long to train the repair | **Failed** on its test case (Water) |
 | Tokenizer | Unlearning through one tokenizer relapses through the other | Held: 33 up, 12 down, p = 0.0012; held-out models 10 to 2, p = 0.019 |
-| Tokenizer | The rise is smaller at layers 7 to 9 than at layers 5 to 7 | Held: 16 of 16 pairs |
-| Tokenizer | Training on both tokenizers narrows the gap | Held: 31 of 45 pairs, p = 0.005 |
+| Tokenizer | The rise is smaller at layers 7 to 9 than at layers 5 to 7 | Held on all five models (16 of 16 pairs). **Not significant on the held-out models alone** (4 of 4, p = 0.062) |
+| Tokenizer | Training on both tokenizers narrows the gap | Held on all five (31 of 45 pairs, p = 0.005). **Not significant on the held-out models alone** (p = 0.19) |
 | Tokenizer | Training on both protects the deployed model | **Failed** (18 pairs against 26) |
 | Placement | Layers 3 to 5 beat the default layers 5 to 7 | Held: 9 of 10, p = 0.011 |
 | Placement | Layers 7 to 9 beat the default | **Failed** (7 of 10) |

@@ -6,6 +6,7 @@ Creates paper/numbers.tex and paper/table_*.tex. A table whose experiment has no
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 
@@ -72,7 +73,8 @@ def relapse_map() -> tuple[dict, dict]:
             "mapRelapseLow": f"{min(100 * r[f]['delta'] for r, f in rel):.1f}", "mapRelapseHigh": f"{max(100 * r[f]['delta'] for r, f in rel):.1f}",
             "mapHfourA": f"{h['H4']['10_12'][0]} of {h['H4']['10_12'][1]}", "mapHfourB": f"{h['H4']['7_9'][0]} of {h['H4']['7_9'][1]}", "mapHfourP": f"{h['H4']['p']:.3f}",
             "mapHeldHfourA": f"{ho['H4']['10_12'][0]} of {ho['H4']['10_12'][1]}", "mapHeldHfourB": f"{ho['H4']['7_9'][0]} of {ho['H4']['7_9'][1]}", "mapHeldHfourP": f"{ho['H4']['p']:.2f}",
-            "mapHthreeN": h["H3"]["not_comparable"]}
+            "mapHthreeN": h["H3"]["not_comparable"],
+            **{f"mapAt{k}": sum(any(r[f]["delta"] >= t and r[f]["p"] < 0.05 for f in ("Q4_0", "nf4")) for r in eff) for k, t in (("Three", 0.03), ("Four", 0.04))}}
     return nums, {"table_map.tex": tex}
 
 
@@ -115,6 +117,21 @@ def deep() -> tuple[dict, dict]:
     compact = lambda r: f"{r['model'].capitalize()} {r['seed']}, lr {lr_text(r['lr'])}" + ("$^{\\dagger}$" if r["arm"] == "rerun" else "")
     body = "".join(f"{compact(r)} & {pct(r['wmdp_fp16'])} & {cell(r, 'Q4_0')} & {cell(r, 'nf4')} \\\\\n"
                    for r in sorted(rows, key=lambda r: (r["model"], r["seed"], r["arm"], float(r["lr"]))))
+    def original(folder, label):
+        it = json.load(open(os.path.join(ROOT, "results", *folder, "items.json")))
+        acc = lambda f: float(np.mean(it[f"base|{f}|wmdp-bio"]))
+        return acc, f"{label} & {pct(acc('fp16'))} & {pct(acc('Q4_0'))} ({signed(100 * (acc('Q4_0') - acc('fp16')))}) & {pct(acc('nf4'))} ({signed(100 * (acc('nf4') - acc('fp16')))}) \\\\\n"
+    ob, row_b = original(("deep", "base_seed41_plain"), "\\emph{Original Base}")
+    of, row_f = original(("deep", "fire_seed41_w13"), "\\emph{Original Fire}")
+    ow, row_w = original(("deep", "water_seed41_plain"), "\\emph{Original Water}")
+    body += "\\midrule\n" + row_b + row_f + row_w
+    by_name = {r["name"]: r for r in runs}
+    nums.update(origBaseQ=signed(100 * (ob("Q4_0") - ob("fp16"))), fireNet=signed(100 * (by_name["fire_W13-15_lr0.002_s44"]["nf4"]["delta"] - (of("nf4") - of("fp16")))),
+                waterNet=signed(100 * (by_name["water_W10-12_lr0.001_s42"]["nf4"]["delta"] - (ow("nf4") - ow("fp16")))))
+    gap = (ob("Q4_0") - ob("fp16")) - (ob("nf4") - ob("fp16"))      # R2 again, net of the original's own Q4_0 minus NF4 gap (not registered)
+    seeds = [v for v in A["per_seed"].values() if v["effective"]]
+    w = sum(v["mean_change_Q4_0"] - v["mean_change_nf4"] > gap for v in seeds); l = sum(v["mean_change_Q4_0"] - v["mean_change_nf4"] < gap for v in seeds)
+    nums.update(rtwoNetWins=w, rtwoNetN=w + l, rtwoNetP=f"{sum(math.comb(w + l, i) for i in range(w, w + l + 1)) / 2 ** (w + l):.2f}")
     tables["table_cases.tex"] = table("@{}lrrr@{}", r"Model, seed, lr & fp16 & \fq{} & \nf{} \\" + "\n", body,
                                       r"\wmdp{} accuracy (\%) of the same weights at fp16 and after each 4-bit round trip, with the change in points. $^{*}$ marks a relapse; $^{\dagger}$ marks a seed-12 run retrained with the same settings on an L4 GPU. Base and Water are edited at layers 10--12, Fire at layers 13--15.", "tab:cases", "3pt")
     # real llama.cpp files, compared by AuditKIT
@@ -152,7 +169,8 @@ def deep() -> tuple[dict, dict]:
         body = "".join(f"{label} & " + " & ".join(signed(v[p]) for _, v in cases) + " \\\\\n" for p, label in parts)
         tables["table_cause.tex"] = table("@{}l" + "r" * len(cases) + "@{}", r" & \multicolumn{2}{c}{\fq{}} & \multicolumn{2}{c}{\nf{}} \\" + "\nRounded part & " + " & ".join(n for n, _ in cases) + " \\\\\n", body,
                                           r"Change in \wmdp{} (points) when only one part of the model is rounded to the format that relapses. Columns are the relapsing runs (model and seed; Base 12 is the mean of its three runs).", "tab:cause", "2.5pt", "\\footnotesize")
-        nums.update(causeEditedMax=f"{max(v['edited'] for _, v in cases):.1f}", causeCases=len(cases) + 2)
+        single = [100 * C[fmt][k]["edited"]["rise"] for fmt in C for k in C[fmt] if k != "base" and "edited" in C[fmt][k] and ((fmt == "Q4_0") == k.startswith("base"))]
+        nums.update(causeEditedMax=f"{max(single):.1f}", causeCases=len(single))
         for n, v in cases:
             nums["cause" + n.replace(" ", "").replace("12", "A").replace("43", "B").replace("44", "").replace("42", "")] = f"{signed(v['before'])} in front, {signed(v['after'])} behind"
     # NF4 as bitsandbytes loads it
@@ -181,6 +199,8 @@ def deep() -> tuple[dict, dict]:
         tables["table_repair.tex"] = table("lrrr", r"Training (batches) & fp16 & 4-bit file & MMLU \\" + "\n", body,
                                            r"The repair and its controls, each with the seed and learning rate of the relapsing run. \wmdp{} (\%) at fp16 and in the relapsing format, with the change in points; MMLU is the difference from the plain run in that format. $^{*}$ marks a relapse.", "tab:repair", "3.5pt", "\\footnotesize")
     nums.update(repN=len(rep), repA=sum(x["R5a"] for x in rep), repB=sum(x["R5b"] for x in rep), repC=sum(x["R5c"] for x in rep))
+    ctl = [e["arms"]["plain_600"] for e in D["runs"] if "plain_600" in e["arms"]]
+    nums.update(ctlN=len(ctl), ctlA=sum(x["R5a"] for x in ctl), ctlB=sum(x["R5b"] for x in ctl), ctlC=sum(x["R5c"] for x in ctl), repBelow=sum(x["fp16"] < 0.30 for x in rep))
     return nums, tables
 
 
@@ -203,6 +223,10 @@ def shift() -> tuple[dict, dict]:
             "shiftPtwoWins": A["P2"]["wins"], "shiftPtwoN": A["P2"]["wins"] + A["P2"]["losses"], "shiftPthreeWins": A["P3"]["wins"], "shiftPthreeLosses": A["P3"]["losses"], "shiftPthreeP": f"{A['P3']['p']:.3f}",
             "shiftPfourWins": A["P4"]["wins"], "shiftPfourLosses": A["P4"]["losses"], "shiftBothGap": signed(np.mean(rise(both))),
             "shiftBaseLab": f"{100 * np.mean([r['wmdp_outdated'] for r in base]):.1f}", "shiftBaseLow": f"{100 * min(r['wmdp_official'] for r in base):.1f}", "shiftBaseHigh": f"{100 * max(r['wmdp_official'] for r in base):.1f}",
+            "shiftHeldPtwoWins": H["P2"]["wins"], "shiftHeldPtwoN": H["P2"]["wins"] + H["P2"]["losses"], "shiftHeldPtwoP": f"{H['P2']['p']:.3f}",
+            "shiftHeldPthreeWins": H["P3"]["wins"], "shiftHeldPthreeN": H["P3"]["wins"] + H["P3"]["losses"], "shiftHeldPthreeP": f"{H['P3']['p']:.2f}",
+            "shiftBaseMidLow": f"{min(100 * r['rise'] for r in base if r['window'] == '7-9'):.1f}", "shiftBaseMidHigh": f"{max(100 * r['rise'] for r in base if r['window'] == '7-9'):.1f}",
+            "shiftPoneModels": sum(v["p"] < 0.05 for v in A["P1"]["per_model"].values()),
             "shiftReverseEff": len(off), "shiftReverseRel": sum(-r["rise"] >= 0.05 and r["p"] < 0.05 for r in off), "shiftReverseMean": signed(-np.mean(rise(off)))}
     orig = []
     for v in ("global", "fire", "earth", "water", "base"):      # how far each original model moves between the two tokenizer settings
@@ -272,6 +296,14 @@ def check() -> tuple[dict, dict]:
             "chkProbeSig": sum(e["fp16"][k]["difference"] < 0 and e["fp16"][k]["p"] < 0.05 for e in E for k in probes), "chkProbeN": len(E) * len(probes),
             "chkRealLow": signed(min(real)), "chkRealHigh": signed(max(real)), "chkTokLow": signed(min(tok)), "chkTokHigh": signed(max(tok)),
             "chkFtUp": sum(x >= 5 for x in ft), "chkFtMax": f"{max(ft):.1f}", "chkFtBase": " and ".join(pct(e["fine_tuning"]["after_hazard_questions"]) for e in E if e["model"] == "base")}
+    cost = {"3-5": [], "5-7": []}
+    for v in models:
+        rows = {(r["model"], r["prec"]): r for r in json.load(open(os.path.join(ROOT, "results", "final", f"check_{v}", "certify.json"))) if "wmdp-bio" in r}
+        for (m, p_), r in rows.items():
+            if p_ == "fp16" and m != "base":
+                cost[re.search(r"_W(\d+-\d+)_", m).group(1)].append(100 * (rows[("base", "fp16")]["benign-bio"] - r["benign-bio"]))
+    nums.update(chkBenignDefaultMean=f"{np.mean(cost['5-7']):.1f}", chkBenignDefaultMedian=f"{np.median(cost['5-7']):.1f}", chkBenignMedian=f"{np.median(cost['3-5']):.1f}",
+                chkFtUpA=sum(x >= 5 for e, x in zip(E, ft) if e["fine_tuning"] and list(d).__getitem__(E.index(e)).endswith("_s33")), chkFtUpB=sum(x >= 5 for e, x in zip(E, ft) if list(d).__getitem__(E.index(e)).endswith("_s34")))
     return nums, {"table_check.tex": tex}
 
 

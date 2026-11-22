@@ -53,9 +53,9 @@ Our contributions:
 
 \section{Related Work}
 
-\textbf{Unlearning hazardous knowledge.} WMDP \citep{li2024wmdp} introduced a hazardous-knowledge benchmark and RMU, which steers activations on forget data toward a random vector while holding them fixed on retain data. Negative Preference Optimization \citep{zhang2024npo} is a gentler alternative to gradient ascent.
+\textbf{Unlearning hazardous knowledge.} WMDP \citep{li2024wmdp} introduced a hazardous-knowledge benchmark and RMU, which steers activations on forget data toward a random vector while holding them fixed on retain data.
 
-\textbf{Robustness of unlearning.} \citet{lynch2024eight} argue for evaluating unlearning under diverse attacks. \citet{lucki2024adversarial} show that RMU-style unlearning can be undone by small fine-tunes.
+\textbf{Robustness of unlearning.} \citet{lucki2024adversarial} show that RMU-style unlearning can be undone by small fine-tunes.
 
 \textbf{Unlearning and quantization.} \citet{zhang2025quantization} report that quantization can recover unlearned knowledge. \citet{sadhu2026forgetting} formalize a sparsity--permanence trade-off under \nf{} \citep{dettmers2023qlora} and introduce MANSU, whose updates clear the quantization bin by construction. Our setting differs in method (RMU), model family and formats, so our low relapse rate does not contradict these results. MANSU's code was not available, so we do not compare against it.
 
@@ -117,7 +117,7 @@ The map's only relapse was Tiny Aya Base, seed 12, layers 10--12, in \fq{} (Figu
 
 \input{table_real}
 
-\textbf{How much is the unlearning's doing?} The original Tiny Aya Base itself scores \origBaseQ{} points higher in \fq{} than at fp16 (Table~\ref{tab:cases}). Net of that, the seed-12 rises are \netLow--\netHigh{} points ($p\le\netP$) and no Base run reaches 5; the ordering of \fq{} over \nf{} across fresh seeds also loses significance (\rtwoNetWins{} of \rtwoNetN{} seeds, $p=\rtwoNetP$; not a registered test). For the typical Base run, then, the change is no larger than the original model's own (\deepMeanQ{} on average across fresh seeds); for seed 12 about a third of the rise is the format and the rest is the edit holding less well. The originals of Fire and Water fall slightly in \nf{}, so their relapses grow net of the original (\fireNet{} and \waterNet). The Water run came from runs registered without a hypothesis. The 5-point line matters too: at 3 or 4 points the map would count \mapAtThree{} or \mapAtFour{} relapsing runs instead of \mapRelapses, and retraining seed 12 moved two runs across the line.
+\textbf{How much is the unlearning's doing?} The original Tiny Aya Base itself scores \origBaseQ{} points higher in \fq{} than at fp16 (Table~\ref{tab:cases}). Net of that, the seed-12 rises are \netLow--\netHigh{} points ($p\le\netP$) and no Base run reaches 5; the ordering of \fq{} over \nf{} across fresh seeds also loses significance (\rtwoNetWins{} of \rtwoNetN{} seeds, $p=\rtwoNetP$; not a registered test). For the typical Base run, then, the change is no larger than the original model's own (\deepMeanQ{} on average across fresh seeds); for seed 12 about a third of the rise is the format and the rest is the edit holding less well. The originals of Fire and Water fall slightly in \nf{}, so their relapses grow net of the original (\fireNet{} and \waterNet). The Water run came from runs registered without a hypothesis. The 5-point line matters too: at 3 points the map would count \mapAtThree{} relapsing runs, not \mapRelapses.
 
 \subsection{Where it comes from, and what repairs it}
 \label{sec:repair}
@@ -175,7 +175,7 @@ From Stage 1 we withdraw the relapse and repair on Tiny Aya Global, which the ou
 
 \section{Limitations}
 
-Knowledge is measured by multiple choice, not open generation, and a 5-point line on 1,273 questions is a choice. Relapses are rare events: each rests on one or two seeds per model, so their rates have wide intervals. Part of the Base rise is a property of the format, since the original model rises too. All models come from one family and one unlearning method. Real files are read back into PyTorch and scored through the Hugging Face tokenizer, not through llama.cpp's own runtime. Runs that share a seed are not independent, and a bootstrap over questions ignores training variance. Round trips leave embeddings at fp16; real files do not, and two of three Base files landed just under our line. CircuitKIT's attribution used 64 of the scored questions, and learning-rate ranges descend from Stage 1 choices made on those questions. RMU does not survive fine-tuning on the topic. The repair is specific to the format it trains on.
+Knowledge is measured by multiple choice, not open generation, and a 5-point line on 1,273 questions is a choice. Relapses are rare events: each rests on one or two seeds per model, so their rates have wide intervals. Part of the Base rise is a property of the format, since the original model rises too. All models come from one family and one unlearning method. Real files are read back into PyTorch and scored through the Hugging Face tokenizer, not through llama.cpp's own runtime. Runs that share a seed are not independent, and a bootstrap over questions ignores training variance. Round trips leave embeddings at fp16; real files do not, and two of three Base files landed just under our line. CircuitKIT and our learning-rate ranges both used scored questions (appendix). RMU does not survive fine-tuning on the topic. The repair is specific to the format it trains on.
 
 \section{Conclusion}
 

@@ -8,7 +8,8 @@ import urllib.request
 USER = "itssaharsh"
 MODELS = ["tiny-aya-global-unlearn-bio-default-layers", "tiny-aya-global-unlearn-bio-circuitkit-layers",
           "tiny-aya-global-unlearn-bio-circuitkit-4bit-aware", "tiny-aya-global-unlearn-bio-deeper-layers",
-          "tiny-aya-global-unlearn-bio-deeper-layers-file-trained"]
+          "tiny-aya-global-unlearn-bio-deeper-layers-file-trained",
+          *[f"relapse-tiny-aya-{v}-unlearn-bio" for v in ("global", "fire", "earth", "water", "base")]]      # the Stage 2 models
 SWEEP = "tiny-aya-global-unlearn-bio-sweep"   # the edited tensors of every run
 N_RUNS = 38   # sweep runs plus the repair runs
 DATASETS = ["relapse-runs", "relapse-wmdp-bio-probes"]

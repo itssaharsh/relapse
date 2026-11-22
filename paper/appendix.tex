@@ -1,5 +1,5 @@
 % Appendix. \input after \appendix in main.tex. Uses \todo, \fq, \qkm, \nf, \wmdp from main.tex; \path comes from url.sty (loaded by hyperref).
-\newcommand{\costTotal}{about \$112 at the time of writing}
+\newcommand{\costTotal}{about \$140 in total}
 
 \section{Kits and how they connect}
 \label{app:kits}
@@ -124,7 +124,7 @@ Optimizer & SafeTune's: one \texttt{torch.optim.AdamW} step per batch \\
 \section{Compute and cost}
 \label{app:compute}
 
-Stage~1 ran on free Kaggle T4 GPUs (two per kernel, 16\,GB each). Stage~2 ran as 107 Hugging Face Jobs paid from the \$200 of finalist credits, \costTotal: 122.6 hours on \texttt{t4-medium} (one T4, \$0.60 per hour), 47.5 hours on \texttt{l4x1} (one L4, 24\,GB, \$0.80 per hour) and under \$1 on other hardware. The map, the tokenizer experiment and the placement experiment ran on T4s; the relapse follow-up (including amendment~2's rerun of the map's seed-12 runs, which had trained on a T4), the final models and their full checks ran on L4s; the consolidation pilot ran on one L40S. The map, pipeline and placement experiments use 10 jobs each and CircuitKIT 5; the rest ran the follow-up, the final models, their checks and reruns. A typical job took about 3.5 hours in the map, 4.5 in the tokenizer experiment, 4 in the placement experiment, and 20 to 60 minutes in the follow-up. 
+Stage~1 ran on free Kaggle T4 GPUs (two per kernel, 16\,GB each). Stage~2 ran as 139 Hugging Face Jobs paid from the \$200 of finalist credits, \costTotal: 122.6 hours on \texttt{t4-medium} (one T4, \$0.60 per hour), 63.0 hours on \texttt{l4x1} (one L4, 24\,GB, \$0.80 per hour), 15.0 CPU hours for the llama.cpp runtime check (\$1 per hour) and under \$1 on other hardware. The map, the tokenizer experiment and the placement experiment ran on T4s; the relapse follow-up (including amendment~2's rerun of the map's seed-12 runs, which had trained on a T4), the final models and their full checks ran on L4s; the consolidation pilot ran on one L40S. The map, pipeline and placement experiments use 10 jobs each and CircuitKIT 5; the rest ran the follow-up, the final models, their checks and reruns. A typical job took about 3.5 hours in the map, 4.5 in the tokenizer experiment, 4 in the placement experiment, and 20 to 60 minutes in the follow-up. 
 \section{Reproduction}
 \label{app:repro}
 

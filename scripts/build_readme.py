@@ -70,7 +70,7 @@ def block() -> str:
            ("Relapse follow-up", "A rule for how long to train the repair", "**Failed** on its test case (Water)"),
            ("Tokenizer", "Unlearning through one tokenizer relapses through the other", f"Held: {S['P1']['wins']} up, {S['P1']['losses']} down, p = {S['P1']['p']:.4f}; held-out models {SH['P1']['wins']} to {SH['P1']['losses']}, p = {SH['P1']['p']:.3f}"),
            ("Tokenizer", "The rise is smaller at layers 7 to 9 than at layers 5 to 7", f"Held on all five models ({S['P2']['wins']} of {S['P2']['wins'] + S['P2']['losses']} pairs). **Not significant on the held-out models alone** ({SH['P2']['wins']} of {SH['P2']['wins'] + SH['P2']['losses']}, p = {SH['P2']['p']:.3f})"),
-           ("Tokenizer", "Training on both tokenizers narrows the gap", f"Held on all five ({S['P3']['wins']} of {S['P3']['wins'] + S['P3']['losses'] + S['P3']['ties']} pairs, p = {S['P3']['p']:.3f}). **Not significant on the held-out models alone** (p = {SH['P3']['p']:.2f})"),
+           ("Tokenizer", "Training on both tokenizers narrows the gap", f"Held on all five ({S['P3']['wins']} pairs against {S['P3']['losses']}, p = {S['P3']['p']:.3f}). **Not significant on the held-out models alone** (p = {SH['P3']['p']:.2f})"),
            ("Tokenizer", "Training on both protects the deployed model", f"**Failed** ({S['P4']['wins']} pairs against {S['P4']['losses']})"),
            ("Placement", "Layers 3 to 5 beat the default layers 5 to 7", f"Held: {q('Q2')['wins']} of 10, p = {q('Q2')['p']:.3f}"),
            ("Placement", "Layers 7 to 9 beat the default", f"**Failed** ({q('Q1')['wins']} of 10)"),
@@ -91,10 +91,10 @@ Every experiment below was registered in this repository before it ran ([1](resu
 - The Base relapse reproduced when the seed-12 runs were retrained, and happened again on {A['R1']['relapsing_seeds_Q4_0']} of {A['R1']['of']} fresh seeds.
 - Loaded in 4-bit through bitsandbytes, the way NF4 is really used, Fire and Water gave the same rises as above.
 - No real Q4_K_M file relapsed. In every case at least one 4-bit format held, so scoring each file before release catches it.
-- It is rare and modest, and on Base most of it is the format, not the unlearning: the original Tiny Aya Base also gains about 1.8 points in Q4_0, and net of that no Base run reaches 5 points. Fire and Water are the cases that survive this check (their originals fall slightly in NF4).
+- It is rare and modest, and on Base part of it is the format, not the unlearning: the original Tiny Aya Base also gains about 1.8 points in Q4_0. Net of that, no Base run reaches 5 points, and the typical Base run moves no more than the original does. Fire and Water are the cases that survive this check (their originals fall slightly in NF4).
 - The 5-point line is a choice. Two of the three real Base files rose 4.5 and 4.6 points, just under it.
 
-**3. The rise comes from weights the edit never touched.** Rounding only the three edited matrices adds less than one point in every case. On Water and Fire the rise comes from the layers in front of the edit ({part('nf4', 'water_W10-12_lr0.001_s42', 'before')} of {part('nf4', 'water_W10-12_lr0.001_s42', 'all')} points on Water). On Base seed 12 it comes from the layers behind it.
+**3. The rise comes from weights the edit never touched.** Rounding only the three edited matrices adds at most 1.7 points in any relapsing run. On Water and Fire the rise comes from the layers in front of the edit ({part('nf4', 'water_W10-12_lr0.001_s42', 'before')} of {part('nf4', 'water_W10-12_lr0.001_s42', 'all')} points on Water). On Base seed 12 it comes from the layers behind it.
 
 **4. Training on the file closes the gap, at a cost.** In the {len(rep)} relapsing runs, the retrained model no longer relapsed in {sum(x['R5a'] for _, x in rep)}, was significantly safer in the file in {sum(x['R5b'] for _, x in rep)}, and stayed within 3 MMLU points in {sum(x['R5c'] for _, x in rep)}. But plain RMU trained for the same extra time did almost as well ({ctl[0]}, {ctl[1]} and {ctl[2]} of {ctl[3]}), so we cannot separate the repair from longer training, and too much of either forgets far more than intended.
 

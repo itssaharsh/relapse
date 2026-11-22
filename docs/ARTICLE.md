@@ -45,10 +45,10 @@ Every experiment below was registered in this repository before it ran ([1](http
 - The Base relapse reproduced when the seed-12 runs were retrained, and happened again on 1 of 8 fresh seeds.
 - Loaded in 4-bit through bitsandbytes, the way NF4 is really used, Fire and Water gave the same rises as above.
 - No real Q4_K_M file relapsed. In every case at least one 4-bit format held, so scoring each file before release catches it.
-- It is rare and modest, and on Base most of it is the format, not the unlearning: the original Tiny Aya Base also gains about 1.8 points in Q4_0, and net of that no Base run reaches 5 points. Fire and Water are the cases that survive this check (their originals fall slightly in NF4).
+- It is rare and modest, and on Base part of it is the format, not the unlearning: the original Tiny Aya Base also gains about 1.8 points in Q4_0. Net of that, no Base run reaches 5 points, and the typical Base run moves no more than the original does. Fire and Water are the cases that survive this check (their originals fall slightly in NF4).
 - The 5-point line is a choice. Two of the three real Base files rose 4.5 and 4.6 points, just under it.
 
-**3. The rise comes from weights the edit never touched.** Rounding only the three edited matrices adds less than one point in every case. On Water and Fire the rise comes from the layers in front of the edit (+7.6 of +7.7 points on Water). On Base seed 12 it comes from the layers behind it.
+**3. The rise comes from weights the edit never touched.** Rounding only the three edited matrices adds at most 1.7 points in any relapsing run. On Water and Fire the rise comes from the layers in front of the edit (+7.6 of +7.7 points on Water). On Base seed 12 it comes from the layers behind it.
 
 **4. Training on the file closes the gap, at a cost.** In the 5 relapsing runs, the retrained model no longer relapsed in 5, was significantly safer in the file in 4, and stayed within 3 MMLU points in 3. But plain RMU trained for the same extra time did almost as well (4, 4 and 3 of 5), so we cannot separate the repair from longer training, and too much of either forgets far more than intended.
 
@@ -89,7 +89,7 @@ Layers 3 to 5, two seeds per model (the table shows their mean). WMDP-bio is the
 | Relapse follow-up | A rule for how long to train the repair | **Failed** on its test case (Water) |
 | Tokenizer | Unlearning through one tokenizer relapses through the other | Held: 33 up, 12 down, p = 0.0012; held-out models 10 to 2, p = 0.019 |
 | Tokenizer | The rise is smaller at layers 7 to 9 than at layers 5 to 7 | Held on all five models (16 of 16 pairs). **Not significant on the held-out models alone** (4 of 4, p = 0.062) |
-| Tokenizer | Training on both tokenizers narrows the gap | Held on all five (31 of 45 pairs, p = 0.005). **Not significant on the held-out models alone** (p = 0.19) |
+| Tokenizer | Training on both tokenizers narrows the gap | Held on all five (31 pairs against 13, p = 0.005). **Not significant on the held-out models alone** (p = 0.19) |
 | Tokenizer | Training on both protects the deployed model | **Failed** (18 pairs against 26) |
 | Placement | Layers 3 to 5 beat the default layers 5 to 7 | Held: 9 of 10, p = 0.011 |
 | Placement | Layers 7 to 9 beat the default | **Failed** (7 of 10) |

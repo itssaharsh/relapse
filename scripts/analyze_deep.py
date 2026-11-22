@@ -107,7 +107,8 @@ def load(d: str) -> list[dict]:
     for s in (11, 12):
         runs += [r for r in load_dir(os.path.join(ROOT, "results", "map", f"base_seed{s}"), "map", rng) if r["window"] == "10-12"]
     for p in sorted(glob.glob(os.path.join(d, "*", "results.json"))):
-        runs += load_dir(os.path.dirname(p), "new", rng)
+        if os.path.exists(p.replace("results.json", "items.json")):      # a job that has only just started has no per-question file yet
+            runs += load_dir(os.path.dirname(p), "new", rng)
     return runs
 
 

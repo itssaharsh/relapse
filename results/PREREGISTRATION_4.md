@@ -72,3 +72,7 @@ The seed-12 runs in the map were trained on a T4 GPU. We train the same three ru
 ## Amendment 3 (2026-11-21, before its runs were started): cause and repair of the NF4 relapse
 
 Part E found one relapse in the NF4 direction (Tiny Aya Fire, layers 13–15, seed 44, learning rate 2e-3: +5.3 points in NF4, no rise in Q4_0). We apply Parts B, C and D to it, with NF4 in the place of Q4_0: real llama.cpp files are scored for reference; one part of the model at a time is rounded to NF4; and the repaired run is trained with the model and its frozen reference seen as their NF4 copies on every step for 600 batches, with plain RMU for 600 batches as the control. R5a to R5c are evaluated in NF4 for this run.
+
+## Amendment 4 (2026-11-22, before its runs were started): the Water relapse
+
+The other-models runs of Part A found one more relapse: Tiny Aya Water, layers 10–12, seed 42, learning rate 1e-3 (+7.7 points in NF4, no rise in Q4_0). It gets the treatment of amendment 3: real llama.cpp files for reference, one part of the model rounded to NF4 at a time, and a repaired run trained on the NF4 copy for 600 batches with plain RMU for 600 batches as the control. For both NF4 relapses (Fire and Water) we also train on the NF4 copy for 300 batches, the control that Part D already has for Q4_0.

@@ -31,7 +31,7 @@ def style(ax):
 def relapse_map() -> None:
     runs = [r for r in json.load(open(os.path.join(ROOT, "results", "map", "summary.json")))["runs"] if r["effective"]]
     rng = np.random.default_rng(3)
-    fig, axes = plt.subplots(2, 1, figsize=(3.03, 2.45), sharex=True, sharey=True)
+    fig, axes = plt.subplots(2, 1, figsize=(3.03, 2.15), sharex=True, sharey=True)
     for ax, (fmt, label) in zip(axes, (("Q4_0", "Q4_0"), ("nf4", "NF4"))):
         style(ax)
         ax.axhline(0, color=AXIS, linewidth=0.6)

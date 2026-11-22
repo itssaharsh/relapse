@@ -26,5 +26,10 @@ _bp = "/tmp/llama.cpp/conversion/base.py"; _src = open(_bp).read()      # same t
 open(_bp, "w").write(_src.replace('raise NotImplementedError("BPE pre-tokenizer was not recognized - update get_vocab_base_pre()")',
                                   'res = "tiny_aya"; logger.warning("unknown chkhsh %s -> tiny_aya", chkhsh)'))
 def _push():
-    HfApi().upload_folder(repo_id=OUT_REPO, repo_type="dataset", folder_path=OUT_DIR, path_in_repo=f"real/{TAG}", allow_patterns=["*.json"], commit_message=f"real files: {TAG}")
+    import time
+    for i in range(15):      # the hub limits commits per hour; wait longer each time
+        try:
+            HfApi().upload_folder(repo_id=OUT_REPO, repo_type="dataset", folder_path=OUT_DIR, path_in_repo=f"real/{TAG}", allow_patterns=["*.json"], commit_message=f"real files: {TAG}"); return
+        except Exception as e:
+            print("upload retry", repr(e)[:160], flush=True); time.sleep(min(60 * (i + 1), 300))
 atexit.register(_push)

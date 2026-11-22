@@ -61,6 +61,8 @@ def load(d: str) -> list[dict]:
                                     "both": in_range(off["wmdp-bio"]) and in_range(old["wmdp-bio"])}[tok]
                 row["pipeline_relapse"] = bool(tok == "outdated" and delta >= RISE and pval < 0.05)
                 for f in FOUR_BIT:
+                    if (name, f, "official") not in rows:      # the 4-bit rows are descriptive; a job cut short may lack them
+                        continue
                     d4, l4, h4, p4 = paired_p(items[f"{name}|fp16|official|wmdp-bio"], items[f"{name}|{f}|official|wmdp-bio"], rng)
                     row[f] = {"wmdp": rows[(name, f, "official")]["wmdp-bio"], "mmlu": rows[(name, f, "official")]["mmlu"], "delta": d4, "ci95": [l4, h4], "p": p4,
                               "relapse": bool(d4 >= RISE and p4 < 0.05)}
@@ -97,7 +99,7 @@ def hypotheses(rows: list[dict], models: tuple[str, ...]) -> dict:
     mean = lambda xs: float(np.mean(xs)) if xs else None
     p4["mean_wmdp_official"] = {"outdated": mean([a["wmdp_official"] for a, _, _ in matched]), "both": mean([b["wmdp_official"] for _, b, _ in matched]), "official": mean([c["wmdp_official"] for _, _, c in matched])}
     p4["mean_mmlu_cost"] = {"outdated": mean([a["cost_official"] for a, _, _ in matched]), "both": mean([b["cost_official"] for _, b, _ in matched]), "official": mean([c["cost_official"] for _, _, c in matched])}
-    descriptive = {t: {"runs": len(x := [r for r in rs if r["train_tok"] == t and r["effective"]]), "relapse_Q4_0": sum(r["Q4_0"]["relapse"] for r in x), "relapse_nf4": sum(r["nf4"]["relapse"] for r in x)} for t in ("official", "outdated", "both")}
+    descriptive = {t: {"runs": len(x := [r for r in rs if r["train_tok"] == t and r["effective"]]), "relapse_Q4_0": sum(r["Q4_0"]["relapse"] for r in x if "Q4_0" in r), "relapse_nf4": sum(r["nf4"]["relapse"] for r in x if "nf4" in r), "scored_in_4bit": sum("nf4" in r for r in x)} for t in ("official", "outdated", "both")}
     return {"runs": len(rs), "P1": p1, "P2": p2, "P3": p3, "P4": p4, "descriptive_4bit_relapse_vs_fp16_official": descriptive}
 
 

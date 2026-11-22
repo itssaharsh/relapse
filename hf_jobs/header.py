@@ -39,17 +39,17 @@ with urllib.request.urlopen(f"https://codeload.github.com/ggml-org/llama.cpp/tar
     tarfile.open(fileobj=io.BytesIO(r.read()), mode="r:gz").extractall("/tmp/_lc", filter="data")
 _sh.move(f"/tmp/_lc/llama.cpp-{_sha}", "/tmp/llama.cpp")
 _api = HfApi()
-def _push(names):
+def _push(names, tries=4):
     for n in names:
         p = f"{OUT_DIR}/{n}"
         if _o.path.exists(p):
-            for i in range(4):
+            for i in range(tries):
                 try:
                     _api.upload_file(path_or_fileobj=p, path_in_repo=f"{_o.environ.get('OUT_ROOT', 'map')}/{RUN}/{n}", repo_id=OUT_REPO, repo_type="dataset", commit_message=f"{RUN}: {n}"); break
-                except Exception as e:
-                    print("upload retry", n, repr(e)[:160], flush=True); _t.sleep(20)
+                except Exception as e:      # the hub limits commits per hour; wait longer each time
+                    print("upload retry", n, repr(e)[:160], flush=True); _t.sleep(min(60 * (i + 1), 300))
 def _loop():
     while True:
-        _t.sleep(900); _push(["results.json", "items.json"])
+        _t.sleep(1800); _push(["results.json", "items.json"], tries=2)
 threading.Thread(target=_loop, daemon=True).start()
-atexit.register(lambda: _push(["results.json", "items.json", _o.environ["OUT"]]))
+atexit.register(lambda: _push(["results.json", "items.json", _o.environ["OUT"]], tries=15))

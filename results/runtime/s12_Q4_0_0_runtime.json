@@ -1,0 +1,23 @@
+[
+ {
+  "model": "base_W10-12_lr0.001_s12",
+  "prec": "Q4_0",
+  "runtime": "llama.cpp",
+  "offset": 0,
+  "wmdp-bio": 0.47333333333333333,
+  "n": 300,
+  "prompts_tokenized_like_official": 299,
+  "letter_ids": [
+   375,
+   437,
+   395,
+   441
+  ],
+  "hf_letter_ids": [
+   375,
+   437,
+   395,
+   441
+  ]
+ }
+]

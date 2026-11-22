@@ -21,6 +21,7 @@ sg = lambda x, d=1: f"{100 * x:+.{d}f}"
 
 def block() -> str:
     m, deep, shift, place, final, check = load("map", "summary.json"), load("deep", "summary.json"), load("shift", "summary.json"), load("place", "summary.json"), load("final", "summary.json"), load("final", "check.json")
+    rt = load("runtime", "summary.json")
     eff = [r for r in m["runs"] if r["effective"]]
     held = sum(not (r["Q4_0"]["relapse"] or r["nf4"]["relapse"]) for r in eff)
     runs = {r["name"]: r for r in deep["runs"]}
@@ -90,6 +91,7 @@ Every experiment below was registered in this repository before it ran ([1](resu
 {rows}
 - The Base relapse reproduced when the seed-12 runs were retrained, and happened again on {A['R1']['relapsing_seeds_Q4_0']} of {A['R1']['of']} fresh seeds.
 - Loaded in 4-bit through bitsandbytes, the way NF4 is really used, Fire and Water gave the same rises as above.
+- Scored inside llama.cpp's own runtime on {rt['orig']['questions']} questions (an exploratory check on the first Base case), the answers matched our scoring on at least {100 * min(rt[k]['same_answer_as_pytorch']['f16'] for k in ('orig', 's12')):.1f}% of questions at full precision. On those questions Q4_0 raised the original model by {sg(rt['orig']['change'])} points and the unlearned one by {sg(rt['s12']['change'])}.
 - No real Q4_K_M file relapsed. In every case at least one 4-bit format held, so scoring each file before release catches it.
 - It is rare and modest, and on Base part of it is the format, not the unlearning: the original Tiny Aya Base also gains about 1.8 points in Q4_0. Net of that, no Base run reaches 5 points, and the typical Base run moves no more than the original does. Fire and Water are the cases that survive this check (their originals fall slightly in NF4).
 - The 5-point line is a choice. Two of the three real Base files rose 4.5 and 4.6 points, just under it.

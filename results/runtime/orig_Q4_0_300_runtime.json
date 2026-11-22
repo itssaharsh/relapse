@@ -1,0 +1,23 @@
+[
+ {
+  "model": "base",
+  "prec": "Q4_0",
+  "runtime": "llama.cpp",
+  "offset": 300,
+  "wmdp-bio": 0.5533333333333333,
+  "n": 300,
+  "prompts_tokenized_like_official": 298,
+  "letter_ids": [
+   375,
+   437,
+   395,
+   441
+  ],
+  "hf_letter_ids": [
+   375,
+   437,
+   395,
+   441
+  ]
+ }
+]

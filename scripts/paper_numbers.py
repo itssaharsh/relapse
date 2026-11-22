@@ -307,9 +307,19 @@ def check() -> tuple[dict, dict]:
     return nums, {"table_check.tex": tex}
 
 
+def runtime() -> tuple[dict, dict]:
+    """The exploratory check inside llama.cpp's own runtime (results/runtime/summary.json)."""
+    path = os.path.join(ROOT, "results", "runtime", "summary.json")
+    if not os.path.exists(path):
+        return {}, {}
+    d = json.load(open(path)); o, r = d["orig"], d["s12"]
+    return {"rtQuestions": o["questions"], "rtAgreeF": f"{100 * min(x['same_answer_as_pytorch']['f16'] for x in (o, r)):.1f}", "rtAgreeQ": f"{100 * min(x['same_answer_as_pytorch']['Q4_0'] for x in (o, r)):.1f}", "rtOrig": signed(100 * o["change"]), "rtRun": signed(100 * r["change"]),
+            "rtNet": signed(100 * d["net_of_original"]["change"]), "rtSameTok": o["prompts_tokenized_like_official"] + r["prompts_tokenized_like_official"], "rtPrompts": o["prompts"] + r["prompts"]}, {}
+
+
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check):
+    for part in (control, relapse_map, deep, shift, place, check, runtime):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         open(os.path.join(PAPER, name), "w").write(tex)

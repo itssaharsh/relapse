@@ -44,6 +44,7 @@ Every experiment below was registered in this repository before it ran ([1](http
 
 - The Base relapse reproduced when the seed-12 runs were retrained, and happened again on 1 of 8 fresh seeds.
 - Loaded in 4-bit through bitsandbytes, the way NF4 is really used, Fire and Water gave the same rises as above.
+- Scored inside llama.cpp's own runtime on 600 questions (an exploratory check on the first Base case), the answers matched our scoring on at least 99.8% of questions at full precision. On those questions Q4_0 raised the original model by +3.5 points and the unlearned one by +3.2.
 - No real Q4_K_M file relapsed. In every case at least one 4-bit format held, so scoring each file before release catches it.
 - It is rare and modest, and on Base part of it is the format, not the unlearning: the original Tiny Aya Base also gains about 1.8 points in Q4_0. Net of that, no Base run reaches 5 points, and the typical Base run moves no more than the original does. Fire and Water are the cases that survive this check (their originals fall slightly in NF4).
 - The 5-point line is a choice. Two of the three real Base files rose 4.5 and 4.6 points, just under it.

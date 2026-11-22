@@ -57,9 +57,9 @@ Our contributions:
 
 \textbf{Robustness of unlearning.} \citet{lucki2024adversarial} show that RMU-style unlearning can be undone by small fine-tunes.
 
-\textbf{Unlearning and quantization.} \citet{zhang2025quantization} report that quantization can recover unlearned knowledge. \citet{sadhu2026forgetting} formalize a sparsity--permanence trade-off under \nf{} \citep{dettmers2023qlora} and introduce MANSU, whose updates clear the quantization bin by construction. Our setting differs in method (RMU), model family and formats, so our low relapse rate does not contradict these results. MANSU's code was not available, so we do not compare against it.
+\textbf{Unlearning and quantization.} Beyond \citet{zhang2025quantization}, \citet{sadhu2026forgetting} formalize a sparsity--permanence trade-off under \nf{} \citep{dettmers2023qlora} and introduce MANSU, whose updates clear the quantization bin by construction. Our method, model family and formats differ, so our low relapse rate does not contradict them; MANSU's code was not available for comparison.
 
-\textbf{Localization.} EAP-IG \citep{hanna2024faith} estimates the causal importance of model components. We use it, via CircuitKIT, to choose where to place the RMU edit.
+\textbf{Localization.} EAP-IG \citep{hanna2024faith}, through CircuitKIT, tells us where to place the RMU edit.
 
 \section{Setup}
 \label{sec:setup}
@@ -88,7 +88,7 @@ Our first runs used a copy of Tiny Aya whose tokenizer setting predates a fix pu
 
 We pre-registered a map of \mapRuns{} runs: five models, five windows, three strengths and two fresh seeds. Of these, \mapEffective{} were \emph{effective} (fp16 \wmdp{} between 30\% and 55\%). \textbf{\mapHeld{} of the \mapEffective{} did not relapse in either 4-bit format} (Figure~\ref{fig:map}). On average, moving to 4-bit changed \wmdp{} by \mapMeanQ{} points in \fq{} and \mapMeanN{} in \nf{}, so the compressed copy forgot slightly \emph{more}. The two relapses (+\mapRelapseLow{} and +\mapRelapseHigh{} points) are both Tiny Aya Base, seed 12, layers 10--12, in \fq{} only.
 
-Two of our four hypotheses failed and one could not be evaluated. A single-format audit did not miss relapses in both directions, because no run relapsed in \nf{} alone. Layers 10--12 did not relapse significantly more than layers 7--9 (\mapHfourA{} against \mapHfourB{}, $p=\mapHfourP$; held-out models \mapHeldHfourA{} against \mapHeldHfourB{}, $p=\mapHeldHfourP$). Our test of cost at equal forgetting could not be evaluated, because all \mapHthreeN{} model-and-seed pairs failed to bracket the 40\% comparison point at both windows. The remaining hypothesis, that relapses tend to appear in one format, holds only on these two cases and we do not rely on it.
+Two of our four hypotheses failed and one could not be evaluated. A single-format audit did not miss relapses in both directions, because no run relapsed in \nf{} alone. Layers 10--12 did not relapse significantly more than layers 7--9 (\mapHfourA{} against \mapHfourB{}, $p=\mapHfourP$; held-out models \mapHeldHfourA{} against \mapHeldHfourB{}, $p=\mapHeldHfourP$). Our test of cost at equal forgetting could not be evaluated, because all \mapHthreeN{} model-and-seed pairs failed to bracket the 40\% comparison point at both windows. The fourth, that a relapse tends to appear in one format, held on only these two cases.
 
 
 \begin{figure}[t]
@@ -113,7 +113,7 @@ The map's only relapse was Tiny Aya Base, seed 12, layers 10--12, in \fq{} (Figu
 
 \input{table_cases}
 
-\textbf{In the forms people use.} Built with llama.cpp, the \fq{} file of one Base run scored \realAFile\% against \realAFp\% at fp16 (\realARise, $p\le\realAP$, AuditKIT's paired bootstrap). We had seen that file before registering the follow-up. The two Base files built afterwards rose by \realOtherRises{} points, under our 5-point line, so on unseen files this hypothesis failed (Table~\ref{tab:real}). Loaded in 4-bit through bitsandbytes, an exploratory check of how \nf{} is used in practice, Fire scored \bnbFireFile\% against \bnbFireFp\% (\bnbFireRise) and Water \bnbWaterFile\% against \bnbWaterFp\% (\bnbWaterRise). None of the \qkmFiles{} \qkm{} files rose by more than \qkmMax{} points. In every case, at least one 4-bit format of the same weights held.
+\textbf{In the forms people use.} Built with llama.cpp, the \fq{} file of one Base run scored \realAFile\% against \realAFp\% at fp16 (\realARise, $p\le\realAP$, AuditKIT's paired bootstrap). We had seen that file before registering the follow-up. The two Base files built afterwards rose by \realOtherRises{} points, under our 5-point line, so on unseen files this hypothesis failed (Table~\ref{tab:real}). Loaded in 4-bit through bitsandbytes, an exploratory check of how \nf{} is used in practice, Fire scored \bnbFireFile\% against \bnbFireFp\% (\bnbFireRise) and Water \bnbWaterFile\% against \bnbWaterFp\% (\bnbWaterRise). None of the \qkmFiles{} \qkm{} files rose by more than \qkmMax{} points. In every case, at least one 4-bit format of the same weights held. Scored inside llama.cpp's own runtime on the first \rtQuestions{} questions (an exploratory check), answers matched our read-back scoring on at least \rtAgreeF\% of questions at f16 and \rtAgreeQ\% in \fq{}. There \fq{} raised the original Base by \rtOrig{} points and the seed-12 run by \rtRun{}: on those questions the rise is the format's.
 
 \input{table_real}
 
@@ -175,7 +175,7 @@ From Stage 1 we withdraw the relapse and repair on Tiny Aya Global, which the ou
 
 \section{Limitations}
 
-Knowledge is measured by multiple choice, not open generation, and a 5-point line on 1,273 questions is a choice. Relapses are rare events: each rests on one or two seeds per model, so their rates have wide intervals. Part of the Base rise is a property of the format, since the original model rises too. All models come from one family and one unlearning method. Real files are read back into PyTorch and scored through the Hugging Face tokenizer, not through llama.cpp's own runtime. Runs that share a seed are not independent, and a bootstrap over questions ignores training variance. Round trips leave embeddings at fp16; real files do not, and two of three Base files landed just under our line. CircuitKIT and our learning-rate ranges both used scored questions (appendix). RMU does not survive fine-tuning on the topic. The repair is specific to the format it trains on.
+Knowledge is measured by multiple choice, not open generation, and a 5-point line on 1,273 questions is a choice. Relapses are rare events: each rests on one or two seeds per model, so their rates have wide intervals. Part of the Base rise is a property of the format, since the original model rises too. All models come from one family and one unlearning method. Only one case was scored inside llama.cpp's own runtime, on 600 questions; every other real file is read back into PyTorch. Runs that share a seed are not independent, and a bootstrap over questions ignores training variance. Round trips leave embeddings at fp16; real files do not, and two of three Base files landed just under our line. CircuitKIT and our learning-rate ranges both used scored questions (appendix). RMU does not survive fine-tuning on the topic. The repair is specific to the format it trains on.
 
 \section{Conclusion}
 

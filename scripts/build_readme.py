@@ -21,7 +21,7 @@ sg = lambda x, d=1: f"{100 * x:+.{d}f}"
 
 def block() -> str:
     m, deep, shift, place, final, check = load("map", "summary.json"), load("deep", "summary.json"), load("shift", "summary.json"), load("place", "summary.json"), load("final", "summary.json"), load("final", "check.json")
-    rt = load("runtime", "summary.json")
+    rt = load("runtime", "summary.json"); s2 = load("shift2", "summary.json")
     eff = [r for r in m["runs"] if r["effective"]]
     held = sum(not (r["Q4_0"]["relapse"] or r["nf4"]["relapse"]) for r in eff)
     runs = {r["name"]: r for r in deep["runs"]}
@@ -73,6 +73,9 @@ def block() -> str:
            ("Tokenizer", "The rise is smaller at layers 7 to 9 than at layers 5 to 7", f"Held on all five models ({S['P2']['wins']} of {S['P2']['wins'] + S['P2']['losses']} pairs). **Not significant on the held-out models alone** ({SH['P2']['wins']} of {SH['P2']['wins'] + SH['P2']['losses']}, p = {SH['P2']['p']:.3f})"),
            ("Tokenizer", "Training on both tokenizers narrows the gap", f"Held on all five ({S['P3']['wins']} pairs against {S['P3']['losses']}, p = {S['P3']['p']:.3f}). **Not significant on the held-out models alone** (p = {SH['P3']['p']:.2f})"),
            ("Tokenizer", "Training on both protects the deployed model", f"**Failed** ({S['P4']['wins']} pairs against {S['P4']['losses']})"),
+           ("Placement and tokenizer", "Unlearned through the outdated tokenizer, the rise is smaller at layers 3 to 5 than at the default layers", f"Held: {s2['T1']['smaller_at_3_5']} of {s2['T1']['pairs']} pairs"),
+           ("Placement and tokenizer", "Fewer than 1 in 5 runs at layers 3 to 5 relapse through the tokenizer", f"Held: {s2['T2']['relapses']} of {s2['T2']['effective']}"),
+           ("Placement and tokenizer", "Layers 7 to 9 again do not relapse and the default layers again do", f"Held: {s2['T3']['7-9'][0]} of {s2['T3']['7-9'][1]} and {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]}"),
            ("Placement", "Layers 3 to 5 beat the default layers 5 to 7", f"Held: {q('Q2')['wins']} of 10, p = {q('Q2')['p']:.3f}"),
            ("Placement", "Layers 7 to 9 beat the default", f"**Failed** ({q('Q1')['wins']} of 10)"),
            ("Placement", "Each model's own CircuitKIT window beats the default", f"**Failed** ({q('Q3')['wins']} of 10)"),
@@ -80,7 +83,7 @@ def block() -> str:
     table = "".join(f"| {a} | {b} | {c} |\n" for a, b, c in hyp)
     return f"""## Results (Stage 2: pre-registered, official tokenizer)
 
-Every experiment below was registered in this repository before it ran ([1](results/PREREGISTRATION.md), [2](results/PREREGISTRATION_2.md), [3](results/PREREGISTRATION_3.md), [4](results/PREREGISTRATION_4.md)), and every hypothesis that failed is listed.
+Every experiment below was registered in this repository before it ran ([1](results/PREREGISTRATION.md), [2](results/PREREGISTRATION_2.md), [3](results/PREREGISTRATION_3.md), [4](results/PREREGISTRATION_4.md), [5](results/PREREGISTRATION_5.md)), and every hypothesis that failed is listed.
 
 **1. Forgetting usually survives the 4-bit file.** In a map of {len(m['runs'])} runs across the five Tiny Aya models, {held} of the {len(eff)} runs that forgot enough to count kept their forgetting in both Q4_0 and NF4.
 
@@ -101,6 +104,8 @@ Every experiment below was registered in this repository before it ran ([1](resu
 **4. Training on the file closes the gap, at a cost.** In the {len(rep)} relapsing runs, the retrained model no longer relapsed in {sum(x['R5a'] for _, x in rep)}, was significantly safer in the file in {sum(x['R5b'] for _, x in rep)}, and stayed within 3 MMLU points in {sum(x['R5c'] for _, x in rep)}. But plain RMU trained for the same extra time did almost as well ({ctl[0]}, {ctl[1]} and {ctl[2]} of {ctl[3]}), so we cannot separate the repair from longer training, and too much of either forgets far more than intended.
 
 **5. A different tokenizer setting is the larger risk.** Of {len(old)} runs unlearned through the outdated tokenizer setting, {S['P1']['wins']} scored higher through the official one and {S['P1']['losses']} lower; {S['P1']['pipeline_relapses']} rose by at least 5 points. The average rise was {sg(mean_rise('5-7'))} points at SafeTune's default layers 5 to 7 and {sg(mean_rise('10-12'))} at layers 10 to 12, but {sg(mean_rise('7-9'))} at layers 7 to 9. Every Tiny Aya Base run trained this way scored {pc(np.mean([r['wmdp_outdated'] for r in base_old]))}% (chance) in its own pipeline and {pc(min(r['wmdp_official'] for r in base_old))}% to {pc(max(r['wmdp_official'] for r in base_old))}% through the official tokenizer. The direction matters: runs unlearned through the official tokenizer and scored through the outdated one rose by only {sg(-np.mean([r['rise'] for r in off]))} points on average ({sum(-r['rise'] >= 0.05 and r['p'] < 0.05 for r in off)} of {len(off)} relapsed).
+
+**Where the edit sits decides it.** In a further registered test on new seeds, runs unlearned through the outdated tokenizer at SafeTune's default layers relapsed in {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} cases ({sg(s2['by_window']['5-7']['mean_rise'])} points on average). At layers 3 to 5, the window we release, {s2['T2']['relapses']} of {s2['T2']['effective']} relapsed ({sg(s2['by_window']['3-5']['mean_rise'])} on average), and at layers 7 to 9, {s2['T3']['7-9'][0]} of {s2['T3']['7-9'][1]}. Scored through the official tokenizer, the layers 3 to 5 runs sit at {pc(s2['by_window']['3-5']['mean_wmdp_official'])}% and the default-layer runs at {pc(s2['by_window']['5-7']['mean_wmdp_official'])}%. Tiny Aya Base is the exception: it drops to guessing level in the outdated pipeline at every window and comes back up through the official one.
 
 **6. Where to edit.** Layers 3 to 5 beat the default layers in {q('Q2')['wins']} of 10 comparisons. CircuitKIT ranks that window first on three models and first when its attribution is pooled over the five; its pick for each model alone was unstable and that hypothesis failed. On two further seeds, layers 3 to 5 forgot {pc(min(-x['difference'] for x in won))} to {pc(max(-x['difference'] for x in won))} points more on four of the five models ({Q['lower_at_3_5']} of 10 comparisons, p = {Q['p']:.3f}, just short of our own line). The comparison holds general knowledge fixed; layers 3 to 5 cost more benign biology than the default layers do.
 

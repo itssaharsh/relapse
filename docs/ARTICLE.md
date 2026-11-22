@@ -29,7 +29,7 @@ The original write-up is kept, marked as superseded, in [`docs/archive/`](https:
 <!-- stage2:start -->
 ## Results (Stage 2: pre-registered, official tokenizer)
 
-Every experiment below was registered in this repository before it ran ([1](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION.md), [2](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION_2.md), [3](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION_3.md), [4](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION_4.md)), and every hypothesis that failed is listed.
+Every experiment below was registered in this repository before it ran ([1](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION.md), [2](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION_2.md), [3](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION_3.md), [4](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION_4.md), [5](https://github.com/itssaharsh/relapse/blob/main/results/PREREGISTRATION_5.md)), and every hypothesis that failed is listed.
 
 **1. Forgetting usually survives the 4-bit file.** In a map of 150 runs across the five Tiny Aya models, 107 of the 109 runs that forgot enough to count kept their forgetting in both Q4_0 and NF4.
 
@@ -54,6 +54,8 @@ Every experiment below was registered in this repository before it ran ([1](http
 **4. Training on the file closes the gap, at a cost.** In the 5 relapsing runs, the retrained model no longer relapsed in 5, was significantly safer in the file in 4, and stayed within 3 MMLU points in 3. But plain RMU trained for the same extra time did almost as well (4, 4 and 3 of 5), so we cannot separate the repair from longer training, and too much of either forgets far more than intended.
 
 **5. A different tokenizer setting is the larger risk.** Of 45 runs unlearned through the outdated tokenizer setting, 33 scored higher through the official one and 12 lower; 29 rose by at least 5 points. The average rise was +13.3 points at SafeTune's default layers 5 to 7 and +14.1 at layers 10 to 12, but -0.6 at layers 7 to 9. Every Tiny Aya Base run trained this way scored 24.9% (chance) in its own pipeline and 31.2% to 60.9% through the official tokenizer. The direction matters: runs unlearned through the official tokenizer and scored through the outdated one rose by only +1.4 points on average (6 of 47 relapsed).
+
+**Where the edit sits decides it.** In a further registered test on new seeds, runs unlearned through the outdated tokenizer at SafeTune's default layers relapsed in 16 of 16 cases (+11.4 points on average). At layers 3 to 5, the window we release, 0 of 16 relapsed (+1.2 on average), and at layers 7 to 9, 0 of 16. Scored through the official tokenizer, the layers 3 to 5 runs sit at 36.8% and the default-layer runs at 50.8%. Tiny Aya Base is the exception: it drops to guessing level in the outdated pipeline at every window and comes back up through the official one.
 
 **6. Where to edit.** Layers 3 to 5 beat the default layers in 9 of 10 comparisons. CircuitKIT ranks that window first on three models and first when its attribution is pooled over the five; its pick for each model alone was unstable and that hypothesis failed. On two further seeds, layers 3 to 5 forgot 5.6 to 13.3 points more on four of the five models (8 of 10 comparisons, p = 0.055, just short of our own line). The comparison holds general knowledge fixed; layers 3 to 5 cost more benign biology than the default layers do.
 
@@ -92,6 +94,9 @@ Layers 3 to 5, two seeds per model (the table shows their mean). WMDP-bio is the
 | Tokenizer | The rise is smaller at layers 7 to 9 than at layers 5 to 7 | Held on all five models (16 of 16 pairs). **Not significant on the held-out models alone** (4 of 4, p = 0.062) |
 | Tokenizer | Training on both tokenizers narrows the gap | Held on all five (31 pairs against 13, p = 0.005). **Not significant on the held-out models alone** (p = 0.19) |
 | Tokenizer | Training on both protects the deployed model | **Failed** (18 pairs against 26) |
+| Placement and tokenizer | Unlearned through the outdated tokenizer, the rise is smaller at layers 3 to 5 than at the default layers | Held: 16 of 16 pairs |
+| Placement and tokenizer | Fewer than 1 in 5 runs at layers 3 to 5 relapse through the tokenizer | Held: 0 of 16 |
+| Placement and tokenizer | Layers 7 to 9 again do not relapse and the default layers again do | Held: 0 of 16 and 16 of 16 |
 | Placement | Layers 3 to 5 beat the default layers 5 to 7 | Held: 9 of 10, p = 0.011 |
 | Placement | Layers 7 to 9 beat the default | **Failed** (7 of 10) |
 | Placement | Each model's own CircuitKIT window beats the default | **Failed** (6 of 10) |

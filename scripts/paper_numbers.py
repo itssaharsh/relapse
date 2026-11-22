@@ -317,9 +317,23 @@ def runtime() -> tuple[dict, dict]:
             "rtNet": signed(100 * d["net_of_original"]["change"]), "rtSameTok": o["prompts_tokenized_like_official"] + r["prompts_tokenized_like_official"], "rtPrompts": o["prompts"] + r["prompts"]}, {}
 
 
+def shift2() -> tuple[dict, dict]:
+    """Placement against the tokenizer (results/PREREGISTRATION_5.md)."""
+    path = os.path.join(ROOT, "results", "shift2", "summary.json")
+    if not os.path.exists(path):
+        return {}, {}
+    d = json.load(open(path)); W = d["by_window"]
+    base = [r for r in d["not_effective"] if r["model"] == "base" and r["window"] == "3-5"]
+    return {"stwoPairs": d["T1"]["pairs"], "stwoWins": d["T1"]["smaller_at_3_5"], "stwoShallowRel": d["T2"]["relapses"], "stwoShallowN": d["T2"]["effective"],
+            "stwoMidRel": d["T3"]["7-9"][0], "stwoMidN": d["T3"]["7-9"][1], "stwoDefaultRel": d["T3"]["5-7"][0], "stwoDefaultN": d["T3"]["5-7"][1],
+            "stwoShallowMean": signed(100 * W["3-5"]["mean_rise"]), "stwoDefaultMean": signed(100 * W["5-7"]["mean_rise"]), "stwoShallowMax": signed(100 * W["3-5"]["max_rise"]),
+            "stwoShallowDeployed": pct(W["3-5"]["mean_wmdp_official"]), "stwoDefaultDeployed": pct(W["5-7"]["mean_wmdp_official"]), "stwoMidDeployed": pct(W["7-9"]["mean_wmdp_official"]),
+            "stwoBaseLow": pct(min(r["wmdp_official"] for r in base)), "stwoBaseHigh": pct(max(r["wmdp_official"] for r in base)), "stwoBaseAll": len([r for r in d["not_effective"] if r["model"] == "base"])}, {}
+
+
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         open(os.path.join(PAPER, name), "w").write(tex)

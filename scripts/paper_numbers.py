@@ -204,9 +204,34 @@ def shift() -> tuple[dict, dict]:
     return nums, {}
 
 
+def place() -> tuple[dict, dict]:
+    """Numbers of the placement experiment and of the final models (results/PREREGISTRATION_3.md)."""
+    nums = {}
+    path = os.path.join(ROOT, "results", "place", "summary.json")
+    if os.path.exists(path):
+        d = json.load(open(path)); A = d["results"]["all_five"]
+        q = lambda fmt, k: next(v for name, v in A[fmt].items() if name.startswith(k))
+        for k, tag in (("Q1", "One"), ("Q2", "Two"), ("Q3", "Three")):
+            nums.update({f"placeQ{tag}Wins": q("fp16", k)["wins"], f"placeQ{tag}Losses": q("fp16", k)["losses"], f"placeQ{tag}P": f"{q('fp16', k)['p']:.3f}"})
+        nums.update(placeQTwoWinsQ=q("Q4_0", "Q2")["wins"], placeQTwoWinsN=q("nf4", "Q2")["wins"])
+        pairs = q("fp16", "Q2")["pairs"]
+        nums.update(placeShallowMean=pct(np.mean([x["best_chosen"] for x in pairs])), placeDefaultMean=pct(np.mean([x["best_default"] for x in pairs])))
+    path = os.path.join(ROOT, "results", "final", "summary.json")
+    if os.path.exists(path):
+        d = json.load(open(path)); Q, P = d["Q4"], d["pairs"]
+        won = [x for x in P if x["difference"] < 0]
+        change = [100 * v["change"] for x in P for f, v in x["formats"].items() if "change" in v]
+        nums.update(finalWins=Q["lower_at_3_5"], finalLosses=Q["lower_at_5_7"], finalP=f"{Q['p']:.3f}", finalSig=Q["significant_pairs"], finalMeanNew=pct(Q["mean_wmdp_3_5"]), finalMeanOld=pct(Q["mean_wmdp_5_7"]),
+                    finalGainLow=f"{min(-100 * x['difference'] for x in won):.1f}", finalGainHigh=f"{max(-100 * x['difference'] for x in won):.1f}",
+                    finalCostMax=f"{max(100 * x['cost_3_5'] for x in P):.1f}", finalCostMean=f"{np.mean([100 * x['cost_3_5'] for x in P]):.1f}",
+                    finalBaseCostOld=" and ".join(f"{100 * x['cost_5_7']:.1f}" for x in P if x["model"] == "base"), finalBaseCostNew=" and ".join(f"{100 * x['cost_3_5']:.1f}" for x in P if x["model"] == "base"),
+                    finalChangeLow=signed(min(change)), finalChangeHigh=signed(max(change)), finalRelapses=sum(bool(v.get("relapse")) for x in P for v in x["formats"].values()))
+    return nums, {}
+
+
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift):
+    for part in (control, relapse_map, deep, shift, place):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         open(os.path.join(PAPER, name), "w").write(tex)

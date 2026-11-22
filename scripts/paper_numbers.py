@@ -119,25 +119,49 @@ def deep() -> tuple[dict, dict]:
     # real llama.cpp files, compared by AuditKIT
     real = [(n, v) for models in d["part_b_real_files"].values() for n, v in models.items()]
     if real:
-        short = lambda n: "Original" if n.endswith("_base") else re.sub(r".*?(lr[^_]+)_s(\d+)$", lambda m: f"Seed {m.group(2)}, {m.group(1).replace('lr', 'lr ')}", n.replace("_x10", "").replace("_W10-12", "").replace("_W13-15", ""))
+        keep = [(t, n, v) for t, models in d["part_b_real_files"].items() if t != "deep_ladder_s12" for n, v in models.items() if not n.endswith("_base") and "file_nb" not in n and "Q4_K_M" in v]
+        def short(n):
+            m = NAME.search(n.replace("_x10", "_W10-12").replace("lr2e-4", "lr0.0002").replace("lr1e-3", "lr0.001"))
+            return f"{m['model'].split('_')[-1].capitalize()} {m['seed']}, lr {lr_text(m['lr'])}"
         rc = lambda v, f: f"{pct(v[f]['file'])} ({signed(100 * v[f]['rise'])})" + ("$^{*}$" if v[f]["relapse"] else "") if f in v else "--"
-        body = "".join(f"{short(n)} & {pct(v['Q4_0']['fp16'])} & {rc(v, 'Q4_0')} & {rc(v, 'Q4_K_M')} \\\\\n" for n, v in sorted(real, key=lambda x: (not x[0].endswith('_base'), x[0])))
-        tables["table_real.tex"] = table("lrrr", r"Tiny Aya Base & fp16 & \fq{} file & \qkm{} file \\" + "\n", body,
-                                         r"Real llama.cpp files: \wmdp{} accuracy (\%) and change against fp16, compared with AuditKIT's paired bootstrap. $^{*}$ marks a relapse.", "tab:real")
+        body = "".join(f"{short(n)} & {pct(v['Q4_0']['fp16'])} & {rc(v, 'Q4_0')} & {rc(v, 'Q4_K_M')} & {rc(v, 'nf4')} \\\\\n" for t, n, v in sorted(keep, key=lambda x: short(x[1])))
+        tables["table_real.tex"] = table("lrrrr", r"Run & fp16 & \fq{} file & \qkm{} file & \nf{} \\" + "\n", body,
+                                         r"Real llama.cpp files of every relapsing run: \wmdp{} accuracy (\%) and change against fp16, compared with AuditKIT's paired bootstrap. \nf{} is the round trip, which the bitsandbytes loader reproduces. $^{*}$ marks a relapse.", "tab:real", "2.5pt")
+        rep_real = [v for t, models in d["part_b_real_files"].items() for n, v in models.items() if "file_nb600" in n]
+        if rep_real:
+            nums.update(repRealRise=signed(100 * rep_real[0]["Q4_0"]["rise"]), repRealP=f"{rep_real[0]['Q4_0']['p']:.2f}", repRealFile=pct(rep_real[0]["Q4_0"]["file"]))
         for n, v in real:
             key = "realOrig" if n.endswith("_base") else "realA" if "1e-3" in n and "s12" in n else "realB" if "2e-4" in n and "s12" in n and "file" not in n else None
             if key:
                 nums.update({key + "Fp": pct(v["Q4_0"]["fp16"]), key + "File": pct(v["Q4_0"]["file"]), key + "Rise": signed(100 * v["Q4_0"]["rise"]), key + "P": f"{v['Q4_0']['p']:.3f}"})
-    # where the rise comes from: one part of the model rounded at a time (seed 12, mean of the three runs)
+    # where the rise comes from: one part of the model rounded at a time, for every relapse case
     C = d["part_c"]["by_format"]
-    if "Q4_0" in C and "nf4" in C:
-        parts = (("before", "Layers in front of the edit"), ("edited", "The three edited matrices"), ("window_other", "Other matrices in the window"), ("after", "Layers behind the edit"), ("all", "Whole model"))
-        s12 = [k for k in C["Q4_0"] if k.endswith("_s12")]
-        mean = lambda fmt, part: np.mean([100 * C[fmt][k][part]["rise"] for k in s12 if part in C[fmt].get(k, {})])
-        body = "".join(f"{label} & {signed(100 * C['Q4_0']['base'][part]['rise'])} & {signed(mean('Q4_0', part))} & {signed(100 * C['nf4']['base'][part]['rise'])} & {signed(mean('nf4', part))} \\\\\n" for part, label in parts)
-        tables["table_cause.tex"] = table("lrrrr", r" & \multicolumn{2}{c}{\fq{}} & \multicolumn{2}{c}{\nf{}} \\" + "\nPart rounded to 4 bits & Orig. & Unl. & Orig. & Unl. \\\\\n", body,
-                                          r"Change in \wmdp{} (points) when only one part of the model is rounded, for the original Tiny Aya Base and for the three unlearned seed-12 runs (mean).", "tab:cause", "3pt")
-        nums.update(causeAfterUnl=signed(mean("Q4_0", "after")), causeAfterOrig=signed(100 * C["Q4_0"]["base"]["after"]["rise"]), causeBeforeUnl=signed(mean("Q4_0", "before")), causeEditedUnl=signed(mean("Q4_0", "edited")))
+    parts = (("before", "Layers in front of the edit"), ("edited", "The three edited matrices"), ("window_other", "Other matrices in the window"), ("after", "Layers behind the edit"), ("all", "Whole model"))
+    cases = []
+    if "Q4_0" in C:
+        s12 = [k for k in C["Q4_0"] if k.endswith("_s12") and all(p in C["Q4_0"][k] for p, _ in parts)]
+        if s12:
+            cases.append(("Base 12", {p: np.mean([100 * C["Q4_0"][k][p]["rise"] for k in s12]) for p, _ in parts}))
+    for fmt, key, label in (("Q4_0", "base_W10-12_lr0.00045_s43", "Base 43"), ("nf4", "fire_W13-15_lr0.002_s44", "Fire 44"), ("nf4", "water_W10-12_lr0.001_s42", "Water 42")):
+        if key in C.get(fmt, {}) and all(p in C[fmt][key] for p, _ in parts):
+            cases.append((label, {p: 100 * C[fmt][key][p]["rise"] for p, _ in parts}))
+    if cases:
+        body = "".join(f"{label} & " + " & ".join(signed(v[p]) for _, v in cases) + " \\\\\n" for p, label in parts)
+        tables["table_cause.tex"] = table("l" + "r" * len(cases), r" & \multicolumn{2}{c}{\fq{}} & \multicolumn{2}{c}{\nf{}} \\" + "\nPart rounded to 4 bits & " + " & ".join(n for n, _ in cases) + " \\\\\n", body,
+                                          r"Change in \wmdp{} (points) when only one part of the model is rounded to the format that relapses. Columns are the relapsing runs (model and seed; Base 12 is the mean of its three runs).", "tab:cause", "3pt")
+        nums.update(causeEditedMax=f"{max(v['edited'] for _, v in cases):.1f}", causeCases=len(cases) + 2)
+        for n, v in cases:
+            nums["cause" + n.replace(" ", "").replace("12", "A").replace("43", "B").replace("44", "").replace("42", "")] = f"{signed(v['before'])} in front, {signed(v['after'])} behind"
+    # NF4 as bitsandbytes loads it
+    for v in ("fire", "water"):
+        pth = os.path.join(ROOT, "results", "deep", f"real_deep_bnb_{v}", "bnb.json")
+        if os.path.exists(pth):
+            by = {(r["model"], r["prec"]): r for r in json.load(open(pth))}
+            name = next(m for m, _ in by if m != "base")
+            nums.update({f"bnb{v.capitalize()}Fp": pct(by[(name, "fp16")]["wmdp-bio"]), f"bnb{v.capitalize()}File": pct(by[(name, "nf4_bitsandbytes")]["wmdp-bio"]),
+                         f"bnb{v.capitalize()}Rise": signed(100 * (by[(name, "nf4_bitsandbytes")]["wmdp-bio"] - by[(name, "fp16")]["wmdp-bio"]))})
+    qkm = [v["Q4_K_M"] for _, v in real if "Q4_K_M" in v and not _.endswith("_base")] if real else []
+    nums.update(qkmFiles=len(qkm), qkmRelapses=sum(x["relapse"] for x in qkm), qkmMax=signed(max(100 * x["rise"] for x in qkm)) if qkm else "")
     # the repair: every relapsing run with its arms
     labels = (("repaired", "Trained on the file, 600"), ("repaired_nf4", "Trained on the file, 600"), ("plain_600", "Plain RMU, 600"), ("file_300", "Trained on the file, 300"), ("file_nf4_300", "Trained on the file, 300"), ("edited_only", "Edited matrices rounded"))
     body, rep = "", []
@@ -157,9 +181,32 @@ def deep() -> tuple[dict, dict]:
     return nums, tables
 
 
+def shift() -> tuple[dict, dict]:
+    """Numbers of the tokenizer experiment (results/PREREGISTRATION_2.md)."""
+    path = os.path.join(ROOT, "results", "shift", "summary.json")
+    if not os.path.exists(path):
+        return {}, {}
+    d = json.load(open(path)); A, H, R = d["all_five"], d["held_out"], d["runs"]
+    old = [r for r in R if r["train_tok"] == "outdated"]; eff = [r for r in old if r["effective"]]
+    rise = lambda rs: [100 * r["rise"] for r in rs]
+    win = lambda rs, w: [r for r in rs if r["window"] == w]
+    base = [r for r in old if r["model"] == "base"]
+    both = [r for r in R if r["train_tok"] == "both" and r["effective"] and r["window"] == "5-7"]
+    off = [r for r in R if r["train_tok"] == "official" and r["effective"]]
+    nums = {"shiftRuns": len(R), "shiftEff": len(eff), "shiftUp": A["P1"]["wins"], "shiftDown": A["P1"]["losses"], "shiftPone": f"{A['P1']['p']:.4f}", "shiftRelapses": A["P1"]["pipeline_relapses"],
+            "shiftHeldUp": H["P1"]["wins"], "shiftHeldDown": H["P1"]["losses"], "shiftHeldP": f"{H['P1']['p']:.3f}",
+            **{f"shiftMean{k}": signed(np.mean(rise(win(eff, w)))) for k, w in (("Default", "5-7"), ("Mid", "7-9"), ("Deep", "10-12"))},
+            "shiftMaxRise": f"{max(rise(eff)):.1f}", "shiftMidLow": signed(min(rise(win(eff, '7-9')))), "shiftMidHigh": signed(max(rise(win(eff, '7-9')))),
+            "shiftPtwoWins": A["P2"]["wins"], "shiftPtwoN": A["P2"]["wins"] + A["P2"]["losses"], "shiftPthreeWins": A["P3"]["wins"], "shiftPthreeLosses": A["P3"]["losses"], "shiftPthreeP": f"{A['P3']['p']:.3f}",
+            "shiftPfourWins": A["P4"]["wins"], "shiftPfourLosses": A["P4"]["losses"], "shiftBothGap": signed(np.mean(rise(both))),
+            "shiftBaseLab": f"{100 * np.mean([r['wmdp_outdated'] for r in base]):.1f}", "shiftBaseLow": f"{100 * min(r['wmdp_official'] for r in base):.1f}", "shiftBaseHigh": f"{100 * max(r['wmdp_official'] for r in base):.1f}",
+            "shiftReverseEff": len(off), "shiftReverseRel": sum(-r["rise"] >= 0.05 and r["p"] < 0.05 for r in off), "shiftReverseMean": signed(-np.mean(rise(off)))}
+    return nums, {}
+
+
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep):
+    for part in (control, relapse_map, deep, shift):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         open(os.path.join(PAPER, name), "w").write(tex)

@@ -25,7 +25,8 @@ from datasets import load_dataset
 from transformers import AutoTokenizer
 from circuitkit.tasks.builtins import wmdp as _w
 from circuitkit.tasks._chat import to_tokens as _tt
-MAXLEN, NEX = 80, 64
+MAXLEN, NEX = 80, int(os.environ.get("NEX", "64"))      # pre-registration 3 used 64 prompts; more is an exploratory stability check
+SAMPLES, SUB = int(os.environ.get("SAMPLES", "700")), os.environ.get("OUT_SUB", "circuitkit")
 def agg(scores):
     layers = {l: {"mlp": 0.0, "attn": 0.0, "mlp_abs": 0.0, "attn_abs": 0.0} for l in range(36)}
     for k, v in scores.items():
@@ -51,7 +52,7 @@ api = HfApi()
 def push():
     for f in ("layer_importance.json", "node_scores.json", "tokenizer_check.json", "faithfulness.json", "error.txt"):
         if os.path.exists(f"{OUT}/{f}"):
-            api.upload_file(path_or_fileobj=f"{OUT}/{f}", path_in_repo=f"circuitkit/{V}/{f}", repo_id="itssaharsh/relapse-stage2", repo_type="dataset", commit_message=f"circuitkit {V}: {f}")
+            api.upload_file(path_or_fileobj=f"{OUT}/{f}", path_in_repo=f"{SUB}/{V}/{f}", repo_id="itssaharsh/relapse-stage2", repo_type="dataset", commit_message=f"circuitkit {V}: {f}")
 t0 = time.time()
 try:
     model = ck.load_model(MD, dtype="float16", algorithm="eap-ig")
@@ -64,7 +65,7 @@ try:
     model.unembed.W_U = torch.nn.Parameter(model.embed.W_E.T.detach(), requires_grad=False)  # tied weights: drop the duplicate copy
     torch.cuda.empty_cache()
     circuit = ck.discover(model, "wmdp", algorithm="eap-ig", n_examples=NEX, batch_size=1, ig_steps=5, model_name=MD,
-                          samples_per_config=700, configs="wmdp-bio", sparsity=0.5, scope="both", output_path=OUT + "/circuit.pt")
+                          samples_per_config=SAMPLES, configs="wmdp-bio", sparsity=0.5, scope="both", output_path=OUT + "/circuit.pt")
     scores = dict(circuit.scores); layers = agg(scores)
     score = lambda a: sum(layers[l]["mlp_abs"] for l in range(a, a + 3))
     a = max(range(1, 11), key=score)

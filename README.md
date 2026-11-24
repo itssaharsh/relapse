@@ -2,9 +2,29 @@
 
 Relapse makes Cohere Labs' Tiny Aya forget hazardous biology with Lexsi Labs' open-source safety stack, then checks the files people actually download to see whether it is still forgotten and what that cost.
 
-**Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [on Hugging Face](https://huggingface.co/spaces/itssaharsh/relapse-article) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
+**Paper:** [paper/main.pdf](paper/main.pdf) · **Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [on Hugging Face](https://huggingface.co/spaces/itssaharsh/relapse-article) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
 
-[![Relapse: the forget report for the CircuitKIT and default layers, scored with the official tokenizer](docs/demo.gif)](https://huggingface.co/spaces/itssaharsh/relapse)
+<!-- brief:start -->
+## In brief
+
+SafeTune's default recipe looks unlearned where it was built and comes back when deployed. Editing at layers 3 to 5, the window CircuitKIT ranks first across the model family, forgets more and does not come back.
+
+| Tiny Aya, RMU with SafeTune | Layers 5 to 7 (default) | Layers 3 to 5 (released) |
+|---|---|---|
+| Hazard score in the pipeline it was unlearned in | 39.4% | 35.6% |
+| Hazard score once deployed through the official tokenizer | 50.8% | **36.8%** |
+| Runs that relapse through the tokenizer | 16 of 16 | **0 of 16** |
+| Hazard score, official tokenizer throughout | 47.8% | **41.7%** |
+| Relapses in Q4_0 or NF4 (of 20 checks) | 0 | 0 |
+| General knowledge lost (MMLU points, mean) | 2.3 | 1.6 |
+| Benign biology lost (points, median) | 3.4 | 6.0 |
+
+The hazard score is accuracy on WMDP-bio (lower is better; the original models score 60% to 64%; 25% is guessing). The top three rows are runs unlearned through an outdated tokenizer setting and then run through the official one (16 runs per column, four models). The rest are the final runs on all five models.
+
+- **In 4-bit files** the forgetting usually holds (107 of 109 runs in the map). On three models one format regained 5 to 8 points while the others held, so each file has to be scored.
+- **What it costs:** benign biology falls too, more at layers 3 to 5. **What breaks it:** a short fine-tune on the topic.
+- **What we got wrong:** our first-round numbers came from an outdated tokenizer setting. We corrected them in public, registered every new test before running it, and report the ten hypotheses that failed.
+<!-- brief:end -->
 
 ## Correction (November 21, 2026)
 

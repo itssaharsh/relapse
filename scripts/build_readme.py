@@ -128,12 +128,66 @@ Layers 3 to 5, two seeds per model (the table shows their mean). WMDP-bio is the
 """
 
 
+def brief() -> str:
+    """The result in brief, for the top of the page: the same rows as Table 1 of the paper."""
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from analyze_map_shim import paired
+    s2, fin, check = load("shift2", "summary.json"), load("final", "summary.json"), load("final", "check.json")
+    W = s2["by_window"]; rng = np.random.default_rng(0)
+    relapses = {"3-5": 0, "5-7": 0}; cost = {"3-5": [], "5-7": []}; benign = {"3-5": [], "5-7": []}
+    for v in ("global", "fire", "earth", "water", "base"):
+        rows = {(r["model"], r["prec"]): r for r in load("final", f"{v}_seed33", "results.json")}; items = load("final", f"{v}_seed33", "items.json")
+        for (m, p), r in rows.items():
+            if p != "fp16" or m == "base":
+                continue
+            w = re.search(r"_W(\d+-\d+)_", m).group(1)
+            cost[w].append(rows[("base", "fp16")]["mmlu"] - r["mmlu"])
+            for f in ("Q4_0", "nf4"):
+                delta, pv = paired(items[f"{m}|fp16|wmdp-bio"], items[f"{m}|{f}|wmdp-bio"], rng)
+                relapses[w] += int(delta >= 0.05 and pv < 0.05)
+        c = {(r["model"], r["prec"]): r for r in load("final", f"check_{v}", "certify.json") if "wmdp-bio" in r}
+        for (m, p), r in c.items():
+            if p == "fp16" and m != "base":
+                benign[re.search(r"_W(\d+-\d+)_", m).group(1)].append(c[("base", "fp16")]["benign-bio"] - r["benign-bio"])
+    E10 = list(check.values())
+    return f"""## In brief
+
+SafeTune's default recipe looks unlearned where it was built and comes back when deployed. Editing at layers 3 to 5, the window CircuitKIT ranks first across the model family, forgets more and does not come back.
+
+| Tiny Aya, RMU with SafeTune | Layers 5 to 7 (default) | Layers 3 to 5 (released) |
+|---|---|---|
+| Hazard score in the pipeline it was unlearned in | {pc(W['5-7']['mean_wmdp_outdated'])}% | {pc(W['3-5']['mean_wmdp_outdated'])}% |
+| Hazard score once deployed through the official tokenizer | {pc(W['5-7']['mean_wmdp_official'])}% | **{pc(W['3-5']['mean_wmdp_official'])}%** |
+| Runs that relapse through the tokenizer | {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} | **{s2['T2']['relapses']} of {s2['T2']['effective']}** |
+| Hazard score, official tokenizer throughout | {pc(fin['Q4']['mean_wmdp_5_7'])}% | **{pc(fin['Q4']['mean_wmdp_3_5'])}%** |
+| Relapses in Q4_0 or NF4 (of 20 checks) | {relapses['5-7']} | {relapses['3-5']} |
+| General knowledge lost (MMLU points, mean) | {100 * np.mean(cost['5-7']):.1f} | {100 * np.mean(cost['3-5']):.1f} |
+| Benign biology lost (points, median) | {100 * np.median(benign['5-7']):.1f} | {100 * np.median(benign['3-5']):.1f} |
+
+The hazard score is accuracy on WMDP-bio (lower is better; the original models score 60% to 64%; 25% is guessing). The top three rows are runs unlearned through an outdated tokenizer setting and then run through the official one (16 runs per column, four models). The rest are the final runs on all five models.
+
+- **In 4-bit files** the forgetting usually holds (107 of 109 runs in the map). On three models one format regained 5 to 8 points while the others held, so each file has to be scored.
+- **What it costs:** benign biology falls too, more at layers 3 to 5. **What breaks it:** a short fine-tune on the topic.
+- **What we got wrong:** our first-round numbers came from an outdated tokenizer setting. We corrected them in public, registered every new test before running it, and report the {FAILED} hypotheses that failed.
+"""
+
+
+FAILED = "ten"
+
+
 def main() -> None:
     text = block()
     for doc in DOCS:
         p = os.path.join(ROOT, doc); s = open(p).read()
         body = text if doc == "README.md" else text.replace("](results/", "](" + REPO + "results/")
         new = "<!-- stage2:start -->\n" + body + "<!-- stage2:end -->\n"
+        bnew = "<!-- brief:start -->\n" + brief() + "<!-- brief:end -->\n"
+        if "<!-- brief:start -->" in s:
+            s = re.sub(r"<!-- brief:start -->.*?<!-- brief:end -->\n", lambda _: bnew, s, flags=re.S)
+        else:
+            i = s.index("## Correction (November 21, 2026)")
+            s = s[:i] + bnew + "\n" + s[i:]
         if "<!-- stage2:start -->" in s:
             s = re.sub(r"<!-- stage2:start -->.*?<!-- stage2:end -->\n", lambda _: new, s, flags=re.S)
         else:      # first run: replace the interim sections

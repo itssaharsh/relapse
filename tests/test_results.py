@@ -50,7 +50,7 @@ def test_every_number_in_the_write_up_is_measured():
     pts |= {round(p, 1) for p in pct}
     bad = []
     for doc in DOCS:
-        text = re.sub(r"<!-- (scores|recipes|stage2):start -->.*?<!-- (scores|recipes|stage2):end -->", "", read(doc), flags=re.S)
+        text = re.sub(r"<!-- (scores|recipes|stage2|brief):start -->.*?<!-- (scores|recipes|stage2|brief):end -->", "", read(doc), flags=re.S)
         bad += [f"{doc}: {x}%" for x in re.findall(r"(?<![\d.$])(\d+(?:\.\d+)?)%", text) if float(x) not in pct]
         bad += [f"{doc}: {x} points" for x in re.findall(r"(?<![\d.$])(\d+\.\d+) points?", text) if float(x) not in pts]
         bad += [f"{doc}: p = {x}" for x in re.findall(r"p = (0\.\d+)", text) if float(x) not in pv]
@@ -58,7 +58,9 @@ def test_every_number_in_the_write_up_is_measured():
 
 
 def test_stage2_block_is_rebuilt_from_the_results():
-    from build_readme import REPO, block
+    from build_readme import REPO, block, brief
+    for doc in DOCS:
+        assert "<!-- brief:start -->\n" + brief() + "<!-- brief:end -->" in read(doc)
     text = block()
     assert "<!-- stage2:start -->\n" + text + "<!-- stage2:end -->" in read("README.md")
     assert "<!-- stage2:start -->\n" + text.replace("](results/", "](" + REPO + "results/") + "<!-- stage2:end -->" in read(os.path.join("docs", "ARTICLE.md"))

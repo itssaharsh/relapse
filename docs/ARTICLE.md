@@ -2,6 +2,28 @@
 
 Small models like Cohere Labs' [Tiny Aya](https://huggingface.co/CohereLabs/tiny-aya-global) run offline, on phones and laptops, where no server can filter what they say. Any safety has to live in the model's weights, and in the compressed file people actually download. We used four Lexsi Labs tools to make Tiny Aya forget hazardous biology and checked whether it stays forgotten in those files.
 
+<!-- brief:start -->
+## In brief
+
+SafeTune's default recipe looks unlearned where it was built and comes back when deployed. Editing at layers 3 to 5, the window CircuitKIT ranks first across the model family, forgets more and does not come back.
+
+| Tiny Aya, RMU with SafeTune | Layers 5 to 7 (default) | Layers 3 to 5 (released) |
+|---|---|---|
+| Hazard score in the pipeline it was unlearned in | 39.4% | 35.6% |
+| Hazard score once deployed through the official tokenizer | 50.8% | **36.8%** |
+| Runs that relapse through the tokenizer | 16 of 16 | **0 of 16** |
+| Hazard score, official tokenizer throughout | 47.8% | **41.7%** |
+| Relapses in Q4_0 or NF4 (of 20 checks) | 0 | 0 |
+| General knowledge lost (MMLU points, mean) | 2.3 | 1.6 |
+| Benign biology lost (points, median) | 3.4 | 6.0 |
+
+The hazard score is accuracy on WMDP-bio (lower is better; the original models score 60% to 64%; 25% is guessing). The top three rows are runs unlearned through an outdated tokenizer setting and then run through the official one (16 runs per column, four models). The rest are the final runs on all five models.
+
+- **In 4-bit files** the forgetting usually holds (107 of 109 runs in the map). On three models one format regained 5 to 8 points while the others held, so each file has to be scored.
+- **What it costs:** benign biology falls too, more at layers 3 to 5. **What breaks it:** a short fine-tune on the topic.
+- **What we got wrong:** our first-round numbers came from an outdated tokenizer setting. We corrected them in public, registered every new test before running it, and report the ten hypotheses that failed.
+<!-- brief:end -->
+
 ## Correction (November 21, 2026)
 
 **Our Stage 1 results contained a serious error, and we have withdrawn two of the claims in our submission.**

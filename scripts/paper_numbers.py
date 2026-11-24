@@ -251,6 +251,20 @@ def place() -> tuple[dict, dict]:
         nums["placeWaterMargin"] = f"{100 * (share[2] - share[3]) / sum(share.values()):.1f}"
         pairs = q("fp16", "Q2")["pairs"]
         nums.update(placeShallowMean=pct(np.mean([x["best_chosen"] for x in pairs])), placeDefaultMean=pct(np.mean([x["best_default"] for x in pairs])))
+    def windows(folder):      # share of MLP attribution of each three-layer window in layers 1-12, per model
+        out = {}
+        for v in ("global", "fire", "earth", "water", "base"):
+            L = json.load(open(os.path.join(ROOT, "results", "place", folder, v, "layer_importance.json")))["per_layer"]
+            sc = {f"{a}-{a + 2}": sum(L[str(l)]["mlp_abs"] for l in range(a, a + 3)) for a in range(1, 11)}
+            out[v] = {k: x / sum(sc.values()) for k, x in sc.items()}
+        return out
+    if os.path.exists(os.path.join(ROOT, "results", "place", "circuitkit_more", "base", "layer_importance.json")):
+        few, many = windows("circuitkit"), windows("circuitkit_more")
+        top = lambda w: {v: max(w[v], key=w[v].get) for v in w}
+        pooled = lambda w: sorted(((np.mean([w[v][k] for v in w]), k) for k in w["global"]), reverse=True)
+        nums.update(ckChanged=sum(top(few)[v] != top(many)[v] for v in few), ckPooledFew=pooled(few)[0][1].replace("-", "--"), ckPooledMany=pooled(many)[0][1].replace("-", "--"),
+                    ckLeadFew=f"{100 * (pooled(few)[0][0] - pooled(few)[1][0]):.1f}", ckLeadMany=f"{100 * (pooled(many)[0][0] - pooled(many)[1][0]):.1f}",
+                    ckTopMany=sum(top(many)[v] == "3-5" for v in many))
     path = os.path.join(ROOT, "results", "final", "summary.json")
     if os.path.exists(path):
         d = json.load(open(path)); Q, P = d["Q4"], d["pairs"]

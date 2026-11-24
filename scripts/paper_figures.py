@@ -53,6 +53,25 @@ def relapse_map() -> None:
     fig.savefig(os.path.join(OUT, "map.pdf")); fig.savefig(os.path.join(OUT, "map.png"), dpi=220); plt.close(fig)
 
 
+def tokenizer() -> None:
+    """Each run unlearned through the outdated tokenizer: its score in that pipeline, and once deployed through the official one."""
+    d = json.load(open(os.path.join(ROOT, "results", "shift2", "summary.json")))
+    fig, axes = plt.subplots(1, 3, figsize=(3.03, 1.75), sharey=True)
+    for ax, (w, label) in zip(axes, (("5-7", "Layers 5–7\n(default)"), ("3-5", "Layers 3–5\n(released)"), ("7-9", "Layers 7–9"))):
+        style(ax)
+        runs = [r for r in d["runs"] if r["window"] == w]
+        for r in runs:
+            counted = r["effective"]; up = r["pipeline_relapse"]
+            ax.plot((0, 1), (100 * r["wmdp_outdated"], 100 * r["wmdp_official"]), color=MUTED if not counted else (RELAPSE if up else HELD), linewidth=0.8 if counted else 0.6,
+                    alpha=0.85 if counted else 0.6, linestyle="-" if counted else (0, (2, 2)), marker="o", markersize=2.2, zorder=3 if up else 2)
+        ax.set_xlim(-0.3, 1.3); ax.set_xticks((0, 1)); ax.set_xticklabels(("lab", "live"), fontsize=6.5); ax.set_title(label, fontsize=7, color=INK, pad=3)
+        ax.set_ylim(20, 58); ax.set_yticks((25, 35, 45, 55))
+    axes[0].set_ylabel("WMDP-bio (%)", color=INK, fontsize=7.5)
+    fig.subplots_adjust(left=0.15, right=0.995, top=0.84, bottom=0.12, wspace=0.08)
+    fig.savefig(os.path.join(OUT, "tokenizer.pdf")); fig.savefig(os.path.join(OUT, "tokenizer.png"), dpi=220); plt.close(fig)
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     relapse_map()
+    tokenizer()

@@ -331,9 +331,47 @@ def shift2() -> tuple[dict, dict]:
             "stwoBaseLow": pct(min(r["wmdp_official"] for r in base)), "stwoBaseHigh": pct(max(r["wmdp_official"] for r in base)), "stwoBaseAll": len([r for r in d["not_effective"] if r["model"] == "base"])}, {}
 
 
+def glance() -> tuple[dict, dict]:
+    """The result in brief: SafeTune's default layers against layers 3-5, from pre-registrations 3 (final seeds) and 5."""
+    p2, pf = os.path.join(ROOT, "results", "shift2", "summary.json"), os.path.join(ROOT, "results", "final", "summary.json")
+    if not (os.path.exists(p2) and os.path.exists(pf)):
+        return {}, {}
+    s2, fin = json.load(open(p2)), json.load(open(pf)); W = s2["by_window"]
+    rng = np.random.default_rng(0)
+    from analyze_map_shim import paired
+    relapses = {"3-5": 0, "5-7": 0}; cost = {"3-5": [], "5-7": []}; benign = {"3-5": [], "5-7": []}
+    for v in ("global", "fire", "earth", "water", "base"):
+        d = os.path.join(ROOT, "results", "final", f"{v}_seed33")
+        rows = {(r["model"], r["prec"]): r for r in json.load(open(os.path.join(d, "results.json")))}; items = json.load(open(os.path.join(d, "items.json")))
+        for (m, p), r in rows.items():
+            if p != "fp16" or m == "base":
+                continue
+            w = re.search(r"_W(\d+-\d+)_", m).group(1)
+            cost[w].append(100 * (rows[("base", "fp16")]["mmlu"] - r["mmlu"]))
+            for f in ("Q4_0", "nf4"):
+                delta, pv = paired(items[f"{m}|fp16|wmdp-bio"], items[f"{m}|{f}|wmdp-bio"], rng)
+                relapses[w] += int(delta >= 0.05 and pv < 0.05)
+        c = {(r["model"], r["prec"]): r for r in json.load(open(os.path.join(ROOT, "results", "final", f"check_{v}", "certify.json"))) if "wmdp-bio" in r}
+        for (m, p), r in c.items():
+            if p == "fp16" and m != "base":
+                benign[re.search(r"_W(\d+-\d+)_", m).group(1)].append(100 * (c[("base", "fp16")]["benign-bio"] - r["benign-bio"]))
+    row = lambda label, a_, b_: f"{label} & {a_} & {b_} \\\\\n"
+    body = (row("\\wmdp{} through the pipeline it was unlearned in (\\%)", pct(W["5-7"]["mean_wmdp_outdated"]), pct(W["3-5"]["mean_wmdp_outdated"]))
+            + row("\\wmdp{} once deployed through the official tokenizer (\\%)", pct(W["5-7"]["mean_wmdp_official"]), "\\textbf{" + pct(W["3-5"]["mean_wmdp_official"]) + "}")
+            + row("Runs that relapse through the tokenizer", f"{s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]}", "\\textbf{" + f"{s2['T2']['relapses']} of {s2['T2']['effective']}" + "}")
+            + "\\midrule\n"
+            + row("\\wmdp{}, official tokenizer throughout (\\%)", pct(fin["Q4"]["mean_wmdp_5_7"]), "\\textbf{" + pct(fin["Q4"]["mean_wmdp_3_5"]) + "}")
+            + row("Relapses in \\fq{} or \\nf{} (of 20 checks)", relapses["5-7"], relapses["3-5"])
+            + row("MMLU points lost (mean)", f"{np.mean(cost['5-7']):.1f}", f"{np.mean(cost['3-5']):.1f}")
+            + row("Benign-biology points lost (median)", f"{np.median(benign['5-7']):.1f}", f"{np.median(benign['3-5']):.1f}"))
+    tex = table("p{0.60\\columnwidth}rr", "Tiny Aya, RMU with SafeTune & Layers 5--7 & Layers 3--5 \\\\\n & (default) & (released) \\\\\n", body,
+                "The result in brief. Top: runs unlearned through an outdated tokenizer setting, then deployed through the official one (pre-registration 5; four models, two seeds, 16 runs per column). Bottom: the final runs, five models and two seeds (pre-registration 3). Original models score 60--64\\% on \\wmdp{}; lower is better.", "tab:glance", "3pt")
+    return {"glanceRelDefault": relapses["5-7"], "glanceRelNew": relapses["3-5"]}, {"table_glance.tex": tex}
+
+
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         open(os.path.join(PAPER, name), "w").write(tex)

@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering\small\setlength{\tabcolsep}{3pt}
+\begin{tabular}{p{0.60\columnwidth}rr}
+\toprule
+Tiny Aya, RMU with SafeTune & Layers 5--7 & Layers 3--5 \\
+ & (default) & (released) \\
+\midrule
+\wmdp{} through the pipeline it was unlearned in (\%) & 39.4 & 35.6 \\
+\wmdp{} once deployed through the official tokenizer (\%) & 50.8 & \textbf{36.8} \\
+Runs that relapse through the tokenizer & 16 of 16 & \textbf{0 of 16} \\
+\midrule
+\wmdp{}, official tokenizer throughout (\%) & 47.8 & \textbf{41.7} \\
+Relapses in \fq{} or \nf{} (of 20 checks) & 0 & 0 \\
+MMLU points lost (mean) & 2.3 & 1.6 \\
+Benign-biology points lost (median) & 3.4 & 6.0 \\
+\bottomrule
+\end{tabular}
+\caption{The result in brief. Top: runs unlearned through an outdated tokenizer setting, then deployed through the official one (pre-registration 5; four models, two seeds, 16 runs per column). Bottom: the final runs, five models and two seeds (pre-registration 3). Original models score 60--64\% on \wmdp{}; lower is better.}
+\label{tab:glance}
+\end{table}

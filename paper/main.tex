@@ -33,6 +33,8 @@ An unlearned model is audited once, at full precision, through one tokenizer. Us
 
 \noindent\fbox{\parbox{0.96\columnwidth}{\small\textbf{Content note.} This paper studies the removal of hazardous biological knowledge. It contains no hazardous question text and no model-generated hazardous content.}}
 
+\input{table_glance}
+
 \section{Introduction}
 
 Small open-weight language models now run offline on phones and laptops. Offline, no server-side filter sits between the user and the model, so whatever safety the model has must live in its weights. \emph{Machine unlearning} aims to put it there by removing specific hazardous knowledge while preserving general ability \citep{li2024wmdp}.
@@ -41,7 +43,7 @@ Unlearning is usually evaluated once, on one full-precision checkpoint, through 
 
 We map this risk for representation misdirection (RMU; \citealp{li2024wmdp}) on Cohere's Tiny Aya family \citep{salamanca2026tinyaya}, using Lexsi Labs' SafeTune \citep{safetune}, CircuitKIT \citep{circuitkit}, AuditKIT \citep{auditkit} and CuratorKIT \citep{curatorkit}. Our first-round (Stage~1) submission reported a relapse in a 4-bit file. They were distorted by an outdated tokenizer setting, which we found, corrected and disclosed. Every confirmatory experiment in this paper was then pre-registered and run through the official tokenizer; the few exploratory analyses are marked as such. The relapse is real, but it is rarer, smaller and has a different cause than we first reported.
 
-Our contributions:
+Table~\ref{tab:glance} gives the result in brief. Our contributions:
 \begin{itemize}
 \setlength\itemsep{1pt}
 \item \textbf{A pre-registered map} of \mapRuns{} runs showing that RMU forgetting usually survives \fq{} and \nf{}.
@@ -86,22 +88,15 @@ Our first runs used a copy of Tiny Aya whose tokenizer setting predates a fix pu
 \subsection{Compression rarely undoes RMU}
 \label{sec:map}
 
-We pre-registered a map of \mapRuns{} runs: five models, five windows, three strengths and two fresh seeds. Of these, \mapEffective{} were \emph{effective} (fp16 \wmdp{} between 30\% and 55\%). \textbf{\mapHeld{} of the \mapEffective{} did not relapse in either 4-bit format} (Figure~\ref{fig:map}). On average, moving to 4-bit changed \wmdp{} by \mapMeanQ{} points in \fq{} and \mapMeanN{} in \nf{}, so the compressed copy forgot slightly \emph{more}. The two relapses (+\mapRelapseLow{} and +\mapRelapseHigh{} points) are both Tiny Aya Base, seed 12, layers 10--12, in \fq{} only.
+We pre-registered a map of \mapRuns{} runs: five models, five windows, three strengths and two fresh seeds. Of these, \mapEffective{} were \emph{effective} (fp16 \wmdp{} between 30\% and 55\%). \textbf{\mapHeld{} of the \mapEffective{} did not relapse in either 4-bit format}. On average, moving to 4-bit changed \wmdp{} by \mapMeanQ{} points in \fq{} and \mapMeanN{} in \nf{}, so the compressed copy forgot slightly \emph{more}. The two relapses (+\mapRelapseLow{} and +\mapRelapseHigh{} points) are both Tiny Aya Base, seed 12, layers 10--12, in \fq{} only.
 
 Two of our four hypotheses failed and one could not be evaluated. A single-format audit did not miss relapses in both directions, because no run relapsed in \nf{} alone. Layers 10--12 did not relapse significantly more than layers 7--9 (\mapHfourA{} against \mapHfourB{}, $p=\mapHfourP$; held-out models \mapHeldHfourA{} against \mapHeldHfourB{}, $p=\mapHeldHfourP$). Our test of cost at equal forgetting could not be evaluated, because all \mapHthreeN{} model-and-seed pairs failed to bracket the 40\% comparison point at both windows. The fourth, that a relapse tends to appear in one format, held on only these two cases.
 
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/map.pdf}
-\caption{The pre-registered map: each dot is one effective run. Above the dashed line the 4-bit copy has regained at least 5 points of hazardous knowledge.}
-\label{fig:map}
-\end{figure}
-
 \subsection{One file can relapse while its siblings hold}
 \label{sec:cases}
 
-The map's only relapse was Tiny Aya Base, seed 12, layers 10--12, in \fq{} (Figure~\ref{fig:map}). We pre-registered a follow-up of this case before running it.
+The map's only relapse was Tiny Aya Base, seed 12, layers 10--12, in \fq{}. We pre-registered a follow-up of this case before running it.
 
 \textbf{It reproduces.} Retraining the three seed-12 runs with the same settings on a different GPU type gave rises of \rerunRises{} points (Table~\ref{tab:cases}).
 
@@ -113,9 +108,8 @@ The map's only relapse was Tiny Aya Base, seed 12, layers 10--12, in \fq{} (Figu
 
 \input{table_cases}
 
-\textbf{In the forms people use.} Built with llama.cpp, the \fq{} file of one Base run scored \realAFile\% against \realAFp\% at fp16 (\realARise, $p\le\realAP$, AuditKIT's paired bootstrap). We had seen that file before registering the follow-up. The two Base files built afterwards rose by \realOtherRises{} points, under our 5-point line, so on unseen files this hypothesis failed (Table~\ref{tab:real}). Loaded in 4-bit through bitsandbytes, an exploratory check of how \nf{} is used in practice, Fire scored \bnbFireFile\% against \bnbFireFp\% (\bnbFireRise) and Water \bnbWaterFile\% against \bnbWaterFp\% (\bnbWaterRise). None of the \qkmFiles{} \qkm{} files rose by more than \qkmMax{} points. In every case, at least one 4-bit format of the same weights held. Scored inside llama.cpp's own runtime on the first \rtQuestions{} questions (an exploratory check), answers matched our read-back scoring on at least \rtAgreeF\% of questions at f16 and \rtAgreeQ\% in \fq{}. There \fq{} raised the original Base by \rtOrig{} points and the seed-12 run by \rtRun{}: on those questions the rise is the format's.
+\textbf{In the forms people use.} Built with llama.cpp, the \fq{} file of one Base run scored \realAFile\% against \realAFp\% at fp16 (\realARise, $p\le\realAP$, AuditKIT's paired bootstrap). We had seen that file before registering the follow-up. The two Base files built afterwards rose by \realOtherRises{} points, under our 5-point line, so on unseen files this hypothesis failed (appendix, Table~\ref{tab:real}). Loaded in 4-bit through bitsandbytes, an exploratory check of how \nf{} is used in practice, Fire scored \bnbFireFile\% against \bnbFireFp\% (\bnbFireRise) and Water \bnbWaterFile\% against \bnbWaterFp\% (\bnbWaterRise). None of the \qkmFiles{} \qkm{} files rose by more than \qkmMax{} points. In every case, at least one 4-bit format of the same weights held. Scored inside llama.cpp's own runtime on the first \rtQuestions{} questions (an exploratory check), answers matched our read-back scoring on at least \rtAgreeF\% of questions at f16 and \rtAgreeQ\% in \fq{}. There \fq{} raised the original Base by \rtOrig{} points and the seed-12 run by \rtRun{}: on those questions the rise is the format's.
 
-\input{table_real}
 
 \textbf{How much is the unlearning's doing?} The original Tiny Aya Base itself scores \origBaseQ{} points higher in \fq{} than at fp16 (Table~\ref{tab:cases}). Net of that, the seed-12 rises are \netLow--\netHigh{} points ($p\le\netP$) and no Base run reaches 5; the ordering of \fq{} over \nf{} across fresh seeds also loses significance (\rtwoNetWins{} of \rtwoNetN{} seeds, $p=\rtwoNetP$; not a registered test). For the typical Base run, then, the change is no larger than the original model's own (\deepMeanQ{} on average across fresh seeds); for seed 12 about a third of the rise is the format and the rest is the edit holding less well. The originals of Fire and Water fall slightly in \nf{}, so their relapses grow net of the original (\fireNet{} and \waterNet). The Water run came from runs registered without a hypothesis. The 5-point line matters too: at 3 points the map would count \mapAtThree{} relapsing runs, not \mapRelapses.
 
@@ -138,7 +132,14 @@ The correction above rests on four sets of weights, all of Tiny Aya Global. We p
 
 \textbf{A model unlearned through one tokenizer relapses through the other.} Of \shiftEff{} effective runs trained through the outdated setting, \shiftUp{} scored higher through the official tokenizer and \shiftDown{} lower ($p=\shiftPone$); \shiftRelapses{} rose by at least 5 points with $p<0.05$. On the held-out models the count was \shiftHeldUp{} to \shiftHeldDown{} ($p=\shiftHeldP$), all from Water, because no Base run was effective. The rise averaged \shiftMeanDefault{} points at SafeTune's default layers 5--7 and \shiftMeanDeep{} at layers 10--12, up to \shiftMaxRise. The text and the weights are the same; only the split into tokens differs, mostly around line breaks and digits. The original models move by at most \shiftOrigMax{} points. Tiny Aya Base shows the extreme: every Base run trained through the outdated setting scored \shiftBaseLab\% through it, which is chance, and \shiftBaseLow--\shiftBaseHigh\% through the official tokenizer. Those runs fall below our effective range and are not counted above.
 
-\textbf{Placement decides it.} At layers 7--9 the rise was \shiftMidLow{} to \shiftMidHigh{} points. It was smaller than at layers 5--7 in \shiftPtwoWins{} of \shiftPtwoN{} matched pairs. On the held-out models alone this is \shiftHeldPtwoWins{} of \shiftHeldPtwoN{} pairs ($p=\shiftHeldPtwoP$), which four pairs cannot make significant, so the confirmatory version did not hold. A further registered test on two new seeds added layers 3--5, the window we release. Trained through the outdated setting, \stwoDefaultRel{} of \stwoDefaultN{} effective runs at the default layers relapsed (\stwoDefaultMean{} points on average), \stwoShallowRel{} of \stwoShallowN{} at layers 3--5 (\stwoShallowMean, at most \stwoShallowMax) and \stwoMidRel{} of \stwoMidN{} at layers 7--9; all three hypotheses held. Through the official tokenizer the 3--5 runs scored \stwoShallowDeployed\%, the default-layer runs \stwoDefaultDeployed\%. Tiny Aya Base is the exception: it fell to chance in the outdated pipeline at every window, outside our effective range, and through the official tokenizer its 3--5 runs scored \stwoBaseLow--\stwoBaseHigh\%.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/tokenizer.pdf}
+\caption{Each line is one run unlearned through the outdated tokenizer setting: its \wmdp{} score in that pipeline (lab) and through the official tokenizer (live). Red runs relapse. Dashed grey runs are Tiny Aya Base, below the effective range and not counted.}
+\label{fig:tok}
+\end{figure}
+
+\textbf{Placement decides it.} At layers 7--9 the rise was \shiftMidLow{} to \shiftMidHigh{} points. It was smaller than at layers 5--7 in \shiftPtwoWins{} of \shiftPtwoN{} matched pairs. On the held-out models alone this is \shiftHeldPtwoWins{} of \shiftHeldPtwoN{} pairs ($p=\shiftHeldPtwoP$), which four pairs cannot make significant, so the confirmatory version did not hold. A further registered test on two new seeds added layers 3--5, the window we release. Trained through the outdated setting, \stwoDefaultRel{} of \stwoDefaultN{} effective runs at the default layers relapsed (\stwoDefaultMean{} points on average), \stwoShallowRel{} of \stwoShallowN{} at layers 3--5 (\stwoShallowMean, at most \stwoShallowMax) and \stwoMidRel{} of \stwoMidN{} at layers 7--9; all three hypotheses held (Figure~\ref{fig:tok}). Through the official tokenizer the 3--5 runs scored \stwoShallowDeployed\%, the default-layer runs \stwoDefaultDeployed\%. Tiny Aya Base is the exception: it fell to chance in the outdated pipeline at every window, outside our effective range, and through the official tokenizer its 3--5 runs scored \stwoBaseLow--\stwoBaseHigh\%.
 
 \textbf{Training on both tokenizers narrows the gap but does not protect the deployed model.} The gap between the two tokenizers was smaller in \shiftPthreeWins{} of \the\numexpr\shiftPthreeWins+\shiftPthreeLosses\relax{} matched pairs ($p=\shiftPthreeP$), though not significantly on the held-out models (\shiftHeldPthreeWins{} of \shiftHeldPthreeN, $p=\shiftHeldPthreeP$). At layers 5--7 it stayed at \shiftBothGap{} points, and the score through the official tokenizer was lower in only \shiftPfourWins{} pairs against \shiftPfourLosses. \textbf{Direction matters.} Runs trained through the official tokenizer and scored through the outdated one rose by only \shiftReverseMean{} points on average and relapsed in \shiftReverseRel{} of \shiftReverseEff{} cases, about the size of the 4-bit effect. The large relapse belongs to unlearning done through the outdated setting. The dependable protection is procedural: audit through the exact tokenizer files that ship with the model.
 

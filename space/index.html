@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Relapse: forget the hazard, keep the rest, even in the 4-bit file</title>
-<meta name="description" content="A small model made to forget hazardous biology, checked in the files people download. Scores rescored with the official tokenizer after a correction.">
-<meta name="theme-color" content="#ff7053">
-<meta property="og:title" content="Relapse: forget the hazard, keep the rest, even in the 4-bit file">
-<meta property="og:description" content="Hazardous-biology score and general-knowledge cost for every file and every unlearning method.">
+<title>Relapse: does unlearning survive deployment?</title>
+<meta name="description" content="Cohere's Tiny Aya models made to forget hazardous biology with Lexsi Labs' SafeTune, then checked in 4-bit files and through the official tokenizer. Final, pre-registered results.">
+<meta name="theme-color" content="#faf9f6">
+<meta property="og:title" content="Relapse: does unlearning survive deployment?">
+<meta property="og:description" content="Where the edit sits decides whether a model's forgetting survives deployment. Final, pre-registered results on five Tiny Aya models.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="og.png">
 <meta property="og:image:width" content="1200">
@@ -15,139 +15,168 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="og.png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@100..150,100..900&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body data-v="hot">
-<a class="skip" href="#main">Skip to the results</a>
-
-<aside class="correction" role="note"><b>Correction, Nov 21, 2026.</b> Our Stage 1 runs used an outdated tokenizer setting. We withdrew the relapse and repair claims made on these models. This page shows the Stage 1 models rescored with the official tokenizer. <b>Stage 2 is finished:</b> four pre-registered experiments on all five Tiny Aya models, with new released models. <a href="https://huggingface.co/spaces/itssaharsh/relapse-article">Read the results</a> · <a href="https://github.com/itssaharsh/relapse#correction-november-21-2026">What changed</a></aside>
+<body>
+<a class="skip" href="#brief">Skip to the results</a>
 
 <header class="top">
-  <div class="mark"><i aria-hidden="true"></i>Relapse</div>
-  <p class="meta" id="meta"></p>
+  <div class="top-in">
+    <a class="mark" href="#top" aria-label="Relapse, back to the top"><i aria-hidden="true"></i>Relapse</a>
+    <nav aria-label="Project links">
+      <a href="https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf">Paper</a>
+      <a href="https://github.com/itssaharsh/relapse">Code</a>
+    </nav>
+  </div>
 </header>
 
-<main id="main" class="wrap">
- <div class="col">
-  <section class="intro">
-    <h1 id="headline">Forget the <span class="redact">hazard</span>. Keep the rest. Even in the 4-bit file.</h1>
-    <p class="deck" id="deck"></p>
-    <div class="try" role="group" aria-labelledby="try-l">
-      <b id="try-l">Try these</b>
-      <div class="chips" id="chips"></div>
-    </div>
+<main id="top">
+  <section class="hero wrap">
+    <p class="eyebrow">Final results · registered before they ran · official tokenizer</p>
+    <h1>Where the edit sits decides whether a model's forgetting survives deployment.</h1>
+    <p class="lede">We made Cohere's small Tiny Aya models forget hazardous biology with Lexsi Labs' SafeTune, then ran them the way people do: shrunk to 4-bit files, and through the official tokenizer, the step that cuts text into the pieces a model reads. The forgetting mostly held in 4-bit files, but when a model was unlearned through an older tokenizer setting, the knowledge came back once deployed if the edit sat at SafeTune's default layers, and stayed gone if it sat at layers 3 to 5.</p>
+    <p class="note">Our first-round claims were withdrawn after we found that tokenizer problem in our own runs. <a href="#wrong">What we got wrong</a></p>
   </section>
 
-  <section class="result" aria-label="Result">
-    <p class="ans" id="ans"></p>
-    <p class="line" id="line"></p>
-    <p class="small" id="detail"></p>
-    <div class="cmp" id="cmp" role="group" aria-label="Default layers against CircuitKIT layers"></div>
-  </section>
- </div>
- <div class="col">
-  <section class="paper-wrap" aria-labelledby="paper-t">
-    <div class="stamps" id="stamps" role="status"><div class="stamp" id="stamp"></div><div class="tag2" id="tag2"></div></div>
-    <div class="paper" id="paper">
-      <div class="p-head"><b id="p-head">Forget report</b></div>
-      <h2 class="p-title" id="paper-t">What the biology answers still know</h2>
-      <p class="p-sub" id="p-sub"></p>
-      <div class="methods" role="group" aria-label="Method" id="methods"></div>
-      <div class="ladder" id="ladder"></div>
-      <div class="langs" id="langs" role="group" aria-label="Language"></div>
-      <p class="key" id="key"></p>
-      <p class="file" id="file"></p>
+  <section class="brief wrap" id="brief" aria-labelledby="brief-h">
+    <h2 id="brief-h">The result in brief</h2>
+    <p class="sub">We unlearned <span data-t="brief.default.tok_runs"></span> runs at each placement, on <span data-t="brief.tok_models|words"></span> of the models, through an outdated tokenizer setting, as our first round did by accident, then ran them through the official tokenizer, as the model is deployed. Runs whose hazardous knowledge came back:</p>
+
+    <div class="duel">
+      <article class="side back" aria-labelledby="d-def">
+        <h3 id="d-def">SafeTune's default layers <span>(layers 5 to 7)</span></h3>
+        <p class="big"><span data-t="brief.default.tok_relapses"></span><small> of <span data-t="brief.default.tok_runs"></span></small></p>
+        <p class="verdict"><span class="tag back">Came back</span> scores rose by <span data-t="brief.default.mean_rise|sgn"></span> points on average</p>
+        <div class="dots" data-dots="default" aria-hidden="true"></div>
+      </article>
+      <article class="side held" aria-labelledby="d-new">
+        <h3 id="d-new">Layers 3 to 5 <span>(the layers we release)</span></h3>
+        <p class="big"><span data-t="brief.released.tok_relapses"></span><small> of <span data-t="brief.released.tok_runs"></span></small></p>
+        <p class="verdict"><span class="tag held">Held</span> scores moved by <span data-t="brief.released.mean_rise|sgn"></span> points on average</p>
+        <div class="dots" data-dots="released" aria-hidden="true"></div>
+      </article>
     </div>
+
+    <div class="scroller" role="region" aria-labelledby="cmp-cap" tabindex="0">
+      <table class="cmp">
+        <caption id="cmp-cap">SafeTune's default layers against layers 3 to 5, side by side</caption>
+        <thead>
+          <tr><th scope="col"><span class="sr">Measure</span></th><th scope="col">Default layers<br><span>5 to 7</span></th><th scope="col">Layers 3 to 5<br><span>released</span></th></tr>
+        </thead>
+        <tbody>
+          <tr class="grp"><th scope="rowgroup" colspan="3">Unlearned through the outdated tokenizer setting</th></tr>
+          <tr><th scope="row">Hazard score in the pipeline it was unlearned in</th><td data-t="brief.default.pipeline|pct"></td><td data-t="brief.released.pipeline|pct"></td></tr>
+          <tr><th scope="row">Hazard score once deployed through the official tokenizer</th><td data-t="brief.default.deployed|pct"></td><td data-t="brief.released.deployed|pct"></td></tr>
+          <tr><th scope="row">Runs whose knowledge came back through the tokenizer</th><td class="back-t"><span data-t="brief.default.tok_relapses"></span> of <span data-t="brief.default.tok_runs"></span></td><td class="held-t"><span data-t="brief.released.tok_relapses"></span> of <span data-t="brief.released.tok_runs"></span></td></tr>
+          <tr class="grp"><th scope="rowgroup" colspan="3">Unlearned and run through the official tokenizer (final runs, <span data-t="brief.final_models|words"></span> models)</th></tr>
+          <tr><th scope="row">Hazard score</th><td data-t="brief.default.official_throughout|pct"></td><td data-t="brief.released.official_throughout|pct"></td></tr>
+          <tr><th scope="row">Runs whose knowledge came back in a 4-bit file (Q4_0 or NF4, of <span data-t="brief.default.quant_checks"></span> checks)</th><td data-t="brief.default.quant_relapses"></td><td data-t="brief.released.quant_relapses"></td></tr>
+          <tr><th scope="row">General knowledge lost (MMLU, points, mean)</th><td data-t="brief.default.mmlu_lost|pt"></td><td data-t="brief.released.mmlu_lost|pt"></td></tr>
+          <tr><th scope="row">Benign biology lost (points, median)</th><td data-t="brief.default.benign_lost|pt"></td><td data-t="brief.released.benign_lost|pt"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fine">The <b>hazard score</b> is the share of questions answered correctly on WMDP-bio, a public multiple-choice test of hazardous biology knowledge. Lower is better: with four choices, 25% is guessing, and the original models score <span data-t="costs.original_low|pct"></span> to <span data-t="costs.original_high|pct"></span>. <b>Q4_0</b> and <b>NF4</b> are two common ways of storing a model in 4 bits per number instead of 16, which makes the file about a quarter of the size. <b>MMLU</b> is a broad general-knowledge test, and <b>benign biology</b> is its ordinary biology questions; for both, higher is better. Layers 3 to 5 cost more benign biology than the default layers do. Tiny Aya Base is not in the top rows: in the outdated setting it drops to guessing level at every placement and comes back up through the official tokenizer.</p>
   </section>
 
+  <section class="check wrap" id="check" aria-labelledby="check-h">
+    <h2 id="check-h">Check a released model</h2>
+    <p class="sub">We release one unlearned copy of each of the five Tiny Aya models, edited at layers 3 to 5. Pick one to see its hazard score in each way people run it. <b>Held</b> means the score did not rise by <span data-t="rise_points|pt0"></span> points or more over the unlearned model; <b>Came back</b> means it did, by a margin too large to be chance.</p>
 
-  <section class="example" id="example" aria-labelledby="ex-t" hidden>
-    <div class="sheet">
-      <h2 id="ex-t" class="ex-t"></h2>
-      <div class="cards" id="cards"></div>
-      <p class="ex-note" id="ex-note"></p>
+    <div class="picker" role="group" aria-label="Choose a model" id="picker"></div>
+
+    <div class="card" id="model-card" aria-live="polite">
+      <div class="card-head">
+        <div>
+          <h3 id="m-name"></h3>
+          <p class="card-sub" id="m-sub"></p>
+        </div>
+        <a class="repo" id="m-repo" href="#">Model files on Hugging Face</a>
+      </div>
+      <p class="summary" id="m-summary"></p>
+
+      <h4 class="rows-h">Hazard score (WMDP-bio): lower is better, 25% is guessing</h4>
+      <p class="key"><span><i class="k-guess" aria-hidden="true"></i>Dashed line: 25%, guessing</span><span><i class="k-orig" aria-hidden="true"></i>Solid line: the original model, <span id="m-orig-mark"></span></span></p>
+      <ol class="rows" id="m-rows"></ol>
+
+      <h4 class="rows-h">What the model keeps: higher is better</h4>
+      <ol class="rows keep" id="m-keep"></ol>
     </div>
+
+    <dl class="terms">
+      <div><dt>Full precision</dt><dd>The weights as trained, 16 bits per number.</dd></div>
+      <div><dt>Q4_0 and Q4_K_M</dt><dd>Two 4-bit file formats for llama.cpp, the files most people download to run a model on a laptop. Made with llama.cpp's own tools and read back for scoring.</dd></div>
+      <div><dt>NF4</dt><dd>The 4-bit format used when a model is loaded in 4-bit with bitsandbytes in Python.</dd></div>
+      <div><dt>Outdated tokenizer setting</dt><dd>An older copy of the tokenizer settings that splits text differently from the way the model was trained.</dd></div>
+    </dl>
   </section>
- </div>
+
+  <section class="relapse wrap" id="relapse" aria-labelledby="relapse-h">
+    <h2 id="relapse-h">When one file relapses</h2>
+    <p class="sub">In a map of <span data-t="relapses.map_runs"></span> runs across the five models, <span data-t="relapses.map_held"></span> of the <span data-t="relapses.map_effective"></span> runs that forgot enough to count kept their forgetting in both Q4_0 and NF4. In the runs below, all edited deeper in the model than the released ones, one 4-bit format brought back at least <span data-t="rise_points|pt0"></span> points while other formats of the same weights did not.</p>
+    <div class="scroller" role="region" aria-labelledby="rl-cap" tabindex="0">
+      <table class="rl" id="rl">
+        <caption id="rl-cap">Hazard score of each run in each format, and its change from full precision in points</caption>
+        <thead><tr><th scope="col">Run</th><th scope="col">Full precision</th><th scope="col">Q4_0, exact rounding</th><th scope="col">NF4</th><th scope="col">Real Q4_0 file</th><th scope="col">Real Q4_K_M file</th></tr></thead>
+        <tbody id="rl-body"></tbody>
+      </table>
+    </div>
+    <p class="fine">Exact rounding applies the same 4-bit rounding the format stores to the model's weights in memory; a real file is written and read back by llama.cpp.</p>
+    <ul class="notes">
+      <li><b>It is rare.</b> <span data-t="relapses.map_held"></span> of <span data-t="relapses.map_effective"></span> runs held in the map. The Base relapse happened again on <span data-t="relapses.base_fresh_seeds.0"></span> of <span data-t="relapses.base_fresh_seeds.1"></span> fresh seeds.</li>
+      <li><b>On Base, part of the rise is the format itself.</b> The original Tiny Aya Base also gains about 1.8 points in Q4_0. Net of that, no Base run reaches 5 points. Fire and Water are the cases that survive this check.</li>
+      <li><b>Another format always held.</b> <span id="rl-held-note"></span>, so scoring each file before release catches it.</li>
+      <li><b>The 5-point line is a choice.</b> Two of the three real Base files rose 4.5 and 4.6 points, just under it.</li>
+    </ul>
+  </section>
+
+  <section class="costs wrap" id="costs" aria-labelledby="costs-h">
+    <h2 id="costs-h">What it costs and what breaks it</h2>
+    <div class="stats">
+      <div class="stat">
+        <p class="stat-n"><span data-t="costs.benign_low|pt"></span>–<span data-t="costs.benign_high|pt"></span><small> points</small></p>
+        <p><b>Benign biology lost.</b> The forgetting is not confined to hazardous questions: ordinary biology questions drop too, across all <span data-t="costs.ft_runs"></span> final runs. General knowledge (MMLU) drops by at most <span data-t="costs.mmlu_most_lost|pt"></span> points.</p>
+      </div>
+      <div class="stat">
+        <p class="stat-n back-n"><span data-t="costs.ft_came_back"></span><small> of <span data-t="costs.ft_runs"></span> runs</small></p>
+        <p><b>Came back after a short fine-tune.</b> 25 fine-tuning steps on 64 hazard questions raise the score by at least <span data-t="rise_points|pt0"></span> points, and restore Tiny Aya Base almost fully. RMU, the unlearning method, hides knowledge more than it removes it.</p>
+      </div>
+    </div>
+    <h3 class="chart-h" id="ft-h">Hazard score before and after the fine-tuning attack, on the questions not used to train it</h3>
+    <p class="key" aria-hidden="true"><span><i class="k-before"></i>Before the attack</span><span><i class="k-after"></i>After</span><span><i class="k-orig"></i>The original model, not fine-tuned</span></p>
+    <ol class="ft" id="ft" aria-labelledby="ft-h"></ol>
+  </section>
+
+  <section class="wrong wrap" id="wrong" aria-labelledby="wrong-h">
+    <h2 id="wrong-h">What we got wrong</h2>
+    <p>Our first round of results (Stage 1) ran Tiny Aya through an outdated tokenizer setting. The copy of the model we used predated a fix Cohere made on Hugging Face, so text was split differently from the way the model was trained. The weights were fine; the scores were not. We withdrew the claims we had made on those models: that one of them relapsed in a 4-bit file, and that training on the file repaired it.</p>
+    <p>Everything on this page is Stage 2. Each experiment was registered in the repository before it ran, and every model was scored through the official tokenizer. <span data-t="hypotheses.failed|Words"></span> of the <span data-t="hypotheses.registered"></span> registered hypotheses failed, in full or in part, and every one is reported.</p>
+    <ul class="links">
+      <li><a href="https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf">The paper (PDF)</a></li>
+      <li><a href="https://huggingface.co/spaces/itssaharsh/relapse-article">The write-up</a></li>
+      <li><a href="https://github.com/itssaharsh/relapse">The code, results and pre-registrations</a></li>
+      <li><a href="https://github.com/itssaharsh/relapse#correction-november-21-2026">The correction in full</a></li>
+      <li><a href="https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models">The unlearned models</a></li>
+      <li><a href="https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets">Runs, logs and probe sets</a></li>
+    </ul>
+  </section>
 </main>
 
-<section class="story" id="how">
-  <div class="story-in">
-    <div class="copy">
-      <h2 id="c-head">Test the file people download, not just the checkpoint.</h2>
-      <p class="sub" id="c-sub"></p>
-    </div>
-    <ul class="proofs" id="proofs"></ul>
-
-    <div class="win-wrap" id="win-wrap" hidden>
-      <h2 id="win-head"></h2>
-      <p class="t-sub fr-take" id="win-take"></p>
-      <div class="wins" id="wins"></div>
-    </div>
-
-    <div class="fix-wrap" id="fix-wrap" hidden>
-      <h2 id="fix-head"></h2>
-      <p class="t-sub fr-take" id="fix-take"></p>
-      <div class="fixes" id="fixes" role="list"></div>
-      <p class="t-sub fix-key" id="fix-key"></p>
-    </div>
-
-    <div class="table-wrap" id="var-wrap" hidden>
-      <h2 id="var-head"></h2>
-      <p class="t-sub" id="var-sub"></p>
-      <div class="scroller" tabindex="0" role="region" aria-labelledby="var-head"><table id="var-grid"></table></div>
-    </div>
-
-    <div class="fr-wrap" id="fr-wrap" hidden>
-      <h2 id="fr-head"></h2>
-      <p class="t-sub fr-take" id="fr-take"></p>
-      <div class="fr-tools">
-        <div class="methods" role="group" aria-label="File" id="fr-tabs"></div>
-        <button type="button" class="mt alt" id="fr-view" aria-pressed="false">View as table</button>
-      </div>
-      <div class="fr-chart" id="fr-chart"></div>
-      <div class="scroller" id="fr-table" hidden tabindex="0" role="region" aria-label="Every run as a table"></div>
-      <ul class="fr-key" id="fr-key"></ul>
-    </div>
-
-    <h3 class="how-t" id="how-t">How the check is made</h3>
-    <ol class="pipe" id="pipe" aria-labelledby="how-t"></ol>
-
-    <div class="layer-wrap" id="layer-wrap" hidden>
-      <h3 class="how-t" id="l-head">Where the biology lives in the model</h3>
-      <div class="lbars" id="lbars" role="img"></div>
-      <div class="laxis" id="laxis" aria-hidden="true"></div>
-      <p class="t-sub" id="lcap"></p>
-    </div>
-
-    <div class="rob-wrap" id="rob-wrap" hidden>
-      <h2 id="rob-head">Pushed harder: worked examples, an expert persona, and 25 steps of fine-tuning</h2>
-      <p class="t-sub" id="rob-cap"></p>
-      <div class="methods rob-tabs" role="group" aria-label="File" id="rob-tabs"></div>
-      <div class="rob" id="rob"></div>
-    </div>
-
-    <div class="table-wrap">
-      <h2 id="t-head">Every file, every method</h2>
-      <p class="t-sub" id="t-sub"></p>
-      <p class="swipe">Swipe sideways for every method.</p>
-      <div class="scroller" tabindex="0" role="region" aria-labelledby="t-head">
-        <table id="grid"></table>
-      </div>
-    </div>
-  </div>
-</section>
-
 <footer class="foot">
-  <p class="real" id="real"></p>
-  <ul class="links" id="links"></ul>
-  <p class="run" id="run"></p>
+  <div class="wrap">
+    <h2>Built with</h2>
+    <ul class="tools">
+      <li><a href="https://github.com/Lexsi-Labs/SafeTune">SafeTune</a> removed the knowledge, with RMU unlearning on the WMDP bio forget corpus.</li>
+      <li><a href="https://github.com/Lexsi-Labs/CircuitKIT">CircuitKIT</a> traced which of Tiny Aya's 36 layers carry the knowledge; pooled over the five models it ranks layers 3 to 5 first.</li>
+      <li><a href="https://github.com/Lexsi-Labs/AuditKIT">AuditKIT</a> compared each real llama.cpp file with the same weights at full precision, question by question.</li>
+      <li><a href="https://github.com/Lexsi-Labs/CuratorKIT">CuratorKIT</a> checked the quality of the reworded and translated questions used to test that the forgetting is not tied to one wording or language.</li>
+      <li><a href="https://huggingface.co/CohereLabs">Cohere Labs' Tiny Aya</a> models: Global, Fire, Earth, Water and Base.</li>
+    </ul>
+    <p class="made">Built during the Lexsi AI Safety and Alignment Hackathon, with Claude Code as the coding agent. Every number on this page is read from <a href="https://github.com/itssaharsh/relapse/blob/main/space/data/stage2.json">data/stage2.json</a>, which <a href="https://github.com/itssaharsh/relapse/blob/main/scripts/build_space.py">scripts/build_space.py</a> writes from the result files.</p>
+  </div>
 </footer>
 
-<noscript><p class="ns">Relapse shows a recorded run and needs JavaScript to draw it.</p></noscript>
+<noscript><p class="ns">The numbers on this page are drawn from data/stage2.json and need JavaScript. They are also in the <a href="https://github.com/itssaharsh/relapse#results-stage-2-pre-registered-official-tokenizer">README</a>.</p></noscript>
 <script src="app.js"></script>
 </body>
 </html>

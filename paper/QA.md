@@ -22,7 +22,7 @@ Base unlearns to chance through the outdated setting (24.6 to 25.7% at layers 3 
 
 We claim no mechanism, and the layer is confounded. An exploratory reading of the same runs: where they were audited, the default-layer runs had also lost 5.8 MMLU points (none within our 3-point line) and 1.7 once deployed; at layers 3 to 5 the loss was 0.5 and 1.1. Tiny Aya Base scored 23.1 to 24.0% on MMLU as audited.
 
-Over both tokenizer experiments, all 120 runs trained through the outdated setting rose by 5 points or more exactly when they had lost 3 or more MMLU points as audited (72 runs). So the relapse reads as damage tied to one tokenization that the other undoes; each window had its own learning rates, the pattern is not ordered by depth (10 to 12 relapsed, 7 to 9 held), and we did not vary layer and learning rate apart.
+Over both tokenizer experiments, runs that had lost 3 or more MMLU points as audited rose by 5 points or more in 72 of 72 cases, the others in 0 of 48. About half of the audited forgetting returned (47%), and the deployed runs land where runs unlearned through the official tokenizer at the same layers, seeds and rates land (50.9% against 52.1%). So the outdated audit overstated the forgetting: it counted damage tied to one tokenization; each window had its own learning rates, the pattern is not ordered by depth (10 to 12 relapsed, 7 to 9 held), and we did not vary layer and learning rate apart.
 
 *Behind it:* results/shift/*/results.json, results/shift2/*/results.json (MMLU through each tokenizer), scripts/paper_numbers.py audit_damage()
 

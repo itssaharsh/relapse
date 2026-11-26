@@ -51,7 +51,7 @@ def control() -> tuple[dict, dict]:
     shown = lambda m: round(get(m, "current_official"), 1) - round(get(m, "kaggle_copy"), 1)      # the change between the two values as displayed
     body = "".join(f"{label} & {get(m, 'kaggle_copy'):.1f} & {get(m, 'current_official'):.1f} & {signed(shown(m))} \\\\\n" for m, label in names)
     tex = table("lrrr", "Same weights & Outdated & Official & Change \\\\\n", body,
-                r"\wmdp{} accuracy (\%) of the same weights on Global, scored in one job through each tokenizer setting. The weights were trained through the outdated setting. Lower is better.", "tab:control", "6pt")
+                r"\wmdp{} accuracy (\%) of our Stage~1 weights (Global, trained through the outdated setting), scored in one job through each tokenizer setting.", "tab:control", "6pt")
     return {"ctlMaxRise": f"{max(shown(m) for m, _ in names):.1f}"}, {"table_control.tex": tex}
 
 
@@ -514,7 +514,8 @@ def survey() -> tuple[dict, dict]:
             "surveyShare": f"{100 * len(out) / len([r for r in derived if r['setting'] in ('official', 'outdated')]):.0f}",
             "surveyUnlearning": sum(bool(re.search(r"unlearn|rmu|forget", r["repo"], re.I)) for r in others),      # outdated copies named as unlearning models
             "surveySafety": sum(bool(re.search(r"safe|guard|refus|harm|jailbreak|toxic|moderat", r["repo"], re.I)) for r in others),      # ... named as safety-tuned
-            "surveyBeforeFix": sum(r["last_modified"] <= "2026-09-30" for r in others)}, {}
+            "surveyBeforeFix": sum(r["last_modified"] <= "2026-09-30" for r in others),
+            "surveyAfterFixDownloads": th(sum(num(r["downloads"]) for r in others if r["last_modified"] > "2026-09-30"))}, {}
 
 
 def audit_damage() -> tuple[dict, dict]:
@@ -530,7 +531,7 @@ def audit_damage() -> tuple[dict, dict]:
                     if m.group(2) != "outdated" or (name, "outdated") not in R or (name, "official") not in R:
                         continue
                     a, b = R[(name, "outdated")], R[(name, "official")]
-                    out.append({"model": v, "window": m.group(1), "audited": a["wmdp-bio"], "rise": b["wmdp-bio"] - a["wmdp-bio"], "mmlu_audited": a["mmlu"],
+                    out.append({"model": v, "seed": sd, "window": m.group(1), "audited": a["wmdp-bio"], "deployed": b["wmdp-bio"], "original": R[("base", "outdated")]["wmdp-bio"], "rise": b["wmdp-bio"] - a["wmdp-bio"], "mmlu_audited": a["mmlu"],
                                 "cost_audited": R[("base", "outdated")]["mmlu"] - a["mmlu"], "cost_deployed": R[("base", "official")]["mmlu"] - b["mmlu"]})
         return out
     two, one = runs("shift2", (51, 52)), runs("shift", (21, 22))
@@ -543,6 +544,33 @@ def audit_damage() -> tuple[dict, dict]:
             "stwoBaseMmluLow": f"{100 * min(r['mmlu_audited'] for r in base):.1f}", "stwoBaseMmluHigh": f"{100 * max(r['mmlu_audited'] for r in base):.1f}",
             "stwoDefaultWithin": sum(r["cost_audited"] <= 0.03 for r in eff(two, "5-7")), "shiftDeepCostAudited": mean(eff(one, "10-12"), "cost_audited"), "shiftDeepCostDeployed": mean(eff(one, "10-12"), "cost_deployed"),
             "stwoShallowUpper": f"{100 * (1 - 0.025 ** (1 / len(eff(two, '3-5')))):.1f}"}      # exact (Clopper-Pearson) 95% upper bound of 0 relapses in n runs
+    assert nums["stwoDefaultWithin"] == 0      # the abstract says every default-layer run had lost more than 3 MMLU points as audited
+    share = [(r["deployed"] - r["audited"]) / (r["original"] - r["audited"]) for r in eff(two, "5-7")]      # how much of the audited forgetting returns
+    units = lambda w: {(r["model"], r["seed"]): [] for r in eff(two, w)}
+    def by_unit(w):
+        u = units(w)
+        for r in eff(two, w):
+            u[(r["model"], r["seed"])].append(r["rise"] >= 0.05)
+        return sum(all(v) for v in u.values()), len(u)
+    # the control already in the first experiment: the same window, model, seed and learning rate, unlearned through the official tokenizer
+    official = {}
+    for v in ("global", "fire", "earth", "water", "base"):
+        for sd in (21, 22):
+            R = {(r["model"], r["score_tok"]): r for r in json.load(open(os.path.join(ROOT, "results", "shift", f"{v}_seed{sd}", "results.json"))) if r["prec"] == "fp16" and r.get("score_tok")}
+            for name in R:
+                if name[1] == "official" and "_official_s" in name[0] and "_W5-7_" in name[0]:
+                    official[name[0].replace("_official_s", "_outdated_s")] = R[name]["wmdp-bio"]
+    pairs = []
+    for v in ("global", "fire", "earth", "water", "base"):
+        for sd in (21, 22):
+            R = {(r["model"], r["score_tok"]): r for r in json.load(open(os.path.join(ROOT, "results", "shift", f"{v}_seed{sd}", "results.json"))) if r["prec"] == "fp16" and r.get("score_tok")}
+            for (name, tok), r in R.items():
+                if tok == "official" and "_outdated_s" in name and "_W5-7_" in name and 0.30 <= R[(name, "outdated")]["wmdp-bio"] <= 0.55 and name in official:
+                    pairs.append((r["wmdp-bio"], official[name]))
+    nums.update(stwoShareBack=f"{100 * np.mean(share):.0f}", stwoShareLow=f"{100 * min(share):.0f}", stwoShareHigh=f"{100 * max(share):.0f}",
+                stwoUnitsDefault=f"{by_unit('5-7')[0]} of {by_unit('5-7')[1]}", stwoUnitsShallow=f"{by_unit('3-5')[0]} of {by_unit('3-5')[1]}", stwoUnitUpper=f"{100 * (1 - 0.025 ** (1 / by_unit('3-5')[1])):.1f}",
+                dmgHurtRose=f"{sum(a and b for a, b in zip(rose, hurt))} of {sum(hurt)}", dmgFineRose=f"{sum(a and not b for a, b in zip(rose, hurt))} of {sum(not b for b in hurt)}",
+                ctlPairs=len(pairs), ctlOutdatedTrained=f"{100 * np.mean([a for a, _ in pairs]):.1f}", ctlOfficialTrained=f"{100 * np.mean([b for _, b in pairs]):.1f}")
     for k, w in (("Default", "5-7"), ("Shallow", "3-5"), ("Mid", "7-9")):
         nums[f"stwo{k}CostAudited"] = mean(eff(two, w), "cost_audited"); nums[f"stwo{k}CostDeployed"] = mean(eff(two, w), "cost_deployed")
     return nums, {}

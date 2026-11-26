@@ -16,7 +16,7 @@ Rescored through the official tokenizer on 21 November 2026 (WMDP-bio / MMLU; th
 | fp16: 52.2% / 54.7% | Q4_K_M: 52.8% / 54.1% | Q4_0: 52.5% / 53.6% | NF4: 50.6% / 52.5% |
 |---|---|---|---|
 
-**What the final paper found** ([How Deep Does Unlearning Go? One Tokenizer Change Undoes It at Layers 5–7 but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf)). Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers (5 to 7) regained 11.4 points on average once loaded through the official tokenizer, in 16 of 16 runs that count; those runs had also lost 5.8 MMLU points where they were audited and 1.7 once deployed. At layers 3 to 5, 0 of 16 did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in 107 of 109 runs. Of 22 registered hypotheses, 9 held, 2 held in part, 10 failed and 1 could not be tested.
+**What the final paper found** ([An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf)). Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers (5 to 7) regained 11.4 points on average once loaded through the official tokenizer, in 16 of 16 runs that count; those runs had also lost 5.8 MMLU points where they were audited and 1.7 once deployed. At layers 3 to 5, 0 of 16 did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in 107 of 109 runs. Of 22 registered hypotheses, 9 held, 2 held in part, 10 failed and 1 could not be tested.
 
 ## What this repository holds
 

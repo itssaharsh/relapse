@@ -7,7 +7,7 @@
 <meta name="description" content="Cohere's Tiny Aya models made to forget hazardous biology with Lexsi Labs' SafeTune, then checked in 4-bit files and through the official tokenizer. Final, pre-registered results.">
 <meta name="theme-color" content="#faf9f6">
 <meta property="og:title" content="Relapse: does unlearning survive deployment?">
-<meta property="og:description" content="Where the edit sits decides whether a model's forgetting survives deployment. Final, pre-registered results on five Tiny Aya models.">
+<meta property="og:description" content="An outdated tokenizer setting made unlearning look deeper than it was at the default layers, and not at layers 3 to 5. Final, pre-registered results on five Tiny Aya models.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="og.png">
 <meta property="og:image:width" content="1200">
@@ -33,7 +33,7 @@
 <main id="top">
   <section class="hero wrap">
     <p class="eyebrow">Final results · registered before they ran · official tokenizer</p>
-    <h1>Where the edit sits decides whether a model's forgetting survives deployment.</h1>
+    <h1>An outdated tokenizer setting made unlearning look deeper than it was: at the default layers, not at layers 3 to 5.</h1>
     <p class="lede">We made Cohere's small Tiny Aya models forget hazardous biology with Lexsi Labs' SafeTune, then ran them the way people do: shrunk to 4-bit files, and through the official tokenizer, the step that cuts text into the pieces a model reads. The forgetting mostly held in 4-bit files, but when a model was unlearned through an older tokenizer setting, the knowledge came back once deployed if the edit sat at SafeTune's default layers, and stayed gone if it sat at layers 3 to 5.</p>
     <p class="note">Our first-round claims were withdrawn after we found that tokenizer problem in our own runs. <a href="#wrong">What we got wrong</a></p>
   </section>
@@ -57,7 +57,7 @@
       </article>
     </div>
 
-    <p class="sub">The fifth model, Tiny Aya Base, is the exception. Through the outdated setting it unlearns down to guessing, which our rule does not count, and it rises through the official tokenizer at every placement, by <span data-t="brief.base_rise_low|pt"></span> to <span data-t="brief.base_rise_high|pt"></span> points at layers 3 to 5. Counting every run, <span data-t="brief.default.all_rise"></span> of <span data-t="brief.default.all_runs"></span> rose by 5 points or more at the default layers and <span data-t="brief.released.all_rise"></span> of <span data-t="brief.released.all_runs"></span> at layers 3 to 5. What came back was not only the hazard: the default-layer runs had also lost <span data-t="brief.default.mmlu_audited|pt"></span> points of general knowledge where they were audited, and <span data-t="brief.default.mmlu_deployed|pt"></span> once deployed. The paper: <a href="https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf">How Deep Does Unlearning Go?</a> To check which tokenizer setting a copy of the model carries: <a href="https://github.com/itssaharsh/relapse/blob/main/scripts/check_tokenizer.py">scripts/check_tokenizer.py</a>.</p>
+    <p class="sub">The fifth model, Tiny Aya Base, is the exception. Through the outdated setting it unlearns down to guessing, which our rule does not count, and it rises through the official tokenizer at every placement, by <span data-t="brief.base_rise_low|pt"></span> to <span data-t="brief.base_rise_high|pt"></span> points at layers 3 to 5. Counting every run, <span data-t="brief.default.all_rise"></span> of <span data-t="brief.default.all_runs"></span> rose by 5 points or more at the default layers and <span data-t="brief.released.all_rise"></span> of <span data-t="brief.released.all_runs"></span> at layers 3 to 5. What came back was not only the hazard: the default-layer runs had also lost <span data-t="brief.default.mmlu_audited|pt"></span> points of general knowledge where they were audited, and <span data-t="brief.default.mmlu_deployed|pt"></span> once deployed. Read <a href="https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf">the paper</a> To check which tokenizer setting a copy of the model carries: <a href="https://github.com/itssaharsh/relapse/blob/main/scripts/check_tokenizer.py">scripts/check_tokenizer.py</a>.</p>
 
     <div class="scroller" role="region" aria-labelledby="cmp-cap" tabindex="0">
       <table class="cmp">

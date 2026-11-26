@@ -144,7 +144,7 @@ def main() -> None:
     # datasets and Spaces: the live card with a status block under its title
     for kind, name in [("dataset", n) for n in DATASETS] + [("space", "relapse-article")]:
         cards[(kind, name)] = with_status(live[(kind, name)], name, today)
-    cards[("dataset", "relapse-runs")] = cards[("dataset", "relapse-runs")].replace("Four pre-registered experiments", "Five pre-registered experiments")
+    cards[("dataset", "relapse-runs")] = cards[("dataset", "relapse-runs")].replace("Four pre-registered experiments", "Five pre-registered experiments").replace("scripts/build_results.py", "scripts/archive/stage1/build_results.py")
     cards[("space", "relapse")] = with_status(open(os.path.join(ROOT, "space", "README.md")).read(), "relapse", today)      # the demo Space's card is kept in space/README.md
     for (kind, name), text in cards.items():
         open(os.path.join(OUT, "cards", f"{kind}__{name}.md"), "w").write(text)
@@ -174,7 +174,7 @@ def main() -> None:
     plan += [f"   - `{USER}/{n}` ({k})" + ("" if f"{k}__{n}" in changed else " (unchanged)") for k, n in targets]
     plan += ["3. Demo Space `itssaharsh/relapse`: `index.html`, `app.js`, `data/stage2.json` from `space/` (Tiny Aya Base stated beside the headline, means in the table, links to the paper and the checker).",
              "4. Write-up Space `itssaharsh/relapse-article`: `index.html` from `hf_updates/space__relapse-article/` (rebuilt from `docs/ARTICLE.md`).",
-             "5. Dataset `itssaharsh/relapse-runs`: add `stage2/survey/` (the six files of `results/survey/`) and `stage2/PREREGISTRATION_5.md` if it is not there.",
+             "5. Dataset `itssaharsh/relapse-runs`: add `stage2/survey/` (the files of `results/survey/`), replace `stage2/paper.pdf` with the final `paper/main.pdf`, and add `stage2/PREREGISTRATION_5.md` if it is not there.",
              "6. Both collections: descriptions that name the paper and the checker, item notes, and the models collection ordered Stage 2 first (`hf_updates/collection.json`):"] + [f"   {i + 1}. `{r}`" for i, r in enumerate(order)]
     plan += ["", "Not prepared, for you to decide: the five Stage 1 model repositories still carry the outdated tokenizer setting in their own `tokenizer_config.json` (their cards now say so). "
              "Replacing that one field with the official value would make them load correctly, and would also change what the survey counts; it is not in this plan."]

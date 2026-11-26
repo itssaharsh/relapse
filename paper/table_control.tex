@@ -1,15 +1,15 @@
 \begin{table}[t]
-\centering\small\setlength{\tabcolsep}{6pt}
-\begin{tabular}{lrrr}
+\centering\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrr@{}}
 \toprule
-Same weights & Outdated & Official & Change \\
+RMU at & Outdated & Official & Change & MMLU lost \\
 \midrule
-Original & 63.3 & 63.3 & +0.0 \\
-RMU, layers 5--7 & 38.7 & 47.5 & +8.8 \\
-RMU, layers 7--9 & 36.8 & 35.7 & $-$1.1 \\
-RMU, layers 10--12 & 41.6 & 52.2 & +10.6 \\
+Original & 63.3 & 63.3 & +0.0 & 0.0 \\
+Layers 5--7 & 38.7 & 47.5 & +8.8 & 3.8 \\
+Layers 7--9 & 36.8 & 35.7 & $-$1.1 & 2.2 \\
+Layers 10--12 & 41.6 & 52.2 & +10.6 & 1.5 \\
 \bottomrule
 \end{tabular}
-\caption{\wmdp{} accuracy (\%) of our Stage~1 weights (Global, trained through the outdated setting), scored in one job through each tokenizer setting.}
+\caption{\wmdp{} accuracy (\%) of our Stage~1 weights (Global, trained through the outdated setting), scored in one job through each tokenizer setting, and the MMLU points they had lost as audited (through the outdated setting).}
 \label{tab:control}
 \end{table}

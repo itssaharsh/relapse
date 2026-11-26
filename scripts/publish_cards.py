@@ -81,7 +81,7 @@ All scores are accuracy on four-choice questions, read from the model's next-tok
 ## What to know before using it
 
 - **The forgetting is broader than the hazard.** Benign biology drops from {pc(f['benign-bio']['original'])} to {pc(f['benign-bio']['model'])}.
-- **Fine-tuning can undo it.** See the last row above. RMU hides knowledge more than it removes it.
+- **Fine-tuning can undo it.** Across the ten final runs, 25 fine-tuning steps on the topic raised the score by 5 points or more on five; the last row above shows this model. RMU hides knowledge more than it removes it.
 - **Knowledge was measured by multiple choice**, not by open generation.
 - **Check the file you ship, and the tokenizer you load.** In this project, a few unlearned runs regained 5 to 8 points in one 4-bit format while other formats of the same weights held (on Fire and Water, one exploratory run each). The files in this repository were each scored. Models unlearned through the outdated tokenizer setting at SafeTune's default layers regained {ctx['rise_default']:.1f} points on average once loaded through the official tokenizer; this model was unlearned through the official one, and through the outdated setting it scores as the table shows.
 - A second run with another seed ({other['name']}) scored {pc(other['fp16']['wmdp-bio']['model'])} on WMDP-bio and {pc(other['fp16']['mmlu']['model'])} on MMLU. This repository holds the run with the lower WMDP-bio.

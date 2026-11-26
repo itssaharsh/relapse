@@ -22,7 +22,7 @@ Base unlearns to chance through the outdated setting (24.6 to 25.7% at layers 3 
 
 We claim no mechanism, and the layer is confounded. An exploratory reading of the same runs: where they were audited, the default-layer runs had also lost 5.8 MMLU points (none within our 3-point line) and 1.7 once deployed; at layers 3 to 5 the loss was 0.5 and 1.1. Tiny Aya Base scored 23.1 to 24.0% on MMLU as audited.
 
-Over both tokenizer experiments, runs that had lost 3 or more MMLU points as audited rose by 5 points or more in 72 of 72 cases, the others in 0 of 48. About half of the audited forgetting returned (47%), and the deployed runs land where runs unlearned through the official tokenizer at the same layers, seeds and rates land (50.9% against 52.1%). So the outdated audit overstated the forgetting: it counted damage tied to one tokenization; each window had its own learning rates, the pattern is not ordered by depth (10 to 12 relapsed, 7 to 9 held), and we did not vary layer and learning rate apart.
+Over both tokenizer experiments, runs that had lost 3 or more MMLU points as audited rose by 5 points or more in 72 of 72 cases, the others in 0 of 48. About half of the audited forgetting returned (47%), and the deployed runs land where runs unlearned through the official tokenizer at the same layers, seeds and rates land (50.9% against 52.1%). So the outdated audit overstated the forgetting: it counted damage tied to one tokenization; the rule is fitted on those runs and is not exact outside them (our Stage 1 model at layers 10 to 12 lost 1.5 MMLU points as audited and rose 10.6; the reverse direction gives 4 of 7 against 2 of 40); each window had its own learning rates, though they overlap (3 to 5 held at 3e-5 and 6e-5, 5 to 7 relapsed at 4e-5 and 7e-5), the pattern is not ordered by depth (10 to 12 relapsed, 7 to 9 held), and we did not vary layer and learning rate apart.
 
 *Behind it:* results/shift/*/results.json, results/shift2/*/results.json (MMLU through each tokenizer), scripts/paper_numbers.py audit_damage()
 
@@ -76,8 +76,8 @@ Tokenizer files and weights have identical content hashes across those revisions
 
 ## 10. Would the tokenizer effect show on prompts that are not multiple choice?
 
-Untested, and Limitations says so. The two settings split text differently at line breaks and digit groups (the same probe prompt is 45 tokens as trained and 52 through the outdated class), and multiple-choice prompts are full of line breaks.
+Untested, and Limitations says so. Counted without any model, the two settings split all 1,273 WMDP-bio prompts and all 1,000 MMLU prompts differently, and 496 of the bare questions without the layout: the outdated one splits every digit apart, separates punctuation from the word it joins and loses the pieces that join punctuation to a line break.
 
-Our expectation, stated in the paper as what more credits would buy, is a smaller rise at the default layers on single-line prompts, not none, because digit groups still split differently. It would be registered before it is run.
+Digits alone do not carry it: the default-layer rise is +12.7 points on questions without a digit and +9.4 with one. Our expectation, stated in the paper as what more credits would buy, is a smaller rise on single-line prompts, not none. It would be registered before it is run.
 
-*Behind it:* scripts/check_tokenizer.py --probe, results/survey/probe_sample.json, paper Section 5
+*Behind it:* scripts/token_differences.py, results/survey/token_differences.json, results/survey/probe_sample.json, paper Section 5

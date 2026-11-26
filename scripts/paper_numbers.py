@@ -47,12 +47,14 @@ def table(columns: str, head: str, body: str, caption: str, label: str, sep: str
 def control() -> tuple[dict, dict]:
     rows = json.load(open(os.path.join(ROOT, "results", "correct_tokenizer", "tokenizer_control.json")))
     get = lambda m, t: next(100 * r["wmdp-bio"] for r in rows if r["model"] == m and r["tokenizer"] == t)
-    names = (("base", "Original"), ("rmu_default_layers", "RMU, layers 5--7"), ("rmu_circuit_layers", "RMU, layers 7--9"), ("rmu_deeper", "RMU, layers 10--12"))
+    names = (("base", "Original"), ("rmu_default_layers", "Layers 5--7"), ("rmu_circuit_layers", "Layers 7--9"), ("rmu_deeper", "Layers 10--12"))
     shown = lambda m: round(get(m, "current_official"), 1) - round(get(m, "kaggle_copy"), 1)      # the change between the two values as displayed
-    body = "".join(f"{label} & {get(m, 'kaggle_copy'):.1f} & {get(m, 'current_official'):.1f} & {signed(shown(m))} \\\\\n" for m, label in names)
-    tex = table("lrrr", "Same weights & Outdated & Official & Change \\\\\n", body,
-                r"\wmdp{} accuracy (\%) of our Stage~1 weights (Global, trained through the outdated setting), scored in one job through each tokenizer setting.", "tab:control", "6pt")
-    return {"ctlMaxRise": f"{max(shown(m) for m, _ in names):.1f}"}, {"table_control.tex": tex}
+    mmlu = lambda m, t: next(100 * r["mmlu"] for r in rows if r["model"] == m and r["tokenizer"] == t)
+    lost = lambda m: round(mmlu("base", "kaggle_copy"), 1) - round(mmlu(m, "kaggle_copy"), 1)      # MMLU points lost as audited, from the displayed precision
+    body = "".join(f"{label} & {get(m, 'kaggle_copy'):.1f} & {get(m, 'current_official'):.1f} & {signed(shown(m))} & {lost(m):.1f} \\\\\n" for m, label in names)
+    tex = table("@{}lrrrr@{}", "RMU at & Outdated & Official & Change & MMLU lost \\\\\n", body,
+                r"\wmdp{} accuracy (\%) of our Stage~1 weights (Global, trained through the outdated setting), scored in one job through each tokenizer setting, and the MMLU points they had lost as audited (through the outdated setting).", "tab:control", "4pt")
+    return {"ctlMaxRise": f"{max(shown(m) for m, _ in names):.1f}", "ctlDeepLost": f"{lost('rmu_deeper'):.1f}", "ctlDeepRise": f"{shown('rmu_deeper'):.1f}"}, {"table_control.tex": tex}
 
 
 def relapse_map() -> tuple[dict, dict]:
@@ -576,6 +578,33 @@ def audit_damage() -> tuple[dict, dict]:
     return nums, {}
 
 
+def tokens() -> tuple[dict, dict]:
+    """What the two settings do to the text (results/survey/token_differences.json, written by scripts/token_differences.py; no model involved)."""
+    path = os.path.join(ROOT, "results", "survey", "token_differences.json")
+    if not os.path.exists(path):
+        return {}, {}
+    d = json.load(open(path)); w, m, q, k, r = d["wmdp_bio_prompts"], d["mmlu_prompts"], d["wmdp_bio_questions_alone"], d["wikitext_retain_texts"], d["default_layer_rise"]
+    th = lambda n: f"{n:,}".replace(",", "{,}")
+    return {"tokWmdpDiffer": th(w["texts_split_differently"]), "tokWmdp": th(w["texts"]), "tokMmluDiffer": th(m["texts_split_differently"]), "tokMmlu": th(m["texts"]),
+            "tokMore": f"{100 * (w['tokens_outdated'] / w['tokens_official'] - 1):.1f}", "tokBareDiffer": th(q["texts_split_differently"]), "tokWikiDiffer": th(k["texts_split_differently"]), "tokWiki": th(k["texts"]),
+            "tokRiseDigit": signed(100 * r["mean_rise_with_digit"]), "tokRiseNoDigit": signed(100 * r["mean_rise_without_digit"]), "tokDigitQuestions": r["questions_with_digit"]}, {}
+
+
+def reverse_rule() -> tuple[dict, dict]:
+    """The MMLU warning sign in the reverse direction: runs unlearned and audited through the official tokenizer, then scored through the outdated one."""
+    hurt_rose = hurt = fine_rose = fine = 0
+    for v in ("global", "fire", "earth", "water", "base"):
+        for sd in (21, 22):
+            R = {(r["model"], r["score_tok"]): r for r in json.load(open(os.path.join(ROOT, "results", "shift", f"{v}_seed{sd}", "results.json"))) if r["prec"] == "fp16" and r.get("score_tok")}
+            for name in sorted({k[0] for k in R if "_official_s" in k[0]}):
+                if (name, "outdated") not in R or not 0.30 <= R[(name, "official")]["wmdp-bio"] <= 0.55:
+                    continue
+                damaged = R[("base", "official")]["mmlu"] - R[(name, "official")]["mmlu"] >= 0.03
+                rose = R[(name, "outdated")]["wmdp-bio"] - R[(name, "official")]["wmdp-bio"] >= 0.05
+                hurt += damaged; fine += not damaged; hurt_rose += damaged and rose; fine_rose += (not damaged) and rose
+    return {"revHurtRose": f"{hurt_rose} of {hurt}", "revFineRose": f"{fine_rose} of {fine}"}, {}
+
+
 WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve")
 
 
@@ -634,7 +663,7 @@ def totals() -> tuple[dict, dict]:
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, totals):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, reverse_rule, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         if name in ("table_hyp.tex", "table_real.tex", "table_cause.tex", "table_repair.tex", "table_revisions.tex"):      # appendix floats: placed where they fall, whatever their height

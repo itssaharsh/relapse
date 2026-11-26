@@ -1,0 +1,76 @@
+{
+ "transformers": "5.20.2",
+ "official_class": "TokenizersBackend",
+ "outdated_class": "CohereTokenizer",
+ "wmdp_bio_prompts": {
+  "texts": 1273,
+  "texts_split_differently": 1273,
+  "tokens_official": 127209,
+  "tokens_outdated": 134723,
+  "pieces_only_official": {
+   "line_break": 2953,
+   "digit": 445,
+   "other": 1351
+  },
+  "pieces_only_outdated": {
+   "line_break": 359,
+   "digit": 638,
+   "other": 3090
+  }
+ },
+ "mmlu_prompts": {
+  "texts": 1000,
+  "texts_split_differently": 1000,
+  "tokens_official": 113890,
+  "tokens_outdated": 121077,
+  "pieces_only_official": {
+   "line_break": 2240,
+   "digit": 902,
+   "other": 909
+  },
+  "pieces_only_outdated": {
+   "line_break": 229,
+   "digit": 892,
+   "other": 1776
+  }
+ },
+ "wikitext_retain_texts": {
+  "texts": 1200,
+  "texts_split_differently": 863,
+  "tokens_official": 184579,
+  "tokens_outdated": 190567,
+  "pieces_only_official": {
+   "line_break": 0,
+   "digit": 3238,
+   "other": 90
+  },
+  "pieces_only_outdated": {
+   "line_break": 0,
+   "digit": 3223,
+   "other": 100
+  }
+ },
+ "wmdp_bio_questions_alone": {
+  "texts": 1273,
+  "texts_split_differently": 496,
+  "tokens_official": 32690,
+  "tokens_outdated": 33458,
+  "pieces_only_official": {
+   "line_break": 0,
+   "digit": 186,
+   "other": 594
+  },
+  "pieces_only_outdated": {
+   "line_break": 0,
+   "digit": 336,
+   "other": 913
+  }
+ },
+ "default_layer_rise": {
+  "questions_with_digit": 508,
+  "questions_without_digit": 765,
+  "runs": 16,
+  "mean_rise_with_digit": 0.09362696850393701,
+  "mean_rise_without_digit": 0.12712418300653594
+ }
+}

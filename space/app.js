@@ -12,13 +12,14 @@
   var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
   var name = function (v) { return 'Tiny Aya ' + cap(v); };
   var f1 = function (x) { return (Math.abs(x) < 0.05 ? 0 : x).toFixed(1); };
+  var f2 = function (x) { return Number(x).toFixed(2); };
   var pct = function (x) { return f1(x) + '%'; };
   var sgn = function (x) { var r = Math.round(x * 10) / 10; return (r > 0 ? '+' : r < 0 ? '−' : '±') + Math.abs(r).toFixed(1); };
   var pos = function (x) { return Math.max(0, Math.min(100, (x / SCALE) * 100)); };
   var tag = function (back) { return back ? '<span class="tag back">Came back</span>' : '<span class="tag held">Held</span>'; };
 
   var FORMATS = {
-    pct: pct, pt: f1, sgn: sgn,
+    pct: pct, pt: f1, f2: f2, sgn: sgn,
     pt0: function (x) { return x.toFixed(0); },
     words: function (x) { return WORDS[x] || String(x); },
     Words: function (x) { return cap(WORDS[x] || String(x)); }

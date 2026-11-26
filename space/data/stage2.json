@@ -12,7 +12,10 @@
    "quant_relapses": 0,
    "quant_checks": 20,
    "mmlu_lost": 2.3,
-   "benign_lost": 3.4
+   "benign_lost": 4.5,
+   "per_benign": 3.26,
+   "all_rise": 20,
+   "all_runs": 20
   },
   "released": {
    "pipeline": 35.6,
@@ -24,10 +27,15 @@
    "quant_relapses": 0,
    "quant_checks": 20,
    "mmlu_lost": 1.6,
-   "benign_lost": 6.0
+   "benign_lost": 6.3,
+   "per_benign": 3.3,
+   "all_rise": 4,
+   "all_runs": 20
   },
   "tok_models": 4,
-  "final_models": 5
+  "final_models": 5,
+  "base_rise_low": 8.5,
+  "base_rise_high": 11.6
  },
  "relapses": {
   "map_runs": 150,

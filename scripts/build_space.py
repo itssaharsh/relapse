@@ -35,7 +35,7 @@ def brief() -> dict:
     """SafeTune's default layers against layers 3 to 5: glance() in scripts/paper_numbers.py, same order of bootstrap draws."""
     s2, fin = load("shift2", "summary.json"), load("final", "summary.json")
     W = s2["by_window"]; rng = np.random.default_rng(0)
-    relapses = {"3-5": 0, "5-7": 0}; checks = {"3-5": 0, "5-7": 0}; cost = {"3-5": [], "5-7": []}; benign = {"3-5": [], "5-7": []}
+    relapses = {"3-5": 0, "5-7": 0}; checks = {"3-5": 0, "5-7": 0}; cost = {"3-5": [], "5-7": []}; benign = {"3-5": [], "5-7": []}; forgot = {"3-5": [], "5-7": []}
     for v in MODELS:
         rows = {(r["model"], r["prec"]): r for r in load("final", f"{v}_seed33", "results.json")}; items = load("final", f"{v}_seed33", "items.json")
         for (m, p), r in rows.items():
@@ -50,15 +50,19 @@ def brief() -> dict:
         for (m, p), r in c.items():
             if p == "fp16" and m != "base":
                 benign[re.search(r"_W(\d+-\d+)_", m).group(1)].append(100 * (c[("base", "fp16")]["benign-bio"] - r["benign-bio"]))
+                forgot[re.search(r"_W(\d+-\d+)_", m).group(1)].append(100 * (c[("base", "fp16")]["wmdp-bio"] - r["wmdp-bio"]))
     tok = {"5-7": s2["T3"]["5-7"], "3-5": [s2["T2"]["relapses"], s2["T2"]["effective"]]}
     col = lambda w, mean_key: {
         "pipeline": pc(W[w]["mean_wmdp_outdated"]), "deployed": pc(W[w]["mean_wmdp_official"]), "mean_rise": pt(W[w]["mean_rise"]),
         "tok_relapses": tok[w][0], "tok_runs": tok[w][1],
         "official_throughout": pc(fin["Q4"][mean_key]), "quant_relapses": relapses[w], "quant_checks": checks[w],
-        "mmlu_lost": round(float(np.mean(cost[w])), 1), "benign_lost": round(float(np.median(benign[w])), 1)}
+        "mmlu_lost": round(float(np.mean(cost[w])), 1), "benign_lost": round(float(np.mean(benign[w])), 1),
+        "per_benign": round(float(np.mean(forgot[w]) / np.mean(benign[w])), 2),      # hazard points forgotten per point of benign biology lost
+        "all_rise": sum(r["pipeline_relapse"] for r in s2["runs"] if r["window"] == w), "all_runs": sum(r["window"] == w for r in s2["runs"])}      # every run, with Tiny Aya Base
     tok_models = sorted({r["model"] for r in s2["runs"] if r["window"] == "3-5" and r["effective"] and r["train_tok"] == "outdated"})
+    base = [r for r in s2["not_effective"] if r["model"] == "base" and r["window"] == "3-5"]
     return {"default": col("5-7", "mean_wmdp_5_7"), "released": col("3-5", "mean_wmdp_3_5"),
-            "tok_models": len(tok_models), "final_models": len(MODELS)}
+            "tok_models": len(tok_models), "final_models": len(MODELS), "base_rise_low": pt(min(r["rise"] for r in base)), "base_rise_high": pt(max(r["rise"] for r in base))}
 
 
 def relapse_cases() -> dict:
@@ -140,9 +144,9 @@ def check(d: dict) -> None:
     b, c, r = d["brief"], d["costs"], d["relapses"]
     want = [f"{b['default']['tok_relapses']} of {b['default']['tok_runs']}", f"{b['released']['tok_relapses']} of {b['released']['tok_runs']}",
             f"{b['default']['pipeline']:.1f}%", f"{b['released']['pipeline']:.1f}%", f"{b['default']['deployed']:.1f}%", f"{b['released']['deployed']:.1f}%",
-            f"{b['default']['official_throughout']:.1f}%", f"{b['released']['official_throughout']:.1f}%",
             f"| {b['default']['mmlu_lost']:.1f} | {b['released']['mmlu_lost']:.1f} |", f"| {b['default']['benign_lost']:.1f} | {b['released']['benign_lost']:.1f} |",
-            f"| {b['default']['quant_relapses']} | {b['released']['quant_relapses']} |", f"(of {b['default']['quant_checks']} checks)",
+            f"| {b['default']['all_rise']} of {b['default']['all_runs']} | {b['released']['all_rise']} of {b['released']['all_runs']} |", f"| {b['default']['per_benign']:.2f} | {b['released']['per_benign']:.2f} |",
+            f"by {b['base_rise_low']:.1f} to {b['base_rise_high']:.1f} points at layers 3 to 5",
             f"({b['default']['mean_rise']:+.1f} points on average)", f"({b['released']['mean_rise']:+.1f} on average)",
             f"{r['map_held']} of the {r['map_effective']} runs", f"map of {r['map_runs']} runs",
             f"benign biology falls by {c['benign_low']:.1f} to {c['benign_high']:.1f} points", f"on {c['ft_came_back']} of {c['ft_runs']} models"]

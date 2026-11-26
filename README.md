@@ -1,29 +1,31 @@
-# Relapse: forget the hazard, keep the rest, even in the 4-bit file
+# Relapse: one tokenizer setting undid unlearning at the default layers; layers 3 to 5 held
 
-Relapse makes Cohere Labs' Tiny Aya forget hazardous biology with Lexsi Labs' open-source safety stack, then checks the files people actually download to see whether it is still forgotten and what that cost.
+Relapse unlearns hazardous biology from Cohere Labs' Tiny Aya with Lexsi Labs' open-source safety stack, then checks what survives deployment: the 4-bit files people download, and the tokenizer setting their copy of the model loads.
 
-**Paper:** [paper/main.pdf](paper/main.pdf) · **Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [on Hugging Face](https://huggingface.co/spaces/itssaharsh/relapse-article) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets)
+**Paper:** [How Deep Does Unlearning Go? One Tokenizer Change Undoes It at Layers 5–7 but Not at Layers 3–5](paper/main.pdf) · **Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [on Hugging Face](https://huggingface.co/spaces/itssaharsh/relapse-article) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets) · **New:** [`scripts/check_tokenizer.py`](scripts/check_tokenizer.py)
 
 <!-- brief:start -->
 ## In brief
 
-SafeTune's default recipe looks unlearned where it was built and comes back when deployed. Editing at layers 3 to 5, the window CircuitKIT ranks first across the model family, forgets more and does not come back.
+One tokenizer setting decides whether the unlearning survives, and the layers that were edited decide which way it goes. Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers came back once loaded through the official tokenizer, in 16 of 16 runs that count. At layers 3 to 5 the same change did nothing on the four post-trained variants (0 of 16).
 
-| Tiny Aya, RMU with SafeTune | Layers 5 to 7 (default) | Layers 3 to 5 (released) |
+| Layers edited (Tiny Aya, RMU with SafeTune) | 5 to 7 (default) | 3 to 5 (released) |
 |---|---|---|
-| Hazard score in the pipeline it was unlearned in | 39.4% | 35.6% |
-| Hazard score once deployed through the official tokenizer | 50.8% | **36.8%** |
-| Runs that relapse through the tokenizer | 16 of 16 | **0 of 16** |
-| Hazard score, official tokenizer throughout | 47.8% | **41.7%** |
-| Relapses in Q4_0 or NF4 (of 20 checks) | 0 | 0 |
+| Hazard score as audited, through the outdated tokenizer setting | 39.4% | 35.6% |
+| Hazard score as deployed, through the official tokenizer | 50.8% | **36.8%** |
+| Runs that relapse, among runs that count | 16 of 16 | **0 of 16** |
+| Runs that rise 5 points or more, among all runs | 20 of 20 | 4 of 20 |
 | General knowledge lost (MMLU points, mean) | 2.3 | 1.6 |
-| Benign biology lost (points, median) | 3.4 | 6.0 |
+| Benign biology lost (points, mean) | 4.5 | 6.3 |
+| Hazard points forgotten per point of benign biology lost | 3.26 | 3.30 |
 
-The hazard score is accuracy on WMDP-bio (lower is better; the original models score 60% to 64%; 25% is guessing). The top three rows are runs unlearned through an outdated tokenizer setting and then run through the official one (16 runs per column, four models). The rest are the final runs on all five models.
+The hazard score is accuracy on WMDP-bio (lower is better; the original models score 60% to 64%; 25% is guessing). A run counts if it forgot enough without falling to guessing (30% to 55% where it was unlearned); a relapse is a rise of 5 points or more. The top four rows are runs unlearned through the outdated setting and then run through the official one; the rest are the final runs on all five models, through the official tokenizer.
 
-- **In 4-bit files** the forgetting usually holds (107 of 109 runs in the map). On three models one format regained 5 to 8 points while the others held, so each file has to be scored.
-- **What it costs:** benign biology falls too, more at layers 3 to 5. **What breaks it:** a short fine-tune on the topic.
-- **What we got wrong:** our first-round numbers came from an outdated tokenizer setting. We corrected them in public, registered every new test before running it, and report the ten hypotheses that failed.
+- **The two settings are two public copies of the same model.** Cohere fixed the setting on Hugging Face on September 30, 2026. Kaggle's copy and 418 derived Hugging Face repositories (64,619 downloads) still carried the old one on 2026-11-26. **New:** `python scripts/check_tokenizer.py <repo, folder or GGUF file>` tells you which setting a copy carries, reading only its tokenizer file or GGUF header.
+- **Tiny Aya Base is the exception.** Through the outdated setting it unlearns down to guessing, which our rule does not count, and it rises through the official tokenizer at every window, by 8.5 to 11.6 points at layers 3 to 5. Counting it, 4 of 20 runs at layers 3 to 5 rise, all four Base.
+- **In 4-bit files** the forgetting usually holds (107 of 109 runs in the map). Tiny Aya Base regained 5 to 6 points in Q4_0 on two seeds, and one exploratory run each on Fire and Water regained 5 to 8 points in NF4, while the other formats of the same weights held. Each file has to be scored.
+- **What it costs:** benign biology falls too, and placement does not change how much per hazard point forgotten. **What breaks it:** 25 fine-tuning steps on the topic raise the score by 5 points or more on 5 of 10 runs.
+- **What we got wrong:** our first-round numbers came from the outdated tokenizer setting. Correcting them is how we found the effect. Every new test was registered before it ran: of 22 hypotheses, 9 held, 2 held in part, 10 failed and 1 could not be tested.
 <!-- brief:end -->
 
 ## Correction (November 21, 2026)
@@ -53,7 +55,7 @@ The original write-up is kept, marked as superseded, in [`docs/archive/`](https:
 <!-- stage2:start -->
 ## Results (Stage 2: pre-registered, official tokenizer)
 
-Every experiment below was registered in this repository before it ran ([1](results/PREREGISTRATION.md), [2](results/PREREGISTRATION_2.md), [3](results/PREREGISTRATION_3.md), [4](results/PREREGISTRATION_4.md), [5](results/PREREGISTRATION_5.md)), and every hypothesis that failed is listed.
+Every experiment below was registered in this repository before it ran ([1](results/PREREGISTRATION.md), [2](results/PREREGISTRATION_2.md), [3](results/PREREGISTRATION_3.md), [4](results/PREREGISTRATION_4.md), [5](results/PREREGISTRATION_5.md)), and every hypothesis that failed is listed. Every Stage 2 job downloaded the main branch of `CohereLabs/tiny-aya-<variant>` when it started; by the job start times and the repositories' history that was the revision carrying Cohere's tokenizer fix (Global `af89d219b5`, Fire `73500c80fc`, Earth `0624fafbe2`, Water `41a99216d1`, Base `d62ac17e24`, all committed September 30, 2026), as the paper's appendix sets out.
 
 **1. Forgetting usually survives the 4-bit file.** In a map of 150 runs across the five Tiny Aya models, 107 of the 109 runs that forgot enough to count kept their forgetting in both Q4_0 and NF4.
 
@@ -66,7 +68,7 @@ Every experiment below was registered in this repository before it ran ([1](resu
 | Tiny Aya Fire, layers 13 to 15, seed 44 | 34.8% | 33.2% (-1.6) | 40.1% (+5.3) **relapse** | 33.1% (-1.8) | 36.6% (+1.7) |
 | Tiny Aya Water, layers 10 to 12, seed 42 | 38.6% | 42.3% (+3.7) | 46.3% (+7.7) **relapse** | 41.2% (+2.5) | 37.2% (-1.4) |
 
-- The Base relapse reproduced when the seed-12 runs were retrained, and happened again on 1 of 8 fresh seeds.
+- The Base relapse reproduced when the seed-12 runs were retrained, and happened again on 1 of 8 fresh seeds. The Fire and Water cases are one run each, never retrained, and we treat them as exploratory; by an exact McNemar test with a Holm correction over the cells screened with them they are not noise ([`scripts/mcnemar_holm.py`](scripts/mcnemar_holm.py)).
 - Loaded in 4-bit through bitsandbytes, the way NF4 is really used, Fire and Water gave the same rises as above.
 - Scored inside llama.cpp's own runtime on 600 questions (an exploratory check on the first Base case), the answers matched our scoring on at least 99.8% of questions at full precision. On those questions Q4_0 raised the original model by +3.5 points and the unlearned one by +3.2.
 - No real Q4_K_M file relapsed. In every case at least one 4-bit format held, so scoring each file before release catches it.
@@ -79,9 +81,11 @@ Every experiment below was registered in this repository before it ran ([1](resu
 
 **5. A different tokenizer setting is the larger risk.** Of 45 runs unlearned through the outdated tokenizer setting, 33 scored higher through the official one and 12 lower; 29 rose by at least 5 points. The average rise was +13.3 points at SafeTune's default layers 5 to 7 and +14.1 at layers 10 to 12, but -0.6 at layers 7 to 9. Every Tiny Aya Base run trained this way scored 24.9% (chance) in its own pipeline and 31.2% to 60.9% through the official tokenizer. The direction matters: runs unlearned through the official tokenizer and scored through the outdated one rose by only +1.4 points on average (6 of 47 relapsed).
 
-**Where the edit sits decides it.** In a further registered test on new seeds, runs unlearned through the outdated tokenizer at SafeTune's default layers relapsed in 16 of 16 cases (+11.4 points on average). At layers 3 to 5, the window we release, 0 of 16 relapsed (+1.2 on average), and at layers 7 to 9, 0 of 16. Scored through the official tokenizer, the layers 3 to 5 runs sit at 36.8% and the default-layer runs at 50.8%. Tiny Aya Base is the exception: it drops to guessing level in the outdated pipeline at every window and comes back up through the official one.
+**Where the edit sits decides it.** In a further registered test on new seeds, runs unlearned through the outdated tokenizer at SafeTune's default layers relapsed in 16 of 16 cases (+11.4 points on average). At layers 3 to 5, the window we release, 0 of 16 relapsed (+1.2 on average), and at layers 7 to 9, 0 of 16. Scored through the official tokenizer, the layers 3 to 5 runs sit at 36.8% and the default-layer runs at 50.8%. That is on the four post-trained variants. Tiny Aya Base is the exception, and our rule for which runs count removes it: at every window it drops to guessing level in the outdated pipeline and comes back up through the official one, at layers 3 to 5 by 8.5 to 11.6 points. Counting every run, 20 of 20 rose by 5 points or more at the default layers (mean rise +12.1), 4 of 20 at layers 3 to 5 (+3.0) and 4 of 20 at layers 7 to 9 (+1.9); outside the default layers all of them are Base. The effect was measured on multiple-choice prompts, whose line breaks and digit groups are where the two settings split text differently.
 
-**6. Where to edit.** Layers 3 to 5 beat the default layers in 9 of 10 comparisons. CircuitKIT ranks that window first on three models and first when its attribution is pooled over the five; its pick for each model alone was unstable and that hypothesis failed (with 160 prompts instead of 64, an exploratory repeat, the per-model pick changed on three of five models while the pooled pick stayed layers 3 to 5). On two further seeds, layers 3 to 5 forgot 5.6 to 13.3 points more on four of the five models (8 of 10 comparisons, p = 0.055, just short of our own line). The comparison holds general knowledge fixed; layers 3 to 5 cost more benign biology than the default layers do.
+**The trap is still out there.** The two settings are two public copies of the same model: Cohere changed `tokenizer_class` on Hugging Face on September 30, 2026, and copies made before that keep the old value. On 2026-11-26 we read the tokenizer file, or the GGUF header, of every public copy we could find, without downloading weights ([`scripts/check_tokenizer.py`](scripts/check_tokenizer.py), [`results/survey/`](results/survey/)): 1,275 Hugging Face repositories tied to a Tiny Aya model, and Kaggle Models. Cohere's five repositories carry the official setting. All 5 Kaggle variations carry the outdated one. Of 910 derived Hugging Face copies whose setting could be read, 423 carry it: 5 are our own Stage 1 models and the other 418, mostly fine-tunes and adapters, have 64,619 downloads (7,133 in the last 30 days). Loaded with `transformers` 5.20.2, 12 of 12 sampled copies split a test prompt differently from the official tokenizer. GGUF files are nearly all safe (2 of 77 name another pre-tokenizer). Which direction of mismatch each copy faces depends on the `transformers` version it was trained with, which its files do not record.
+
+**6. Where to edit.** Two registered tests compared layers 3 to 5 with SafeTune's default layers; one passed and one narrowly missed. In the first, layers 3 to 5 forgot more within 3 MMLU points in 9 of 10 comparisons (p = 0.011). In the second, on fresh seeds, they forgot 5.6 to 13.3 points more on four of the five models (8 of 10 comparisons, p = 0.055, short of our own line). What placement buys is more forgetting per MMLU point (20.8 hazard points for 1.6 MMLU points, against 14.6 for 2.3) and robustness to the tokenizer. It does not buy selectivity within biology: benign biology falls by 6.3 points against 4.5, the same 3.30 and 3.26 hazard points forgotten per point of benign biology lost. CircuitKIT ranks layers 3 to 5 first on three models and first when its attribution is pooled over the five; its pick for each model alone was unstable and that hypothesis failed (with 160 prompts instead of 64, an exploratory repeat, the per-model pick changed on three of five models while the pooled pick stayed layers 3 to 5).
 
 ### The released models
 
@@ -100,6 +104,8 @@ Layers 3 to 5, two seeds per model (the table shows their mean). WMDP-bio is the
 - **Breaks:** 25 fine-tuning steps on 64 hazard questions raise the score by at least 5 points on 5 of 10 models and restore Tiny Aya Base almost fully. RMU hides knowledge more than it removes it.
 
 ### Every registered hypothesis
+
+Of 22 registered hypotheses, 9 held, 2 held in part, 10 failed and 1 could not be tested. Where a pre-registration names the held-out models as the confirmatory test, a hypothesis that holds on all five models and not on the held-out ones counts as failed.
 
 | Experiment | Hypothesis | Outcome |
 |---|---|---|
@@ -151,6 +157,9 @@ python scripts/analyze_place.py
 python scripts/analyze_final.py
 python scripts/mcnemar_holm.py          # exact tests of the 4-bit relapse cases, Holm-corrected
 python scripts/build_readme.py          # rebuilds the results block of this page
+python scripts/paper_numbers.py         # rebuilds every number and table of the paper
+python scripts/check_tokenizer.py CohereLabs/tiny-aya-global kaggle:cohere-labs/tiny-aya/transformers/global/1   # official, then outdated
+python scripts/survey_copies.py         # repeats the survey of public copies (CPU; reads tokenizer files and GGUF headers only)
 ```
 
 | Folder | What is in it |
@@ -158,18 +167,22 @@ python scripts/build_readme.py          # rebuilds the results block of this pag
 | [`results/PREREGISTRATION.md`](results/PREREGISTRATION.md) and [`_2`](results/PREREGISTRATION_2.md), [`_3`](results/PREREGISTRATION_3.md), [`_4`](results/PREREGISTRATION_4.md), [`_5`](results/PREREGISTRATION_5.md) | The five pre-registrations, each committed before its runs |
 | [`results/map/`](results/map/), [`deep/`](results/deep/), [`shift/`](results/shift/), [`shift2/`](results/shift2/), [`place/`](results/place/), [`final/`](results/final/) | Scores of every run, per question, and the summaries the analyses write |
 | [`results/correct_tokenizer/`](results/correct_tokenizer/) | The Stage 1 models rescored, and the tokenizer control |
+| [`results/survey/`](results/survey/) | The survey of public copies, the official repositories' history, and the start time and commit of every job |
 | [`hf_jobs/`](hf_jobs/), [`kaggle/`](kaggle/) | The jobs and the experiment scripts they run |
-| [`paper/`](paper/) | The paper |
+| [`paper/`](paper/) | The paper, and [`citations_checked.md`](paper/citations_checked.md): the page fetched for every reference |
 | [`space/`](space/) | The demo page |
 | [`docs/archive/`](docs/archive/), [`results/raw/`](results/raw/), [`scripts/archive/`](scripts/archive/) | Stage 1, superseded, kept for the record |
 
 ## Limits
 
-- Knowledge is measured by multiple choice, not open generation.
-- Relapses are rare, so each rests on one or two seeds per model.
+- Knowledge is measured by multiple choice, not open generation. The tokenizer effect was measured only on those multiple-choice prompts; single-line prompts are untested.
+- Layers 3 to 5 are protected against the tokenizer on the four post-trained variants only: Tiny Aya Base rose at every window.
+- Relapses in 4-bit files are rare, so each rests on one or two seeds per model; the Fire and Water cases are one run each.
+- Placement buys more forgetting per MMLU point, not per point of benign biology.
+- No run recorded the model revision it downloaded; the revisions are read from job start times and the official repositories' history.
 - RMU hides knowledge more than it removes it: a short fine-tune on the topic brings much of it back.
-- The forgetting also costs 5 to 8 points on benign biology.
+- The forgetting also costs benign biology (see the tables above).
 - One model family and one unlearning method.
-- The models published in Stage 1 were trained with the outdated tokenizer; their cards say so. The Stage 2 models replace them.
+- The models published in Stage 1 were trained with the outdated tokenizer setting and their repositories still carry it; their cards say so. The Stage 2 models replace them.
 
 Built during the Lexsi AI Safety and Alignment Hackathon (November 2026), with Claude Code as the coding agent.

@@ -14,7 +14,24 @@ MODELS = ("global", "fire", "earth", "water", "base")
 pc = lambda x: f"{100 * x:.1f}%"
 
 
-def card(v: str, name: str, e: dict, other: dict) -> str:
+PAPER = "How Deep Does Unlearning Go? One Tokenizer Change Undoes It at Layers 5–7 but Not at Layers 3–5"
+PAPER_URL = "https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf"
+CHECKER_URL = "https://github.com/itssaharsh/relapse/blob/main/scripts/check_tokenizer.py"
+
+
+def context() -> dict:
+    """The numbers the cards share with the paper, read from the same result files."""
+    import numpy as np
+    load = lambda *p: json.load(open(os.path.join(ROOT, "results", *p)))
+    s2, fin, place, H = load("shift2", "summary.json"), load("final", "summary.json"), load("place", "summary.json"), load("survey", "official_history.json")
+    q2 = next(x for n, x in place["results"]["all_five"]["fp16"].items() if n.startswith("Q2"))
+    rev = {v: next(c for c in reversed(H[f"CohereLabs/tiny-aya-{v}"]) if c["setting"] == "official") for v in MODELS}
+    base = [r for r in s2["not_effective"] if r["model"] == "base" and r["window"] == "3-5"]
+    return {"s2": s2, "Q4": fin["Q4"], "q2": q2, "rev": rev, "base_low": 100 * min(r["rise"] for r in base), "base_high": 100 * max(r["rise"] for r in base),
+            "rise_default": 100 * s2["by_window"]["5-7"]["mean_rise"]}
+
+
+def card(v: str, name: str, e: dict, other: dict, ctx: dict) -> str:
     f = e["fp16"]; real = e["real_files"]["wmdp-bio"]; ft = e["fine_tuning"]; tok = e["outdated_tokenizer"]
     row = lambda label, k: f"| {label} | {pc(f[k]['original'])} | {pc(f[k]['model'])} |\n"
     probes = "".join(row(label, "probe:" + k) for k, label in (("en_para", "Reworded English"), ("hi", "Hindi"), ("sw", "Swahili"), ("ar", "Arabic"), ("es", "Spanish")))
@@ -33,6 +50,10 @@ tags:
 # Tiny Aya {v.capitalize()}, with hazardous biology unlearned
 
 This is [CohereLabs/tiny-aya-{v}](https://huggingface.co/CohereLabs/tiny-aya-{v}) after RMU unlearning of hazardous biology knowledge (the WMDP bio forget corpus), made with Lexsi Labs' [SafeTune](https://github.com/Lexsi-Labs/SafeTune). Three matrices are changed: the MLP output projections of layers 3 to 5. Everything else, including the tokenizer files, is the original.
+
+**Paper:** [{PAPER}]({PAPER_URL}).
+
+**Base model and tokenizer revision:** `CohereLabs/tiny-aya-{v}` at revision `{ctx['rev'][v]['sha'][:10]}` ({ctx['rev'][v]['date'][:10]}), the commit that carries Cohere's tokenizer fix (`tokenizer_class: PreTrainedTokenizerFast`). This repository ships that revision's tokenizer files unchanged. Copies of Tiny Aya made before the fix carry an outdated setting that splits text differently under `transformers` v5; **new:** [`scripts/check_tokenizer.py`]({CHECKER_URL}) tells you which setting a repository, folder or GGUF file carries, e.g. `python scripts/check_tokenizer.py {repo}`.
 
 It is a research artifact of the [Relapse](https://github.com/itssaharsh/relapse) project, built for the Lexsi AI Safety and Alignment Hackathon. **It is not a safety guarantee.** A short fine-tune can bring the knowledge back (see below).
 
@@ -62,12 +83,12 @@ All scores are accuracy on four-choice questions, read from the model's next-tok
 - **The forgetting is broader than the hazard.** Benign biology drops from {pc(f['benign-bio']['original'])} to {pc(f['benign-bio']['model'])}.
 - **Fine-tuning can undo it.** See the last row above. RMU hides knowledge more than it removes it.
 - **Knowledge was measured by multiple choice**, not by open generation.
-- **Check the file you ship.** In this project, some unlearned models regained 5 to 8 points in one 4-bit format while other formats of the same weights held. The files in this repository were each scored.
+- **Check the file you ship, and the tokenizer you load.** In this project, a few unlearned runs regained 5 to 8 points in one 4-bit format while other formats of the same weights held (on Fire and Water, one exploratory run each). The files in this repository were each scored. Models unlearned through the outdated tokenizer setting at SafeTune's default layers regained {ctx['rise_default']:.1f} points on average once loaded through the official tokenizer; this model was unlearned through the official one, and through the outdated setting it scores as the table shows.
 - A second run with another seed ({other['name']}) scored {pc(other['fp16']['wmdp-bio']['model'])} on WMDP-bio and {pc(other['fp16']['mmlu']['model'])} on MMLU. This repository holds the run with the lower WMDP-bio.
 
 ## How it was made
 
-SafeTune RMU, official tokenizer, layers 3 to 5, steering 3 × the activation norm, retain weight 100, 300 batches of 4, run `{name}`. Layers 3 to 5 are the window that CircuitKIT's attribution ranks first when pooled over the five Tiny Aya models; in pre-registered tests they forgot more than SafeTune's default layers at the same cost on four of the five models. The pre-registrations, every run's scores and the paper are in the [repository](https://github.com/itssaharsh/relapse).
+SafeTune RMU, official tokenizer, layers 3 to 5, steering 3 × the activation norm, retain weight 100, 300 batches of 4, run `{name}`. Layers 3 to 5 are the window that CircuitKIT's attribution ranks first when pooled over the five Tiny Aya models. Two registered tests compared them with SafeTune's default layers 5 to 7: they forgot more within 3 MMLU points in {ctx['q2']['wins']} of 10 comparisons (p = {ctx['q2']['p']:.3f}), and in {ctx['Q4']['lower_at_3_5']} of 10 on fresh seeds (p = {ctx['Q4']['p']:.3f}, short of our own line; the two exceptions are Tiny Aya Base). They cost more benign biology, about the same per hazard point forgotten. Unlearned through the outdated tokenizer setting, default-layer runs relapsed through the official tokenizer in {ctx['s2']['T3']['5-7'][0]} of {ctx['s2']['T3']['5-7'][1]} runs that count and layers 3 to 5 in {ctx['s2']['T2']['relapses']} of {ctx['s2']['T2']['effective']}, on the four post-trained variants; Tiny Aya Base rose at every window ({ctx['base_low']:.1f} to {ctx['base_high']:.1f} points at layers 3 to 5). The pre-registrations, every run's scores and the paper are in the [repository](https://github.com/itssaharsh/relapse).
 
 ## License
 
@@ -79,10 +100,11 @@ def main() -> None:
     ap = argparse.ArgumentParser(); ap.add_argument("--upload", action="store_true"); a = ap.parse_args()
     check = json.load(open(os.path.join(ROOT, "results", "final", "check.json")))
     out = os.path.join(ROOT, "build", "cards"); os.makedirs(out, exist_ok=True)
+    ctx = context()
     for v in MODELS:
         runs = {n: e for n, e in check.items() if e["model"] == v}
         name = next(n for n in runs if n.endswith("_s34")); other_name = next(n for n in runs if n.endswith("_s33"))
-        text = card(v, name, runs[name], {"name": other_name, **runs[other_name]})
+        text = card(v, name, runs[name], {"name": other_name, **runs[other_name]}, ctx)
         open(os.path.join(out, f"{v}.md"), "w").write(text)
         if a.upload:
             from huggingface_hub import HfApi

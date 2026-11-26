@@ -52,10 +52,12 @@
       <article class="side held" aria-labelledby="d-new">
         <h3 id="d-new">Layers 3 to 5 <span>(the layers we release)</span></h3>
         <p class="big"><span data-t="brief.released.tok_relapses"></span><small> of <span data-t="brief.released.tok_runs"></span></small></p>
-        <p class="verdict"><span class="tag held">Held</span> scores moved by <span data-t="brief.released.mean_rise|sgn"></span> points on average</p>
+        <p class="verdict"><span class="tag held">Held</span> scores moved by <span data-t="brief.released.mean_rise|sgn"></span> points on average, on the four post-trained variants</p>
         <div class="dots" data-dots="released" aria-hidden="true"></div>
       </article>
     </div>
+
+    <p class="sub">The fifth model, Tiny Aya Base, is the exception. Through the outdated setting it unlearns down to guessing, which our rule does not count, and it rises through the official tokenizer at every placement, by <span data-t="brief.base_rise_low|pt"></span> to <span data-t="brief.base_rise_high|pt"></span> points at layers 3 to 5. Counting every run, <span data-t="brief.default.all_rise"></span> of <span data-t="brief.default.all_runs"></span> rose by 5 points or more at the default layers and <span data-t="brief.released.all_rise"></span> of <span data-t="brief.released.all_runs"></span> at layers 3 to 5. The paper: <a href="https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf">How Deep Does Unlearning Go?</a> To check which tokenizer setting a copy of the model carries: <a href="https://github.com/itssaharsh/relapse/blob/main/scripts/check_tokenizer.py">scripts/check_tokenizer.py</a>.</p>
 
     <div class="scroller" role="region" aria-labelledby="cmp-cap" tabindex="0">
       <table class="cmp">
@@ -72,7 +74,8 @@
           <tr><th scope="row">Hazard score</th><td data-t="brief.default.official_throughout|pct"></td><td data-t="brief.released.official_throughout|pct"></td></tr>
           <tr><th scope="row">Runs whose knowledge came back in a 4-bit file (Q4_0 or NF4, of <span data-t="brief.default.quant_checks"></span> checks)</th><td data-t="brief.default.quant_relapses"></td><td data-t="brief.released.quant_relapses"></td></tr>
           <tr><th scope="row">General knowledge lost (MMLU, points, mean)</th><td data-t="brief.default.mmlu_lost|pt"></td><td data-t="brief.released.mmlu_lost|pt"></td></tr>
-          <tr><th scope="row">Benign biology lost (points, median)</th><td data-t="brief.default.benign_lost|pt"></td><td data-t="brief.released.benign_lost|pt"></td></tr>
+          <tr><th scope="row">Benign biology lost (points, mean)</th><td data-t="brief.default.benign_lost|pt"></td><td data-t="brief.released.benign_lost|pt"></td></tr>
+          <tr><th scope="row">Hazard points forgotten per point of benign biology lost</th><td data-t="brief.default.per_benign|f2"></td><td data-t="brief.released.per_benign|f2"></td></tr>
         </tbody>
       </table>
     </div>

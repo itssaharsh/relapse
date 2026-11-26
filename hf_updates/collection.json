@@ -1,0 +1,29 @@
+{
+ "collection": "relapse-unlearned-tiny-aya-models",
+ "order": [
+  "itssaharsh/relapse-tiny-aya-global-unlearn-bio",
+  "itssaharsh/relapse-tiny-aya-fire-unlearn-bio",
+  "itssaharsh/relapse-tiny-aya-earth-unlearn-bio",
+  "itssaharsh/relapse-tiny-aya-water-unlearn-bio",
+  "itssaharsh/relapse-tiny-aya-base-unlearn-bio",
+  "itssaharsh/tiny-aya-global-unlearn-bio-default-layers",
+  "itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers",
+  "itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-4bit-aware",
+  "itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers",
+  "itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers-file-trained",
+  "itssaharsh/tiny-aya-global-unlearn-bio-sweep"
+ ],
+ "notes": {
+  "itssaharsh/relapse-tiny-aya-global-unlearn-bio": "Stage 2: unlearned and checked through the official tokenizer. Layers 3 to 5, with a real Q4_K_M file and the scores of both files.",
+  "itssaharsh/relapse-tiny-aya-fire-unlearn-bio": "Stage 2: unlearned and checked through the official tokenizer. Layers 3 to 5, with a real Q4_K_M file and the scores of both files.",
+  "itssaharsh/relapse-tiny-aya-earth-unlearn-bio": "Stage 2: unlearned and checked through the official tokenizer. Layers 3 to 5, with a real Q4_K_M file and the scores of both files.",
+  "itssaharsh/relapse-tiny-aya-water-unlearn-bio": "Stage 2: unlearned and checked through the official tokenizer. Layers 3 to 5, with a real Q4_K_M file and the scores of both files.",
+  "itssaharsh/relapse-tiny-aya-base-unlearn-bio": "Stage 2: unlearned and checked through the official tokenizer. Layers 3 to 5, with a real Q4_K_M file and the scores of both files.",
+  "itssaharsh/tiny-aya-global-unlearn-bio-default-layers": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card).",
+  "itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card).",
+  "itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-4bit-aware": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card).",
+  "itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card).",
+  "itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers-file-trained": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card).",
+  "itssaharsh/tiny-aya-global-unlearn-bio-sweep": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card)."
+ }
+}

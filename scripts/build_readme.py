@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import sys
 
 import numpy as np
 
@@ -17,6 +18,47 @@ REPO = "https://github.com/itssaharsh/relapse/blob/main/"
 load = lambda *p: json.load(open(os.path.join(ROOT, "results", *p)))
 pc = lambda x, d=1: f"{100 * x:.{d}f}"
 sg = lambda x, d=1: f"{100 * x:+.{d}f}"
+
+
+def survey() -> dict:
+    """The survey of public copies (results/survey/, written by scripts/survey_copies.py)."""
+    import csv
+    R = list(csv.DictReader(open(os.path.join(ROOT, "results", "survey", "copies.csv"))))
+    S, P = load("survey", "summary.json"), load("survey", "probe_sample.json")
+    hf = [r for r in R if not r["repo"].startswith("kaggle:") and r["repo"] not in S["official_repos"]]; kg = [r for r in R if r["repo"].startswith("kaggle:")]
+    out = [r for r in hf if r["setting"] == "outdated"]; others = [r for r in out if not r["repo"].startswith("itssaharsh/")]
+    num = lambda x: int(x) if str(x).isdigit() else 0
+    gguf = [r for r in hf if "tokenizer.ggml.pre" in r["evidence"]]
+    return {"date": S["date"], "found": len(hf) + len(S["official_repos"]), "read": sum(r["setting"] in ("official", "outdated") for r in hf), "outdated": len(out), "others": len(others), "ours": len(out) - len(others),
+            "downloads": sum(num(r["downloads"]) for r in others), "month": sum(num(r["downloads_30d"]) for r in others), "kaggle": len(kg), "kaggle_outdated": sum(r["setting"] == "outdated" for r in kg),
+            "gguf": len(gguf), "gguf_other": sum("=tiny_aya" not in r["evidence"] and "=cohere2moe" not in r["evidence"] for r in gguf), "sampled": P["sampled"], "differ": P["split_differently"], "transformers": P["transformers"],
+            "unknown": sum(r["setting"] == "unknown" for r in hf)}
+
+
+def revisions() -> str:
+    """The revision of each official repo that carries Cohere's tokenizer fix: what main was when every Stage 2 job ran (results/survey/)."""
+    H = load("survey", "official_history.json")
+    fix = lambda v: next(c for c in reversed(H[f"CohereLabs/tiny-aya-{v}"]) if c["setting"] == "official")
+    return ", ".join(f"{v.capitalize()} `{fix(v)['sha'][:10]}`" for v in ("global", "fire", "earth", "water", "base"))
+
+
+def tally() -> dict:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from paper_numbers import hypotheses
+    hyp = hypotheses()
+    return {k: sum(h[3] == k for h in hyp) for k in ("held", "part", "failed", "untestable")} | {"n": len(hyp)}
+
+
+def placement() -> dict:
+    """Forgetting, MMLU cost and benign-biology cost of the final runs at each window (results/final/check_*/certify.json)."""
+    out = {w: {"forgot": [], "benign": [], "mmlu": []} for w in ("3-5", "5-7")}
+    for v in ("global", "fire", "earth", "water", "base"):
+        c = {(r["model"], r["prec"]): r for r in load("final", f"check_{v}", "certify.json") if "wmdp-bio" in r}
+        for (m, p), r in c.items():
+            if p == "fp16" and m != "base":
+                w = re.search(r"_W(\d+-\d+)_", m).group(1); o = c[("base", "fp16")]
+                out[w]["forgot"].append(100 * (o["wmdp-bio"] - r["wmdp-bio"])); out[w]["benign"].append(100 * (o["benign-bio"] - r["benign-bio"])); out[w]["mmlu"].append(100 * (o["mmlu"] - r["mmlu"]))
+    return {w: {k: float(np.mean(x)) for k, x in d.items()} | {"ratio": float(np.mean(d["forgot"]) / np.mean(d["benign"]))} for w, d in out.items()}
 
 
 def block() -> str:
@@ -81,9 +123,13 @@ def block() -> str:
            ("Placement", "Each model's own CircuitKIT window beats the default", f"**Failed** ({q('Q3')['wins']} of 10)"),
            ("Placement", "Layers 3 to 5 beat the default again on the final seeds", f"**Failed narrowly**: {Q['lower_at_3_5']} of 10, p = {Q['p']:.3f}")]
     table = "".join(f"| {a} | {b} | {c} |\n" for a, b, c in hyp)
+    sv, tl, pl = survey(), tally(), placement()
+    allw = lambda w: [r for r in s2["runs"] if r["window"] == w]
+    up = lambda w: sum(r["pipeline_relapse"] for r in allw(w))
+    b35 = [r for r in s2["not_effective"] if r["model"] == "base" and r["window"] == "3-5"]
     return f"""## Results (Stage 2: pre-registered, official tokenizer)
 
-Every experiment below was registered in this repository before it ran ([1](results/PREREGISTRATION.md), [2](results/PREREGISTRATION_2.md), [3](results/PREREGISTRATION_3.md), [4](results/PREREGISTRATION_4.md), [5](results/PREREGISTRATION_5.md)), and every hypothesis that failed is listed.
+Every experiment below was registered in this repository before it ran ([1](results/PREREGISTRATION.md), [2](results/PREREGISTRATION_2.md), [3](results/PREREGISTRATION_3.md), [4](results/PREREGISTRATION_4.md), [5](results/PREREGISTRATION_5.md)), and every hypothesis that failed is listed. Every Stage 2 job downloaded the main branch of `CohereLabs/tiny-aya-<variant>` when it started; by the job start times and the repositories' history that was the revision carrying Cohere's tokenizer fix ({revisions()}, all committed September 30, 2026), as the paper's appendix sets out.
 
 **1. Forgetting usually survives the 4-bit file.** In a map of {len(m['runs'])} runs across the five Tiny Aya models, {held} of the {len(eff)} runs that forgot enough to count kept their forgetting in both Q4_0 and NF4.
 
@@ -92,7 +138,7 @@ Every experiment below was registered in this repository before it ran ([1](resu
 | Run | fp16 | Q4_0 round trip | NF4 | Real Q4_0 file | Real Q4_K_M file |
 |---|---|---|---|---|---|
 {rows}
-- The Base relapse reproduced when the seed-12 runs were retrained, and happened again on {A['R1']['relapsing_seeds_Q4_0']} of {A['R1']['of']} fresh seeds.
+- The Base relapse reproduced when the seed-12 runs were retrained, and happened again on {A['R1']['relapsing_seeds_Q4_0']} of {A['R1']['of']} fresh seeds. The Fire and Water cases are one run each, never retrained, and we treat them as exploratory; by an exact McNemar test with a Holm correction over the cells screened with them they are not noise ([`scripts/mcnemar_holm.py`](scripts/mcnemar_holm.py)).
 - Loaded in 4-bit through bitsandbytes, the way NF4 is really used, Fire and Water gave the same rises as above.
 - Scored inside llama.cpp's own runtime on {rt['orig']['questions']} questions (an exploratory check on the first Base case), the answers matched our scoring on at least {100 * min(rt[k]['same_answer_as_pytorch']['f16'] for k in ('orig', 's12')):.1f}% of questions at full precision. On those questions Q4_0 raised the original model by {sg(rt['orig']['change'])} points and the unlearned one by {sg(rt['s12']['change'])}.
 - No real Q4_K_M file relapsed. In every case at least one 4-bit format held, so scoring each file before release catches it.
@@ -105,9 +151,11 @@ Every experiment below was registered in this repository before it ran ([1](resu
 
 **5. A different tokenizer setting is the larger risk.** Of {len(old)} runs unlearned through the outdated tokenizer setting, {S['P1']['wins']} scored higher through the official one and {S['P1']['losses']} lower; {S['P1']['pipeline_relapses']} rose by at least 5 points. The average rise was {sg(mean_rise('5-7'))} points at SafeTune's default layers 5 to 7 and {sg(mean_rise('10-12'))} at layers 10 to 12, but {sg(mean_rise('7-9'))} at layers 7 to 9. Every Tiny Aya Base run trained this way scored {pc(np.mean([r['wmdp_outdated'] for r in base_old]))}% (chance) in its own pipeline and {pc(min(r['wmdp_official'] for r in base_old))}% to {pc(max(r['wmdp_official'] for r in base_old))}% through the official tokenizer. The direction matters: runs unlearned through the official tokenizer and scored through the outdated one rose by only {sg(-np.mean([r['rise'] for r in off]))} points on average ({sum(-r['rise'] >= 0.05 and r['p'] < 0.05 for r in off)} of {len(off)} relapsed).
 
-**Where the edit sits decides it.** In a further registered test on new seeds, runs unlearned through the outdated tokenizer at SafeTune's default layers relapsed in {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} cases ({sg(s2['by_window']['5-7']['mean_rise'])} points on average). At layers 3 to 5, the window we release, {s2['T2']['relapses']} of {s2['T2']['effective']} relapsed ({sg(s2['by_window']['3-5']['mean_rise'])} on average), and at layers 7 to 9, {s2['T3']['7-9'][0]} of {s2['T3']['7-9'][1]}. Scored through the official tokenizer, the layers 3 to 5 runs sit at {pc(s2['by_window']['3-5']['mean_wmdp_official'])}% and the default-layer runs at {pc(s2['by_window']['5-7']['mean_wmdp_official'])}%. Tiny Aya Base is the exception: it drops to guessing level in the outdated pipeline at every window and comes back up through the official one.
+**Where the edit sits decides it.** In a further registered test on new seeds, runs unlearned through the outdated tokenizer at SafeTune's default layers relapsed in {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} cases ({sg(s2['by_window']['5-7']['mean_rise'])} points on average). At layers 3 to 5, the window we release, {s2['T2']['relapses']} of {s2['T2']['effective']} relapsed ({sg(s2['by_window']['3-5']['mean_rise'])} on average), and at layers 7 to 9, {s2['T3']['7-9'][0]} of {s2['T3']['7-9'][1]}. Scored through the official tokenizer, the layers 3 to 5 runs sit at {pc(s2['by_window']['3-5']['mean_wmdp_official'])}% and the default-layer runs at {pc(s2['by_window']['5-7']['mean_wmdp_official'])}%. That is on the four post-trained variants. Tiny Aya Base is the exception, and our rule for which runs count removes it: at every window it drops to guessing level in the outdated pipeline and comes back up through the official one, at layers 3 to 5 by {min(100 * r['rise'] for r in b35):.1f} to {max(100 * r['rise'] for r in b35):.1f} points. Counting every run, {up('5-7')} of {len(allw('5-7'))} rose by 5 points or more at the default layers (mean rise {sg(np.mean([r['rise'] for r in allw('5-7')]))}), {up('3-5')} of {len(allw('3-5'))} at layers 3 to 5 ({sg(np.mean([r['rise'] for r in allw('3-5')]))}) and {up('7-9')} of {len(allw('7-9'))} at layers 7 to 9 ({sg(np.mean([r['rise'] for r in allw('7-9')]))}); outside the default layers all of them are Base. The effect was measured on multiple-choice prompts, whose line breaks and digit groups are where the two settings split text differently.
 
-**6. Where to edit.** Layers 3 to 5 beat the default layers in {q('Q2')['wins']} of 10 comparisons. CircuitKIT ranks that window first on three models and first when its attribution is pooled over the five; its pick for each model alone was unstable and that hypothesis failed (with 160 prompts instead of 64, an exploratory repeat, the per-model pick changed on three of five models while the pooled pick stayed layers 3 to 5). On two further seeds, layers 3 to 5 forgot {pc(min(-x['difference'] for x in won))} to {pc(max(-x['difference'] for x in won))} points more on four of the five models ({Q['lower_at_3_5']} of 10 comparisons, p = {Q['p']:.3f}, just short of our own line). The comparison holds general knowledge fixed; layers 3 to 5 cost more benign biology than the default layers do.
+**The trap is still out there.** The two settings are two public copies of the same model: Cohere changed `tokenizer_class` on Hugging Face on September 30, 2026, and copies made before that keep the old value. On {sv['date']} we read the tokenizer file, or the GGUF header, of every public copy we could find, without downloading weights ([`scripts/check_tokenizer.py`](scripts/check_tokenizer.py), [`results/survey/`](results/survey/)): {sv['found']:,} Hugging Face repositories tied to a Tiny Aya model, and Kaggle Models. Cohere's five repositories carry the official setting. All {sv['kaggle']} Kaggle variations carry the outdated one. Of {sv['read']} derived Hugging Face copies whose setting could be read, {sv['outdated']} carry it: {sv['ours']} are our own Stage 1 models and the other {sv['others']}, mostly fine-tunes and adapters, have {sv['downloads']:,} downloads ({sv['month']:,} in the last 30 days). Loaded with `transformers` {sv['transformers']}, {sv['differ']} of {sv['sampled']} sampled copies split a test prompt differently from the official tokenizer. GGUF files are nearly all safe ({sv['gguf_other']} of {sv['gguf']} name another pre-tokenizer). Which direction of mismatch each copy faces depends on the `transformers` version it was trained with, which its files do not record.
+
+**6. Where to edit.** Two registered tests compared layers 3 to 5 with SafeTune's default layers; one passed and one narrowly missed. In the first, layers 3 to 5 forgot more within 3 MMLU points in {q('Q2')['wins']} of 10 comparisons (p = {q('Q2')['p']:.3f}). In the second, on fresh seeds, they forgot {pc(min(-x['difference'] for x in won))} to {pc(max(-x['difference'] for x in won))} points more on four of the five models ({Q['lower_at_3_5']} of 10 comparisons, p = {Q['p']:.3f}, short of our own line). What placement buys is more forgetting per MMLU point ({pl['3-5']['forgot']:.1f} hazard points for {pl['3-5']['mmlu']:.1f} MMLU points, against {pl['5-7']['forgot']:.1f} for {pl['5-7']['mmlu']:.1f}) and robustness to the tokenizer. It does not buy selectivity within biology: benign biology falls by {pl['3-5']['benign']:.1f} points against {pl['5-7']['benign']:.1f}, the same {pl['3-5']['ratio']:.2f} and {pl['5-7']['ratio']:.2f} hazard points forgotten per point of benign biology lost. CircuitKIT ranks layers 3 to 5 first on three models and first when its attribution is pooled over the five; its pick for each model alone was unstable and that hypothesis failed (with 160 prompts instead of 64, an exploratory repeat, the per-model pick changed on three of five models while the pooled pick stayed layers 3 to 5).
 
 ### The released models
 
@@ -121,6 +169,8 @@ Layers 3 to 5, two seeds per model (the table shows their mean). WMDP-bio is the
 - **Breaks:** 25 fine-tuning steps on 64 hazard questions raise the score by at least 5 points on {sum(x >= 0.05 for x in ft)} of {len(E10)} models and restore Tiny Aya Base almost fully. RMU hides knowledge more than it removes it.
 
 ### Every registered hypothesis
+
+Of {tl['n']} registered hypotheses, {tl['held']} held, {tl['part']} held in part, {tl['failed']} failed and {tl['untestable']} could not be tested. Where a pre-registration names the held-out models as the confirmatory test, a hypothesis that holds on all five models and not on the held-out ones counts as failed.
 
 | Experiment | Hypothesis | Outcome |
 |---|---|---|
@@ -150,26 +200,34 @@ def brief() -> str:
         for (m, p), r in c.items():
             if p == "fp16" and m != "base":
                 benign[re.search(r"_W(\d+-\d+)_", m).group(1)].append(c[("base", "fp16")]["benign-bio"] - r["benign-bio"])
-    E10 = list(check.values())
+    sv, tl, pl = survey(), tally(), placement()
+    allw = lambda w: [r for r in s2["runs"] if r["window"] == w]
+    up = lambda w: sum(r["pipeline_relapse"] for r in allw(w))
+    b35 = [r for r in s2["not_effective"] if r["model"] == "base" and r["window"] == "3-5"]
+    m = load("map", "summary.json"); eff = [r for r in m["runs"] if r["effective"]]
+    held = sum(not (r["Q4_0"]["relapse"] or r["nf4"]["relapse"]) for r in eff)
+    ft = [e["fine_tuning"]["after_hazard_questions"] - e["fine_tuning"]["before"] for e in check.values()]
     return f"""## In brief
 
-SafeTune's default recipe looks unlearned where it was built and comes back when deployed. Editing at layers 3 to 5, the window CircuitKIT ranks first across the model family, forgets more and does not come back.
+One tokenizer setting decides whether the unlearning survives, and the layers that were edited decide which way it goes. Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers came back once loaded through the official tokenizer, in {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} runs that count. At layers 3 to 5 the same change did nothing on the four post-trained variants ({s2['T2']['relapses']} of {s2['T2']['effective']}).
 
-| Tiny Aya, RMU with SafeTune | Layers 5 to 7 (default) | Layers 3 to 5 (released) |
+| Layers edited (Tiny Aya, RMU with SafeTune) | 5 to 7 (default) | 3 to 5 (released) |
 |---|---|---|
-| Hazard score in the pipeline it was unlearned in | {pc(W['5-7']['mean_wmdp_outdated'])}% | {pc(W['3-5']['mean_wmdp_outdated'])}% |
-| Hazard score once deployed through the official tokenizer | {pc(W['5-7']['mean_wmdp_official'])}% | **{pc(W['3-5']['mean_wmdp_official'])}%** |
-| Runs that relapse through the tokenizer | {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} | **{s2['T2']['relapses']} of {s2['T2']['effective']}** |
-| Hazard score, official tokenizer throughout | {pc(fin['Q4']['mean_wmdp_5_7'])}% | **{pc(fin['Q4']['mean_wmdp_3_5'])}%** |
-| Relapses in Q4_0 or NF4 (of 20 checks) | {relapses['5-7']} | {relapses['3-5']} |
+| Hazard score as audited, through the outdated tokenizer setting | {pc(W['5-7']['mean_wmdp_outdated'])}% | {pc(W['3-5']['mean_wmdp_outdated'])}% |
+| Hazard score as deployed, through the official tokenizer | {pc(W['5-7']['mean_wmdp_official'])}% | **{pc(W['3-5']['mean_wmdp_official'])}%** |
+| Runs that relapse, among runs that count | {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} | **{s2['T2']['relapses']} of {s2['T2']['effective']}** |
+| Runs that rise 5 points or more, among all runs | {up('5-7')} of {len(allw('5-7'))} | {up('3-5')} of {len(allw('3-5'))} |
 | General knowledge lost (MMLU points, mean) | {100 * np.mean(cost['5-7']):.1f} | {100 * np.mean(cost['3-5']):.1f} |
-| Benign biology lost (points, median) | {100 * np.median(benign['5-7']):.1f} | {100 * np.median(benign['3-5']):.1f} |
+| Benign biology lost (points, mean) | {pl['5-7']['benign']:.1f} | {pl['3-5']['benign']:.1f} |
+| Hazard points forgotten per point of benign biology lost | {pl['5-7']['ratio']:.2f} | {pl['3-5']['ratio']:.2f} |
 
-The hazard score is accuracy on WMDP-bio (lower is better; the original models score 60% to 64%; 25% is guessing). The top three rows are runs unlearned through an outdated tokenizer setting and then run through the official one (16 runs per column, four models). The rest are the final runs on all five models.
+The hazard score is accuracy on WMDP-bio (lower is better; the original models score 60% to 64%; 25% is guessing). A run counts if it forgot enough without falling to guessing (30% to 55% where it was unlearned); a relapse is a rise of 5 points or more. The top four rows are runs unlearned through the outdated setting and then run through the official one; the rest are the final runs on all five models, through the official tokenizer.
 
-- **In 4-bit files** the forgetting usually holds (107 of 109 runs in the map). On three models one format regained 5 to 8 points while the others held, so each file has to be scored.
-- **What it costs:** benign biology falls too, more at layers 3 to 5. **What breaks it:** a short fine-tune on the topic.
-- **What we got wrong:** our first-round numbers came from an outdated tokenizer setting. We corrected them in public, registered every new test before running it, and report the {FAILED} hypotheses that failed.
+- **The two settings are two public copies of the same model.** Cohere fixed the setting on Hugging Face on September 30, 2026. Kaggle's copy and {sv['others']} derived Hugging Face repositories ({sv['downloads']:,} downloads) still carried the old one on {sv['date']}. **New:** `python scripts/check_tokenizer.py <repo, folder or GGUF file>` tells you which setting a copy carries, reading only its tokenizer file or GGUF header.
+- **Tiny Aya Base is the exception.** Through the outdated setting it unlearns down to guessing, which our rule does not count, and it rises through the official tokenizer at every window, by {min(100 * r['rise'] for r in b35):.1f} to {max(100 * r['rise'] for r in b35):.1f} points at layers 3 to 5. Counting it, {up('3-5')} of {len(allw('3-5'))} runs at layers 3 to 5 rise, all four Base.
+- **In 4-bit files** the forgetting usually holds ({held} of {len(eff)} runs in the map). Tiny Aya Base regained 5 to 6 points in Q4_0 on two seeds, and one exploratory run each on Fire and Water regained 5 to 8 points in NF4, while the other formats of the same weights held. Each file has to be scored.
+- **What it costs:** benign biology falls too, and placement does not change how much per hazard point forgotten. **What breaks it:** 25 fine-tuning steps on the topic raise the score by 5 points or more on {sum(x >= 0.05 for x in ft)} of {len(ft)} runs.
+- **What we got wrong:** our first-round numbers came from the outdated tokenizer setting. Correcting them is how we found the effect. Every new test was registered before it ran: of {tl['n']} hypotheses, {tl['held']} held, {tl['part']} held in part, {tl['failed']} failed and {tl['untestable']} could not be tested.
 """
 
 

@@ -38,6 +38,7 @@ def main() -> None:
     api.upload_folder(folder_path=os.path.join(ROOT, "results", "survey"), path_in_repo="stage2/survey", repo_id=f"{USER}/relapse-runs", repo_type="dataset",
                       commit_message="Survey of public copies, official history, job ledger")      # 5. the runs dataset
     api.upload_file(path_or_fileobj=os.path.join(ROOT, "paper", "main.pdf"), path_in_repo="stage2/paper.pdf", repo_id=f"{USER}/relapse-runs", repo_type="dataset", commit_message="The final paper")
+    api.upload_file(path_or_fileobj=os.path.join(ROOT, "scripts", "check_tokenizer.py"), path_in_repo="stage2/check_tokenizer.py", repo_id=f"{USER}/relapse-runs", repo_type="dataset", commit_message="The tokenizer checker")
     if "stage2/PREREGISTRATION_5.md" not in api.list_repo_files(f"{USER}/relapse-runs", repo_type="dataset"):
         api.upload_file(path_or_fileobj=os.path.join(ROOT, "results", "PREREGISTRATION_5.md"), path_in_repo="stage2/PREREGISTRATION_5.md", repo_id=f"{USER}/relapse-runs", repo_type="dataset",
                         commit_message="Pre-registration 5")

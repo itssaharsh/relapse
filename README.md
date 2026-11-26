@@ -164,7 +164,7 @@ python scripts/analyze_final.py
 python scripts/mcnemar_holm.py          # exact tests of the 4-bit relapse cases, Holm-corrected
 python scripts/build_readme.py          # rebuilds the results block of this page
 python scripts/paper_numbers.py         # rebuilds every number and table of the paper
-python scripts/check_tokenizer.py itssaharsh/relapse-tiny-aya-global-unlearn-bio kaggle:cohere-labs/tiny-aya/transformers/global/1   # official, then outdated; needs no account
+python scripts/check_tokenizer.py itssaharsh/relapse-tiny-aya-global-unlearn-bio kaggle:cohere-labs/tiny-aya/transformers/global/1   # official, then outdated; needs no account and only Python's standard library
 python scripts/survey_copies.py         # repeats the survey of public copies (CPU; reads tokenizer files and GGUF headers only)
 ```
 

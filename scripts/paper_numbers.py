@@ -573,6 +573,11 @@ def audit_damage() -> tuple[dict, dict]:
                 stwoUnitsDefault=f"{by_unit('5-7')[0]} of {by_unit('5-7')[1]}", stwoUnitsShallow=f"{by_unit('3-5')[0]} of {by_unit('3-5')[1]}", stwoUnitUpper=f"{100 * (1 - 0.025 ** (1 / by_unit('3-5')[1])):.1f}",
                 dmgHurtRose=f"{sum(a and b for a, b in zip(rose, hurt))} of {sum(hurt)}", dmgFineRose=f"{sum(a and not b for a, b in zip(rose, hurt))} of {sum(not b for b in hurt)}",
                 ctlPairs=len(pairs), ctlOutdatedTrained=f"{100 * np.mean([a for a, _ in pairs]):.1f}", ctlOfficialTrained=f"{100 * np.mean([b for _, b in pairs]):.1f}")
+    # outside Tiny Aya Base, do window and damage in the audit pipeline overlap? And does the rise grow with the damage inside a window?
+    rest = [r for r in both if r["model"] != "base"]
+    high = [100 * r["cost_audited"] for r in rest if r["window"] in ("5-7", "10-12")]; low = [100 * r["cost_audited"] for r in rest if r["window"] in ("3-5", "7-9")]
+    corr = lambda w: float(np.corrcoef([r["rise"] for r in rest if r["window"] == w], [r["cost_audited"] for r in rest if r["window"] == w])[0, 1])
+    nums.update(dmgHighMin=f"{min(high):.1f}", dmgLowMax=f"{max(low):.1f}", dmgCorrDefault=f"{corr('5-7'):.2f}", dmgCorrDeep=f"{corr('10-12'):.2f}")
     for k, w in (("Default", "5-7"), ("Shallow", "3-5"), ("Mid", "7-9")):
         nums[f"stwo{k}CostAudited"] = mean(eff(two, w), "cost_audited"); nums[f"stwo{k}CostDeployed"] = mean(eff(two, w), "cost_deployed")
     return nums, {}

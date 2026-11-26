@@ -20,7 +20,7 @@ pretty_name: Relapse runs, per-question results and logs
 
 ## Stage 2 (current): `stage2/`
 
-Five pre-registered experiments, trained and scored through the **official tokenizer** on all five Tiny Aya models. These are the results the [paper and README](https://github.com/itssaharsh/relapse) report.
+Five pre-registered experiments on all five Tiny Aya models, scored through the **official tokenizer**; the two tokenizer experiments also unlearn and score through the outdated setting, on purpose. These are the results the [paper and README](https://github.com/itssaharsh/relapse) report.
 
 | Folder | What is in it |
 |---|---|
@@ -28,6 +28,8 @@ Five pre-registered experiments, trained and scored through the **official token
 | `stage2/map/` | The 150-run map: fp16, Q4_0 and NF4 scores of every run, right or wrong per question |
 | `stage2/deep/` | The relapse follow-up: fresh seeds, real llama.cpp files, bitsandbytes NF4, one part of the model rounded at a time, the repair and its controls |
 | `stage2/shift/` | The tokenizer experiment: each run scored through the official and the outdated tokenizer setting |
+| `stage2/shift2/` | Placement against the tokenizer (pre-registration 5): layers 3 to 5, 5 to 7 and 7 to 9, unlearned through the outdated setting, scored through both |
+| `stage2/survey/` | The survey of public copies, the official repositories' history, the start time and commit of every job, token-level differences; `stage2/check_tokenizer.py` is the checker |
 | `stage2/place/`, `stage2/final/` | Where to place the edit, the final models and their full check |
 
 Each folder has a `summary.json` written by the matching `scripts/analyze_*.py` in the repository. The files hold scores only, no question text.

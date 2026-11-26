@@ -403,17 +403,18 @@ def glance() -> tuple[dict, dict]:
     row = lambda label, a_, b_: f"{label} & {a_} & {b_} \\\\\n"
     dmg = audit_damage()[0]
     body = (row("\\wmdp{} as audited (\\%)", pct(W["5-7"]["mean_wmdp_outdated"]), pct(W["3-5"]["mean_wmdp_outdated"]))
-            + row("\\wmdp{} as deployed (\\%)", pct(W["5-7"]["mean_wmdp_official"]), "\\textbf{" + pct(W["3-5"]["mean_wmdp_official"]) + "}")
-            + row("Relapses, effective runs", f"{s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]}", "\\textbf{" + f"{s2['T2']['relapses']} of {s2['T2']['effective']}" + "}")
+            + row("\\wmdp{} as deployed (\\%)", pct(W["5-7"]["mean_wmdp_official"]), pct(W["3-5"]["mean_wmdp_official"]))
+            + row("Relapses, effective runs", f"{s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]}", f"{s2['T2']['relapses']} of {s2['T2']['effective']}")
             + row("Rise $\\geq$5 points, all runs", f"{sum(r['pipeline_relapse'] for r in s2['runs'] if r['window'] == '5-7')} of {sum(r['window'] == '5-7' for r in s2['runs'])}",
                   f"{sum(r['pipeline_relapse'] for r in s2['runs'] if r['window'] == '3-5')} of {sum(r['window'] == '3-5' for r in s2['runs'])}")
             + row("MMLU lost, audited $\\rightarrow$ deployed", f"{dmg['stwoDefaultCostAudited']} $\\rightarrow$ {dmg['stwoDefaultCostDeployed']}", f"{dmg['stwoShallowCostAudited']} $\\rightarrow$ {dmg['stwoShallowCostDeployed']}")
+            + f"Rise $\\geq$5, MMLU lost $<$3$^\\ast$ & \\multicolumn{{2}}{{r}}{{{dmg['dmgFineRose']}}} \\\\\n"
             + "\\midrule\n"
             + row("MMLU points lost", f"{np.mean(cost['5-7']):.1f}", f"{np.mean(cost['3-5']):.1f}")
             + row("Benign-biology points lost", f"{np.mean(benign['5-7']):.1f}", f"{np.mean(benign['3-5']):.1f}")
             + row("Hazard points per benign point", f"{np.mean(forgot['5-7']) / np.mean(benign['5-7']):.2f}", f"{np.mean(forgot['3-5']) / np.mean(benign['3-5']):.2f}"))
     tex = table("@{}lrr@{}", "Layers edited & 5--7 (default) & 3--5 \\\\\n", body,
-                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited; MMLU lost is against the original through the same tokenizer. Bottom: the final runs, official tokenizer, five models and two seeds; the last row is hazard points forgotten per point of benign biology lost. Lower \\wmdp{} is better.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
+                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited; MMLU lost is against the original through the same tokenizer. Bottom: the final runs, official tokenizer, five models and two seeds. $^\\ast$Both tokenizer experiments, every window: runs that had lost under 3 MMLU points as audited.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
     return {"glanceRelDefault": relapses["5-7"], "glanceRelNew": relapses["3-5"]}, {"table_glance.tex": tex}
 
 
@@ -645,6 +646,28 @@ def single_line_extra(d: dict) -> dict:
             "slShallowAudited": pct(d["by_window"]["3-5"]["mean_wmdp_outdated"]), "slShallowDeployed": pct(d["by_window"]["3-5"]["mean_wmdp_official"])}
 
 
+def single_line_tokens() -> tuple[dict, dict]:
+    """How many single-line prompts the two settings split differently, and the default-layer rise on those alone (scripts/single_line_tokens.py)."""
+    path = os.path.join(ROOT, "results", "survey", "single_line_tokens.json")
+    if not os.path.exists(path):
+        return {}, {}
+    d = json.load(open(path)); r = d["default_layer_rise_on_prompts_split_differently"]; c = d["reconstruction_check"]
+    return {"sltDiffer": d["wmdp_bio_single_line_prompts"]["texts_split_differently"], "sltTotal": f"{d['wmdp_bio_single_line_prompts']['texts']:,}",
+            "sltMmluDiffer": d["mmlu_single_line_prompts"]["texts_split_differently"], "sltMmluTotal": f"{d['mmlu_single_line_prompts']['texts']:,}",
+            "sltRise": signed(100 * r["mean_rise_single_line"]), "sltRiseMax": signed(100 * r["max_rise_single_line"]), "sltRiseRegistered": signed(100 * r["mean_rise_registered_layout_same_questions"]),
+            "sltSame": c["wmdp_bio_prompts_with_identical_ids"], "sltFlipMax": c["most_answers_differing_on_them_in_one_run"]}, {}
+
+
+def pushes() -> tuple[dict, dict]:
+    """When each pre-registration became public: GitHub's push record (scripts/push_record.py)."""
+    path = os.path.join(ROOT, "results", "survey", "pushes.json")
+    if not os.path.exists(path):
+        return {}, {}
+    P = json.load(open(path))["preregistrations"]; public = [x for x in P if x["first_public_push"]]
+    assert [x["n"] for x in public] == list(range(1, len(public) + 1))
+    return {"pushPublic": len(public), "pushMaxLag": max(x["seconds_from_commit_to_public"] for x in public), "pushLater": len(P) - len(public)}, {}
+
+
 def reverse_rule() -> tuple[dict, dict]:
     """The MMLU warning sign in the reverse direction: runs unlearned and audited through the official tokenizer, then scored through the outdated one."""
     hurt_rose = hurt = fine_rose = fine = 0
@@ -733,7 +756,7 @@ def totals() -> tuple[dict, dict]:
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, auditkit_headline, single_line, reverse_rule, totals):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, auditkit_headline, single_line, single_line_tokens, pushes, reverse_rule, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         if name in ("table_hyp.tex", "table_real.tex", "table_cause.tex", "table_repair.tex", "table_revisions.tex"):      # appendix floats: placed where they fall, whatever their height

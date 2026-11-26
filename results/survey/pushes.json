@@ -1,0 +1,460 @@
+{
+ "source": "GET /repos/itssaharsh/relapse/activity",
+ "fetched": "2026-11-26T20:20:14Z",
+ "pushes": [
+  {
+   "time": "2026-11-10T03:08:43Z",
+   "head": "f7d30a1f9b88a41c016efe17a987d42c2f44c090"
+  },
+  {
+   "time": "2026-11-10T09:16:35Z",
+   "head": "6a1eaa39066a0bb0acf42965b13cc0fe7b8df939"
+  },
+  {
+   "time": "2026-11-10T09:21:45Z",
+   "head": "03c3f620e3f950c22a46e9af99d60b6a1187c71d"
+  },
+  {
+   "time": "2026-11-10T09:24:27Z",
+   "head": "e9c8fbcdd0d7f1460196335813009cd64693d459"
+  },
+  {
+   "time": "2026-11-10T09:26:14Z",
+   "head": "f3d875fe54dfb8f50ac5feb80dfe56bccfe3919f"
+  },
+  {
+   "time": "2026-11-10T10:20:17Z",
+   "head": "07b27f804dff35af09c8e601c04bf2b445027470"
+  },
+  {
+   "time": "2026-11-10T10:44:24Z",
+   "head": "e75178c0cc48f9d2a07baa9660d8caddb1ba27a3"
+  },
+  {
+   "time": "2026-11-10T10:53:36Z",
+   "head": "464b31146ff16b991814c83c8414f787e2e1ea15"
+  },
+  {
+   "time": "2026-11-10T12:30:08Z",
+   "head": "5f79309053aae570dd28e651e21fc8ef8e2766e0"
+  },
+  {
+   "time": "2026-11-10T17:18:58Z",
+   "head": "885f68253e3163cf7e9ef8c01fd25ebc97e3443a"
+  },
+  {
+   "time": "2026-11-10T17:34:14Z",
+   "head": "ea2b823c8fa3ba88935eb3e95edc01159ef78ded"
+  },
+  {
+   "time": "2026-11-10T17:35:23Z",
+   "head": "6f5105b9bc767b093584000cc7427d27ef4c0538"
+  },
+  {
+   "time": "2026-11-10T17:36:46Z",
+   "head": "dbd6e133ed0e0512e470749a85a6150bce668a1f"
+  },
+  {
+   "time": "2026-11-10T17:37:42Z",
+   "head": "d443d185821ace32afd83ccb991f659d82bbc639"
+  },
+  {
+   "time": "2026-11-10T17:41:08Z",
+   "head": "16e867c620ca1ed7ef584c85359b570c16af2ef7"
+  },
+  {
+   "time": "2026-11-10T17:41:57Z",
+   "head": "e7331ef36c55c2f1228e28afba5905d15625b5c6"
+  },
+  {
+   "time": "2026-11-10T18:00:26Z",
+   "head": "6738cbe982d6694f6c4d79ebb822fc893513993d"
+  },
+  {
+   "time": "2026-11-10T18:01:45Z",
+   "head": "a28db9125843b4542bc78a45b00515c4811da88b"
+  },
+  {
+   "time": "2026-11-10T18:15:17Z",
+   "head": "83eaa5c34f7a5c27fba87cdac94ee3cb085461bd"
+  },
+  {
+   "time": "2026-11-10T18:16:58Z",
+   "head": "be5f4f58e44419df433a683949d03233bf0890d7"
+  },
+  {
+   "time": "2026-11-10T21:18:55Z",
+   "head": "22a08a0104443ea023345ca6750f707c954eea6e"
+  },
+  {
+   "time": "2026-11-10T21:23:04Z",
+   "head": "ab1d96927e1491927e6929e401b87c7de8010346"
+  },
+  {
+   "time": "2026-11-10T21:28:01Z",
+   "head": "250a38e4b98ace036c2075423c47ce4b5ba4ab91"
+  },
+  {
+   "time": "2026-11-10T21:50:44Z",
+   "head": "2c1989d4f091fa0ba51b17766432e0b78a2c836c"
+  },
+  {
+   "time": "2026-11-10T21:50:58Z",
+   "head": "79322486b7f19098d0b383e9f0b242448cfcc703"
+  },
+  {
+   "time": "2026-11-10T23:44:18Z",
+   "head": "dfc3983525f06f870eb2ae457fbfbaba33a2cdfa"
+  },
+  {
+   "time": "2026-11-11T00:37:25Z",
+   "head": "35154f1289ba7971db15f57669ea096ed2584129"
+  },
+  {
+   "time": "2026-11-11T01:54:05Z",
+   "head": "bc79b2d1241df0faa8f1fa8714334e547d139ff6"
+  },
+  {
+   "time": "2026-11-11T02:06:09Z",
+   "head": "320a272c8afa71adbeb673b5450de1bf03478528"
+  },
+  {
+   "time": "2026-11-11T09:03:38Z",
+   "head": "80aa006306a4ec6974138e9e0a80d9584b5fc993"
+  },
+  {
+   "time": "2026-11-11T09:14:22Z",
+   "head": "03c7e779ca008adf056d1f7784bad5198e7da24f"
+  },
+  {
+   "time": "2026-11-11T10:38:58Z",
+   "head": "5da7b4f6feb461a56d70c44320fc94636074bb52"
+  },
+  {
+   "time": "2026-11-11T11:44:11Z",
+   "head": "7f1caacc6aa873f5b7407c39c40a2b39539b362d"
+  },
+  {
+   "time": "2026-11-21T18:19:58Z",
+   "head": "ff47b09a2092f76f2685a526f3cedbafedc8c498"
+  },
+  {
+   "time": "2026-11-21T18:34:39Z",
+   "head": "5b44a2271583a8eb89b96563ab85fac863a9f78b"
+  },
+  {
+   "time": "2026-11-21T18:39:45Z",
+   "head": "bc8cf85ca315ef1c6c9ea3d888e0405bfeb1f436"
+  },
+  {
+   "time": "2026-11-21T19:00:29Z",
+   "head": "a2a5b9b3ea0eb9040ea7118fab60f758a8fe05ee"
+  },
+  {
+   "time": "2026-11-21T21:04:54Z",
+   "head": "ed5a79cacd5a221d3e465ea998eef3f8f03c573a"
+  },
+  {
+   "time": "2026-11-21T21:09:40Z",
+   "head": "51ed67907ece201f3a60ad2de63d71acfdcab4b0"
+  },
+  {
+   "time": "2026-11-21T21:15:14Z",
+   "head": "fdc7737def168f93f56fe11a75bc20c8fbf4cab8"
+  },
+  {
+   "time": "2026-11-21T22:07:35Z",
+   "head": "6cf229c5828fad163f13b3fb6a45598e28f23278"
+  },
+  {
+   "time": "2026-11-21T22:12:48Z",
+   "head": "5b78f60d8ef078754c17992025fe0409173d140f"
+  },
+  {
+   "time": "2026-11-21T22:14:08Z",
+   "head": "ddc28438094de08892b4596344c69156ded6643a"
+  },
+  {
+   "time": "2026-11-21T22:24:10Z",
+   "head": "04904f517bc7b336fb09293fc34eb0364fbf8d0d"
+  },
+  {
+   "time": "2026-11-21T22:26:57Z",
+   "head": "8e8d69990f2b27e3e04e9b9fdccc29d9368949de"
+  },
+  {
+   "time": "2026-11-21T22:44:19Z",
+   "head": "892b902d338af9b8c011515b7a14841f62217b51"
+  },
+  {
+   "time": "2026-11-21T22:51:18Z",
+   "head": "2618586289df32c54dc7f2eb29d31f3156f3eb2f"
+  },
+  {
+   "time": "2026-11-21T22:53:09Z",
+   "head": "b24414fd72ac07451e52b59c3e464f0e712e77fd"
+  },
+  {
+   "time": "2026-11-21T22:54:07Z",
+   "head": "9bb162c4a78847d980eb70b7b62b297ff108e7c0"
+  },
+  {
+   "time": "2026-11-21T23:04:43Z",
+   "head": "8e056efe6be72fdced8f8444ca44c06b35c2ff68"
+  },
+  {
+   "time": "2026-11-21T23:07:38Z",
+   "head": "15e0db7c02e5b339645d4e28f51424bab3c799c3"
+  },
+  {
+   "time": "2026-11-21T23:12:32Z",
+   "head": "2edb991e018846fdd5f939488b49d6e7232b74e3"
+  },
+  {
+   "time": "2026-11-21T23:18:19Z",
+   "head": "4512f1fef3b357968ea842f7592b214bd589bca9"
+  },
+  {
+   "time": "2026-11-21T23:43:56Z",
+   "head": "a5b3e26c7b76774c1f41e814e134bd279d1a90af"
+  },
+  {
+   "time": "2026-11-21T23:45:50Z",
+   "head": "245287045b870c4222e4e78c30418f95b35ac073"
+  },
+  {
+   "time": "2026-11-21T23:54:22Z",
+   "head": "fe40ae6e39289619c7e5c180a703803d91c21930"
+  },
+  {
+   "time": "2026-11-21T23:57:57Z",
+   "head": "9c04a0a2a502bcbbeac579d6beeb71d29316e75a"
+  },
+  {
+   "time": "2026-11-22T00:35:34Z",
+   "head": "f9afd8ba93aa517445f39ebd9f76fa30ad609a6c"
+  },
+  {
+   "time": "2026-11-22T00:36:32Z",
+   "head": "d420d6a9209cbcd8668dc59bd06d4aaf34f6f1c2"
+  },
+  {
+   "time": "2026-11-22T00:49:15Z",
+   "head": "e7ebacd45321165c8a0d678458820db86349cf46"
+  },
+  {
+   "time": "2026-11-22T00:50:14Z",
+   "head": "d81ca870e385a63976823326581426e7cccac0a6"
+  },
+  {
+   "time": "2026-11-22T02:05:06Z",
+   "head": "c33d5cc6e9441feae4bca3b7ef505a76411ec56a"
+  },
+  {
+   "time": "2026-11-22T02:11:06Z",
+   "head": "b4b70073a197e7a6b13e49405402bc8fbb333b8b"
+  },
+  {
+   "time": "2026-11-22T02:11:51Z",
+   "head": "6c7f09dc8ddf1aadcd81a9b7a374cbe70f2a7748"
+  },
+  {
+   "time": "2026-11-22T02:29:42Z",
+   "head": "8a08cb5d7bf7d037b14017e75c8a1d696e8afe49"
+  },
+  {
+   "time": "2026-11-22T02:31:04Z",
+   "head": "9c21d394e942a1960def8e2674355b569d2b5f26"
+  },
+  {
+   "time": "2026-11-22T02:31:59Z",
+   "head": "64a02c74dc56e1a2a9afa1054290c83e7fe880e7"
+  },
+  {
+   "time": "2026-11-22T04:23:20Z",
+   "head": "a9e1f789e63f294baeea9e2a733607464595ae9c"
+  },
+  {
+   "time": "2026-11-22T05:41:47Z",
+   "head": "f1d18e94e8da96b67677c64019ccea37728e4235"
+  },
+  {
+   "time": "2026-11-22T05:42:42Z",
+   "head": "e04aaae4aa73f684d6c873f787c74f6e3ae2de18"
+  },
+  {
+   "time": "2026-11-22T05:43:58Z",
+   "head": "44ed171ae3bf95e5eb8c27ecfbb4dc8cdeac01f0"
+  },
+  {
+   "time": "2026-11-22T07:28:35Z",
+   "head": "3571714f45d3e2c0f95c10aa0130d176ca5cceda"
+  },
+  {
+   "time": "2026-11-22T07:29:06Z",
+   "head": "87a2b6de92b081e54d0f1a1343628e1e30fb73a4"
+  },
+  {
+   "time": "2026-11-22T07:31:43Z",
+   "head": "121e34d3c21563bae9ca941206140313d478def8"
+  },
+  {
+   "time": "2026-11-22T07:34:37Z",
+   "head": "71256d0d2d91e9ffb7a22081be6e60d2c67c9b71"
+  },
+  {
+   "time": "2026-11-22T07:37:37Z",
+   "head": "c0519ea23d5c2d8398cfc392d7f72378add98acf"
+  },
+  {
+   "time": "2026-11-22T07:38:53Z",
+   "head": "34e8e27cf73439da7040ec15c54a73eee3845b52"
+  },
+  {
+   "time": "2026-11-22T08:02:35Z",
+   "head": "6e21791362431bf71ac7657861d23816c1f6eb96"
+  },
+  {
+   "time": "2026-11-22T08:18:49Z",
+   "head": "91410bd0c147650c95b7236c2de4fa077d015d92"
+  },
+  {
+   "time": "2026-11-22T08:20:24Z",
+   "head": "2ededa2cf300f5946a3e2f3ad98d15a4ddc6ab08"
+  },
+  {
+   "time": "2026-11-22T08:22:15Z",
+   "head": "fec772c56339f5fa46a691226b026f34ea8eadab"
+  },
+  {
+   "time": "2026-11-22T08:24:57Z",
+   "head": "f50758c57d26498fd977148d71587ba68fe041a2"
+  },
+  {
+   "time": "2026-11-22T08:40:16Z",
+   "head": "8659ce68ea5e4899410a5c22e69291337720b7e1"
+  },
+  {
+   "time": "2026-11-22T08:41:06Z",
+   "head": "3e2e8b824e538c905c0f3a905d4baa662e981da1"
+  },
+  {
+   "time": "2026-11-22T08:42:06Z",
+   "head": "709925d757e213d29c2f5dfc074636580f0e0c6a"
+  },
+  {
+   "time": "2026-11-22T10:24:33Z",
+   "head": "ab5320266f41eb3316274bb84bded91e5a44580d"
+  },
+  {
+   "time": "2026-11-22T10:41:55Z",
+   "head": "9a97321791c0d66a6f07b22bb99574c825cd95d4"
+  },
+  {
+   "time": "2026-11-22T10:42:59Z",
+   "head": "d99c769f1db5ea86c5b7415caf92b0f499257e93"
+  },
+  {
+   "time": "2026-11-22T12:42:40Z",
+   "head": "8a542943a1c45e8e3157ea7c3b82b3726b7f3ba8"
+  },
+  {
+   "time": "2026-11-22T13:12:19Z",
+   "head": "fec9e326b6e72e93b296df651e88e714d68f3200"
+  },
+  {
+   "time": "2026-11-22T13:16:10Z",
+   "head": "2bfe4353bf616ca77af473921654faa1d0f7e282"
+  },
+  {
+   "time": "2026-11-22T14:16:00Z",
+   "head": "f8b4c14bacf4dc0074d4fab9ffccfc22af74aed8"
+  },
+  {
+   "time": "2026-11-22T14:17:31Z",
+   "head": "afde8871dbf71c5327c6bff787014982042341b5"
+  },
+  {
+   "time": "2026-11-22T15:02:05Z",
+   "head": "7cad1788a436ef7ba33abc8184f20e12871fb0ee"
+  },
+  {
+   "time": "2026-11-22T15:02:45Z",
+   "head": "ae15484c9d4a6f7f64ca919872ba012c6b39d3a8"
+  },
+  {
+   "time": "2026-11-22T15:11:45Z",
+   "head": "839903a5fe85a761cd5d55923335a646ab6ff302"
+  },
+  {
+   "time": "2026-11-24T11:11:52Z",
+   "head": "beabe64313bc97757d8b4db7480cdbc66dd38754"
+  },
+  {
+   "time": "2026-11-24T11:16:42Z",
+   "head": "2e4b5c3d4c6ac64ad5a8cced56bd6826e7b3598e"
+  },
+  {
+   "time": "2026-11-24T11:18:26Z",
+   "head": "036504ef8cf907b35621bc298f73cb1333162fa2"
+  },
+  {
+   "time": "2026-11-24T11:27:47Z",
+   "head": "8b0fe1caade55d6706c67465602d4ee5feff26b9"
+  },
+  {
+   "time": "2026-11-24T11:36:37Z",
+   "head": "531274ab91d3848ad0add3bc31e53d5e5b46db76"
+  }
+ ],
+ "preregistrations": [
+  {
+   "n": 1,
+   "file": "results/PREREGISTRATION.md",
+   "commit": "ff47b09a2092f76f2685a526f3cedbafedc8c498",
+   "committed": "2026-11-21T18:19:56Z",
+   "first_public_push": "2026-11-21T18:19:58Z",
+   "seconds_from_commit_to_public": 2
+  },
+  {
+   "n": 2,
+   "file": "results/PREREGISTRATION_2.md",
+   "commit": "fdc7737def168f93f56fe11a75bc20c8fbf4cab8",
+   "committed": "2026-11-21T21:15:13Z",
+   "first_public_push": "2026-11-21T21:15:14Z",
+   "seconds_from_commit_to_public": 1
+  },
+  {
+   "n": 3,
+   "file": "results/PREREGISTRATION_3.md",
+   "commit": "6cf229c5828fad163f13b3fb6a45598e28f23278",
+   "committed": "2026-11-21T22:07:33Z",
+   "first_public_push": "2026-11-21T22:07:35Z",
+   "seconds_from_commit_to_public": 2
+  },
+  {
+   "n": 4,
+   "file": "results/PREREGISTRATION_4.md",
+   "commit": "892b902d338af9b8c011515b7a14841f62217b51",
+   "committed": "2026-11-21T22:44:17Z",
+   "first_public_push": "2026-11-21T22:44:19Z",
+   "seconds_from_commit_to_public": 2
+  },
+  {
+   "n": 5,
+   "file": "results/PREREGISTRATION_5.md",
+   "commit": "fec9e326b6e72e93b296df651e88e714d68f3200",
+   "committed": "2026-11-22T13:12:18Z",
+   "first_public_push": "2026-11-22T13:12:19Z",
+   "seconds_from_commit_to_public": 1
+  },
+  {
+   "n": 6,
+   "file": "results/PREREGISTRATION_6.md",
+   "commit": "8a3d71f68efd645d7abc45746c0509158ffce4ea",
+   "committed": "2026-11-26T18:11:09Z",
+   "first_public_push": null,
+   "seconds_from_commit_to_public": null
+  }
+ ]
+}

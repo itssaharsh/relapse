@@ -177,7 +177,7 @@ def main() -> None:
     notes |= {f"{USER}/{n}": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card)." for n in STAGE1}
     sv = build_readme.survey()
     descriptions = {"relapse-unlearned-tiny-aya-models": "Tiny Aya with hazardous biology unlearned (RMU). Stage 2 models first. Paper and tokenizer checker: github.com/itssaharsh/relapse",
-                    "relapse-runs-logs-and-probe-sets": "Every run of the paper, per question; five pre-registrations; a survey of public copies; probe sets. Paper: github.com/itssaharsh/relapse"}
+                    "relapse-runs-logs-and-probe-sets": "Every run of the paper, per question; six pre-registrations; a survey of public copies; probe sets. Paper: github.com/itssaharsh/relapse"}
     assert all(len(d) <= 150 for d in descriptions.values()), "a collection description is limited to 150 characters"
     data_notes = {f"{USER}/relapse-runs": "Every run of the paper, per question; pre-registrations; the survey of public copies (stage2/survey).",
                   f"{USER}/relapse-wmdp-bio-probes": "707 reworded and translated WMDP-bio questions used in the full check.",

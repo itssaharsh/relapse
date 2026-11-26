@@ -1,0 +1,52 @@
+{
+ "transformers": "5.20.2",
+ "wmdp_bio_single_line_prompts": {
+  "texts": 1273,
+  "texts_split_differently": 815,
+  "tokens_official": 127417,
+  "tokens_outdated": 129610,
+  "pieces_only_official": {
+   "line_break": 0,
+   "digit": 445,
+   "other": 1353
+  },
+  "pieces_only_outdated": {
+   "line_break": 0,
+   "digit": 638,
+   "other": 1867
+  }
+ },
+ "mmlu_single_line_prompts": {
+  "texts": 1000,
+  "texts_split_differently": 564,
+  "tokens_official": 113918,
+  "tokens_outdated": 116659,
+  "pieces_only_official": {
+   "line_break": 0,
+   "digit": 902,
+   "other": 867
+  },
+  "pieces_only_outdated": {
+   "line_break": 0,
+   "digit": 892,
+   "other": 1142
+  }
+ },
+ "reconstruction_check": {
+  "runs": 65,
+  "wmdp_bio_prompts_with_identical_ids": 458,
+  "most_answers_differing_on_them_in_one_run": 3,
+  "mean_answers_differing_on_them": 0.5384615384615384,
+  "wmdp_bio_prompts_split_differently": 815,
+  "fewest_answers_differing_on_them_in_one_run": 16,
+  "mean_answers_differing_on_them_split_differently": 52.87692307692308
+ },
+ "default_layer_rise_on_prompts_split_differently": {
+  "runs": 16,
+  "questions": 815,
+  "mean_rise_single_line": 0.012269938650306749,
+  "max_rise_single_line": 0.024539877300613498,
+  "mean_rise_registered_layout_same_questions": 0.11694785276073619,
+  "mean_rise_single_line_all_questions": 0.008002749410840533
+ }
+}

@@ -28,7 +28,7 @@
  },
  "descriptions": {
   "relapse-unlearned-tiny-aya-models": "Tiny Aya with hazardous biology unlearned (RMU). Stage 2 models first. Paper and tokenizer checker: github.com/itssaharsh/relapse",
-  "relapse-runs-logs-and-probe-sets": "Every run of the paper, per question; five pre-registrations; a survey of public copies; probe sets. Paper: github.com/itssaharsh/relapse"
+  "relapse-runs-logs-and-probe-sets": "Every run of the paper, per question; six pre-registrations; a survey of public copies; probe sets. Paper: github.com/itssaharsh/relapse"
  },
  "data_collection": "relapse-runs-logs-and-probe-sets",
  "data_notes": {

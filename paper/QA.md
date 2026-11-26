@@ -78,6 +78,6 @@ Tokenizer files and weights have identical content hashes across those revisions
 
 We tested the nearest case and it does not. In a sixth registered test (scoring only, pinned revisions) the same 60 saved runs were scored with every line break removed: the default-layer runs score 46.6% through the outdated setting and 47.4% through the official one, a rise of +0.8 points against +11.4 in the multiple-choice layout, and 0 of 16 relapse. We had registered that at least half would still relapse; that hypothesis failed.
 
-So the overstated audit needs both the outdated setting and the layout's line breaks. Counted without any model, the two settings split all 1,273 WMDP-bio prompts differently (digits apart, punctuation separated from words, no joined punctuation-plus-line-break pieces), yet only the line-break layout produced the effect. Why is not explained; open generation is untested.
+So the overstated audit was absent in the one layout without line breaks that we tested (it also joins the options with ` | `). The agreement is not by construction: the two settings still split 815 of the 1,273 single-line WMDP-bio prompts differently, and on those alone the default-layer runs rise by +1.2 points, against +11.7 on the same questions in the multiple-choice layout (`results/survey/single_line_tokens.json`). Other layouts and open generation are untested, and why is not explained.
 
 *Behind it:* results/PREREGISTRATION_6.md, results/single_line/summary.json, scripts/analyze_single_line.py, results/survey/token_differences.json

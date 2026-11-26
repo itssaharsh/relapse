@@ -431,6 +431,56 @@ def mcnemar() -> tuple[dict, dict]:
             "mcOtherSig": sum(c["p_holm"] < 0.05 and c["rise"] > 0 and not c["relapse"] for c in everything)}, {}
 
 
+def revisions() -> tuple[dict, dict]:
+    """Which model and tokenizer revision each experiment used: the job ledger (results/survey/jobs.json) against the official repos' history."""
+    base = os.path.join(ROOT, "results", "survey")
+    if not os.path.exists(os.path.join(base, "jobs.json")):
+        return {}, {}
+    import datetime
+    J = [j for j in json.load(open(os.path.join(base, "jobs.json"))) if j["run_suffix"] != "_smoke"]
+    H = json.load(open(os.path.join(base, "official_history.json")))
+    smoke = [j for j in json.load(open(os.path.join(base, "jobs.json"))) if j["run_suffix"] == "_smoke"]
+    def main_at(when: str) -> tuple:      # the head of each official repo's main branch at a time, by its public history
+        return tuple(next(c["sha"][:10] for c in H[f"CohereLabs/tiny-aya-{v}"] if c["date"] <= when) for v in ("global", "fire", "earth", "water", "base"))
+    core = lambda j: set(j["settings"]) - {"LLAMA_COMMIT", "REPO_COMMIT", "OUT_ROOT"}
+    between = lambda a, b: (lambda j: a <= j["started"] <= b)
+    rows = [("Relapse map (PR1)", lambda j: core(j) == {"SEED", "VARIANT"} and j["started"] < "2026-11-21T19"),
+            ("Tokenizer control", lambda j: not core(j)),
+            ("Tokenizer experiment (PR2)", lambda j: j["out"] == "changed_shift.pt"),
+            ("CircuitKIT, 64 prompts", lambda j: core(j) == {"VARIANT"}),
+            ("Placement (PR3)", lambda j: j["experiment"] == "place"),
+            ("Relapse follow-up, cause, repairs, their real files (PR4); Stage~1 rescoring", between("2026-11-21T18:34", "2026-11-22T02:05")),
+            ("Final models, full check, real files, publishing (PR3, am.~1)", between("2026-11-22T02:31", "2026-11-22T07:39")),
+            ("Runtime check", lambda j: j["flavor"].startswith("cpu")),
+            ("Placement and tokenizer (PR5)", lambda j: j["out"] == "changed_shift2.pt"),
+            ("NPO pilot", lambda j: j["out"] == "npo_deltas.pt"),
+            ("CircuitKIT, 160 prompts", lambda j: j["started"] >= "2026-11-24")]
+    used, sets, body = set(), [], ""
+    stamp = lambda t: datetime.datetime.strptime(t, "%Y-%m-%dT%H:%M:%SZ").strftime("%-d Nov %H:%M")
+    for label, test in rows:
+        g = [j for i, j in enumerate(J) if i not in used and test(j)]
+        used |= {i for i, j in enumerate(J) if i not in used and test(j)}
+        revs = sorted({main_at(j["started"]) for j in g})
+        for r in revs:
+            if r not in sets:
+                sets.append(r)
+        a_, b_ = stamp(g[0]["started"]), stamp(g[-1]["started"])
+        span = a_ if a_ == b_ else f"{a_}--{b_[-5:]}" if a_[:-5] == b_[:-5] else f"{a_} -- {b_}"
+        body += f"{label} & {len(g)} & {span} & " + ", ".join(f"R{sets.index(r) + 1}" for r in revs) + " \\\\\n"
+    assert len(used) == len(J), "a job is in no row of the revision table"
+    date = lambda sha: next(c["date"][:10] for cs in H.values() for c in cs if c["sha"].startswith(sha))
+    names = ("Global", "Fire", "Earth", "Water", "Base")
+    desc = "; ".join(f"R{i + 1}: " + ", ".join(f"{n} \\texttt{{{sha}}}" for n, sha in zip(names, r)) + f" (committed {' and '.join(sorted({date(x) for x in r}))})" for i, r in enumerate(sets))
+    same = all(len({json.dumps({k: v for k, v in c["files"].items() if k != "generation_config.json"}, sort_keys=True) for c in H[f"CohereLabs/tiny-aya-{v}"] if c["sha"][:10] in {r[i] for r in sets}}) == 1
+               for i, v in enumerate(("global", "fire", "earth", "water", "base")))
+    body += ("\\midrule\nStage~1 (withdrawn results; probe translations) & -- & 9--11 Nov, Kaggle & Kaggle Models \\path{cohere-labs/tiny-aya}, version 1 \\\\\n")
+    tex = ("\\begin{table*}[t]\n\\centering\\footnotesize\n\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{0.47\\textwidth} r l l@{}}\n\\toprule\nExperiment & Jobs & Jobs started (UTC, 2026) & Revision \\\\\n\\midrule\n" + body +
+           "\\bottomrule\n\\end{tabular}\n\\caption{Model and tokenizer revision of every experiment. No Stage~2 run recorded the revision it downloaded: each job took the main branch of \\texttt{CohereLabs/tiny-aya-<variant>} when it started, so the revision is read from the job's start time (Hugging Face Jobs' record, \\texttt{results/survey/jobs.json}) and the repositories' public history (\\texttt{results/survey/official\\_history.json}). " + desc +
+           ("." + (" Among tokenizer files, configuration and weights, R1 and R2 differ only in \\texttt{generation\\_config.json}: the tokenizer files and weights have the same content hashes." if len(sets) > 1 and same else "")) +
+           f" Job counts exclude {len(smoke)} three-batch pipeline tests. The outdated setting inside Stage~2 jobs is the same revision's tokenizer files with \\texttt{{tokenizer\\_class}} set to \\texttt{{CohereTokenizerFast}}; Stage~1 used the copy Kaggle held (uploaded 16 February 2026), whose revision Kaggle identifies only as version 1.}}\n\\label{{tab:revisions}}\n\\end{{table*}}\n")
+    return {"revJobs": len(J), "revSmoke": len(smoke), "revSets": len(sets)}, {"table_revisions.tex": tex}
+
+
 WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve")
 
 
@@ -478,13 +528,18 @@ def totals() -> tuple[dict, dict]:
              for f in glob.glob(os.path.join(base, "**", "results.json"), recursive=True) for r in json.load(open(f)) if r.get("model") != "base"}
     hyp = hypotheses()
     count = lambda o: sum(x[3] == o for x in hyp)
+    label = {"held": "Held", "part": "In part", "failed": "\\textbf{Failed}", "untestable": "Untestable"}
+    body = "".join(("\\addlinespace[2pt]\n" if i and hyp[i - 1][0] != h[0] else "") + f"{h[1]} & {h[2]} & {label[h[3]]} \\\\\n" for i, h in enumerate(hyp))
+    tex = table("@{}l>{\\raggedright\\arraybackslash}p{0.68\\columnwidth}l@{}", " & Registered hypothesis & Outcome \\\\\n", body,
+                "Every registered hypothesis and its outcome, read from the flags the registered analyses wrote (\\texttt{scripts/paper\\_numbers.py}). H: pre-registration 1 (map); P: 2 (tokenizer); Q: 3 (placement); R: 4 (relapse follow-up); T: 5 (placement against the tokenizer). For H and P the held-out models are the confirmatory test, as registered; P2 and P3 held on all five models and failed there.", "tab:hyp", "3pt", "\\footnotesize")
     return {"totalRuns": len(names), "totalNpo": sum(e == "npo_pilot" for e, _ in names), "hypN": len(hyp), "hypHeld": count("held"), "hypPart": count("part"), "hypFailed": count("failed"), "hypUntestable": count("untestable"),
-            "hypFailedWord": WORDS[count("failed")]}, {}
+            "hypFailedWord": WORDS[count("failed")], "hypHeldList": ", ".join(h[1] for h in hyp if h[3] == "held"), "hypFailedList": ", ".join(h[1] for h in hyp if h[3] == "failed"),
+            "hypPartList": " and ".join(h[1] for h in hyp if h[3] == "part"), "hypUntestableList": ", ".join(h[1] for h in hyp if h[3] == "untestable")}, {"table_hyp.tex": tex}
 
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, totals):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         open(os.path.join(PAPER, name), "w").write(tex)

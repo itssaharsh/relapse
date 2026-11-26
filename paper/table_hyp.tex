@@ -1,0 +1,37 @@
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.68\columnwidth}l@{}}
+\toprule
+ & Registered hypothesis & Outcome \\
+\midrule
+H1 & A relapse appears in one 4-bit format, not both & Held \\
+H2 & A single-format audit misses relapses in both directions & \textbf{Failed} \\
+H3 & Layers 7--9 cost less than 5--7 at equal forgetting & Untestable \\
+H4 & Layers 10--12 relapse more than layers 7--9 & \textbf{Failed} \\
+\addlinespace[2pt]
+P1 & Unlearned through one tokenizer, a run relapses through the other & Held \\
+P2 & The rise is smaller at layers 7--9 than at 5--7 & \textbf{Failed} \\
+P3 & Training on both tokenizers narrows the gap & \textbf{Failed} \\
+P4 & Training on both protects the deployed model & \textbf{Failed} \\
+\addlinespace[2pt]
+Q1 & Layers 7--9 forget more than 5--7 within 3 MMLU points & \textbf{Failed} \\
+Q2 & Layers 3--5 forget more than 5--7 within 3 MMLU points & Held \\
+Q3 & Each model's own CircuitKIT window beats 5--7 & \textbf{Failed} \\
+Q4 & Layers 3--5 beat 5--7 again on fresh seeds & \textbf{Failed} \\
+\addlinespace[2pt]
+R1 & The Base relapse in \fq{} recurs on fresh seeds & Held \\
+R2 & On Base, \fq{} raises the score more than \nf{} & Held \\
+R3 & The relapse shows in the real \fq{} file & In part \\
+R4 & It comes from the layers in front of the edit & \textbf{Failed} \\
+R5 & Training on the file repairs it (three criteria) & In part \\
+R6 & A relapse in \nf{} and not \fq{} exists & Held \\
+R7 & A rule chooses how long to train the repair & \textbf{Failed} \\
+\addlinespace[2pt]
+T1 & The tokenizer rise is smaller at layers 3--5 than at 5--7 & Held \\
+T2 & Under 1 in 5 runs at layers 3--5 relapse through the tokenizer & Held \\
+T3 & Layers 7--9 again hold and layers 5--7 again relapse & Held \\
+\bottomrule
+\end{tabular}
+\caption{Every registered hypothesis and its outcome, read from the flags the registered analyses wrote (\texttt{scripts/paper\_numbers.py}). H: pre-registration 1 (map); P: 2 (tokenizer); Q: 3 (placement); R: 4 (relapse follow-up); T: 5 (placement against the tokenizer). For H and P the held-out models are the confirmatory test, as registered; P2 and P3 held on all five models and failed there.}
+\label{tab:hyp}
+\end{table}

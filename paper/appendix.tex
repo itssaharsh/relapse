@@ -116,6 +116,8 @@ Optimizer & SafeTune's: one \texttt{torch.optim.AdamW} step per batch \\
 
 \textbf{Pre-registration 4, parts C and D, and amendments 3 to 5.} Part C (\path{kaggle/12}) rounds one part at a time to the format that relapsed (\fq{} for Base; \nf{} for Fire and Water, amendments 3 and 4): everything, the layers in front of the window, the three edited matrices, the rest of the window, or the layers behind it. In part D's repaired run, every projection of the cut model and of its frozen reference is seen as its round trip in the relapsing format on every step for 600 batches (\texttt{attach\_file\_view} in \path{kaggle/common.py}), with trained matrices rounded on the fly and a straight-through gradient. The controls, with the same seed and learning rate, are that training for 300 batches, plain RMU for 600 and, for the \fq{} cases, RMU with only the edited matrices rounded: on half of the forward passes, to one of \fq{}, Q4\_1 or \nf{} chosen at random, with a straight-through gradient (the \texttt{pq} option; pre-registration~4 does not fix the share of passes or the formats). Amendment~5's dose rule takes, of the two file-trained runs, the one with more batches whose MMLU in the relapsing format is within 3 points of the plain run's; it was written after the Base and Fire repairs were scored and before any Water repair result existed, so Water is its only test. Table~\ref{tab:repair} gives every repair run of Section~\ref{sec:repair} with its controls, each scored in the format in which its plain run relapsed.
 
+\input{table_hyp}
+
 \input{table_real}
 
 \input{table_cause}

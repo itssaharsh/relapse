@@ -71,7 +71,7 @@ Our contributions:
 
 \textbf{Robustness of unlearning.} \citet{lucki2024adversarial} show that RMU-style unlearning can be undone by small fine-tunes.
 
-\textbf{Unlearning and quantization.} Beyond \citet{zhang2025quantization}, \citet{sadhu2026forgetting} formalize a sparsity--permanence trade-off under \nf{} \citep{dettmers2023qlora} and introduce MANSU, whose updates clear the quantization bin by construction. Our method, model family and formats differ, so our low relapse rate does not contradict them; MANSU's code was not available for comparison.
+\textbf{Unlearning under quantization: the prediction we test.} \citet{zhang2025quantization} showed that quantization can restore knowledge removed by unlearning. \citet{sadhu2026forgetting}, of Lexsi Labs, whose kits we use, argue that this is systematic: methods that forget meaningfully lose it under 4-bit compression, methods that survive barely change the model, and the cause is updates smaller than the \nf{} quantization bin \citep{dettmers2023qlora}; their MANSU makes updates clear the bin by construction. They test gradient-based methods under \nf{}. Sections~\ref{sec:map}--\ref{sec:repair} test the prediction on RMU, which they discuss but do not run, and on llama.cpp's GGUF files, which they do not cover. MANSU's code was not available for comparison.
 
 \textbf{Localization.} EAP-IG \citep{hanna2024faith}, through CircuitKIT, tells us where to place the RMU edit.
 
@@ -79,6 +79,8 @@ Our contributions:
 \label{sec:setup}
 
 \textbf{Models.} Tiny Aya has 3.35B parameters and 36 layers, in five variants: Base, Global, Fire, Water and Earth. Each is scored against its own original. Water and Base are held out from the hypotheses of the relapse map and the pipeline experiment.
+
+\textbf{Kits.} CuratorKIT gates the reworded and translated probe sets; CircuitKIT's EAP-IG attribution ranks the windows; SafeTune's RMU edits the chosen window; AuditKIT's paired bootstrap compares every real file with the same weights at fp16. Each kit's output is the next one's input (Appendix~\ref{app:kits}).
 
 \textbf{Unlearning.} RMU edits the MLP output projection (\texttt{down\_proj}) of three consecutive layers, the \emph{window}. At the top layer of the window, activations on forget text are pushed toward a fixed random vector with norm $3\times$ the mean activation norm, and activations on retain text are held to a frozen copy with weight $\alpha=100$. The forget set is the WMDP bio corpus and the retain set is Wikitext; we train for 300 batches of 4 with AdamW. SafeTune's default window is layers 5--7.
 
@@ -106,7 +108,7 @@ Our contributions:
 \subsection{Compression rarely undoes RMU}
 \label{sec:map}
 
-We pre-registered a map of \mapRuns{} runs: five models, five windows, three strengths and two fresh seeds. Of these, \mapEffective{} were \emph{effective} (fp16 \wmdp{} between 30\% and 55\%). \textbf{\mapHeld{} of the \mapEffective{} did not relapse in either 4-bit format}. On average, moving to 4-bit changed \wmdp{} by \mapMeanQ{} points in \fq{} and \mapMeanN{} in \nf{}, so the compressed copy forgot slightly \emph{more}. The two relapses (+\mapRelapseLow{} and +\mapRelapseHigh{} points) are both Tiny Aya Base, seed 12, layers 10--12, in \fq{} only.
+\citet{sadhu2026forgetting} predict that forgetting large enough to matter is lost in a 4-bit file. For RMU it mostly is not. We pre-registered a map of \mapRuns{} runs: five models, five windows, three strengths and two fresh seeds. Of these, \mapEffective{} were \emph{effective} (fp16 \wmdp{} between 30\% and 55\%). \textbf{\mapHeld{} of the \mapEffective{} did not relapse in either 4-bit format}. On average, moving to 4-bit changed \wmdp{} by \mapMeanQ{} points in \fq{} and \mapMeanN{} in \nf{}, so the compressed copy forgot slightly \emph{more}. The two relapses (+\mapRelapseLow{} and +\mapRelapseHigh{} points) are both Tiny Aya Base, seed 12, layers 10--12, in \fq{} only.
 
 Two of our four hypotheses failed and one could not be evaluated. A single-format audit did not miss relapses in both directions, because no run relapsed in \nf{} alone. Layers 10--12 did not relapse significantly more than layers 7--9 (\mapHfourA{} against \mapHfourB{}, $p=\mapHfourP$; held-out models \mapHeldHfourA{} against \mapHeldHfourB{}, $p=\mapHeldHfourP$). Our test of cost at equal forgetting could not be evaluated, because all \mapHthreeN{} model-and-seed pairs failed to bracket the 40\% comparison point at both windows. The fourth, that a relapse tends to appear in one format, held on only these two cases.
 
@@ -114,7 +116,7 @@ Two of our four hypotheses failed and one could not be evaluated. A single-forma
 \subsection{One file can relapse while its siblings hold}
 \label{sec:cases}
 
-The map's only relapse was Tiny Aya Base, seed 12, layers 10--12, in \fq{}. We pre-registered a follow-up of this case before running it.
+Where the predicted failure does occur, it is specific to one file format. The map's only relapse was Tiny Aya Base, seed 12, layers 10--12, in \fq{}. We pre-registered a follow-up of this case before running it.
 
 \textbf{It reproduces.} Retraining the three seed-12 runs with the same settings on a different GPU type gave rises of \rerunRises{} points (Table~\ref{tab:cases}).
 
@@ -134,7 +136,7 @@ The map's only relapse was Tiny Aya Base, seed 12, layers 10--12, in \fq{}. We p
 \subsection{Where it comes from, and what repairs it}
 \label{sec:repair}
 
-Earlier work explains relapse under quantization by parameter updates too small to survive rounding \citep{zhang2025quantization,sadhu2026forgetting}. That is not the cause here. We rounded one part of the model at a time (appendix, Table~\ref{tab:cause}). Rounding the three edited matrices alone moved \wmdp{} by at most \causeEditedMax{} points in the \causeCases{} relapsing runs. \textbf{The rise comes from weights that unlearning never touched.} Which ones differs. On Water and Fire it is the layers in front of the edit (\causeWater{}; \causeFire{}), the mechanism our Stage 1 submission described. On Base seed 12 it is the layers behind the edit (\causeBaseA{}), and on Base seed 43 no single part explains it. We had registered the Stage 1 mechanism as a hypothesis for Base, and there it failed.
+The prediction's mechanism is that parameter updates too small to survive rounding are erased \citep{zhang2025quantization,sadhu2026forgetting}. That is not the cause here. We rounded one part of the model at a time (appendix, Table~\ref{tab:cause}). Rounding the three edited matrices alone moved \wmdp{} by at most \causeEditedMax{} points in the \causeCases{} relapsing runs. \textbf{The rise comes from weights that unlearning never touched.} Which ones differs. On Water and Fire it is the layers in front of the edit (\causeWater{}; \causeFire{}), the mechanism our Stage 1 submission described. On Base seed 12 it is the layers behind the edit (\causeBaseA{}), and on Base seed 43 no single part explains it. We had registered the Stage 1 mechanism as a hypothesis for Base, and there it failed.
 
 
 \textbf{Training on the file.} For each relapsing run we trained a repaired run with the same seed and learning rate, with the model and its frozen reference seen as their 4-bit copies on every step, for 600 batches. The repaired run did not relapse in \repA{} of \repN{} cases, scored significantly lower in the file than the run it repairs in \repB, and stayed within 3 MMLU points in \repC{} (appendix, Table~\ref{tab:repair}). But plain RMU for the same 600 batches did almost as well (\ctlA, \ctlB{} and \ctlC{} of \ctlN), and \repBelow{} repaired runs fell below the effective range, where not relapsing means little. We cannot separate the repair from longer training. For the one repaired run we also built as a real llama.cpp file, the file held (\repRealFile\%, \repRealRise{} against fp16). A rule for choosing the amount of training, registered before its test case was scored, failed on that case. Rounding only the edited matrices during training never repaired.
@@ -166,14 +168,18 @@ Table~\ref{tab:check} gives the full check of the \chkModels{} final runs at lay
 \textbf{What it costs, and what breaks it.} Benign biology (four MMLU biology subjects) fell by \chkBenignLow--\chkBenignHigh{} points, \chkBenignMean{} on average: the forgetting is not confined to hazardous questions. A fine-tune of 25 LoRA steps on 64 held-out hazard questions raised the score by at least 5 points on \chkFtUp{} of \chkModels{} models and restored Tiny Aya Base to \chkFtBase\%. RMU hides knowledge more than it removes it \citep{lucki2024adversarial}.
 
 
-\section{What Did Not Work}
+\section{What Did Not Work, and What Is Next}
 \label{sec:fail}
 
-Registered hypotheses that failed: a single-format audit misses relapses in both directions \emph{within the map} (it found only the \fq{} direction; the \nf{} direction appeared in the follow-up); layers 10--12 relapse more than layers 7--9 ($p=\mapHfourP$); the Base relapse comes from the layers in front of the edit; training on both tokenizers protects the deployed model; the held-out, confirmatory versions of two tokenizer hypotheses (placement, and the gap narrowing with both tokenizers); layers 7--9 beat the default; each model's own CircuitKIT window beats the default; layers 3--5 beat the default on the final seeds ($p=\finalP$); and the dose rule for the repair. Another, cost at equal forgetting, could not be evaluated as registered, and the real-file hypothesis held only for the one Base file we had already seen.
+Of \hypN{} registered hypotheses, \hypHeld{} held (\hypHeldList), \hypPart{} held in part (\hypPartList), \hypFailed{} failed (\hypFailedList) and \hypUntestable{} could not be tested (\hypUntestableList); the appendix states each (Table~\ref{tab:hyp}). Three things we built did not work: retraining the edited matrices so that the \fq{} file imitates the audited model, keeping layers 17--20 at full precision, and NPO \citep{zhang2024npo} with LoRA at 17 settings. From Stage~1 we withdraw the relapse and repair on Tiny Aya Global and every number measured through the outdated tokenizer.
 
-Things we built that did not work: retraining the edited matrices so that the \fq{} file imitates the audited model left the file's score unchanged; keeping layers 17--20 at full precision removed only part of the Base rise; and NPO with LoRA, tried at 17 settings through the official tokenizer, either did not forget or lost general knowledge as fast as hazardous knowledge; its 4-bit copies scored like fp16.
+\noindent\fbox{\parbox{0.96\columnwidth}{\small\textbf{For the kits.}
+\textbf{SafeTune}: the default RMU window, layers 5--7, is the one that relapsed through the tokenizer; 3--5 held.
+\textbf{CircuitKIT}: the per-model pick changed on \ckChanged{} of five models from 64 to 160 prompts; pool or report stability.
+\textbf{AuditKIT}: \texttt{compare}'s default resamples floor $p$ at 0.001.
+\textbf{CuratorKIT}: its gates removed none of our probes; none checks translation fidelity.}}
 
-From Stage 1 we withdraw the relapse and repair on Tiny Aya Global, which the outdated tokenizer produced, and every number measured through it.
+\textbf{With more credits} we would (1) rescore the tokenizer experiment with single-line prompts, expecting a smaller rise at the default layers, because digit groups still split differently; (2) run the fine-tuning attack on default-layer models, expecting it to succeed at least as often as at layers 3--5; and (3) retrain the Fire and Water cases on fresh seeds, expecting about one seed in eight to relapse, as on Base.
 
 \section{Limitations}
 

@@ -1,0 +1,7 @@
+{
+ "tiny-aya-global-unlearn-bio-default-layers": "d5a7b12018c97ea313c59a2bb2cb099b4e48c36c",
+ "tiny-aya-global-unlearn-bio-circuitkit-layers": "c0834fccab11a776030f03d95bc63175be1f758d",
+ "tiny-aya-global-unlearn-bio-circuitkit-4bit-aware": "0509cef6ef2b63a4cc0f25aaca43fe5d163c2d49",
+ "tiny-aya-global-unlearn-bio-deeper-layers": "f7ac3122a87741fd854af247b24619afec095826",
+ "tiny-aya-global-unlearn-bio-deeper-layers-file-trained": "02d25e8eeefefdd1bd1a949d1e6f5899f29a0b72"
+}

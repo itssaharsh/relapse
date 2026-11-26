@@ -31,7 +31,7 @@ def main() -> None:
         kind, name = f[:-3].split("__")
         api.upload_file(path_or_fileobj=os.path.join(OUT, "cards", f), path_in_repo="README.md", repo_id=f"{USER}/{name}", repo_type=kind, commit_message=msg)
         print("card:", kind, name)
-    for f in ("index.html", "app.js", "data/stage2.json"):      # 3. the demo Space
+    for f in ("index.html", "app.js", "data/stage2.json", "og.png"):      # 3. the demo Space
         api.upload_file(path_or_fileobj=os.path.join(ROOT, "space", f), path_in_repo=f, repo_id=f"{USER}/relapse", repo_type="space", commit_message="Demo page matches the final paper")
     api.upload_file(path_or_fileobj=os.path.join(OUT, "space__relapse-article", "index.html"), path_in_repo="index.html", repo_id=f"{USER}/relapse-article", repo_type="space",
                     commit_message="Write-up rebuilt from docs/ARTICLE.md")      # 4. the write-up Space
@@ -54,7 +54,22 @@ def main() -> None:
         if it.item_id in plan["data_notes"]:
             api.update_collection_item(data.slug, it.item_object_id, note=plan["data_notes"][it.item_id])
     api.update_collection_metadata(data.slug, description=plan["descriptions"][plan["data_collection"]])
-    print("done: cards, Spaces, dataset and collection order. Remaining: git push origin main.")
+    # 7. the Stage 1 repositories: Cohere's fixed tokenizer_config.json in place of the outdated one, on the date their cards give
+    import datetime
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from check_tokenizer import check
+    from huggingface_hub import hf_hub_download
+    from prepare_hf_updates import FIX_DATE, VENDOR_REPO, VENDOR_REV
+    ist = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=5, minutes=30)))
+    if f"{ist.day} {ist.strftime('%B %Y')}" != FIX_DATE:
+        print(f"NOT DONE: the Stage 1 tokenizer fix. The cards say {FIX_DATE}; today is {ist:%d %B %Y} (IST). Set FIX_DATE, prepare again, and rerun.")
+    else:
+        fixed = hf_hub_download(VENDOR_REPO, "tokenizer_config.json", revision=VENDOR_REV)
+        for name in json.load(open(os.path.join(OUT, "stage1_revisions.json"))):
+            api.upload_file(path_or_fileobj=fixed, path_in_repo="tokenizer_config.json", repo_id=f"{USER}/{name}", commit_message="Tokenizer setting: Cohere's fix of 30 September 2026 (tokenizer_class PreTrainedTokenizerFast)")
+            print("tokenizer fixed:", name, "->", check(f"{USER}/{name}")["setting"])
+    print("done: cards, Spaces, dataset, collections and the Stage 1 tokenizer fix. Remaining: git push origin main.")
 
 
 if __name__ == "__main__":

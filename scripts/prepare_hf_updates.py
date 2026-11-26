@@ -39,6 +39,8 @@ STAGE1 = {"tiny-aya-global-unlearn-bio-default-layers": "layers 5 to 7, SafeTune
           "tiny-aya-global-unlearn-bio-deeper-layers": "layers 10 to 12",
           "tiny-aya-global-unlearn-bio-deeper-layers-file-trained": "layers 10 to 12, trained with the model seen as its Q4_0 file",
           "tiny-aya-global-unlearn-bio-sweep": "the edited matrices of all 38 Stage 1 runs, at five layer windows"}
+FIX_DATE = "27 November 2026"      # the day the Stage 1 repositories get Cohere's fixed tokenizer_config.json (scripts/apply_hf_updates.py checks the date)
+VENDOR_REPO, VENDOR_REV = "CohereLabs/tiny-aya-global", "af89d219b53ed9b13b8a4645f9c8028973510324"      # Cohere's fix of 30 September 2026
 DATASETS = ("relapse-runs", "relapse-wmdp-bio-probes")
 SPACES = ("relapse-article", "relapse")
 load = lambda *p: json.load(open(os.path.join(ROOT, "results", *p)))
@@ -62,13 +64,23 @@ def split(text: str) -> tuple[str, str]:
     return (m.group(1), m.group(2)) if m else ("", text)
 
 
-def stage1_card(name: str, what: str, old: str, files: list[str], today: str) -> str:
+def stage1_revisions(api) -> dict:
+    """The revision of each Stage 1 repository that carries the outdated setting: its head before the tokenizer fix. Kept once written."""
+    path = os.path.join(OUT, "stage1_revisions.json")
+    if os.path.exists(path):
+        return json.load(open(path))
+    revs = {n: api.model_info(f"{USER}/{n}").sha for n in STAGE1 if check(f"{USER}/{n}")["setting"] == "outdated"}
+    json.dump(revs, open(path, "w"), indent=1)
+    return revs
+
+
+def stage1_card(name: str, what: str, old: str, files: list[str], today: str, revs: dict) -> str:
     front, body = split(old)
     title = next((l for l in body.split("\n") if l.startswith("# ")), f"# {name}")
     table = [l for l in body.split("\n") if l.startswith("| fp16:") or l.startswith("|---|---|---|---|")][:2]      # the scores through the official tokenizer, already on the card
-    r = check(f"{USER}/{name}")
-    tok = (f"Its tokenizer files still carry that setting (`{r['evidence'].split(';')[0]}`), so under `transformers` v5 this repository splits text differently from the official Tiny Aya tokenizer."
-           if r["setting"] == "outdated" else "It holds edited matrices only, no tokenizer files.")
+    tok = (f"Until {FIX_DATE} its `tokenizer_config.json` carried that setting (`tokenizer_class: CohereTokenizerFast`); on that date it was replaced with Cohere's fixed file (from `{VENDOR_REPO}` at `{VENDOR_REV[:10]}`), so the repository now loads with the official tokenizer. "
+           f"The Stage 1 results were made with revision `{revs[name][:10]}` of this repository, which keeps the outdated setting."
+           if name in revs else "It holds edited matrices only, no tokenizer files.")
     stage2 = ", ".join(f"[{v.capitalize()}](https://huggingface.co/{USER}/relapse-tiny-aya-{v}-unlearn-bio)" for v in VARIANTS)
     rescored = ("\nRescored through the official tokenizer on 21 November 2026 (WMDP-bio / MMLU; the original scores 63.3% / 55.4% at fp16):\n\n" + "\n".join(table) + "\n") if len(table) == 2 else ""
     return f"""{front}
@@ -137,10 +149,11 @@ def main() -> None:
         name = next(n for n in runs if n.endswith("_s34")); other = next(n for n in runs if n.endswith("_s33"))
         cards[("model", f"relapse-tiny-aya-{v}-unlearn-bio")] = publish_cards.card(v, name, runs[name], {"name": other, **runs[other]}, ctx)
     # Stage 1 models: a short corrected card in place of the Stage 1 text
+    revs = stage1_revisions(api)
     for name, what in STAGE1.items():
         files = sorted(api.list_repo_files(f"{USER}/{name}"))
         files = files if len(files) <= 12 else files[:10] + [f"and {len(files) - 10} more"]
-        cards[("model", name)] = stage1_card(name, what, live[("model", name)], files, today)
+        cards[("model", name)] = stage1_card(name, what, live[("model", name)], files, today, revs)
     # datasets and Spaces: the live card with a status block under its title
     for kind, name in [("dataset", n) for n in DATASETS] + [("space", "relapse-article")]:
         cards[(kind, name)] = with_status(live[(kind, name)], name, today)
@@ -176,12 +189,12 @@ def main() -> None:
     plan = [f"# Pushes prepared on {today}, waiting for a yes", "", "Nothing here has been uploaded. `python scripts/apply_hf_updates.py` prints this plan; `--yes` carries it out. No repository is created, deleted or renamed, and no visibility changes.", "",
             "1. `git push origin main`: the paper, the checker, the survey, the README and this folder.", "2. Model, dataset and Space cards (`README.md` of each repository), from `hf_updates/cards/`:"]
     plan += [f"   - `{USER}/{n}` ({k})" + ("" if f"{k}__{n}" in changed else " (unchanged)") for k, n in targets]
-    plan += ["3. Demo Space `itssaharsh/relapse`: `index.html`, `app.js`, `data/stage2.json` from `space/` (Tiny Aya Base stated beside the headline, means in the table, links to the paper and the checker).",
+    plan += ["3. Demo Space `itssaharsh/relapse`: `index.html`, `app.js`, `data/stage2.json` and the preview image `og.png` from `space/` (Tiny Aya Base stated beside the headline, means in the table, links to the paper and the checker).",
              "4. Write-up Space `itssaharsh/relapse-article`: `index.html` from `hf_updates/space__relapse-article/` (rebuilt from `docs/ARTICLE.md`).",
              "5. Dataset `itssaharsh/relapse-runs`: add `stage2/survey/` (the files of `results/survey/`), replace `stage2/paper.pdf` with the final `paper/main.pdf`, add `stage2/check_tokenizer.py` (the checker, so it sits inside the judged collection), and add `stage2/PREREGISTRATION_5.md` if it is not there.",
              "6. Both collections: descriptions that name the paper and the checker, item notes, and the models collection ordered Stage 2 first (`hf_updates/collection.json`):"] + [f"   {i + 1}. `{r}`" for i, r in enumerate(order)]
-    plan += ["", "Not prepared, for you to decide: the five Stage 1 model repositories still carry the outdated tokenizer setting in their own `tokenizer_config.json` (their cards now say so). "
-             "Replacing that one field with the official value would make them load correctly, and would also change what the survey counts; it is not in this plan."]
+    plan += [f"7. The five Stage 1 model repositories that carry the outdated setting ({', '.join('`' + n + '`' for n in revs)}): replace `tokenizer_config.json` with Cohere's fixed file "
+             f"(`{VENDOR_REPO}` at `{VENDOR_REV[:10]}`). Their cards give the date ({FIX_DATE}) and the revision the Stage 1 results used. The apply script does this only on that date."]
     open(os.path.join(OUT, "PLAN.md"), "w").write("\n".join(plan) + "\n")
     print(f"wrote {len(cards)} cards ({len(changed)} differ from what is live), the write-up page, collection.json and PLAN.md to {OUT}")
 

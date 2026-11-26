@@ -595,6 +595,16 @@ def tokens() -> tuple[dict, dict]:
             "tokRiseDigit": signed(100 * r["mean_rise_with_digit"]), "tokRiseNoDigit": signed(100 * r["mean_rise_without_digit"]), "tokDigitQuestions": r["questions_with_digit"]}, {}
 
 
+def auditkit_headline() -> tuple[dict, dict]:
+    """AuditKIT's paired bootstrap on the headline pairs (results/survey/auditkit_headline.json, written by scripts/auditkit_headline.py)."""
+    path = os.path.join(ROOT, "results", "survey", "auditkit_headline.json")
+    if not os.path.exists(path):
+        return {}, {}
+    d = json.load(open(path))
+    return {"akPairs": d["pairs"], "akSame": d["same_verdict"], "akDefault": f"{d['by_window']['5-7']['relapses_auditkit']} of {d['by_window']['5-7']['pairs']}",
+            "akShallow": f"{d['by_window']['3-5']['relapses_auditkit']} of {d['by_window']['3-5']['pairs']}"}, {}
+
+
 def reverse_rule() -> tuple[dict, dict]:
     """The MMLU warning sign in the reverse direction: runs unlearned and audited through the official tokenizer, then scored through the outdated one."""
     hurt_rose = hurt = fine_rose = fine = 0
@@ -668,7 +678,7 @@ def totals() -> tuple[dict, dict]:
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, reverse_rule, totals):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, auditkit_headline, reverse_rule, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         if name in ("table_hyp.tex", "table_real.tex", "table_cause.tex", "table_repair.tex", "table_revisions.tex"):      # appendix floats: placed where they fall, whatever their height

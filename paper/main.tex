@@ -54,14 +54,14 @@ We study this for RMU (representation misdirection for unlearning; \citealp{li20
 
 Compression was the smaller risk: in \fq{} (llama.cpp's basic 4-bit GGUF format) and \nf{} (bitsandbytes' 4-bit format), \mapHeld{} of \mapEffective{} effective runs kept their forgetting.
 
-\textbf{Recommendation.} Check at load that the tokenizer setting is the one the audit used (\path{scripts/check_tokenizer.py}), treat MMLU lost in the audit pipeline as a warning sign, and score every file that ships; at the learning rates we tested, layers 3--5 were the safer window than the default 5--7.
+\textbf{Recommendation.} Check at load that the tokenizer setting is the one the audit used (\path{scripts/check_tokenizer.py}), treat MMLU lost in the audit pipeline as a warning sign, and score every file that ships. In our runs layers 3--5 did not relapse where the default 5--7 did, but the default-layer audits were also the ones that showed MMLU damage, so we cannot say the layer is why.
 
 Our contributions:
 \begin{itemize}
 \setlength\itemsep{1pt}
 \item \textbf{The tokenizer-by-layer result}: an outdated setting overstated the unlearning at the default layers in every effective run and not at layers 3--5 or 7--9, on the four post-trained variants; the audit's own MMLU loss flags every such run.
 \item \textbf{A pre-registered map of 4-bit relapse}: it confirms at scale that RMU's forgetting usually survives; new are the rare exceptions, specific to one format and caused by weights the edit never touched.
-\item \textbf{A placement result with its price, and a correction}: layers 3--5 give more forgetting per MMLU point and robustness to the tokenizer, with no gain per point of benign biology. We release those models, and report our Stage~1 correction and all \hypFailedWord{} failed hypotheses.
+\item \textbf{A placement result with its price, and a correction}: layers 3--5 gave more forgetting per MMLU point, with no gain per point of benign biology; they did not relapse through the tokenizer, an observation confounded with the MMLU damage of the default-layer audits. We release those models, and report our Stage~1 correction and all \hypFailedWord{} failed hypotheses.
 \end{itemize}
 
 \section{Related Work}
@@ -77,7 +77,7 @@ Our contributions:
 
 \textbf{Models.} Tiny Aya has 3.35B parameters and 36 layers, in five variants: Base, the pretrained model, and Global, Fire, Water and Earth, post-trained from it. Water and Base are held out from the hypotheses of the map and of the first tokenizer experiment.
 
-\textbf{Kits.} CuratorKIT gates the probe sets; CircuitKIT's attribution ranks the windows; SafeTune's RMU makes every edit, including those of the tokenizer result, which is scored with our own scorer and bootstrap; AuditKIT's paired bootstrap compares every real file with the same weights at fp16 (Appendix~\ref{app:kits}).
+\textbf{Kits.} CuratorKIT gates the probe sets; CircuitKIT's attribution ranks the windows; SafeTune's RMU makes every edit, including those of the tokenizer result, which is scored with our own scorer and bootstrap (AuditKIT's gives the same verdict on all \akPairs{} headline pairs); AuditKIT's paired bootstrap compares every real file with the same weights at fp16 (Appendix~\ref{app:kits}).
 
 \textbf{Unlearning.} RMU edits the MLP output projection of the window's three layers: at the top layer, activations on forget text (the WMDP bio corpus) are pushed toward a fixed random vector and activations on retain text (Wikitext) are held to a frozen copy, for 300 batches of 4 (settings in Table~\ref{tab:experiments}).
 
@@ -102,12 +102,12 @@ Our contributions:
 
 \textbf{Direction matters.} In the reverse direction \shiftReverseRel{} of \shiftReverseEff{} runs relapsed. Training on both settings narrowed the gap in \shiftPthreeWins{} of \the\numexpr\shiftPthreeWins+\shiftPthreeLosses\relax{} matched pairs ($p=\shiftPthreeP$; held-out $p=\shiftHeldPthreeP$) but lowered the deployed score in only \shiftPfourWins{} against \shiftPfourLosses.
 
-\textbf{The outdated setting is still widespread.} On \surveyDate{} we read the tokenizer file or GGUF header of every public copy we could find (\path{scripts/check_tokenizer.py}): \surveyFound{} Hugging Face repositories tied to a Tiny Aya model by \texttt{base\_model} or by name, and Kaggle Models. Cohere's five repositories carry the official setting; all \surveyKaggle{} Kaggle variations carry the outdated one. Of \surveyRead{} derived Hugging Face copies whose setting could be read, \surveyOutdated{} (\surveyShare\%) carry it: \surveyOurs{} are our own Stage~1 models, and the other \surveyOutdatedOthers{}, mostly fine-tunes and adapters, have \surveyDownloads{} downloads, \surveyDownloadsMonth{} in the last 30 days. Of \surveySampled{} sampled copies, \surveySampledDiffer{} split a probe prompt differently under \texttt{transformers}~v5. This counts exposure, not harm: \surveyBeforeFix{} were last modified before the fix (\surveyAfterFix{} after it, with \surveyAfterFixDownloads{} downloads), none is named as an unlearning model and \surveySafety{} as safety-tuned, and which direction of mismatch a copy faces depends on the \texttt{transformers} version it was trained with. GGUF files are nearly all safe: \surveyGgufOther{} of \surveyGguf{} name another pre-tokenizer.
+\textbf{The outdated setting is still widespread.} On \surveyDate{} we read the tokenizer file or GGUF header of every public copy we could find (\path{scripts/check_tokenizer.py}): \surveyFound{} Hugging Face repositories tied to a Tiny Aya model by \texttt{base\_model} or by name, and Kaggle Models. Cohere's five repositories carry the official setting; all \surveyKaggle{} Kaggle variations carry the outdated one. Of \surveyRead{} derived Hugging Face copies whose setting could be read, \surveyOutdated{} (\surveyShare\%) carry it: \surveyOurs{} were our own Stage~1 models, which we corrected on 27 November, and the other \surveyOutdatedOthers{}, mostly fine-tunes and adapters, have \surveyDownloads{} downloads, \surveyDownloadsMonth{} in the last 30 days. This counts exposure, not harm: \surveyBeforeFix{} were last modified before the fix (\surveyAfterFix{} after it, with \surveyAfterFixDownloads{} downloads), none is named as an unlearning model and \surveySafety{} as safety-tuned, and which direction of mismatch a copy faces depends on the \texttt{transformers} version it was trained with. GGUF files are nearly all safe: \surveyGgufOther{} of \surveyGguf{} name another pre-tokenizer.
 
 \subsection{Compression rarely undoes RMU}
 \label{sec:map}
 
-\citet{sadhu2026forgetting} find that gradient-based methods that forget meaningfully lose it in a 4-bit file. RMU, which they did not run, mostly keeps it. We pre-registered a map of \mapRuns{} runs over five models and five windows; \mapEffective{} were effective. \textbf{\mapHeld{} of the \mapEffective{} did not relapse in either 4-bit format}. On average, 4-bit changed \wmdp{} by \mapMeanQ{} points in \fq{} and \mapMeanN{} in \nf{}: the compressed copy forgot slightly \emph{more}. The two relapses (+\mapRelapseLow{} and +\mapRelapseHigh{} points) are both Tiny Aya Base, seed 12, layers 10--12, in \fq{} only. Of the map's four hypotheses, one held, two failed and one could not be tested (Table~\ref{tab:hyp}).
+\citet{sadhu2026forgetting} find that gradient-based methods that forget meaningfully lose it in a 4-bit file. RMU, which they did not run, mostly keeps it. We pre-registered a map of \mapRuns{} runs over five models and five windows; \mapEffective{} were effective. \textbf{\mapHeld{} of the \mapEffective{} did not relapse in either 4-bit format}. On average, 4-bit changed \wmdp{} by \mapMeanQ{} points in \fq{} and \mapMeanN{} in \nf{}: the compressed copy forgot slightly \emph{more}. The two relapses (+\mapRelapseLow{} and +\mapRelapseHigh{} points) are both Tiny Aya Base, seed 12, layers 10--12, in \fq{} only.
 
 \subsection{One file can relapse while its siblings hold}
 \label{sec:cases}
@@ -159,7 +159,7 @@ Table~\ref{tab:check} gives the full check of the \chkModels{} final runs at lay
 Of \hypN{} registered hypotheses, \hypHeld{} held, \hypPart{} held in part, \hypFailed{} failed and \hypUntestable{} could not be tested; Table~\ref{tab:hyp} in the appendix states each. Three builds failed: a \fq{} file trained to imitate the audited model, layers 17--20 kept at full precision, and NPO \citep{zhang2024npo} with LoRA. Every Stage~1 number is withdrawn.
 
 \noindent\fbox{\parbox{0.96\columnwidth}{\small\textbf{For the kits.}
-\textbf{SafeTune}: record the tokenizer class and a hash of its files with each run; the default window, layers 5--7, is the one whose audit was overstated.
+\textbf{SafeTune}: record the tokenizer class and a hash of its files with each run; at the default window, layers 5--7, the audit was overstated (with MMLU damage in the same audits).
 \textbf{CircuitKIT}: report the stability of the per-model pick (it changed on \ckChanged{} of five models from 64 to 160 prompts), or pool.
 \textbf{AuditKIT}: expose \texttt{compare}'s resample count; its default floors $p$ at 0.001.
 \textbf{CuratorKIT}: add a fidelity gate; its gates removed none of our probes.}}
@@ -168,7 +168,7 @@ Of \hypN{} registered hypotheses, \hypHeld{} held, \hypPart{} held in part, \hyp
 
 \section{Limitations}
 
-Knowledge is measured by multiple choice, not open generation. The tokenizer effect was measured only on these multiple-choice prompts, every one of which the two settings split differently (Appendix~\ref{app:method}); single-line prompts are untested, and we have no mechanism. Tiny Aya Base rose through the tokenizer at every window, so the protection of layers 3--5 is shown for the four post-trained variants only, and window is confounded with learning rate and with damage in the audit pipeline. Relapses in 4-bit files are rare: each rests on one or two seeds, Fire and Water on one run each, and part of the Base rise is the format's. All models come from one family and one unlearning method. No run recorded the revision it downloaded: Stage~2 revisions are read from job start times (Table~\ref{tab:revisions}), and the Stage~1 runs used whatever copy the platform held.
+Knowledge is measured by multiple choice, not open generation. The tokenizer effect was measured only on these multiple-choice prompts, every one of which the two settings split differently (Appendix~\ref{app:method}); single-line prompts are untested, and we have no mechanism. Tiny Aya Base rose through the tokenizer at every window, so the absence of relapse at layers 3--5 is observed on the four post-trained variants only, and window is confounded with learning rate and with damage in the audit pipeline. Relapses in 4-bit files are rare: each rests on one or two seeds, Fire and Water on one run each, and part of the Base rise is the format's. All models come from one family and one unlearning method. No run recorded the revision it downloaded: Stage~2 revisions are read from job start times (Table~\ref{tab:revisions}), and the Stage~1 runs used whatever copy the platform held.
 
 \textbf{Responsible release.} This paper contains no hazardous question text or model output; the probe set holds only rewordings and translations of public WMDP-bio questions, and the gated forget corpus is never redistributed. The released models are research artifacts, not safety guarantees: their cards say a short fine-tune restores the knowledge. Our checker only reads public configuration.
 

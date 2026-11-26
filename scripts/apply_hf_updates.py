@@ -60,6 +60,11 @@ def main() -> None:
             api.update_collection_item(data.slug, it.item_object_id, note=plan["data_notes"][it.item_id])
     api.update_collection_metadata(data.slug, description=plan["descriptions"][plan["data_collection"]])
     have = {it.item_id for it in api.get_collection(data.slug).items}
+    mine = sum(i.startswith(USER + "/") for i in have)
+    for repo, note in plan.get("add_own_datasets", {}).items():      # our own working dataset, after our own items and before the ones we only used
+        if repo not in have and not api.dataset_info(repo).private:
+            new = api.add_collection_item(data.slug, repo, "dataset", note=note, exists_ok=True)
+            api.update_collection_item(data.slug, next(it.item_object_id for it in new.items if it.item_id == repo), position=mine); print("added to the data collection:", repo)
     for repo, note in plan.get("add_datasets", {}).items():      # the datasets used, after our own
         if repo not in have:
             api.add_collection_item(data.slug, repo, "dataset", note=note, exists_ok=True); print("added to the data collection:", repo)

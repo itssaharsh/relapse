@@ -109,6 +109,69 @@ CC-BY-NC-4.0, the license of the original model. Use is also subject to Cohere's
 """
 
 
+WORK_FOLDERS = [      # folder, what it holds, what reads it
+    ("map/", "Pre-registration 1, the relapse map: per run `results.json`, `items.json` (one 0/1 per question) and the edited matrices `changed_map.pt`.",
+     "`scripts/analyze_map.py`; the matrices by the scoring jobs built on `hf_jobs/header_real.py` (real files, locate) through `PT_REPO` and `PT_PATH`."),
+    ("deep/", "Pre-registration 4, the Base relapse follow-up: reruns, fresh seeds 41 to 48, the repair arms and their controls, with `changed_map.pt`.",
+     "`scripts/analyze_deep.py`; the matrices by the real-file, locate, bitsandbytes and runtime jobs."),
+    ("shift/", "Pre-registration 2, the first tokenizer experiment: every run scored through the official and the outdated setting.", "`scripts/analyze_shift.py` (from the copies in the code repository's `results/shift/`)."),
+    ("shift2/", "Pre-registration 5, placement against the tokenizer: layers 3 to 5, 5 to 7 and 7 to 9, with the edited matrices `changed_shift2.pt`.",
+     "The job of pre-registration 6 (`hf_jobs/header_single.py`, at a pinned revision of this dataset); `scripts/analyze_shift2.py` from `results/shift2/`."),
+    ("single_line/", "Pre-registration 6: the saved runs of pre-registration 5 scored with single-line prompts through both settings.", "`scripts/analyze_single_line.py` from `results/single_line/`."),
+    ("place/", "Pre-registration 3, placement: layers 3 to 5, each model's CircuitKIT window, 7 to 9 and the default 5 to 7 on seeds 31 and 32.", "`scripts/analyze_place.py` from `results/place/`."),
+    ("final/", "The final-model runs of pre-registration 3, amendment 1 (seeds 33 and 34), with `changed_map.pt`.", "`scripts/analyze_final.py`; the full check, real-file and publishing jobs."),
+    ("real/", "Outputs of the scoring jobs: real llama.cpp files, locate (one part rounded at a time), the full check, the bitsandbytes loader, the runtime check, publishing, the tokenizer control and the Stage 1 models rescored. "
+              "Includes AuditKIT run records (`audit_*.json`).", "`scripts/analyze_deep.py`, `scripts/analyze_certify.py`, `scripts/rescore_stats.py`."),
+    ("circuitkit/", "CircuitKIT EAP-IG attribution on the five models, 64 prompts: layer importance, node scores, faithfulness report, tokenizer check.", "The placement job, to pick each model's window; `scripts/paper_numbers.py` from `results/place/circuitkit/`."),
+    ("circuitkit_more/", "The same with 160 prompts (exploratory).", "`scripts/paper_numbers.py` from `results/place/circuitkit_more/`."),
+    ("cons/", "The consolidation pilot (exploratory).", "Nothing registered."),
+    ("npo_pilot/", "The NPO with LoRA pilot (exploratory), with `npo_deltas.pt`.", "`scripts/paper_numbers.py` counts its runs."),
+    ("smoke/", "A three-batch pipeline test.", "Nothing."),
+]
+
+
+def working_card(api, today: str) -> str:
+    """The card of itssaharsh/relapse-stage2, the dataset the Stage 2 jobs wrote into: what each folder holds, what reads it, and its size."""
+    tree = [x for x in api.list_repo_tree(f"{USER}/relapse-stage2", repo_type="dataset", recursive=True) if hasattr(x, "size") and "/" in x.path]
+    size = lambda d, pt: sum(x.size for x in tree if x.path.startswith(d) and x.path.endswith(".pt") == pt)
+    count = lambda d: sum(x.path.startswith(d) for x in tree)
+    assert {x.path.split("/")[0] + "/" for x in tree} == {d for d, _, _ in WORK_FOLDERS}, "a folder of relapse-stage2 is missing from WORK_FOLDERS"
+    rows = "\n".join(f"| `{d}` | {what} | {reads} | {count(d)} | {size(d, True) / 1e9:.1f} GB | {size(d, False) / 1e6:.1f} MB |" for d, what, reads in WORK_FOLDERS)
+    total_pt, total_js = sum(size(d, True) for d, _, _ in WORK_FOLDERS), sum(size(d, False) for d, _, _ in WORK_FOLDERS)
+    return f"""---
+license: cc-by-nc-4.0
+tags: [unlearning, quantization, wmdp, mmlu, safetune, circuitkit, auditkit, tiny-aya, relapse]
+pretty_name: Relapse Stage 2 working files (edited matrices and raw job outputs)
+---
+
+# Relapse: Stage 2 working files
+
+This is the dataset the Stage 2 jobs of the paper wrote into as they ran: the edited weight matrices of every run and the raw outputs of every job. It is kept so that a scoring job can be rerun without retraining. For reading results, use [`{USER}/relapse-runs`](https://huggingface.co/datasets/{USER}/relapse-runs), which holds the same per-question results in a tidier layout, or the `results/` folder of the [code repository]({REPO}).
+
+**Paper:** [{publish_cards.PAPER}]({REPO}/blob/main/paper/main.pdf). **Code, jobs and pre-registrations:** [{REPO.replace("https://", "")}]({REPO}). Status on {today} (UTC): made public on that date, unchanged since the jobs wrote it apart from this card.
+
+## What is in it
+
+{len(tree)} files: {total_pt / 1e9:.1f} GB of edited matrices in {sum(x.path.endswith(".pt") for x in tree)} `.pt` files and {total_js / 1e6:.0f} MB of JSON.
+
+| Folder | What it holds | Read by | Files | Matrices | JSON |
+|---|---|---|---|---|---|
+{rows}
+
+A `.pt` file is a PyTorch dictionary: run name to that run's edited `mlp.down_proj` matrices, by parameter name, which the jobs write into Cohere's original model before scoring. Run names give the model, the window, the learning rate, the tokenizer setting where it applies, and the seed, for example `global_W3-5_lr3e-05_outdated_s51`. The jobs are in [`hf_jobs/`]({REPO}/tree/main/hf_jobs) and [`kaggle/`]({REPO}/tree/main/kaggle); each pre-registration names the settings of its jobs, and `results/survey/jobs.json` in the code repository gives the start time and commit of every job.
+
+## What the text files contain
+
+Scores, per-question 0/1 lists, answer letters and probabilities, attribution scores and job settings. The AuditKIT run records in `real/` also hold the prompt of every question they scored: the public WMDP-bio test questions of [`cais/wmdp`](https://huggingface.co/datasets/cais/wmdp) and the sampled questions of [`cais/mmlu`](https://huggingface.co/datasets/cais/mmlu), both MIT-licensed, with the model's answer letter. Nothing here contains text from the gated forget corpus or free-form model output. Paths such as `/tmp/kg/input/...` in these records are directories inside the job's container.
+
+## License and access
+
+CC-BY-NC-4.0, the license of the original Tiny Aya models, from which the edited matrices are derived. Use is also subject to Cohere's terms for Tiny Aya. The benchmark questions quoted in the run records keep their own MIT license. Not gated, like the released models. The matrices are not models on their own: loading them needs the original weights from [`CohereLabs/tiny-aya-<variant>`](https://huggingface.co/CohereLabs/tiny-aya-global), which Cohere gates.
+
+These are research artifacts, not safety guarantees: the paper shows that a short fine-tune restores the unlearned knowledge.
+"""
+
+
 def status_block(kind: str, today: str) -> str:
     extra = {"relapse-runs": "The `stage2/` folders hold the runs the paper reports, from six pre-registered experiments (the fifth, placement against the tokenizer, is `stage2/shift2/`; the sixth, single-line prompts, `stage2/single_line/`), and `stage2/survey/` holds the survey of public copies, the official repositories' history and the start time and commit of every job. Everything outside `stage2/` and `correct_tokenizer/` is Stage 1, made through the outdated tokenizer setting, and is superseded.",
              "relapse-wmdp-bio-probes": "The translations and rewordings were made in Stage 1 by Tiny Aya Global through Kaggle's copy, so through the outdated tokenizer setting; no native speaker checked them. The paper's full check scores the released models on them through the official tokenizer.",
@@ -163,6 +226,11 @@ def main() -> None:
         "| `stage2/shift/` | The tokenizer experiment: each run scored through the official and the outdated tokenizer setting |",
         "| `stage2/shift/` | The tokenizer experiment: each run scored through the official and the outdated tokenizer setting |\n| `stage2/shift2/` | Placement against the tokenizer (pre-registration 5): layers 3 to 5, 5 to 7 and 7 to 9, unlearned through the outdated setting, scored through both |\n| `stage2/single_line/` | Pre-registration 6: the same saved runs scored with single-line prompts through both settings |\n| `stage2/survey/` | The survey of public copies, the official repositories' history, the start time and commit of every job, token-level differences; `stage2/check_tokenizer.py` is the checker |")
     cards[("space", "relapse")] = with_status(open(os.path.join(ROOT, "space", "README.md")).read(), "relapse", today)      # the demo Space's card is kept in space/README.md
+    cards[("dataset", "relapse-stage2")] = working_card(api, today)      # the working dataset the jobs wrote into
+    try:
+        live[("dataset", "relapse-stage2")] = open(api.hf_hub_download(f"{USER}/relapse-stage2", "README.md", repo_type="dataset")).read()
+    except Exception:
+        live[("dataset", "relapse-stage2")] = ""
     for (kind, name), text in cards.items():
         open(os.path.join(OUT, "cards", f"{kind}__{name}.md"), "w").write(text)
     # the write-up Space: its page template with the article body swapped in
@@ -190,7 +258,8 @@ def main() -> None:
                  "Salesforce/wikitext": "Used, not ours: the texts RMU retains (wikitext-2-raw-v1).",
                  "cais/mmlu": "Used, not ours: general knowledge (a fixed sample of 1,000 questions) and the four benign-biology subjects."}
     json.dump({"collection": "relapse-unlearned-tiny-aya-models", "order": order, "notes": notes, "descriptions": descriptions, "data_collection": "relapse-runs-logs-and-probe-sets", "data_notes": data_notes,
-               "add_models": used_models, "add_datasets": used_data},
+               "add_models": used_models, "add_datasets": used_data,
+               "add_own_datasets": {f"{USER}/relapse-stage2": "Working files of the Stage 2 jobs: the edited matrices of every run (87 GB) and raw job outputs, so a scoring job can be rerun without retraining."}},
               open(os.path.join(OUT, "collection.json"), "w"), indent=1)
     changed = [f"{k}__{n}" for (k, n), t in cards.items() if t != live.get((k, n))]
     plan = [f"# Pushes prepared on {today}, waiting for a yes", "", "Nothing here has been uploaded. `python scripts/apply_hf_updates.py` prints this plan; `--yes` carries it out. No repository is created, deleted or renamed, and no visibility changes.", "",

@@ -193,3 +193,145 @@ Every reference of the paper that is a paper. Each arXiv page was fetched on 26 
 - Cited for: Related Work: RMU's effectiveness depends on the layer it is applied to.
 - Note: named by a reviewer of our draft; opened and read on 26 November 2026 before it was cited.
 
+
+# Software, datasets and methods used (added 26 November 2026, UTC)
+
+The submission form asks that every repository, model, dataset and tool the experiments used is cited. Each page below was fetched on 26 November 2026 before its entry was written (`curl` of the arXiv page, the ACL Anthology `.bib`, the DOI's BibTeX, or the GitHub API and the repository's own citation file); titles, authors, years and venue lines are copied from the fetched page. Where the fetched page gives no venue, the entry is cited as an arXiv preprint and no venue is claimed.
+
+## `merity2016pointer`
+
+- URL: https://arxiv.org/abs/1609.07843
+- Title: Pointer Sentinel Mixture Models
+- Authors: Stephen Merity; Caiming Xiong; James Bradbury; Richard Socher
+- Year: first version 2016 (2016/09/26); venue line on the page: none (cited as an arXiv preprint)
+- Sentence from the abstract: "In order to evaluate how well language models can exploit longer contexts and deal with more realistic vocabularies and larger corpora we also introduce the freely available WikiText corpus."
+- Cited for: Appendix C: WikiText, the source of the retain texts (`Salesforce/wikitext`, `wikitext-2-raw-v1`).
+
+## `hu2021lora`
+
+- URL: https://arxiv.org/abs/2106.09685
+- Title: LoRA: Low-Rank Adaptation of Large Language Models
+- Authors: Edward J. Hu; Yelong Shen; Phillip Wallis; Zeyuan Allen-Zhu; Yuanzhi Li; Shean Wang; Lu Wang; Weizhu Chen
+- Year: first version 2021 (2021/06/17); venue line on the page: none: the comments field reads "Draft V2 includes better baselines, experiments on GLUE, and more on adapter latency" (cited as an arXiv preprint)
+- Sentence from the abstract: "We propose Low-Rank Adaptation, or LoRA, which freezes the pre-trained model weights and injects trainable rank decomposition matrices into each layer of the Transformer architecture, greatly reducing the number of trainable parameters for downstream tasks."
+- Cited for: Appendix E: LoRA, the adapter of the fine-tuning attack (and of the exploratory NPO pilot).
+
+## `loshchilov2019adamw`
+
+- URL: https://arxiv.org/abs/1711.05101
+- Title: Decoupled Weight Decay Regularization
+- Authors: Ilya Loshchilov; Frank Hutter
+- Year: first version 2017 (2017/11/14); venue line on the page: "Published as a conference paper at ICLR 2019"
+- Sentence from the abstract: "While common implementations of these algorithms employ L2 regularization (often calling it "weight decay" in what may be misleading due to the inequivalence we expose), we propose a simple modification to recover the original formulation of weight decay regularization by decoupling the weight decay from the optimization steps taken w.r.t."
+- Cited for: Appendix E: AdamW, the optimizer of the fine-tuning attack and of RMU's updates.
+
+## `paszke2019pytorch`
+
+- URL: https://arxiv.org/abs/1912.01703
+- Title: PyTorch: An Imperative Style, High-Performance Deep Learning Library
+- Authors: Adam Paszke; Sam Gross; Francisco Massa; Adam Lerer; James Bradbury; Gregory Chanan; Trevor Killeen; Zeming Lin; Natalia Gimelshein; Luca Antiga; Alban Desmaison; Andreas Köpf; Edward Yang; Zach DeVito; Martin Raison; Alykhan Tejani; Sasank Chilamkurthy; Benoit Steiner; Lu Fang; Junjie Bai; Soumith Chintala
+- Year: first version 2019 (2019/12/03); venue line on the page: "12 pages, 3 figures, NeurIPS 2019"
+- Sentence from the abstract: "PyTorch is a machine learning library that shows that these two goals are in fact compatible: it provides an imperative and Pythonic programming style that supports code as a model, makes debugging easy and is consistent with other popular scientific computing libraries, while remaining efficient and supporting hardware accelerators such as GPUs."
+- Cited for: Appendix G: PyTorch, which every job runs on.
+
+## `wolf2020transformers`
+
+- URL: https://aclanthology.org/2020.emnlp-demos.6/
+- Title: Transformers: State-of-the-Art Natural Language Processing
+- Authors: Thomas Wolf; Lysandre Debut; Victor Sanh; Julien Chaumond; Clement Delangue; Anthony Moi; and 16 more (from the Anthology's `.bib`)
+- Year and venue: 2020; Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations, pages 38--45
+- Cited for: Appendix G: the Transformers library (version 5.20.2 in every job), whose tokenizer loading is the subject of the paper.
+
+## `lhoest2021datasets`
+
+- URL: https://aclanthology.org/2021.emnlp-demo.21/
+- Title: Datasets: A Community Library for Natural Language Processing
+- Authors: Quentin Lhoest; Albert Villanova del Moral; Yacine Jernite; Abhishek Thakur; Patrick von Platen; Suraj Patil; and 26 more (from the Anthology's `.bib`)
+- Year and venue: 2021; Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing: System Demonstrations, pages 175--184
+- Cited for: Appendix G: the Datasets library, which loads WMDP, MMLU and WikiText in every job.
+
+## `popovic2015chrf`
+
+- URL: https://aclanthology.org/W15-3049/
+- Title: chrF: character n-gram F-score for automatic MT evaluation
+- Authors: Maja Popovi{\'c} (from the Anthology's `.bib`)
+- Year and venue: 2015; Proceedings of the Tenth Workshop on Statistical Machine Translation, pages 392--395
+- Cited for: Appendix C: chrF, the back-translation score that gates the translated probes (kept at 35 or more).
+
+## `post2018sacrebleu`
+
+- URL: https://aclanthology.org/W18-6319/
+- Title: A Call for Clarity in Reporting BLEU Scores
+- Authors: Matt Post (from the Anthology's `.bib`)
+- Year and venue: 2018; Proceedings of the Third Conference on Machine Translation: Research Papers, pages 186--191
+- Cited for: Appendix C: sacreBLEU, the package that computes chrF in `kaggle/03_probe_translations.py` (`sacrebleu.sentence_chrf`).
+
+## `harris2020numpy`
+
+- URL: https://doi.org/10.1038/s41586-020-2649-2
+- Title: Array programming with NumPy
+- Authors: Charles R. Harris; K. Jarrod Millman; Stéfan J. van der Walt; Ralf Gommers; Pauli Virtanen; David Cournapeau; and 20 more (from the DOI's BibTeX)
+- Year and venue: 2020; Nature 585(7825), pages 357–362
+- Cited for: Appendix G: NumPy, used by the analysis scripts (bootstrap, exact tests).
+
+## `hunter2007matplotlib`
+
+- URL: https://doi.org/10.1109/MCSE.2007.55
+- Title: Matplotlib: A 2D Graphics Environment
+- Authors: John D. Hunter (from the DOI's BibTeX)
+- Year and venue: 2007; Computing in Science & Engineering 9(3), pages 90–95
+- Cited for: Appendix G: Matplotlib, which draws the figures (`scripts/paper_figures.py`).
+
+## `peft` (software)
+
+- URL: https://github.com/huggingface/peft
+- Title: PEFT: State-of-the-art Parameter-Efficient Fine-Tuning methods
+- Authors: Sourab Mangrulkar; Sylvain Gugger; Lysandre Debut; Younes Belkada; Sayak Paul; Benjamin Bossan; Marian Tietz
+- Year: 2022
+- Source of these fields: the `@Misc{peft}` entry in the repository's README
+- Cited for: Appendix E: PEFT, which supplies the LoRA adapters (`kaggle/15_certify.py`).
+
+## `bitsandbytes` (software)
+
+- URL: https://github.com/bitsandbytes-foundation/bitsandbytes
+- Title: bitsandbytes (repository description: "Accessible large language models via k-bit quantization for PyTorch.")
+- Authors: the organisation's GitHub name is "bitsandbytes collective"
+- Year: 2021 (repository created 2021-06-04)
+- Source of these fields: the GitHub API; the README's own citation is the QLoRA paper, already cited as `dettmers2023qlora`
+- Cited for: Appendix E: the package whose `quantize_4bit` makes the NF4 round trip.
+
+## `nanda2022transformerlens` (software)
+
+- URL: https://github.com/TransformerLensOrg/TransformerLens
+- Title: TransformerLens
+- Authors: Neel Nanda; Joseph Bloom
+- Year: 2022
+- Source of these fields: the `@misc{nanda2022transformerlens}` entry in the repository's README
+- Cited for: Appendix A: the library CircuitKIT runs on (version 3.8.0).
+
+## `llamacpppython` (software)
+
+- URL: https://github.com/abetlen/llama-cpp-python
+- Title: llama-cpp-python (repository description: "Python bindings for llama.cpp")
+- Authors: no citation file; cited as "llama-cpp-python contributors"
+- Year: 2023 (repository created 2023-03-23)
+- Source of these fields: the GitHub API
+- Cited for: Appendix G: the runtime check, which scores real GGUF files inside llama.cpp's own runtime (`kaggle/19_llamacpp_runtime.py`).
+
+## `hftokenizers` (software)
+
+- URL: https://github.com/huggingface/tokenizers
+- Title: HuggingFace's Tokenizers
+- Authors: Anthony Moi; Nicolas Patry
+- Year: 2023 (date-released 2023-04-05)
+- Source of these fields: the repository's `CITATION.cff`
+- Cited for: Appendix G: the fast tokenizer library whose pre-tokenizer the outdated setting fails to load.
+
+## `gguf` (software)
+
+- URL: https://github.com/ggml-org/ggml/blob/master/docs/gguf.md
+- Title: GGUF (the page opens: "GGUF is a file format for storing models for inference with GGML and executors based on GGML.")
+- Authors: no author line; cited as "ggml contributors"
+- Year: 2023 (the file's first commit, 2023-11-01, "gguf : add file format specification")
+- Source of these fields: the file itself and the GitHub API
+- Cited for: Appendix E: the file format of the real 4-bit files.

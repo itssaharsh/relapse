@@ -9,9 +9,11 @@ import json
 import math
 import os
 import re
+import sys
 
 import numpy as np
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PAPER = os.path.join(ROOT, "paper")
 WINDOWS = ("3-5", "5-7", "7-9", "10-12", "13-15")
@@ -310,12 +312,17 @@ def check() -> tuple[dict, dict]:
             "chkProbeSig": sum(e["fp16"][k]["difference"] < 0 and e["fp16"][k]["p"] < 0.05 for e in E for k in probes), "chkProbeN": len(E) * len(probes),
             "chkRealLow": signed(min(real)), "chkRealHigh": signed(max(real)), "chkTokLow": signed(min(tok)), "chkTokHigh": signed(max(tok)),
             "chkFtUp": sum(x >= 5 for x in ft), "chkFtMax": f"{max(ft):.1f}", "chkFtBase": " and ".join(pct(e["fine_tuning"]["after_hazard_questions"]) for e in E if e["model"] == "base")}
-    cost = {"3-5": [], "5-7": []}
+    cost = {"3-5": [], "5-7": []}; forgot = {"3-5": [], "5-7": []}; mmlu = {"3-5": [], "5-7": []}
     for v in models:
         rows = {(r["model"], r["prec"]): r for r in json.load(open(os.path.join(ROOT, "results", "final", f"check_{v}", "certify.json"))) if "wmdp-bio" in r}
         for (m, p_), r in rows.items():
             if p_ == "fp16" and m != "base":
-                cost[re.search(r"_W(\d+-\d+)_", m).group(1)].append(100 * (rows[("base", "fp16")]["benign-bio"] - r["benign-bio"]))
+                w = re.search(r"_W(\d+-\d+)_", m).group(1); o = rows[("base", "fp16")]
+                cost[w].append(100 * (o["benign-bio"] - r["benign-bio"])); forgot[w].append(100 * (o["wmdp-bio"] - r["wmdp-bio"])); mmlu[w].append(100 * (o["mmlu"] - r["mmlu"]))
+    # hazard points forgotten per point of benign biology lost: mean forgetting over mean benign-biology loss, per window
+    nums.update(placeRatioShallow=f"{np.mean(forgot['3-5']) / np.mean(cost['3-5']):.2f}", placeRatioDefault=f"{np.mean(forgot['5-7']) / np.mean(cost['5-7']):.2f}",
+                chkForgotShallow=f"{np.mean(forgot['3-5']):.1f}", chkForgotDefault=f"{np.mean(forgot['5-7']):.1f}", chkMmluShallow=f"{np.mean(mmlu['3-5']):.1f}", chkMmluDefault=f"{np.mean(mmlu['5-7']):.1f}",
+                chkPerMmluShallow=f"{np.mean(forgot['3-5']) / np.mean(mmlu['3-5']):.1f}", chkPerMmluDefault=f"{np.mean(forgot['5-7']) / np.mean(mmlu['5-7']):.1f}")
     nums.update(chkBenignDefaultMean=f"{np.mean(cost['5-7']):.1f}", chkBenignDefaultMedian=f"{np.median(cost['5-7']):.1f}", chkBenignMedian=f"{np.median(cost['3-5']):.1f}",
                 chkFtUpA=sum(x >= 5 for e, x in zip(E, ft) if e["fine_tuning"] and list(d).__getitem__(E.index(e)).endswith("_s33")), chkFtUpB=sum(x >= 5 for e, x in zip(E, ft) if list(d).__getitem__(E.index(e)).endswith("_s34")))
     return nums, {"table_check.tex": tex}
@@ -373,7 +380,7 @@ def glance() -> tuple[dict, dict]:
     s2, fin = json.load(open(p2)), json.load(open(pf)); W = s2["by_window"]
     rng = np.random.default_rng(0)
     from analyze_map_shim import paired
-    relapses = {"3-5": 0, "5-7": 0}; cost = {"3-5": [], "5-7": []}; benign = {"3-5": [], "5-7": []}
+    relapses = {"3-5": 0, "5-7": 0}; cost = {"3-5": [], "5-7": []}; benign = {"3-5": [], "5-7": []}; forgot = {"3-5": [], "5-7": []}
     for v in ("global", "fire", "earth", "water", "base"):
         d = os.path.join(ROOT, "results", "final", f"{v}_seed33")
         rows = {(r["model"], r["prec"]): r for r in json.load(open(os.path.join(d, "results.json")))}; items = json.load(open(os.path.join(d, "items.json")))
@@ -389,16 +396,39 @@ def glance() -> tuple[dict, dict]:
         for (m, p), r in c.items():
             if p == "fp16" and m != "base":
                 benign[re.search(r"_W(\d+-\d+)_", m).group(1)].append(100 * (c[("base", "fp16")]["benign-bio"] - r["benign-bio"]))
+                forgot[re.search(r"_W(\d+-\d+)_", m).group(1)].append(100 * (c[("base", "fp16")]["wmdp-bio"] - r["wmdp-bio"]))
     row = lambda label, a_, b_: f"{label} & {a_} & {b_} \\\\\n"
     body = (row("\\wmdp{} as audited (\\%)", pct(W["5-7"]["mean_wmdp_outdated"]), pct(W["3-5"]["mean_wmdp_outdated"]))
             + row("\\wmdp{} as deployed (\\%)", pct(W["5-7"]["mean_wmdp_official"]), "\\textbf{" + pct(W["3-5"]["mean_wmdp_official"]) + "}")
             + row("Relapses, effective runs", f"{s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]}", "\\textbf{" + f"{s2['T2']['relapses']} of {s2['T2']['effective']}" + "}")
+            + row("Rise $\\geq$5 points, all runs", f"{sum(r['pipeline_relapse'] for r in s2['runs'] if r['window'] == '5-7')} of {sum(r['window'] == '5-7' for r in s2['runs'])}",
+                  f"{sum(r['pipeline_relapse'] for r in s2['runs'] if r['window'] == '3-5')} of {sum(r['window'] == '3-5' for r in s2['runs'])}")
             + "\\midrule\n"
             + row("MMLU points lost", f"{np.mean(cost['5-7']):.1f}", f"{np.mean(cost['3-5']):.1f}")
-            + row("Benign-biology points lost", f"{np.mean(benign['5-7']):.1f}", f"{np.mean(benign['3-5']):.1f}"))
+            + row("Benign-biology points lost", f"{np.mean(benign['5-7']):.1f}", f"{np.mean(benign['3-5']):.1f}")
+            + row("Hazard points forgotten per benign point", f"{np.mean(forgot['5-7']) / np.mean(benign['5-7']):.2f}", f"{np.mean(forgot['3-5']) / np.mean(benign['3-5']):.2f}"))
     tex = table("@{}lrr@{}", "Layers edited & 5--7 (default) & 3--5 \\\\\n", body,
-                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one (pre-registration 5; four models, two seeds, 16 effective runs per column). Bottom: the final runs through the official tokenizer, mean of five models and two seeds. Original models score 60--64\\% on \\wmdp{}; lower is better.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
+                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one (pre-registration 5). Effective runs: four post-trained variants, two seeds, 16 per column. All runs add Tiny Aya Base, which is at chance when audited. Bottom: the final runs through the official tokenizer, mean of five models and two seeds. Original models score 60--64\\% on \\wmdp{}; lower is better.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
     return {"glanceRelDefault": relapses["5-7"], "glanceRelNew": relapses["3-5"]}, {"table_glance.tex": tex}
+
+
+def mcnemar() -> tuple[dict, dict]:
+    """Exact McNemar p-values of the relapse cases, Holm-corrected over the cells screened in the same experiment (scripts/mcnemar_holm.py)."""
+    from mcnemar_holm import holm, screens
+    S = screens()
+    def sci(p):
+        mant, exp = f"{p:.1e}".split("e")
+        return f"${mant}\\times10^{{{int(exp)}}}$" if p < 0.001 else f"{p:.3f}"
+    pick = lambda screen, run, f: next(c for c in S[screen] if c["run"] == run and c["format"] == f)
+    fire, water = pick("fire", "fire_W13-15_lr0.002_s44", "nf4"), pick("others", "water_W10-12_lr0.001_s42", "nf4")
+    base = [c for k in ("map", "base") for c in S[k] if c["relapse"]]
+    everything = [c for cells in S.values() for c in cells]
+    pooled = dict(zip([id(c) for c in everything], holm([c["p"] for c in everything])))
+    rel = [c for c in everything if c["relapse"]]
+    return {"mcCells": len(everything), "mcMapCells": len(S["map"]), "mcBaseCells": len(S["base"]), "mcFireCells": len(S["fire"]), "mcWaterCells": len(S["others"]),
+            "mcFireP": sci(fire["p"]), "mcFireHolm": sci(fire["p_holm"]), "mcWaterP": sci(water["p"]), "mcWaterHolm": sci(water["p_holm"]),
+            "mcBaseN": len(base), "mcBaseHolmMax": sci(max(c["p_holm"] for c in base)), "mcRelapses": len(rel), "mcHolmMax": sci(max(c["p_holm"] for c in rel)), "mcPooledMax": sci(max(pooled[id(c)] for c in rel)),
+            "mcOtherSig": sum(c["p_holm"] < 0.05 and c["rise"] > 0 and not c["relapse"] for c in everything)}, {}
 
 
 WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve")
@@ -454,7 +484,7 @@ def totals() -> tuple[dict, dict]:
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, totals):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         open(os.path.join(PAPER, name), "w").write(tex)

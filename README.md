@@ -146,15 +146,17 @@ pip install -r requirements.txt
 python -m pytest -q tests               # format round trips, and the numbers on this page against the data
 python scripts/analyze_map.py           # each pre-registered analysis reads results/ and prints its hypotheses
 python scripts/analyze_shift.py
+python scripts/analyze_shift2.py        # pre-registration 5: placement against the tokenizer
 python scripts/analyze_place.py
 python scripts/analyze_final.py
+python scripts/mcnemar_holm.py          # exact tests of the 4-bit relapse cases, Holm-corrected
 python scripts/build_readme.py          # rebuilds the results block of this page
 ```
 
 | Folder | What is in it |
 |---|---|
-| [`results/PREREGISTRATION.md`](results/PREREGISTRATION.md) and `_2`, `_3`, `_4` | The hypotheses, each committed before its runs |
-| [`results/map/`](results/map/), [`deep/`](results/deep/), [`shift/`](results/shift/), [`place/`](results/place/), [`final/`](results/final/) | Scores of every run, per question, and the summaries the analyses write |
+| [`results/PREREGISTRATION.md`](results/PREREGISTRATION.md) and [`_2`](results/PREREGISTRATION_2.md), [`_3`](results/PREREGISTRATION_3.md), [`_4`](results/PREREGISTRATION_4.md), [`_5`](results/PREREGISTRATION_5.md) | The five pre-registrations, each committed before its runs |
+| [`results/map/`](results/map/), [`deep/`](results/deep/), [`shift/`](results/shift/), [`shift2/`](results/shift2/), [`place/`](results/place/), [`final/`](results/final/) | Scores of every run, per question, and the summaries the analyses write |
 | [`results/correct_tokenizer/`](results/correct_tokenizer/) | The Stage 1 models rescored, and the tokenizer control |
 | [`hf_jobs/`](hf_jobs/), [`kaggle/`](kaggle/) | The jobs and the experiment scripts they run |
 | [`paper/`](paper/) | The paper |

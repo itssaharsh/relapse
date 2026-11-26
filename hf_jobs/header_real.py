@@ -15,10 +15,13 @@ OUT_REPO, OUT_DIR = "itssaharsh/relapse-stage2", "/tmp/kg/working"
 _o.makedirs(OUT_DIR, exist_ok=True); _o.makedirs("/tmp/kg/input/run", exist_ok=True)
 snapshot_download(f"CohereLabs/tiny-aya-{V}", local_dir=f"/tmp/kg/input/models/cohere-labs/tiny-aya/transformers/{V}/1",
                   allow_patterns=["*.safetensors", "*.json", "tokenizer*", "special_tokens*"])
+# Stage 1 files (the default when PT_REPO is not set, and the prebuilt llama-quantize): the public copy in the stage1/ folder of the dataset itssaharsh/relapse-stage2.
+# The jobs of 21 November 2026 read the same files, by the same paths without the stage1/ prefix, from a private backup; the content hashes are unchanged.
+_STAGE1 = "PT_REPO" not in _o.environ
 for _p in _o.environ["PT_PATH"].split(","):
-    _sh.copy(hf_hub_download(_o.environ.get("PT_REPO", "itssaharsh/relapse-backup"), _p, repo_type=_o.environ.get("PT_TYPE", "model")), "/tmp/kg/input/run/" + _o.path.basename(_p))
+    _sh.copy(hf_hub_download(_o.environ.get("PT_REPO", "itssaharsh/relapse-stage2"), ("stage1/" if _STAGE1 else "") + _p, repo_type=_o.environ.get("PT_TYPE", "dataset")), "/tmp/kg/input/run/" + _o.path.basename(_p))
 if not _BUILD:
-    _sh.copy(hf_hub_download("itssaharsh/relapse-backup", "dl/final_a/bin/llama-quantize"), "/tmp/kg/input/run/llama-quantize")
+    _sh.copy(hf_hub_download("itssaharsh/relapse-stage2", "stage1/dl/final_a/bin/llama-quantize", repo_type="dataset"), "/tmp/kg/input/run/llama-quantize")
 _gitsha, _sha = _o.environ["REPO_COMMIT"], _o.environ["LLAMA_COMMIT"]
 urllib.request.urlretrieve(f"https://raw.githubusercontent.com/itssaharsh/relapse/{_gitsha}/" + "kaggle" + "/auditkit_mcq.py", "/tmp/kg/input/run/auditkit_mcq.py")
 with urllib.request.urlopen(f"https://codeload.github.com/ggml-org/llama.cpp/tar.gz/{_sha}", timeout=300) as r:

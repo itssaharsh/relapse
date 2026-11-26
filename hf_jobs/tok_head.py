@@ -9,4 +9,5 @@ _o.makedirs("/tmp/kg/working", exist_ok=True); _o.makedirs("/tmp/kg/input/run", 
 snapshot_download("CohereLabs/tiny-aya-global", local_dir="/tmp/kg/input/models/cohere-labs/tiny-aya/transformers/global/1",
                   allow_patterns=["*.safetensors", "*.json", "tokenizer*", "special_tokens*"])
 for _p in ("dl/rmu3/changed_rmu3.pt", "dl/rmu4/changed_rmu4.pt", "dl/relapse-ctrl-deeper/changed_ctrl_deeper.pt"):
-    _sh.copy(hf_hub_download("itssaharsh/relapse-backup", _p), "/tmp/kg/input/run/" + _o.path.basename(_p))
+    # the public copy of these Stage 1 files (stage1/ of the dataset itssaharsh/relapse-stage2); the job of 21 November 2026 read the same files from a private backup
+    _sh.copy(hf_hub_download("itssaharsh/relapse-stage2", "stage1/" + _p, repo_type="dataset"), "/tmp/kg/input/run/" + _o.path.basename(_p))

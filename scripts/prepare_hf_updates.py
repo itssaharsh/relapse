@@ -127,6 +127,9 @@ WORK_FOLDERS = [      # folder, what it holds, what reads it
     ("cons/", "The consolidation pilot (exploratory).", "Nothing registered."),
     ("npo_pilot/", "The NPO with LoRA pilot (exploratory), with `npo_deltas.pt`.", "`scripts/paper_numbers.py` counts its runs."),
     ("smoke/", "A three-batch pipeline test.", "Nothing."),
+    ("stage1/", "Six files of the superseded Stage 1 that two job headers read: the edited matrices of five Stage 1 runs (`dl/*/changed_*.pt`) and a `llama-quantize` built from llama.cpp on Kaggle. "
+                "Copied here on 26 November 2026 (UTC) from a private backup, with unchanged content hashes, so that no job reads a private repository.",
+     "`hf_jobs/tok_head.py` (the tokenizer control) and `hf_jobs/header_real.py` (the Stage 1 models rescored; real-file jobs run without `BUILD_QUANTIZE=1`)."),
 ]
 
 
@@ -148,13 +151,13 @@ pretty_name: Relapse Stage 2 working files (edited matrices and raw job outputs)
 
 This is the dataset the Stage 2 jobs of the paper wrote into as they ran: the edited weight matrices of every run and the raw outputs of every job. It is kept so that a scoring job can be rerun without retraining. For reading results, use [`{USER}/relapse-runs`](https://huggingface.co/datasets/{USER}/relapse-runs), which holds the same per-question results in a tidier layout, or the `results/` folder of the [code repository]({REPO}).
 
-**Paper:** [{publish_cards.PAPER}]({REPO}/blob/main/paper/main.pdf). **Code, jobs and pre-registrations:** [{REPO.replace("https://", "")}]({REPO}). Status on {today} (UTC): made public on that date, unchanged since the jobs wrote it apart from this card.
+**Paper:** [{publish_cards.PAPER}]({REPO}/blob/main/paper/main.pdf). **Code, jobs and pre-registrations:** [{REPO.replace("https://", "")}]({REPO}). Status on {today} (UTC): made public on 26 November 2026 (UTC); unchanged since the jobs wrote it, apart from this card and the `stage1/` folder.
 
 ## What is in it
 
-{len(tree)} files: {total_pt / 1e9:.1f} GB of edited matrices in {sum(x.path.endswith(".pt") for x in tree)} `.pt` files and {total_js / 1e6:.0f} MB of JSON.
+{len(tree)} files: {total_pt / 1e9:.1f} GB of edited matrices in {sum(x.path.endswith(".pt") for x in tree)} `.pt` files and {total_js / 1e6:.0f} MB of other files (JSON, and one binary in `stage1/`).
 
-| Folder | What it holds | Read by | Files | Matrices | JSON |
+| Folder | What it holds | Read by | Files | Matrices | Other files |
 |---|---|---|---|---|---|
 {rows}
 
@@ -166,7 +169,7 @@ Scores, per-question 0/1 lists, answer letters and probabilities, attribution sc
 
 ## License and access
 
-CC-BY-NC-4.0, the license of the original Tiny Aya models, from which the edited matrices are derived. Use is also subject to Cohere's terms for Tiny Aya. The benchmark questions quoted in the run records keep their own MIT license. Not gated, like the released models. The matrices are not models on their own: loading them needs the original weights from [`CohereLabs/tiny-aya-<variant>`](https://huggingface.co/CohereLabs/tiny-aya-global), which Cohere gates.
+CC-BY-NC-4.0, the license of the original Tiny Aya models, from which the edited matrices are derived. Use is also subject to Cohere's terms for Tiny Aya. The benchmark questions quoted in the run records keep their own MIT license, and so does `stage1/dl/final_a/bin/llama-quantize`, a build of llama.cpp. Not gated, like the released models. The matrices are not models on their own: loading them needs the original weights from [`CohereLabs/tiny-aya-<variant>`](https://huggingface.co/CohereLabs/tiny-aya-global), which Cohere gates.
 
 These are research artifacts, not safety guarantees: the paper shows that a short fine-tune restores the unlearned knowledge.
 """

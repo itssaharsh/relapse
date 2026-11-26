@@ -4,21 +4,21 @@ Nothing here has been uploaded. `python scripts/apply_hf_updates.py` prints this
 
 1. `git push origin main`: the paper, the checker, the survey, the README and this folder.
 2. Model, dataset and Space cards (`README.md` of each repository), from `hf_updates/cards/`:
-   - `itssaharsh/relapse-tiny-aya-global-unlearn-bio` (model)
-   - `itssaharsh/relapse-tiny-aya-fire-unlearn-bio` (model)
-   - `itssaharsh/relapse-tiny-aya-earth-unlearn-bio` (model)
-   - `itssaharsh/relapse-tiny-aya-water-unlearn-bio` (model)
-   - `itssaharsh/relapse-tiny-aya-base-unlearn-bio` (model)
-   - `itssaharsh/tiny-aya-global-unlearn-bio-default-layers` (model)
-   - `itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers` (model)
-   - `itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-4bit-aware` (model)
-   - `itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers` (model)
-   - `itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers-file-trained` (model)
-   - `itssaharsh/tiny-aya-global-unlearn-bio-sweep` (model)
+   - `itssaharsh/relapse-tiny-aya-global-unlearn-bio` (model) (unchanged)
+   - `itssaharsh/relapse-tiny-aya-fire-unlearn-bio` (model) (unchanged)
+   - `itssaharsh/relapse-tiny-aya-earth-unlearn-bio` (model) (unchanged)
+   - `itssaharsh/relapse-tiny-aya-water-unlearn-bio` (model) (unchanged)
+   - `itssaharsh/relapse-tiny-aya-base-unlearn-bio` (model) (unchanged)
+   - `itssaharsh/tiny-aya-global-unlearn-bio-default-layers` (model) (unchanged)
+   - `itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers` (model) (unchanged)
+   - `itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-4bit-aware` (model) (unchanged)
+   - `itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers` (model) (unchanged)
+   - `itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers-file-trained` (model) (unchanged)
+   - `itssaharsh/tiny-aya-global-unlearn-bio-sweep` (model) (unchanged)
    - `itssaharsh/relapse-runs` (dataset)
-   - `itssaharsh/relapse-wmdp-bio-probes` (dataset)
-   - `itssaharsh/relapse-article` (space)
-   - `itssaharsh/relapse` (space)
+   - `itssaharsh/relapse-wmdp-bio-probes` (dataset) (unchanged)
+   - `itssaharsh/relapse-article` (space) (unchanged)
+   - `itssaharsh/relapse` (space) (unchanged)
 3. Demo Space `itssaharsh/relapse`: `index.html`, `app.js`, `data/stage2.json` and the preview image `og.png` from `space/` (Tiny Aya Base stated beside the headline, means in the table, links to the paper and the checker).
 4. Write-up Space `itssaharsh/relapse-article`: `index.html` from `hf_updates/space__relapse-article/` (rebuilt from `docs/ARTICLE.md`).
 5. Dataset `itssaharsh/relapse-runs`: add `stage2/survey/` (the files of `results/survey/`), replace `stage2/paper.pdf` with the final `paper/main.pdf`, add `stage2/check_tokenizer.py` (the checker, so it sits inside the judged collection), `stage2/single_line/` and `stage2/PREREGISTRATION_6.md`, and add `stage2/PREREGISTRATION_5.md` if it is not there.

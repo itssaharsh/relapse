@@ -1,0 +1,34 @@
+{
+ "issues": [
+  {
+   "kit": "SafeTune",
+   "url": "https://github.com/Lexsi-Labs/SafeTune/issues/105",
+   "title": "RMU scored through a stale Tiny Aya tokenizer setting overstates forgetting; the run does not record which tokenizer made its batches",
+   "created_at": "2026-11-26T20:36:55Z"
+  },
+  {
+   "kit": "CircuitKIT",
+   "url": "https://github.com/Lexsi-Labs/CircuitKIT/issues/60",
+   "title": "EAP-IG layer ranking on the built-in wmdp-bio task changes with the number of prompts on 3 of 5 Tiny Aya models",
+   "created_at": "2026-11-26T20:36:58Z"
+  },
+  {
+   "kit": "AuditKIT",
+   "url": "https://github.com/Lexsi-Labs/AuditKIT/issues/54",
+   "title": "`compare(a, b).significance(metric)` always uses 1,000 resamples, so its p-value cannot go below 1/1001",
+   "created_at": "2026-11-26T20:37:02Z"
+  },
+  {
+   "kit": "CuratorKIT",
+   "url": "https://github.com/Lexsi-Labs/CuratorKIT/issues/58",
+   "title": "Schema, length and deduplication gates passed all 707 machine-translated probes; none of them tests translation fidelity",
+   "created_at": "2026-11-26T20:37:05Z"
+  }
+ ],
+ "kaggle_discussion": {
+  "page": "https://www.kaggle.com/models/cohere-labs/tiny-aya",
+  "text": "hf_updates/reports/kaggle_discussion.md",
+  "posted": null,
+  "note": "Kaggle's public API has no call that creates a discussion; the text is ready and was not posted from this machine."
+ }
+}

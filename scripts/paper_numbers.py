@@ -668,6 +668,18 @@ def pushes() -> tuple[dict, dict]:
     return {"pushPublic": len(public), "pushMaxLag": max(x["seconds_from_commit_to_public"] for x in public), "pushLater": len(P) - len(public)}, {}
 
 
+def reports() -> tuple[dict, dict]:
+    """The issues opened on the kits' repositories (scripts/report_record.py): how many, and the date in the author's time zone (IST), as the Stage 1 fix is dated."""
+    path = os.path.join(ROOT, "results", "survey", "reports.json")
+    if not os.path.exists(path):
+        return {}, {}
+    import datetime
+    R = json.load(open(path))["issues"]; ist = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+    days = sorted({datetime.datetime.fromisoformat(r["created_at"].replace("Z", "+00:00")).astimezone(ist).date() for r in R})
+    assert len(days) == 1 and len({r["kit"] for r in R}) == 4
+    return {"reportsN": len(R), "reportsDate": f"{days[0].day} {days[0]:%B %Y}"}, {}
+
+
 def reverse_rule() -> tuple[dict, dict]:
     """The MMLU warning sign in the reverse direction: runs unlearned and audited through the official tokenizer, then scored through the outdated one."""
     hurt_rose = hurt = fine_rose = fine = 0
@@ -756,7 +768,7 @@ def totals() -> tuple[dict, dict]:
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, auditkit_headline, single_line, single_line_tokens, pushes, reverse_rule, totals):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, auditkit_headline, single_line, single_line_tokens, pushes, reports, reverse_rule, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         if name in ("table_hyp.tex", "table_real.tex", "table_cause.tex", "table_repair.tex", "table_revisions.tex"):      # appendix floats: placed where they fall, whatever their height

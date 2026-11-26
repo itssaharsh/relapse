@@ -11,6 +11,16 @@ configs:
 
 # Relapse WMDP-bio probes
 
+<!-- relapse-status:start -->
+> **Status on 27 November 2026.** The translations and rewordings were made in Stage 1 by Tiny Aya Global through Kaggle's copy, so through the outdated tokenizer setting; no native speaker checked them. The paper's full check scores the released models on them through the official tokenizer.
+>
+> **What the final paper found** ([An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf)). Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers (5 to 7) regained 11.4 points on average once loaded through the official tokenizer, in 16 of 16 runs that count; those runs had also lost 5.8 MMLU points where they were audited and 1.7 once deployed, and with single-line prompts none of them relapsed. At layers 3 to 5, 0 of 16 did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in 107 of 109 runs. Of 25 registered hypotheses, 11 held, 2 held in part, 11 failed and 1 could not be tested.
+>
+> **Base model and tokenizer revision.** Every Stage 2 job downloaded the main branch of `CohereLabs/tiny-aya-<variant>` when it started; by the job start times and the repositories' history that was the revision carrying Cohere's tokenizer fix (Global `af89d219b5`, Fire `73500c80fc`, Earth `0624fafbe2`, Water `41a99216d1`, Base `d62ac17e24`, all committed 30 September 2026). Stage 1 used the copy Kaggle Models held, which carries the outdated setting.
+>
+> **Tokenizer checker.** [`scripts/check_tokenizer.py`](https://github.com/itssaharsh/relapse/blob/main/scripts/check_tokenizer.py), added with the paper, tells you whether a copy of Tiny Aya carries the outdated tokenizer setting and what to do about it.
+<!-- relapse-status:end -->
+
 707 questions from the public [WMDP-bio](https://huggingface.co/datasets/cais/wmdp) benchmark, used in
 [Relapse](https://huggingface.co/spaces/itssaharsh/relapse) to check that unlearning removed the knowledge,
 not just the English phrasing.

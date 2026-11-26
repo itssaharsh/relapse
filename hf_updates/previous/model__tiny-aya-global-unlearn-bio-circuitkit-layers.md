@@ -9,55 +9,28 @@ datasets: [cais/wmdp, cais/mmlu]
 
 # Tiny Aya Global, hazardous biology unlearned (CircuitKIT layers)
 
-> **Correction (Nov 21, 2026).** This model was trained on Kaggle with an outdated tokenizer setting that splits text differently from the way Tiny Aya was trained. Scores below this notice were measured with that setting and are **superseded**. With the official tokenizer (WMDP-bio / MMLU; the original scores 63.3% / 55.4% at fp16):
+> **Superseded Stage 1 artifact (status on 27 November 2026).** This repository was made in the first round of the Lexsi AI Safety and Alignment Hackathon, on Kaggle, through an outdated tokenizer setting that splits text differently from the way Tiny Aya was trained. Every Stage 1 score and claim made from it is withdrawn, including the 4-bit relapse at layers 10 to 12 and its repair. Until 27 November 2026 its `tokenizer_config.json` carried that setting (`tokenizer_class: CohereTokenizerFast`); on that date it was replaced with Cohere's fixed file (from `CohereLabs/tiny-aya-global` at `af89d219b5`), so the repository now loads with the official tokenizer. The Stage 1 results were made with revision `c0834fccab` of this repository, which keeps the outdated setting. Use the Stage 2 models instead: [Global](https://huggingface.co/itssaharsh/relapse-tiny-aya-global-unlearn-bio), [Fire](https://huggingface.co/itssaharsh/relapse-tiny-aya-fire-unlearn-bio), [Earth](https://huggingface.co/itssaharsh/relapse-tiny-aya-earth-unlearn-bio), [Water](https://huggingface.co/itssaharsh/relapse-tiny-aya-water-unlearn-bio), [Base](https://huggingface.co/itssaharsh/relapse-tiny-aya-base-unlearn-bio).
+
+Rescored through the official tokenizer on 21 November 2026 (WMDP-bio / MMLU; the original scores 63.3% / 55.4% at fp16):
 
 | fp16: 35.7% / 54.3% | Q4_K_M: 36.8% / 53.8% | Q4_0: 34.1% / 52.5% | NF4: 36.1% / 51.7% |
 |---|---|---|---|
 
-[What changed](https://github.com/itssaharsh/relapse#correction-november-21-2026).
+**What the final paper found** ([An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf)). Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers (5 to 7) regained 11.4 points on average once loaded through the official tokenizer, in 16 of 16 runs that count; those runs had also lost 5.8 MMLU points where they were audited and 1.7 once deployed, and with single-line prompts none of them relapsed. At layers 3 to 5, 0 of 16 did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in 107 of 109 runs. Of 25 registered hypotheses, 11 held, 2 held in part, 11 failed and 1 could not be tested.
 
-SafeTune RMU at the layers CircuitKIT found (7 to 9). Part of [Relapse](https://huggingface.co/spaces/itssaharsh/relapse): forget the hazard, keep the rest, and check it in the 4-bit file people download.
+## What this repository holds
 
-This is [CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/tiny-aya-global) with hazardous biology knowledge removed by
-[SafeTune](https://github.com/Lexsi-Labs/SafeTune)'s RMU, editing only the MLP down-projections of layers 7 to 9 (found with CircuitKIT). At full precision it
-scores 36.8% on WMDP-bio (the original scores 63.3%; guessing scores 25%) and
-53.2% on MMLU (original 55.4%).
+- Tiny Aya Global after SafeTune RMU unlearning of hazardous biology: layers 7 to 9, the window CircuitKIT ranked first in Stage 1. Trained and first scored through the outdated tokenizer setting.
+- Files: `config.json`, `generation_config.json`, `model-00001-of-00002.safetensors`, `model-00002-of-00002.safetensors`, `model.safetensors.index.json`, `special_tokens_map.json`, `tiny-aya-global-unlearn-bio-circuitkit-layers-Q4_K_M.gguf`, `tokenizer.json`, `tokenizer_config.json`.
 
-## Every file format
+## Base model and tokenizer revision
 
-| File | WMDP-bio (forget, lower is better) | MMLU (keep, higher is better) | Original MMLU on the same file |
-|---|---|---|---|
-| fp16 | 36.8% | 53.2% | 55.4% |
-| bf16 | 36.9% | 53.1% | 55.4% |
-| Q8_0 | 37.3% | 53.2% | 55.1% |
-| Q6_K | 36.4% | 53.8% | 55.6% |
-| Q4_K_M | 37.1% | 54.9% | 54.8% |
-| Q4_0 | 35.9% | 52.7% | 55.5% |
-| NF4 | 35.3% | 51.2% | 52.7% |
+Base model: [CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/tiny-aya-global). The Stage 1 runs used the copy Kaggle Models held (`cohere-labs/tiny-aya/transformers/global/1`, uploaded 16 February 2026), which Kaggle identifies only as version 1 and which carries the outdated setting (`tokenizer_class: CohereTokenizerFast`). Cohere fixed the setting on Hugging Face on 30 September 2026 (revision `af89d219b5` of the official repository).
 
-Q6_K and Q4_K_M are real llama.cpp files; Q8_0, Q4_0 and NF4 are bit-exact weight round trips. All 30 runs of the sweep
-are in [itssaharsh/tiny-aya-global-unlearn-bio-sweep](https://huggingface.co/itssaharsh/tiny-aya-global-unlearn-bio-sweep). All runs, per-question probabilities and
-AuditKIT comparisons are in [itssaharsh/relapse-runs](https://huggingface.co/datasets/itssaharsh/relapse-runs); code in [https://github.com/itssaharsh/relapse](https://github.com/itssaharsh/relapse).
+The checker [`scripts/check_tokenizer.py`](https://github.com/itssaharsh/relapse/blob/main/scripts/check_tokenizer.py), added with the paper, reports which setting a repository, folder or GGUF file carries and what to do about it, reading only its tokenizer file or GGUF header: `python scripts/check_tokenizer.py itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers`.
 
-## Use
+The Stage 1 card of this repository, with its withdrawn description and scores, is kept at [`hf_updates/previous/`](https://github.com/itssaharsh/relapse/tree/main/hf_updates/previous), and the Stage 1 write-up at [`docs/archive/`](https://github.com/itssaharsh/relapse/tree/main/docs/archive).
 
-```python
-from transformers import AutoTokenizer, AutoModelForCausalLM
-tok = AutoTokenizer.from_pretrained("itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers")
-model = AutoModelForCausalLM.from_pretrained("itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers", dtype="auto")
-```
+## License
 
-### llama.cpp (the 4-bit file)
-
-```bash
-llama-cli -m tiny-aya-global-unlearn-bio-circuitkit-layers-Q4_K_M.gguf -p "Hello"
-```
-
-## Intended use and limits
-
-A research artifact for studying unlearning and quantization. The forgetting held across seven file formats, four other
-languages and prompt attacks (worked examples, an expert persona). It did not survive fine-tuning: 25 LoRA steps on 64
-WMDP-bio questions brought most of it back, so it protects against prompting the shipped file, not against someone who
-retrains the weights. Knowledge removal is measured with multiple-choice questions (WMDP-bio), not open generation; it is
-not a guarantee that no hazardous information can be elicited. The license and the
-[Cohere Labs acceptable use policy](https://docs.cohere.com/docs/c4ai-acceptable-use-policy) of the base model apply (non-commercial).
+CC-BY-NC-4.0, the license of the original model. Use is also subject to Cohere's terms for Tiny Aya.

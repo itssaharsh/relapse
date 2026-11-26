@@ -155,6 +155,8 @@ Of 25 registered hypotheses, 11 held, 2 held in part, 11 failed and 1 could not 
 | Remove the knowledge | [SafeTune](https://github.com/Lexsi-Labs/SafeTune) | RMU unlearning on the WMDP bio forget corpus, with a Wikitext retain set |
 | Check every file | [AuditKIT](https://github.com/Lexsi-Labs/AuditKIT) | Paired bootstrap comparisons of each real llama.cpp file against the same weights at full precision |
 
+What we found in each kit is reported on its repository: [SafeTune #105](https://github.com/Lexsi-Labs/SafeTune/issues/105), [CircuitKIT #60](https://github.com/Lexsi-Labs/CircuitKIT/issues/60), [AuditKIT #54](https://github.com/Lexsi-Labs/AuditKIT/issues/54), [CuratorKIT #58](https://github.com/Lexsi-Labs/CuratorKIT/issues/58).
+
 Real files are made with llama.cpp's own tools and read back for scoring. The Q4_0 and NF4 round trips are exact copies of what those formats store for the decoder's linear weights, with the embedding table left at fp16. The pre-registered analyses use a paired bootstrap over the same questions.
 
 ## Reproduce

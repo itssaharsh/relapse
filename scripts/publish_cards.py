@@ -53,7 +53,7 @@ This is [CohereLabs/tiny-aya-{v}](https://huggingface.co/CohereLabs/tiny-aya-{v}
 
 **Paper:** [{PAPER}]({PAPER_URL}).
 
-**Base model and tokenizer revision:** `CohereLabs/tiny-aya-{v}` at revision `{ctx['rev'][v]['sha'][:10]}` ({ctx['rev'][v]['date'][:10]}), the commit that carries Cohere's tokenizer fix (`tokenizer_class: PreTrainedTokenizerFast`). This repository ships that revision's tokenizer files unchanged. Copies of Tiny Aya made before the fix carry an outdated setting that splits text differently under `transformers` v5; **new:** [`scripts/check_tokenizer.py`]({CHECKER_URL}) tells you which setting a repository, folder or GGUF file carries, e.g. `python scripts/check_tokenizer.py {repo}`.
+**Base model and tokenizer revision:** `CohereLabs/tiny-aya-{v}` at revision `{ctx['rev'][v]['sha'][:10]}` ({ctx['rev'][v]['date'][:10]}), the commit that carries Cohere's tokenizer fix (`tokenizer_class: PreTrainedTokenizerFast`). This repository ships that revision's tokenizer files unchanged. Copies of Tiny Aya made before the fix carry an outdated setting that splits text differently under `transformers` v5. The checker [`scripts/check_tokenizer.py`]({CHECKER_URL}), added with the paper, tells you which setting a repository, folder or GGUF file carries and what to do about it, e.g. `python scripts/check_tokenizer.py {repo}`.
 
 It is a research artifact of the [Relapse](https://github.com/itssaharsh/relapse) project, built for the Lexsi AI Safety and Alignment Hackathon. **It is not a safety guarantee.** A short fine-tune can bring the knowledge back (see below).
 

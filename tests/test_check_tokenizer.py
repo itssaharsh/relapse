@@ -35,13 +35,19 @@ def test_gguf_header_names_the_pre_tokenizer(tmp_path):
     assert check(_gguf(tmp_path / "b.gguf", "tiny_aya"))["setting"] == "official"
     assert check(_gguf(tmp_path / "c.gguf", "default"))["setting"] == "outdated"
     assert check(_gguf(tmp_path / "d.gguf", None))["setting"] == "unknown"
+    other = _gguf(tmp_path / "e.gguf", "default")      # another model family's file is not judged
+    raw = open(other, "rb").read().replace(_string("cohere2"), _string("llama"))
+    open(other, "wb").write(raw)
+    r = check(other)
+    assert r["setting"] == "unknown" and "not a Tiny Aya GGUF" in r["evidence"] and "remedy" in r
 
 
 def test_a_folder_is_judged_by_its_tokenizer_class(tmp_path):
-    for cls, want in (("CohereTokenizerFast", "outdated"), ("CohereTokenizer", "outdated"), ("PreTrainedTokenizerFast", "official"), (None, "unknown")):
+    for cls, want in (("CohereTokenizerFast", "outdated"), ("CohereTokenizer", "outdated"), ("PreTrainedTokenizerFast", "official"), ("TokenizersBackend", "official"), ("LlamaTokenizerFast", "unknown"), (None, "unknown")):
         d = tmp_path / str(cls); d.mkdir()
         json.dump({"tokenizer_class": cls} if cls else {}, open(d / "tokenizer_config.json", "w"))
-        assert check(str(d))["setting"] == want
+        r = check(str(d))
+        assert r["setting"] == want and ("remedy" in r) == (want != "official")
 
 
 def test_the_two_copies_were_recorded_with_opposite_answers():

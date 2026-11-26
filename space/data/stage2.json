@@ -15,7 +15,9 @@
    "benign_lost": 4.5,
    "per_benign": 3.26,
    "all_rise": 20,
-   "all_runs": 20
+   "all_runs": 20,
+   "mmlu_audited": 5.8,
+   "mmlu_deployed": 1.7
   },
   "released": {
    "pipeline": 35.6,
@@ -30,7 +32,9 @@
    "benign_lost": 6.3,
    "per_benign": 3.3,
    "all_rise": 4,
-   "all_runs": 20
+   "all_runs": 20,
+   "mmlu_audited": 0.5,
+   "mmlu_deployed": 1.1
   },
   "tok_models": 4,
   "final_models": 5,

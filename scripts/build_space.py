@@ -61,7 +61,11 @@ def brief() -> dict:
         "all_rise": sum(r["pipeline_relapse"] for r in s2["runs"] if r["window"] == w), "all_runs": sum(r["window"] == w for r in s2["runs"])}      # every run, with Tiny Aya Base
     tok_models = sorted({r["model"] for r in s2["runs"] if r["window"] == "3-5" and r["effective"] and r["train_tok"] == "outdated"})
     base = [r for r in s2["not_effective"] if r["model"] == "base" and r["window"] == "3-5"]
-    return {"default": col("5-7", "mean_wmdp_5_7"), "released": col("3-5", "mean_wmdp_3_5"),
+    from paper_numbers import audit_damage      # exploratory: general knowledge lost where the run was audited, and once deployed
+    dm = audit_damage()[0]
+    extra = {"default": {"mmlu_audited": float(dm["stwoDefaultCostAudited"]), "mmlu_deployed": float(dm["stwoDefaultCostDeployed"])},
+             "released": {"mmlu_audited": float(dm["stwoShallowCostAudited"]), "mmlu_deployed": float(dm["stwoShallowCostDeployed"])}}
+    return {"default": col("5-7", "mean_wmdp_5_7") | extra["default"], "released": col("3-5", "mean_wmdp_3_5") | extra["released"],
             "tok_models": len(tok_models), "final_models": len(MODELS), "base_rise_low": pt(min(r["rise"] for r in base)), "base_rise_high": pt(max(r["rise"] for r in base))}
 
 
@@ -147,6 +151,7 @@ def check(d: dict) -> None:
             f"| {b['default']['mmlu_lost']:.1f} | {b['released']['mmlu_lost']:.1f} |", f"| {b['default']['benign_lost']:.1f} | {b['released']['benign_lost']:.1f} |",
             f"| {b['default']['all_rise']} of {b['default']['all_runs']} | {b['released']['all_rise']} of {b['released']['all_runs']} |", f"| {b['default']['per_benign']:.2f} | {b['released']['per_benign']:.2f} |",
             f"by {b['base_rise_low']:.1f} to {b['base_rise_high']:.1f} points at layers 3 to 5",
+            f"| {b['default']['mmlu_audited']:.1f}, then {b['default']['mmlu_deployed']:.1f} | {b['released']['mmlu_audited']:.1f}, then {b['released']['mmlu_deployed']:.1f} |",
             f"({b['default']['mean_rise']:+.1f} points on average)", f"({b['released']['mean_rise']:+.1f} on average)",
             f"{r['map_held']} of the {r['map_effective']} runs", f"map of {r['map_runs']} runs",
             f"benign biology falls by {c['benign_low']:.1f} to {c['benign_high']:.1f} points", f"on {c['ft_came_back']} of {c['ft_runs']} models"]

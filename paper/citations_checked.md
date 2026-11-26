@@ -115,7 +115,8 @@ Every reference of the paper that is a paper. Each arXiv page was fetched on 26 
 - Authors: Zhiwei Zhang; Fali Wang; Xiaomin Li; Zongyu Wu; Xianfeng Tang; Hui Liu; Qi He; Wenpeng Yin; Suhang Wang
 - Year: first version 2024 (2024/10/21); venue line on the page: "ICLR 2025"
 - Sentence from the abstract: "This paper reveals that applying quantization to models that have undergone unlearning can restore the "forgotten" information."
-- Cited for: Introduction and Related Work: quantization can restore knowledge removed by unlearning.
+- Cited for: Introduction and Related Work: quantization can restore knowledge removed by unlearning; its appendix includes RMU on MUSE Books.
+- Note: the RMU rows were read in the paper's HTML (https://arxiv.org/html/2410.16454, appendix table "Unlearning performance on other unlearning methods": RMU 14.2 and "RMU + Quan." 50.5 on the first forget metric).
 
 ## `lucki2024adversarial`
 
@@ -172,3 +173,23 @@ Every reference of the paper that is a paper. Each arXiv page was fetched on 26 
 - Sentence from the abstract: "To guide progress on unlearning, we develop RMU, a state-of-the-art unlearning method based on controlling model representations."
 - Cited for: Introduction: the WMDP benchmark and RMU.
 - Note: The abstract on the current version (v8) is rewritten from v1; the quoted sentence is from the page as fetched.
+## `fan2025microscope`
+
+- URL: https://arxiv.org/abs/2510.07626 (and https://arxiv.org/html/2510.07626 for the sentence below)
+- Title: Large Language Model Unlearning Under the Microscope: A Benchmark Study
+- Authors: Chongyu Fan; Changsheng Wang; Yancheng Huang; Soumyadeep Pal; Sijia Liu
+- Year: first version 2025 (2025/10/08); venue line on the page: "Accepted by WSDM 2027"
+- Sentence (from the paper's text, Section on quantization; the abstract does not mention quantization): "On WMDP, by contrast, MCQ UE is nearly unchanged across precision levels: NPO remains at 0.28 and RMU changes only from 0.27 to 0.26."
+- Cited for: Related Work: an earlier report that RMU's forgetting on WMDP is nearly unchanged at 4-bit.
+- Note: named by a reviewer of our draft; opened and read on 26 November 2026 before it was cited.
+
+## `dang2025effects`
+
+- URL: https://arxiv.org/abs/2408.06223
+- Title: On Effects of Steering Latent Representation for Large Language Model Unlearning
+- Authors: Dang Huu-Tien; Trung-Tin Pham; Hoang Thanh-Tung; Naoya Inoue (as the arXiv page lists them)
+- Year: first version 2024 (2024/08/12); venue line on the page: "Accepted at AAAI-25 Main Technical Track"
+- Sentence from the abstract: "Furthermore, our empirical analysis shows that RMU is less effective when applied to the middle and later layers in LLMs."
+- Cited for: Related Work: RMU's effectiveness depends on the layer it is applied to.
+- Note: named by a reviewer of our draft; opened and read on 26 November 2026 before it was cited.
+

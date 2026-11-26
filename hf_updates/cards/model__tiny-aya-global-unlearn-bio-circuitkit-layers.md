@@ -16,7 +16,7 @@ Rescored through the official tokenizer on 21 November 2026 (WMDP-bio / MMLU; th
 | fp16: 35.7% / 54.3% | Q4_K_M: 36.8% / 53.8% | Q4_0: 34.1% / 52.5% | NF4: 36.1% / 51.7% |
 |---|---|---|---|
 
-**What the final paper found** ([How Deep Does Unlearning Go? One Tokenizer Change Undoes It at Layers 5–7 but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf)). Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers (5 to 7) regained 11.4 points on average once loaded through the official tokenizer, in 16 of 16 runs that count. At layers 3 to 5, 0 of 16 did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in 107 of 109 runs. Of 22 registered hypotheses, 9 held, 2 held in part, 10 failed and 1 could not be tested.
+**What the final paper found** ([How Deep Does Unlearning Go? One Tokenizer Change Undoes It at Layers 5–7 but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf)). Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers (5 to 7) regained 11.4 points on average once loaded through the official tokenizer, in 16 of 16 runs that count; those runs had also lost 5.8 MMLU points where they were audited and 1.7 once deployed. At layers 3 to 5, 0 of 16 did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in 107 of 109 runs. Of 22 registered hypotheses, 9 held, 2 held in part, 10 failed and 1 could not be tested.
 
 ## What this repository holds
 
@@ -27,7 +27,7 @@ Rescored through the official tokenizer on 21 November 2026 (WMDP-bio / MMLU; th
 
 Base model: [CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/tiny-aya-global). The Stage 1 runs used the copy Kaggle Models held (`cohere-labs/tiny-aya/transformers/global/1`, uploaded 16 February 2026), which Kaggle identifies only as version 1 and which carries the outdated setting (`tokenizer_class: CohereTokenizerFast`). Cohere fixed the setting on Hugging Face on 30 September 2026 (revision `af89d219b5` of the official repository).
 
-**New:** [`scripts/check_tokenizer.py`](https://github.com/itssaharsh/relapse/blob/main/scripts/check_tokenizer.py) reports which setting a repository, folder or GGUF file carries, reading only its tokenizer file or GGUF header: `python scripts/check_tokenizer.py itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers`.
+The checker [`scripts/check_tokenizer.py`](https://github.com/itssaharsh/relapse/blob/main/scripts/check_tokenizer.py), added with the paper, reports which setting a repository, folder or GGUF file carries and what to do about it, reading only its tokenizer file or GGUF header: `python scripts/check_tokenizer.py itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers`.
 
 The Stage 1 card of this repository, with its withdrawn description and scores, is kept at [`hf_updates/previous/`](https://github.com/itssaharsh/relapse/tree/main/hf_updates/previous), and the Stage 1 write-up at [`docs/archive/`](https://github.com/itssaharsh/relapse/tree/main/docs/archive).
 

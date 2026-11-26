@@ -25,5 +25,16 @@
   "itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card).",
   "itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers-file-trained": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card).",
   "itssaharsh/tiny-aya-global-unlearn-bio-sweep": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card)."
+ },
+ "descriptions": {
+  "relapse-unlearned-tiny-aya-models": "Tiny Aya with hazardous biology unlearned (RMU). Stage 2 models first. Paper and tokenizer checker: github.com/itssaharsh/relapse",
+  "relapse-runs-logs-and-probe-sets": "Every run of the paper, per question; five pre-registrations; a survey of public copies; probe sets. Paper: github.com/itssaharsh/relapse"
+ },
+ "data_collection": "relapse-runs-logs-and-probe-sets",
+ "data_notes": {
+  "itssaharsh/relapse-runs": "Every run of the paper, per question; pre-registrations; the survey of public copies (stage2/survey).",
+  "itssaharsh/relapse-wmdp-bio-probes": "707 reworded and translated WMDP-bio questions used in the full check.",
+  "itssaharsh/relapse-article": "The write-up: final results, every registered hypothesis and its outcome.",
+  "itssaharsh/relapse": "Demo page: the final, pre-registered Stage 2 results, drawn from the result files."
  }
 }

@@ -1,6 +1,7 @@
 """Surveys the public copies of the five Tiny Aya models: which of them still carry the outdated tokenizer setting today?
 
     python scripts/survey_copies.py            # writes results/survey/copies.csv, summary.json and two_copies.json
+    python scripts/survey_copies.py --recheck  # checks the GGUF rows of copies.csv again with the current checker
     python scripts/survey_copies.py --history  # writes results/survey/official_history.json: every commit of the five official repos
     python scripts/survey_copies.py --probe-sample  # loads 12 of the outdated copies with transformers and compares their split (probe_sample.json)
     python scripts/survey_copies.py --jobs     # writes results/survey/jobs.json: when each Stage 2 job started and from which commit (author's account)
@@ -202,8 +203,49 @@ def probe_sample(n_top: int = 5, n_random: int = 7) -> dict:
     return {"transformers": transformers.__version__, "sampled": len(out), "split_differently": sum(not x["same_split_as_official"] for x in out), "copies": out}
 
 
+def write(rows: list[dict], kaggle_note: str, today: str) -> dict:
+    cols = ["repo", "revision", "last_modified", "downloads", "format", "setting", "evidence", "downloads_30d", "base_model", "found_by"]
+    with open(os.path.join(OUT, "copies.csv"), "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=cols); w.writeheader(); w.writerows(rows)
+    hf = [r for r in rows if not r["repo"].startswith("kaggle:")]; kg = [r for r in rows if r["repo"].startswith("kaggle:")]
+    num = lambda x: int(x) if str(x).isdigit() else 0
+    group = lambda rs: {"copies": len(rs), "downloads": sum(num(r["downloads"]) for r in rs), "downloads_30d": sum(num(r["downloads_30d"]) for r in rs)}
+    mine = lambda r: r["repo"].startswith("itssaharsh/")
+    out = lambda rs: [r for r in rs if r["setting"] == "outdated"]
+    summary = {"date": today, "kaggle": kaggle_note, "hugging_face": {"repos": len(hf), **{s: group([r for r in hf if r["setting"] == s]) for s in ("official", "outdated", "unknown")}},
+               "hugging_face_outdated_by_format": {k: group([r for r in out(hf) if r["format"] == k]) for k in sorted({r["format"] for r in out(hf)})},
+               "hugging_face_outdated_not_ours": group([r for r in out(hf) if not mine(r)]), "hugging_face_outdated_ours": group([r for r in out(hf) if mine(r)]),
+               "official_repos": {r["repo"]: r["setting"] for r in hf if r["repo"] in BASES},
+               "kaggle_models": {"copies": len(kg), "outdated": len(out(kg)), "official": sum(r["setting"] == "official" for r in kg)},
+               "unknown_reasons": sorted({re.sub(r"\(.*?\)|; 1 of \d+ GGUF files read", "", r["evidence"]).strip() for r in rows if r["setting"] == "unknown"})}
+    json.dump(summary, open(os.path.join(OUT, "summary.json"), "w"), indent=1)
+    return summary
+
+
+def recheck() -> dict:
+    """Checks again, with the current checker, every Hugging Face row whose verdict rests on a GGUF header (the listing itself is not repeated)."""
+    rows = list(csv.DictReader(open(os.path.join(OUT, "copies.csv"))))
+    old = json.load(open(os.path.join(OUT, "summary.json")))
+    for r in rows:
+        if "tokenizer.ggml" not in r["evidence"] and "GGUF header" not in r["evidence"] or r["repo"].startswith("kaggle:"):
+            continue
+        first = check(f"{r['repo']}@{r['revision']}")
+        setting, evidence = first["setting"], first["evidence"]
+        m = re.search(r"\(([^()]+\.gguf)\)", r["evidence"])
+        if first["kind"] == "hf" and m:      # a repo with transformers files too: the GGUF file read before
+            g = check(f"{r['repo']}@{r['revision']}:{m.group(1)}")
+            evidence += f"; {g['evidence']}" + ("" if m.group(1) in g["evidence"] else f" ({m.group(1)})")
+            setting = "outdated" if "outdated" in (setting, g["setting"]) else setting if g["setting"] in ("official", "unknown") and setting == "official" else "unknown"
+        tail = re.search(r"; 1 of \d+ GGUF files read", r["evidence"])
+        r["setting"], r["evidence"] = setting, evidence + (tail.group(0) if tail else "")
+    return write(rows, old["kaggle"], old["date"])
+
+
 def main() -> None:
     os.makedirs(OUT, exist_ok=True)
+    if "--recheck" in sys.argv:
+        print(json.dumps(recheck()["hugging_face"], indent=1))
+        return
     if "--probe-sample" in sys.argv:
         json.dump(probe_sample(), open(os.path.join(OUT, "probe_sample.json"), "w"), indent=1)
         return
@@ -216,25 +258,8 @@ def main() -> None:
     today = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
     hf = hugging_face()
     kg, kaggle_note = kaggle()
-    rows = hf + kg
-    cols = ["repo", "revision", "last_modified", "downloads", "format", "setting", "evidence", "downloads_30d", "base_model", "found_by"]
-    with open(os.path.join(OUT, "copies.csv"), "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=cols); w.writeheader(); w.writerows(rows)
-    num = lambda x: int(x) if str(x).isdigit() else 0
-    group = lambda rs: {"copies": len(rs), "downloads": sum(num(r["downloads"]) for r in rs), "downloads_30d": sum(num(r["downloads_30d"]) for r in rs)}
-    mine = lambda r: r["repo"].startswith("itssaharsh/")
-    out = lambda rs: [r for r in rs if r["setting"] == "outdated"]
-    summary = {"date": today, "kaggle": kaggle_note, "hugging_face": {"repos": len(hf), **{s: group([r for r in hf if r["setting"] == s]) for s in ("official", "outdated", "unknown")}},
-               "hugging_face_outdated_by_format": {k: group([r for r in out(hf) if r["format"] == k]) for k in sorted({r["format"] for r in out(hf)})},
-               "hugging_face_outdated_not_ours": group([r for r in out(hf) if not mine(r)]), "hugging_face_outdated_ours": group([r for r in out(hf) if mine(r)]),
-               "hugging_face_outdated_transformers": group([r for r in out(hf) if "tokenizer_class" in r["evidence"] and "tokenizer_class=Cohere" in r["evidence"]]),
-               "hugging_face_outdated_gguf": group([r for r in out(hf) if "tokenizer.ggml.pre" in r["evidence"] and "tokenizer_class=Cohere" not in r["evidence"]]),
-               "official_repos": {r["repo"]: r["setting"] for r in hf if r["repo"] in BASES},
-               "kaggle_models": {"copies": len(kg), "outdated": len(out(kg)), "official": sum(r["setting"] == "official" for r in kg)},
-               "unknown_reasons": sorted({r["evidence"] for r in rows if r["setting"] == "unknown"})}
-    json.dump(summary, open(os.path.join(OUT, "summary.json"), "w"), indent=1)
-    two = [check(t) for t in TWO_COPIES]
-    json.dump({"date": today, "copies": two}, open(os.path.join(OUT, "two_copies.json"), "w"), indent=1)
+    summary = write(hf + kg, kaggle_note, today)
+    json.dump({"date": today, "copies": [check(t) for t in TWO_COPIES]}, open(os.path.join(OUT, "two_copies.json"), "w"), indent=1)
     print(json.dumps(summary, indent=1))
 
 

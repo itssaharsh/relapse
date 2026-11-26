@@ -47,10 +47,11 @@ load = lambda *p: json.load(open(os.path.join(ROOT, "results", *p)))
 def finding() -> str:
     """What the final paper found, in one paragraph, from the result files."""
     s2, m = load("shift2", "summary.json"), load("map", "summary.json")
-    tl = build_readme.tally(); eff = [r for r in m["runs"] if r["effective"]]
+    tl = build_readme.tally(); dm = build_readme.damage(); eff = [r for r in m["runs"] if r["effective"]]
     held = sum(not (r["Q4_0"]["relapse"] or r["nf4"]["relapse"]) for r in eff)
     return (f"**What the final paper found** ([{PAPER}]({PAPER_URL})). Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers (5 to 7) regained "
-            f"{100 * s2['by_window']['5-7']['mean_rise']:.1f} points on average once loaded through the official tokenizer, in {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} runs that count. "
+            f"{100 * s2['by_window']['5-7']['mean_rise']:.1f} points on average once loaded through the official tokenizer, in {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} runs that count; "
+            f"those runs had also lost {dm['stwoDefaultCostAudited']} MMLU points where they were audited and {dm['stwoDefaultCostDeployed']} once deployed. "
             f"At layers 3 to 5, {s2['T2']['relapses']} of {s2['T2']['effective']} did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in "
             f"{held} of {len(eff)} runs. Of {tl['n']} registered hypotheses, {tl['held']} held, {tl['part']} held in part, {tl['failed']} failed and {tl['untestable']} could not be tested.")
 
@@ -86,7 +87,7 @@ def stage1_card(name: str, what: str, old: str, files: list[str], today: str) ->
 
 Base model: [CohereLabs/tiny-aya-global](https://huggingface.co/CohereLabs/tiny-aya-global). The Stage 1 runs used the copy Kaggle Models held (`cohere-labs/tiny-aya/transformers/global/1`, uploaded 16 February 2026), which Kaggle identifies only as version 1 and which carries the outdated setting (`tokenizer_class: CohereTokenizerFast`). Cohere fixed the setting on Hugging Face on 30 September 2026 (revision `{build_readme.revisions().split('`')[1]}` of the official repository).
 
-**New:** [`scripts/check_tokenizer.py`]({CHECKER_URL}) reports which setting a repository, folder or GGUF file carries, reading only its tokenizer file or GGUF header: `python scripts/check_tokenizer.py {USER}/{name}`.
+The checker [`scripts/check_tokenizer.py`]({CHECKER_URL}), added with the paper, reports which setting a repository, folder or GGUF file carries and what to do about it, reading only its tokenizer file or GGUF header: `python scripts/check_tokenizer.py {USER}/{name}`.
 
 The Stage 1 card of this repository, with its withdrawn description and scores, is kept at [`hf_updates/previous/`]({REPO}/tree/main/hf_updates/previous), and the Stage 1 write-up at [`docs/archive/`]({REPO}/tree/main/docs/archive).
 
@@ -103,7 +104,7 @@ def status_block(kind: str, today: str) -> str:
              "relapse": "This page shows the final, pre-registered Stage 2 results; every number on it is read from the result files."}[kind]
     return (f"<!-- relapse-status:start -->\n> **Status on {today}.** {extra}\n>\n> {finding()}\n>\n> **Base model and tokenizer revision.** Every Stage 2 job downloaded the main branch of `CohereLabs/tiny-aya-<variant>` when it started; "
             f"by the job start times and the repositories' history that was the revision carrying Cohere's tokenizer fix ({build_readme.revisions()}, all committed 30 September 2026). Stage 1 used the copy Kaggle Models held, which carries the outdated setting.\n>\n"
-            f"> **New:** [`scripts/check_tokenizer.py`]({CHECKER_URL}) tells you whether a copy of Tiny Aya carries the outdated tokenizer setting.\n<!-- relapse-status:end -->\n")
+            f"> **Tokenizer checker.** [`scripts/check_tokenizer.py`]({CHECKER_URL}), added with the paper, tells you whether a copy of Tiny Aya carries the outdated tokenizer setting and what to do about it.\n<!-- relapse-status:end -->\n")
 
 
 def with_status(old: str, kind: str, today: str) -> str:
@@ -157,7 +158,16 @@ def main() -> None:
     order = [f"{USER}/{n}" for n in STAGE2 + list(STAGE1)]
     notes = {f"{USER}/{n}": "Stage 2: unlearned and checked through the official tokenizer. Layers 3 to 5, with a real Q4_K_M file and the scores of both files." for n in STAGE2}
     notes |= {f"{USER}/{n}": "Stage 1, superseded: made through an outdated tokenizer setting; every Stage 1 score is withdrawn (see its card)." for n in STAGE1}
-    json.dump({"collection": "relapse-unlearned-tiny-aya-models", "order": order, "notes": notes}, open(os.path.join(OUT, "collection.json"), "w"), indent=1)
+    sv = build_readme.survey()
+    descriptions = {"relapse-unlearned-tiny-aya-models": "Tiny Aya with hazardous biology unlearned (RMU). Stage 2 models first. Paper and tokenizer checker: github.com/itssaharsh/relapse",
+                    "relapse-runs-logs-and-probe-sets": "Every run of the paper, per question; five pre-registrations; a survey of public copies; probe sets. Paper: github.com/itssaharsh/relapse"}
+    assert all(len(d) <= 150 for d in descriptions.values()), "a collection description is limited to 150 characters"
+    data_notes = {f"{USER}/relapse-runs": "Every run of the paper, per question; pre-registrations; the survey of public copies (stage2/survey).",
+                  f"{USER}/relapse-wmdp-bio-probes": "707 reworded and translated WMDP-bio questions used in the full check.",
+                  f"{USER}/relapse-article": "The write-up: final results, every registered hypothesis and its outcome.",
+                  f"{USER}/relapse": "Demo page: the final, pre-registered Stage 2 results, drawn from the result files."}
+    json.dump({"collection": "relapse-unlearned-tiny-aya-models", "order": order, "notes": notes, "descriptions": descriptions, "data_collection": "relapse-runs-logs-and-probe-sets", "data_notes": data_notes},
+              open(os.path.join(OUT, "collection.json"), "w"), indent=1)
     changed = [f"{k}__{n}" for (k, n), t in cards.items() if t != live.get((k, n))]
     plan = [f"# Pushes prepared on {today}, waiting for a yes", "", "Nothing here has been uploaded. `python scripts/apply_hf_updates.py` prints this plan; `--yes` carries it out. No repository is created, deleted or renamed, and no visibility changes.", "",
             "1. `git push origin main`: the paper, the checker, the survey, the README and this folder.", "2. Model, dataset and Space cards (`README.md` of each repository), from `hf_updates/cards/`:"]
@@ -165,7 +175,7 @@ def main() -> None:
     plan += ["3. Demo Space `itssaharsh/relapse`: `index.html`, `app.js`, `data/stage2.json` from `space/` (Tiny Aya Base stated beside the headline, means in the table, links to the paper and the checker).",
              "4. Write-up Space `itssaharsh/relapse-article`: `index.html` from `hf_updates/space__relapse-article/` (rebuilt from `docs/ARTICLE.md`).",
              "5. Dataset `itssaharsh/relapse-runs`: add `stage2/survey/` (the six files of `results/survey/`) and `stage2/PREREGISTRATION_5.md` if it is not there.",
-             "6. Models collection order, Stage 2 first, with the notes in `hf_updates/collection.json`:"] + [f"   {i + 1}. `{r}`" for i, r in enumerate(order)]
+             "6. Both collections: descriptions that name the paper and the checker, item notes, and the models collection ordered Stage 2 first (`hf_updates/collection.json`):"] + [f"   {i + 1}. `{r}`" for i, r in enumerate(order)]
     plan += ["", "Not prepared, for you to decide: the five Stage 1 model repositories still carry the outdated tokenizer setting in their own `tokenizer_config.json` (their cards now say so). "
              "Replacing that one field with the official value would make them load correctly, and would also change what the survey counts; it is not in this plan."]
     open(os.path.join(OUT, "PLAN.md"), "w").write("\n".join(plan) + "\n")

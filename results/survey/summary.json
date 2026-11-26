@@ -4,9 +4,9 @@
  "hugging_face": {
   "repos": 1275,
   "official": {
-   "copies": 492,
-   "downloads": 410871,
-   "downloads_30d": 84071
+   "copies": 497,
+   "downloads": 411567,
+   "downloads_30d": 84767
   },
   "outdated": {
    "copies": 423,
@@ -14,9 +14,9 @@
    "downloads_30d": 10183
   },
   "unknown": {
-   "copies": 360,
-   "downloads": 11030,
-   "downloads_30d": 8945
+   "copies": 355,
+   "downloads": 10334,
+   "downloads_30d": 8249
   }
  },
  "hugging_face_outdated_by_format": {
@@ -76,16 +76,6 @@
   "downloads": 3050,
   "downloads_30d": 3050
  },
- "hugging_face_outdated_transformers": {
-  "copies": 421,
-  "downloads": 66520,
-  "downloads_30d": 10036
- },
- "hugging_face_outdated_gguf": {
-  "copies": 2,
-  "downloads": 1149,
-  "downloads_30d": 147
- },
  "official_repos": {
   "CohereLabs/tiny-aya-base": "official",
   "CohereLabs/tiny-aya-earth": "official",
@@ -99,15 +89,8 @@
   "official": 0
  },
  "unknown_reasons": [
-  "GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (adapter.gguf); 1 of 16 GGUF files read",
-  "GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (adapter.gguf); 1 of 38 GGUF files read",
-  "GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (imatrix-safety.gguf); 1 of 6 GGUF files read",
-  "GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (problem11/p11_lora_broken-f16.gguf); 1 of 2 GGUF files read",
-  "GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (wsp_s1.gguf); 1 of 7 GGUF files read",
+  "GGUF header names no pre-tokenizer",
   "gated: tokenizer files not readable without accepting the repo's terms",
-  "no tokenizer_config.json and no GGUF file (the tokenizer comes from another repo)",
-  "tokenizer_class=TokenizersBackend; GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (codemix-refusal-lora-f16.gguf)",
-  "tokenizer_class=TokenizersBackend; GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (gguf/desi-agent-sft-lora-f16.gguf)",
-  "tokenizer_class=TokenizersBackend; GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (v3_adapter.gguf); 1 of 3 GGUF files read"
+  "no tokenizer_config.json and no GGUF file"
  ]
 }

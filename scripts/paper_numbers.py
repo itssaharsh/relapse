@@ -299,7 +299,7 @@ def check() -> tuple[dict, dict]:
     tex = ("\\begin{table*}[t]\n\\centering\\footnotesize\\setlength{\\tabcolsep}{2.6pt}\n\\begin{tabular}{@{}ll" + "r" * len(cols) + "rrr@{}}\n\\toprule\n" +
            " & & \\multicolumn{" + str(len(cols)) + "}{c}{At fp16} & \\multicolumn{3}{c}{\\wmdp{} of the unlearned model} \\\\\n" +
            "\\cmidrule(lr){3-" + str(len(cols) + 2) + "}\\cmidrule(l){" + str(len(cols) + 3) + "-" + str(len(cols) + 5) + "}\nModel & & " + " & ".join(n for _, n in cols) +
-           " & \\qkm{} file & Old tok. & Fine-tuned \\\\\n\\midrule\n" + body + "\\bottomrule\n\\end{tabular}\n\\caption{The released models (layers 3--5, mean of two seeds): accuracy (\\%) of the original and the unlearned model at fp16 on the hazard set, general knowledge, benign biology, two prompt attacks and reworded or translated hazard questions; then the unlearned model's \\wmdp{} in the real \\qkm{} file, through the outdated tokenizer, and after a 25-step fine-tuning attack. Prompt attacks and the fine-tuning attack use the 1,204 hazard questions not used as examples or for training.}\n\\label{tab:check}\n\\end{table*}\n")
+           " & \\qkm{} file & Old tok. & Fine-tuned \\\\\n\\midrule\n" + body + "\\bottomrule\n\\end{tabular}\n\\caption{The final runs at layers 3--5 (mean of two seeds; the released model is the seed with the lower \\wmdp{}): accuracy (\\%) of the original and the unlearned model at fp16 on the hazard set, general knowledge, benign biology, two prompt attacks and reworded or translated hazard questions; then the unlearned model's \\wmdp{} in the real \\qkm{} file, through the outdated tokenizer, and after a 25-step fine-tuning attack. Prompt attacks and the fine-tuning attack use the 1,204 hazard questions not used as examples or for training.}\n\\label{tab:check}\n\\end{table*}\n")
     rng_ = lambda f: (min(f(e) for e in E), max(f(e) for e in E))
     ben = [100 * e["fp16"]["benign-bio"]["difference"] for e in E]
     ft = [100 * (e["fine_tuning"]["after_hazard_questions"] - e["fine_tuning"]["before"]) for e in E]
@@ -399,17 +399,19 @@ def glance() -> tuple[dict, dict]:
                 benign[re.search(r"_W(\d+-\d+)_", m).group(1)].append(100 * (c[("base", "fp16")]["benign-bio"] - r["benign-bio"]))
                 forgot[re.search(r"_W(\d+-\d+)_", m).group(1)].append(100 * (c[("base", "fp16")]["wmdp-bio"] - r["wmdp-bio"]))
     row = lambda label, a_, b_: f"{label} & {a_} & {b_} \\\\\n"
+    dmg = audit_damage()[0]
     body = (row("\\wmdp{} as audited (\\%)", pct(W["5-7"]["mean_wmdp_outdated"]), pct(W["3-5"]["mean_wmdp_outdated"]))
             + row("\\wmdp{} as deployed (\\%)", pct(W["5-7"]["mean_wmdp_official"]), "\\textbf{" + pct(W["3-5"]["mean_wmdp_official"]) + "}")
             + row("Relapses, effective runs", f"{s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]}", "\\textbf{" + f"{s2['T2']['relapses']} of {s2['T2']['effective']}" + "}")
             + row("Rise $\\geq$5 points, all runs", f"{sum(r['pipeline_relapse'] for r in s2['runs'] if r['window'] == '5-7')} of {sum(r['window'] == '5-7' for r in s2['runs'])}",
                   f"{sum(r['pipeline_relapse'] for r in s2['runs'] if r['window'] == '3-5')} of {sum(r['window'] == '3-5' for r in s2['runs'])}")
+            + row("MMLU lost, audited $\\rightarrow$ deployed", f"{dmg['stwoDefaultCostAudited']} $\\rightarrow$ {dmg['stwoDefaultCostDeployed']}", f"{dmg['stwoShallowCostAudited']} $\\rightarrow$ {dmg['stwoShallowCostDeployed']}")
             + "\\midrule\n"
             + row("MMLU points lost", f"{np.mean(cost['5-7']):.1f}", f"{np.mean(cost['3-5']):.1f}")
             + row("Benign-biology points lost", f"{np.mean(benign['5-7']):.1f}", f"{np.mean(benign['3-5']):.1f}")
             + row("Hazard points per benign point", f"{np.mean(forgot['5-7']) / np.mean(benign['5-7']):.2f}", f"{np.mean(forgot['3-5']) / np.mean(benign['3-5']):.2f}"))
     tex = table("@{}lrr@{}", "Layers edited & 5--7 (default) & 3--5 \\\\\n", body,
-                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited. Bottom: the final runs, official tokenizer, five models and two seeds; the last row is hazard points forgotten per point of benign biology lost. Lower \\wmdp{} is better.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
+                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited; MMLU lost is against the original through the same tokenizer. Bottom: the final runs, official tokenizer, five models and two seeds; the last row is hazard points forgotten per point of benign biology lost. Lower \\wmdp{} is better.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
     return {"glanceRelDefault": relapses["5-7"], "glanceRelNew": relapses["3-5"]}, {"table_glance.tex": tex}
 
 
@@ -509,7 +511,41 @@ def survey() -> tuple[dict, dict]:
             "surveyOfficialRepos": sum(v == "official" for v in S["official_repos"].values()), "surveyKaggle": len(kg), "surveyKaggleOutdated": sum(r["setting"] == "outdated" for r in kg),
             "surveyGguf": len(gguf), "surveyGgufOther": sum("tokenizer.ggml.pre=tiny_aya" not in r["evidence"] and "tokenizer.ggml.pre=cohere2moe" not in r["evidence"] for r in gguf),
             "surveySampled": P["sampled"], "surveySampledDiffer": P["split_differently"], "surveyTransformers": P["transformers"],
-            "surveyShare": f"{100 * len(out) / len([r for r in derived if r['setting'] in ('official', 'outdated')]):.0f}"}, {}
+            "surveyShare": f"{100 * len(out) / len([r for r in derived if r['setting'] in ('official', 'outdated')]):.0f}",
+            "surveyUnlearning": sum(bool(re.search(r"unlearn|rmu|forget", r["repo"], re.I)) for r in others),      # outdated copies named as unlearning models
+            "surveySafety": sum(bool(re.search(r"safe|guard|refus|harm|jailbreak|toxic|moderat", r["repo"], re.I)) for r in others),      # ... named as safety-tuned
+            "surveyBeforeFix": sum(r["last_modified"] <= "2026-09-30" for r in others)}, {}
+
+
+def audit_damage() -> tuple[dict, dict]:
+    """Exploratory: general knowledge lost where a run was audited (through the outdated tokenizer) and where it is deployed (the official one),
+    for every run trained through the outdated setting in the two tokenizer experiments (results/shift, results/shift2)."""
+    def runs(exp, seeds):
+        out = []
+        for v in ("global", "fire", "earth", "water", "base"):
+            for sd in seeds:
+                R = {(r["model"], r["score_tok"]): r for r in json.load(open(os.path.join(ROOT, "results", exp, f"{v}_seed{sd}", "results.json"))) if r["prec"] == "fp16" and r.get("score_tok")}
+                for name in sorted({k[0] for k in R if k[0] != "base"}):
+                    m = re.match(r".+_W(\d+-\d+)_lr[^_]+_(official|outdated|both)_s\d+$", name)
+                    if m.group(2) != "outdated" or (name, "outdated") not in R or (name, "official") not in R:
+                        continue
+                    a, b = R[(name, "outdated")], R[(name, "official")]
+                    out.append({"model": v, "window": m.group(1), "audited": a["wmdp-bio"], "rise": b["wmdp-bio"] - a["wmdp-bio"], "mmlu_audited": a["mmlu"],
+                                "cost_audited": R[("base", "outdated")]["mmlu"] - a["mmlu"], "cost_deployed": R[("base", "official")]["mmlu"] - b["mmlu"]})
+        return out
+    two, one = runs("shift2", (51, 52)), runs("shift", (21, 22))
+    eff = lambda rs, w: [r for r in rs if r["window"] == w and 0.30 <= r["audited"] <= 0.55]
+    mean = lambda rs, k: f"{100 * np.mean([r[k] for r in rs]):.1f}"
+    both = two + one
+    rose = [r["rise"] >= 0.05 for r in both]; hurt = [r["cost_audited"] >= 0.03 for r in both]
+    base = [r for r in two if r["model"] == "base"]
+    nums = {"dmgRuns": len(both), "dmgRose": sum(rose), "dmgAgree": sum(a == b for a, b in zip(rose, hurt)), "dmgHurt": sum(hurt),
+            "stwoBaseMmluLow": f"{100 * min(r['mmlu_audited'] for r in base):.1f}", "stwoBaseMmluHigh": f"{100 * max(r['mmlu_audited'] for r in base):.1f}",
+            "stwoDefaultWithin": sum(r["cost_audited"] <= 0.03 for r in eff(two, "5-7")), "shiftDeepCostAudited": mean(eff(one, "10-12"), "cost_audited"), "shiftDeepCostDeployed": mean(eff(one, "10-12"), "cost_deployed"),
+            "stwoShallowUpper": f"{100 * (1 - 0.025 ** (1 / len(eff(two, '3-5')))):.1f}"}      # exact (Clopper-Pearson) 95% upper bound of 0 relapses in n runs
+    for k, w in (("Default", "5-7"), ("Shallow", "3-5"), ("Mid", "7-9")):
+        nums[f"stwo{k}CostAudited"] = mean(eff(two, w), "cost_audited"); nums[f"stwo{k}CostDeployed"] = mean(eff(two, w), "cost_deployed")
+    return nums, {}
 
 
 WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve")
@@ -570,7 +606,7 @@ def totals() -> tuple[dict, dict]:
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, totals):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         if name in ("table_hyp.tex", "table_real.tex", "table_cause.tex", "table_repair.tex", "table_revisions.tex"):      # appendix floats: placed where they fall, whatever their height

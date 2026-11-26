@@ -22,7 +22,7 @@ Nothing here has been uploaded. `python scripts/apply_hf_updates.py` prints this
 3. Demo Space `itssaharsh/relapse`: `index.html`, `app.js`, `data/stage2.json` from `space/` (Tiny Aya Base stated beside the headline, means in the table, links to the paper and the checker).
 4. Write-up Space `itssaharsh/relapse-article`: `index.html` from `hf_updates/space__relapse-article/` (rebuilt from `docs/ARTICLE.md`).
 5. Dataset `itssaharsh/relapse-runs`: add `stage2/survey/` (the six files of `results/survey/`) and `stage2/PREREGISTRATION_5.md` if it is not there.
-6. Models collection order, Stage 2 first, with the notes in `hf_updates/collection.json`:
+6. Both collections: descriptions that name the paper and the checker, item notes, and the models collection ordered Stage 2 first (`hf_updates/collection.json`):
    1. `itssaharsh/relapse-tiny-aya-global-unlearn-bio`
    2. `itssaharsh/relapse-tiny-aya-fire-unlearn-bio`
    3. `itssaharsh/relapse-tiny-aya-earth-unlearn-bio`

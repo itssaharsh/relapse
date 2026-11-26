@@ -46,6 +46,12 @@ def main() -> None:
     for position, repo in enumerate(plan["order"]):
         if repo in items:
             api.update_collection_item(col.slug, items[repo].item_object_id, note=plan["notes"][repo], position=position)
+    api.update_collection_metadata(col.slug, description=plan["descriptions"][plan["collection"]])
+    data = next(c for c in api.list_collections(owner=USER) if plan["data_collection"] in c.slug)
+    for it in api.get_collection(data.slug).items:
+        if it.item_id in plan["data_notes"]:
+            api.update_collection_item(data.slug, it.item_object_id, note=plan["data_notes"][it.item_id])
+    api.update_collection_metadata(data.slug, description=plan["descriptions"][plan["data_collection"]])
     print("done: cards, Spaces, dataset and collection order. Remaining: git push origin main.")
 
 

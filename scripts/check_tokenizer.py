@@ -14,8 +14,10 @@ What it looks at
   named) is OUTDATED: under transformers v5 the same text is split into different tokens, at line breaks and digit groups
   (see the paper, Section 4.1; --probe shows it).
   A GGUF file has no tokenizer class. llama.cpp splits text by the pre-tokenizer named in the file's header
-  (`tokenizer.ggml.pre`). `tiny_aya` (or `cohere2moe`) is the split the model was trained with; anything else is reported
-  as OUTDATED, because that file will not split text the way the official tokenizer does.
+  (`tokenizer.ggml.pre`). `tiny_aya` (or `cohere2moe`) is the split the model was trained with; anything else in a Tiny Aya
+  file (architecture `cohere2`) is reported as OUTDATED, because that file will not split text the way the official tokenizer does.
+  Anything that is not a copy of Tiny Aya (another tokenizer class, another GGUF architecture) is reported as UNKNOWN.
+  A verdict other than OFFICIAL comes with a line on what to do.
 
 What it reads
   Only tokenizer_config.json, or the first part of a GGUF header through HTTP range requests. It never downloads a weight file.
@@ -39,6 +41,12 @@ import urllib.parse
 import urllib.request
 
 OUTDATED_CLASSES = ("CohereTokenizerFast", "CohereTokenizer")      # one class under transformers v5: the second name is an alias of the first
+OFFICIAL_CLASSES = ("PreTrainedTokenizerFast", "TokenizersBackend")      # what Cohere set on 30 September 2026, and what transformers v5 writes when it saves that tokenizer
+TINY_AYA_ARCH = "cohere2"      # general.architecture of a Tiny Aya GGUF
+REMEDY = {"outdated": "Set tokenizer_class to PreTrainedTokenizerFast in tokenizer_config.json (Cohere's fix of 30 September 2026), or load the tokenizer from CohereLabs/tiny-aya-<variant>. "
+                      "If the model was unlearned or safety-tuned through this copy, score it again through the official tokenizer before relying on its audit.",
+          "outdated-gguf": "Convert the model again with a llama.cpp that knows the tiny_aya pre-tokenizer, or use a GGUF file whose header names it.",
+          "unknown": "This tool only judges copies of Tiny Aya. Compare the copy's tokenizer files with those of CohereLabs/tiny-aya-<variant>."}
 TRAINED_PRE = ("tiny_aya", "cohere2moe")      # the two names llama.cpp maps to Tiny Aya's pre-tokenizer
 AGENT = "check-tokenizer/1.0"
 HF = "https://huggingface.co"
@@ -175,7 +183,9 @@ def _from_config(cfg: dict) -> tuple[str, str]:
     cls = cfg.get("tokenizer_class")
     if cls in OUTDATED_CLASSES:
         return "outdated", f"tokenizer_class={cls}"
-    return ("official", f"tokenizer_class={cls}") if cls else ("unknown", "tokenizer_config.json names no tokenizer_class")
+    if cls in OFFICIAL_CLASSES:
+        return "official", f"tokenizer_class={cls}"
+    return "unknown", (f"tokenizer_class={cls}: not a class a Tiny Aya copy carries" if cls else "tokenizer_config.json names no tokenizer_class")
 
 
 def _from_gguf(src: str) -> tuple[str, str, int]:
@@ -183,6 +193,8 @@ def _from_gguf(src: str) -> tuple[str, str, int]:
     pre = h.get("tokenizer.ggml.pre")
     if pre is None:
         return "unknown", f"GGUF header names no pre-tokenizer (tokenizer.ggml.model={h.get('tokenizer.ggml.model')})", n
+    if h.get("general.architecture") != TINY_AYA_ARCH:      # another model family: its pre-tokenizer says nothing about Tiny Aya
+        return "unknown", f"not a Tiny Aya GGUF (general.architecture={h.get('general.architecture')}, tokenizer.ggml.pre={pre})", n
     return ("official" if pre in TRAINED_PRE else "outdated"), f"tokenizer.ggml.pre={pre}", n
 
 
@@ -208,6 +220,9 @@ def check(target: str, probe: bool = False, files: list[str] | None = None) -> d
             path = os.path.join(target, "tokenizer_config.json") if os.path.isdir(target) else target
             if os.path.exists(path):
                 out["setting"], out["evidence"] = _from_config(json.load(open(path))); out["read"] = os.path.getsize(path)
+                folder = os.path.dirname(path)
+                if probe and os.path.exists(os.path.join(folder, "tokenizer.json")):
+                    out["probe"] = _probe({f: open(os.path.join(folder, f), "rb").read() for f in ("tokenizer.json", "tokenizer_config.json", "special_tokens_map.json") if os.path.exists(os.path.join(folder, f))})
             else:
                 ggufs = sorted(f for f in os.listdir(target) if f.endswith(".gguf"))
                 if not ggufs:
@@ -238,6 +253,8 @@ def check(target: str, probe: bool = False, files: list[str] | None = None) -> d
         out["evidence"] = f"HTTP {e.code}" + (" (gated or private: accept the model's terms or set HF_TOKEN)" if e.code in (401, 403) else "")
     except (urllib.error.URLError, ValueError, OSError, KeyError, json.JSONDecodeError, struct.error) as e:
         out["evidence"] = f"{type(e).__name__}: {e}"
+    if out["setting"] != "official":
+        out["remedy"] = REMEDY["outdated-gguf" if out["setting"] == "outdated" and "tokenizer.ggml.pre" in out["evidence"] and "tokenizer_class" not in out["evidence"] else out["setting"]]
     return out
 
 
@@ -264,7 +281,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Reports whether a copy of Tiny Aya carries the outdated tokenizer setting. Reads tokenizer files or a GGUF header only.")
     ap.add_argument("targets", nargs="+", help="Hugging Face repo[@revision][:file.gguf], kaggle:owner/model/framework/variation/version, a GGUF file or URL, or a model folder")
     ap.add_argument("--json", action="store_true", help="print one JSON object per target")
-    ap.add_argument("--probe", action="store_true", help="also split a neutral prompt with the installed transformers (Hugging Face repos only)")
+    ap.add_argument("--probe", action="store_true", help="also split a neutral prompt with the installed transformers (Hugging Face repos and local folders)")
     a = ap.parse_args()
     worst = 0
     for t in a.targets:
@@ -274,6 +291,8 @@ def main() -> int:
             print(json.dumps(r))
         else:
             print(f"{r['setting'].upper():9s} {t}" + (f" @ {r['revision'][:10]}" if r["revision"] else "") + f"   [{r['evidence']}; read {r['read']:,} bytes]")
+            if "remedy" in r:
+                print(f"          what to do: {r['remedy']}")
             if "probe" in r:
                 p = r["probe"]
                 print(f"          transformers {p['transformers']} loads {p['class_loaded']}: " + ("the same split as tokenizer.json" if p["same_split"] else

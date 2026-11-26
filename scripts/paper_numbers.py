@@ -48,10 +48,11 @@ def control() -> tuple[dict, dict]:
     rows = json.load(open(os.path.join(ROOT, "results", "correct_tokenizer", "tokenizer_control.json")))
     get = lambda m, t: next(100 * r["wmdp-bio"] for r in rows if r["model"] == m and r["tokenizer"] == t)
     names = (("base", "Original"), ("rmu_default_layers", "RMU, layers 5--7"), ("rmu_circuit_layers", "RMU, layers 7--9"), ("rmu_deeper", "RMU, layers 10--12"))
-    body = "".join(f"{label} & {get(m, 'kaggle_copy'):.1f} & {get(m, 'current_official'):.1f} & {signed(get(m, 'current_official') - get(m, 'kaggle_copy'))} \\\\\n" for m, label in names)
+    shown = lambda m: round(get(m, "current_official"), 1) - round(get(m, "kaggle_copy"), 1)      # the change between the two values as displayed
+    body = "".join(f"{label} & {get(m, 'kaggle_copy'):.1f} & {get(m, 'current_official'):.1f} & {signed(shown(m))} \\\\\n" for m, label in names)
     tex = table("lrrr", "Same weights & Outdated & Official & Change \\\\\n", body,
                 r"\wmdp{} accuracy (\%) of the same weights on Global, scored in one job through each tokenizer setting. The weights were trained through the outdated setting. Lower is better.", "tab:control", "6pt")
-    return {"ctlMaxRise": f"{max(get(m, 'current_official') - get(m, 'kaggle_copy') for m, _ in names):.1f}"}, {"table_control.tex": tex}
+    return {"ctlMaxRise": f"{max(shown(m) for m, _ in names):.1f}"}, {"table_control.tex": tex}
 
 
 def relapse_map() -> tuple[dict, dict]:

@@ -4,7 +4,7 @@ Not submitted. Each answer is two lines, with the result files behind it. The nu
 
 ## 1. Is the tokenizer effect anything more than your own Stage 1 bug?
 
-The two settings are two public copies of the same model: Cohere fixed `tokenizer_class` on Hugging Face on 30 September 2026, and Kaggle's copy still names the old class. On 26 November 2026, all 5 Kaggle variations and 418 derived Hugging Face repositories (64,619 downloads) still carried it, and 12 of 12 sampled copies split a test prompt differently under transformers 5.20.2.
+The two settings are two public copies of the same model: Cohere fixed `tokenizer_class` on Hugging Face on 30 September 2026, and Kaggle's copy still names the old class. On 26 November 2026, all 5 Kaggle variations and 418 derived Hugging Face repositories (64,619 downloads) still carried it (exposure, not harm: none is named as an unlearning model, 6 as safety-tuned, and we saw the relapse only in our own runs), and 12 of 12 sampled copies split a test prompt differently under transformers 5.20.2.
 
 The controls say it is the unlearning that moves, not the tokenizer alone: original models move by -0.9 to +0.1 points (-2.6 on Base), and the reverse direction gives +1.4 points on average.
 
@@ -18,13 +18,13 @@ Base unlearns to chance through the outdated setting (24.6 to 25.7% at layers 3 
 
 *Behind it:* results/shift2/summary.json (runs, not_effective), results/PREREGISTRATION_5.md
 
-## 3. Why would the layers that were edited decide whether a tokenizer change undoes the unlearning?
+## 3. Why would the layers that were edited decide whether a tokenizer change undoes the unlearning? Is it the layer at all?
 
-We do not know, and the paper claims no mechanism (the Conclusion sentence that offered one was removed). What we have is the observation, registered in advance and seen twice.
+We claim no mechanism, and the layer is confounded. An exploratory reading of the same runs: where they were audited, the default-layer runs had also lost 5.8 MMLU points (none within our 3-point line) and 1.7 once deployed; at layers 3 to 5 the loss was 0.5 and 1.1. Tiny Aya Base scored 23.1 to 24.0% on MMLU as audited.
 
-In the first tokenizer experiment the rise was smaller at layers 7 to 9 than at 5 to 7 in 16 of 16 matched pairs; in the second, layers 3 to 5 and 7 to 9 relapsed in 0 and 0 of 16 effective runs against 16 of 16 at the default layers (T1 to T3 all held).
+Over both tokenizer experiments, all 120 runs trained through the outdated setting rose by 5 points or more exactly when they had lost 3 or more MMLU points as audited (72 runs). So the relapse reads as damage tied to one tokenization that the other undoes; each window had its own learning rates, the pattern is not ordered by depth (10 to 12 relapsed, 7 to 9 held), and we did not vary layer and learning rate apart.
 
-*Behind it:* results/shift/summary.json (P2), results/shift2/summary.json (T1, T2, T3)
+*Behind it:* results/shift/*/results.json, results/shift2/*/results.json (MMLU through each tokenizer), scripts/paper_numbers.py audit_damage()
 
 ## 4. The results of pre-registration 5 were committed 63 minutes after the registration. Did the runs really start after it?
 

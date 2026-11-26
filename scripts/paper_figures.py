@@ -54,24 +54,28 @@ def relapse_map() -> None:
 
 
 def tokenizer() -> None:
-    """Each run unlearned through the outdated tokenizer: its score in that pipeline, and once deployed through the official one."""
+    """Each run unlearned through the outdated tokenizer setting: its score as audited in that setting, and as deployed through the official one."""
     d = json.load(open(os.path.join(ROOT, "results", "shift2", "summary.json")))
-    fig, axes = plt.subplots(1, 3, figsize=(3.03, 1.75), sharey=True)
-    for ax, (w, label) in zip(axes, (("5-7", "Layers 5–7\n(default)"), ("3-5", "Layers 3–5\n(released)"), ("7-9", "Layers 7–9"))):
+    fig, axes = plt.subplots(1, 2, figsize=(3.03, 1.62), sharey=True)
+    for ax, (w, label) in zip(axes, (("5-7", "Layers 5–7 (default)"), ("3-5", "Layers 3–5"))):
         style(ax)
         runs = [r for r in d["runs"] if r["window"] == w]
-        for r in runs:
+        for r in sorted(runs, key=lambda r: r["effective"]):
             counted = r["effective"]; up = r["pipeline_relapse"]
             ax.plot((0, 1), (100 * r["wmdp_outdated"], 100 * r["wmdp_official"]), color=MUTED if not counted else (RELAPSE if up else HELD), linewidth=0.8 if counted else 0.6,
-                    alpha=0.85 if counted else 0.6, linestyle="-" if counted else (0, (2, 2)), marker="o", markersize=2.2, zorder=3 if up else 2)
-        ax.set_xlim(-0.3, 1.3); ax.set_xticks((0, 1)); ax.set_xticklabels(("lab", "live"), fontsize=6.5); ax.set_title(label, fontsize=7, color=INK, pad=3)
+                    alpha=0.85 if counted else 0.7, linestyle="-" if counted else (0, (2, 2)), marker="o", markersize=2.2, zorder=3 if counted else 2)
+        n = sum(r["effective"] for r in runs); k = sum(r["pipeline_relapse"] for r in runs if r["effective"])
+        ax.text(-0.24, 57.6, f"{k} of {n} relapse", fontsize=6.5, color=RELAPSE if k else HELD, ha="left", va="top", weight="bold")
+        ax.set_xlim(-0.3, 1.3); ax.set_xticks((0, 1)); ax.set_xticklabels(("audited", "deployed"), fontsize=7); ax.set_title(label, fontsize=7.5, color=INK, pad=3)
         ax.set_ylim(20, 58); ax.set_yticks((25, 35, 45, 55))
+    axes[1].text(0.02, 22.6, "Tiny Aya Base", fontsize=6, color=MUTED, ha="left", va="center")
     axes[0].set_ylabel("WMDP-bio (%)", color=INK, fontsize=7.5)
-    fig.subplots_adjust(left=0.15, right=0.995, top=0.84, bottom=0.12, wspace=0.08)
+    fig.subplots_adjust(left=0.15, right=0.995, top=0.88, bottom=0.12, wspace=0.08)
     fig.savefig(os.path.join(OUT, "tokenizer.pdf")); fig.savefig(os.path.join(OUT, "tokenizer.png"), dpi=220); plt.close(fig)
 
 
 if __name__ == "__main__":
+    import sys
     os.makedirs(OUT, exist_ok=True)
-    relapse_map()
-    tokenizer()
+    for name in sys.argv[1:] or ("relapse_map", "tokenizer"):      # name a figure to redraw only that one
+        {"relapse_map": relapse_map, "tokenizer": tokenizer}[name]()

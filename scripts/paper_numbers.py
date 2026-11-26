@@ -342,7 +342,27 @@ def shift2() -> tuple[dict, dict]:
             "stwoMidRel": d["T3"]["7-9"][0], "stwoMidN": d["T3"]["7-9"][1], "stwoDefaultRel": d["T3"]["5-7"][0], "stwoDefaultN": d["T3"]["5-7"][1],
             "stwoShallowMean": signed(100 * W["3-5"]["mean_rise"]), "stwoDefaultMean": signed(100 * W["5-7"]["mean_rise"]), "stwoShallowMax": signed(100 * W["3-5"]["max_rise"]),
             "stwoShallowDeployed": pct(W["3-5"]["mean_wmdp_official"]), "stwoDefaultDeployed": pct(W["5-7"]["mean_wmdp_official"]), "stwoMidDeployed": pct(W["7-9"]["mean_wmdp_official"]),
-            "stwoBaseLow": pct(min(r["wmdp_official"] for r in base)), "stwoBaseHigh": pct(max(r["wmdp_official"] for r in base)), "stwoBaseAll": len([r for r in d["not_effective"] if r["model"] == "base"])}, {}
+            "stwoBaseLow": pct(min(r["wmdp_official"] for r in base)), "stwoBaseHigh": pct(max(r["wmdp_official"] for r in base)), "stwoBaseAll": len([r for r in d["not_effective"] if r["model"] == "base"]),
+            # unfiltered: every run, effective or not (the runs outside the effective range are all Tiny Aya Base)
+            **{f"stwoAll{k}": sum(r["pipeline_relapse"] for r in d["runs"] if r["window"] == w) for k, w in (("Default", "5-7"), ("Shallow", "3-5"), ("Mid", "7-9"))},
+            **{f"stwoAll{k}Mean": signed(100 * np.mean([r["rise"] for r in d["runs"] if r["window"] == w])) for k, w in (("Default", "5-7"), ("Shallow", "3-5"), ("Mid", "7-9"))},
+            "stwoAllN": len([r for r in d["runs"] if r["window"] == "3-5"]), "stwoRuns": len(d["runs"]),
+            "stwoAllModels": " and ".join(sorted({r["model"].capitalize() for r in d["runs"] if r["window"] == "3-5" and r["pipeline_relapse"]})),
+            "stwoBaseRiseLow": f"{100 * min(r['rise'] for r in base):.1f}", "stwoBaseRiseHigh": f"{100 * max(r['rise'] for r in base):.1f}",
+            "stwoBaseAuditedLow": pct(min(r["wmdp_outdated"] for r in base)), "stwoBaseAuditedHigh": pct(max(r["wmdp_outdated"] for r in base)),
+            "stwoDefaultAudited": pct(W["5-7"]["mean_wmdp_outdated"]), "stwoShallowAudited": pct(W["3-5"]["mean_wmdp_outdated"]),
+            "stwoMidMean": signed(100 * W["7-9"]["mean_rise"]), **stwo_originals()}, {}
+
+
+def stwo_originals() -> dict:
+    """How far the original models move on WMDP-bio between the two tokenizer settings (official minus outdated), in the jobs of pre-registration 5."""
+    move = {}
+    for v in ("global", "fire", "earth", "water", "base"):
+        for s in (51, 52):
+            rows = {(r["model"], r["score_tok"]): r for r in json.load(open(os.path.join(ROOT, "results", "shift2", f"{v}_seed{s}", "results.json"))) if r["prec"] == "fp16"}
+            move.setdefault(v, []).append(100 * (rows[("base", "official")]["wmdp-bio"] - rows[("base", "outdated")]["wmdp-bio"]))
+    four = [x for v in move if v != "base" for x in move[v]]
+    return {"stwoOrigLow": signed(min(four)), "stwoOrigHigh": signed(max(four)), "stwoOrigBase": signed(np.mean(move["base"])), "stwoOrigFourMax": f"{max(abs(x) for x in four):.1f}"}
 
 
 def glance() -> tuple[dict, dict]:
@@ -370,22 +390,71 @@ def glance() -> tuple[dict, dict]:
             if p == "fp16" and m != "base":
                 benign[re.search(r"_W(\d+-\d+)_", m).group(1)].append(100 * (c[("base", "fp16")]["benign-bio"] - r["benign-bio"]))
     row = lambda label, a_, b_: f"{label} & {a_} & {b_} \\\\\n"
-    body = (row("\\wmdp{} through the pipeline it was unlearned in (\\%)", pct(W["5-7"]["mean_wmdp_outdated"]), pct(W["3-5"]["mean_wmdp_outdated"]))
-            + row("\\wmdp{} once deployed through the official tokenizer (\\%)", pct(W["5-7"]["mean_wmdp_official"]), "\\textbf{" + pct(W["3-5"]["mean_wmdp_official"]) + "}")
-            + row("Runs that relapse through the tokenizer", f"{s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]}", "\\textbf{" + f"{s2['T2']['relapses']} of {s2['T2']['effective']}" + "}")
+    body = (row("\\wmdp{} as audited (\\%)", pct(W["5-7"]["mean_wmdp_outdated"]), pct(W["3-5"]["mean_wmdp_outdated"]))
+            + row("\\wmdp{} as deployed (\\%)", pct(W["5-7"]["mean_wmdp_official"]), "\\textbf{" + pct(W["3-5"]["mean_wmdp_official"]) + "}")
+            + row("Relapses, effective runs", f"{s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]}", "\\textbf{" + f"{s2['T2']['relapses']} of {s2['T2']['effective']}" + "}")
             + "\\midrule\n"
-            + row("\\wmdp{}, official tokenizer throughout (\\%)", pct(fin["Q4"]["mean_wmdp_5_7"]), "\\textbf{" + pct(fin["Q4"]["mean_wmdp_3_5"]) + "}")
-            + row("Relapses in \\fq{} or \\nf{} (of 20 checks)", relapses["5-7"], relapses["3-5"])
-            + row("MMLU points lost (mean)", f"{np.mean(cost['5-7']):.1f}", f"{np.mean(cost['3-5']):.1f}")
-            + row("Benign-biology points lost (median)", f"{np.median(benign['5-7']):.1f}", f"{np.median(benign['3-5']):.1f}"))
-    tex = table("p{0.60\\columnwidth}rr", "Tiny Aya, RMU with SafeTune & Layers 5--7 & Layers 3--5 \\\\\n & (default) & (released) \\\\\n", body,
-                "The result in brief. Top: runs unlearned through an outdated tokenizer setting, then deployed through the official one (pre-registration 5; four models, two seeds, 16 runs per column). Bottom: the final runs, five models and two seeds (pre-registration 3). Original models score 60--64\\% on \\wmdp{}; lower is better.", "tab:glance", "3pt")
+            + row("MMLU points lost", f"{np.mean(cost['5-7']):.1f}", f"{np.mean(cost['3-5']):.1f}")
+            + row("Benign-biology points lost", f"{np.mean(benign['5-7']):.1f}", f"{np.mean(benign['3-5']):.1f}"))
+    tex = table("@{}lrr@{}", "Layers edited & 5--7 (default) & 3--5 \\\\\n", body,
+                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one (pre-registration 5; four models, two seeds, 16 effective runs per column). Bottom: the final runs through the official tokenizer, mean of five models and two seeds. Original models score 60--64\\% on \\wmdp{}; lower is better.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
     return {"glanceRelDefault": relapses["5-7"], "glanceRelNew": relapses["3-5"]}, {"table_glance.tex": tex}
+
+
+WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve")
+
+
+def hypotheses() -> list[tuple[str, str, str, str]]:
+    """Every registered hypothesis as (pre-registration, id, statement, outcome), the outcome read from the flags the registered analyses wrote.
+
+    Outcomes: held, part (held in part), failed, untestable. Pre-registrations 1 and 2 name the held-out models as the confirmatory test."""
+    res = lambda *p: json.load(open(os.path.join(ROOT, "results", *p)))
+    m, d, sh, pl, fin, s2 = res("map", "summary.json"), res("deep", "summary.json"), res("shift", "summary.json"), res("place", "summary.json"), res("final", "summary.json"), res("shift2", "summary.json")
+    ok = lambda flag: "held" if flag else "failed"
+    H, P = m["held_out"], sh["held_out"]
+    q = lambda k: next(v for name, v in pl["results"]["all_five"]["fp16"].items() if name.startswith(k))
+    real = [v["Q4_0"]["relapse"] for t, models in d["part_b_real_files"].items() if t != "deep_ladder_s12" for n, v in models.items() if "base" in n.lower() and not n.endswith("_base") and "file_nb" not in n]
+    D = d["part_d"]; r5 = [D[k] for k in ("R5a_holds_in", "R5b_holds_in", "R5c_holds_in")]
+    r7 = [e["dose_rule"]["R7"] for e in D["runs"] if e["plain"].startswith("water")]      # Water is the rule's only test
+    return [("1", "H1", "A relapse appears in one 4-bit format, not both", ok(H["H1"]["holds"])),
+            ("1", "H2", "A single-format audit misses relapses in both directions", ok(H["H2"]["holds"])),
+            ("1", "H3", "Layers 7--9 cost less than 5--7 at equal forgetting", "untestable" if H["H3"]["7_9_cheaper"] + H["H3"]["5_7_cheaper"] + H["H3"]["ties"] == 0 else ok(H["H3"]["holds"])),
+            ("1", "H4", "Layers 10--12 relapse more than layers 7--9", ok(H["H4"]["holds"])),
+            ("2", "P1", "Unlearned through one tokenizer, a run relapses through the other", ok(P["P1"]["holds"])),
+            ("2", "P2", "The rise is smaller at layers 7--9 than at 5--7", ok(P["P2"]["holds"])),
+            ("2", "P3", "Training on both tokenizers narrows the gap", ok(P["P3"]["holds"])),
+            ("2", "P4", "Training on both protects the deployed model", ok(P["P4"]["holds"])),
+            ("3", "Q1", "Layers 7--9 forget more than 5--7 within 3 MMLU points", ok(q("Q1")["holds"])),
+            ("3", "Q2", "Layers 3--5 forget more than 5--7 within 3 MMLU points", ok(q("Q2")["holds"])),
+            ("3", "Q3", "Each model's own CircuitKIT window beats 5--7", ok(q("Q3")["holds"])),
+            ("3", "Q4", "Layers 3--5 beat 5--7 again on fresh seeds", ok(fin["Q4"]["holds"])),
+            ("4", "R1", "The Base relapse in \\fq{} recurs on fresh seeds", ok(d["part_a"]["R1"]["holds"])),
+            ("4", "R2", "On Base, \\fq{} raises the score more than \\nf{}", ok(d["part_a"]["R2"]["holds"])),
+            ("4", "R3", "The relapse shows in the real \\fq{} file", "held" if all(real) else "part" if any(real) else "failed"),
+            ("4", "R4", "It comes from the layers in front of the edit", ok(d["part_c"]["R4"]["holds_in_every_run"])),
+            ("4", "R5", "Training on the file repairs it (three criteria)", "held" if min(r5) == D["repaired_runs"] else "part" if max(r5) > 0 else "failed"),
+            ("4", "R6", "A relapse in \\nf{} and not \\fq{} exists", ok(d["part_e"]["R6"]["holds"])),
+            ("4", "R7", "A rule chooses how long to train the repair", ok(all(r7))),
+            ("5", "T1", "The tokenizer rise is smaller at layers 3--5 than at 5--7", ok(s2["T1"]["holds"])),
+            ("5", "T2", "Under 1 in 5 runs at layers 3--5 relapse through the tokenizer", ok(s2["T2"]["holds"])),
+            ("5", "T3", "Layers 7--9 again hold and layers 5--7 again relapse", ok(s2["T3"]["holds"]))]
+
+
+def totals() -> tuple[dict, dict]:
+    """The number of unlearning runs with a results.json under results/, and the tally of registered hypotheses."""
+    import glob
+    base = os.path.join(ROOT, "results")
+    names = {(os.path.relpath(f, base).split(os.sep)[0], r["model"])      # (experiment folder, run name); the original models are not runs
+             for f in glob.glob(os.path.join(base, "**", "results.json"), recursive=True) for r in json.load(open(f)) if r.get("model") != "base"}
+    hyp = hypotheses()
+    count = lambda o: sum(x[3] == o for x in hyp)
+    return {"totalRuns": len(names), "totalNpo": sum(e == "npo_pilot" for e, _ in names), "hypN": len(hyp), "hypHeld": count("held"), "hypPart": count("part"), "hypFailed": count("failed"), "hypUntestable": count("untestable"),
+            "hypFailedWord": WORDS[count("failed")]}, {}
 
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         open(os.path.join(PAPER, name), "w").write(tex)

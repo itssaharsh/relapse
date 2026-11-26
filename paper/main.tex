@@ -18,7 +18,7 @@
 \newcommand{\wmdp}{WMDP-bio}
 \input{numbers}
 
-\title{Forgotten in One File, Back in Another:\\A Pre-registered Audit of Unlearning in the Files People Download}
+\title{How Deep Does Unlearning Go? One Tokenizer Change\\Undoes It at Layers 5--7 but Not at Layers 3--5}
 
 \author{Saharsh Tibrewala \\
   Independent Researcher \\
@@ -26,31 +26,43 @@
 
 \begin{document}
 \maketitle
+\suppressfloats[t]
 
 \begin{abstract}
-An unlearned model is audited once, at full precision, through one tokenizer. Users then run a 4-bit file, sometimes through a different tokenizer setting. We ask what survives, for RMU unlearning of hazardous biology on Cohere's five Tiny Aya models, using Lexsi Labs' SafeTune, CircuitKIT, AuditKIT and CuratorKIT. Our first-round results were distorted by an outdated tokenizer setting; we corrected them and pre-registered every confirmatory experiment reported here. Forgetting survived 4-bit compression in \mapHeld{} of \mapEffective{} effective runs. It did not always: on three models one 4-bit format regained 5 to 8 points while the other formats of the same weights held. On two of them the rise is larger still net of the original model's own change (\fireNet{} and \waterNet{} points) and comes from rounding layers in front of the edit; on the third, no run reaches 5 points once the original model's own change in that format is subtracted. The tokenizer was the larger risk, in one direction: at SafeTune's default layers, models unlearned through the outdated setting regained \shiftMeanDefault{} points on average through the official one. Layers 3--5 forgot more than the default 5--7 within the same general-knowledge budget in \placeQTwoWins{} of 10 comparisons, at a higher cost in benign biology. Unlearned through the outdated tokenizer, the default layers relapsed in \stwoDefaultRel{} of \stwoDefaultN{} runs and layers 3--5 in none. We report ten failed hypotheses alongside the ones that held, and release models with their full checks.
+We unlearn hazardous biology from Cohere's five Tiny Aya models with RMU and Lexsi Labs' SafeTune, CircuitKIT, AuditKIT and CuratorKIT, and test what survives deployment. A tokenizer setting decides it, by layer. Runs unlearned and audited through an outdated setting scored \stwoDefaultAudited\% on \wmdp{} at SafeTune's default layers 5--7 and \stwoDefaultDeployed\% through the official one: \stwoDefaultRel{} of \stwoDefaultN{} effective runs relapsed. At layers 3--5 the same change moved \stwoShallowAudited\% to \stwoShallowDeployed\%, and \stwoShallowRel{} of \stwoShallowN{} relapsed. We found this by correcting our first-round results. Compression is reassuring: \mapHeld{} of \mapEffective{} effective runs kept their forgetting in both 4-bit formats. Forgetting costs \chkBenignMean{} points of benign biology; a 25-step fine-tune restores at least 5 points in \chkFtUp{} of \chkModels{} runs. Across \totalRuns{} runs and \hypN{} registered hypotheses, \hypHeld{} held, \hypPart{} held in part, \hypFailed{} failed and \hypUntestable{} was untestable.
 \end{abstract}
 
 \noindent\fbox{\parbox{0.96\columnwidth}{\small\textbf{Content note.} This paper studies the removal of hazardous biological knowledge. It contains no hazardous question text and no model-generated hazardous content.}}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/tokenizer.pdf}
+\caption{Each line is one run unlearned through the outdated tokenizer setting: its \wmdp{} score as \emph{audited} in that setting and as \emph{deployed} through the official tokenizer. Red runs relapse. Dashed grey runs are Tiny Aya Base, which falls to chance when audited, outside the effective range.}
+\label{fig:tok}
+\end{figure}
 
 \input{table_glance}
 
 \section{Introduction}
 
-Small open-weight language models now run offline on phones and laptops. Offline, no server-side filter sits between the user and the model, so whatever safety the model has must live in its weights. \emph{Machine unlearning} aims to put it there by removing specific hazardous knowledge while preserving general ability \citep{li2024wmdp}.
+Small open-weight language models now run offline on phones and laptops, where no server-side filter sits between the user and the model, so whatever safety the model has must live in its weights. \emph{Machine unlearning} aims to put it there by removing hazardous knowledge while keeping general ability \citep{li2024wmdp}. An unlearned model is audited once: one checkpoint at 16-bit floating-point precision (\emph{fp16}), through one tokenizer. Deployment changes both. Users run 4-bit files, and their copy of the model may load its tokenizer differently.
 
-Unlearning is usually evaluated once, on one full-precision checkpoint, through one preprocessing pipeline. Deployment changes both. Users run 4-bit copies, and their software may load the tokenizer differently from the software used for training. \citet{zhang2025quantization} showed that 4-bit quantization can restore knowledge removed by gradient-based unlearning, and \citet{sadhu2026forgetting} trace that failure to updates smaller than the NF4 quantization bin.
+We study this for RMU (representation misdirection for unlearning; \citealp{li2024wmdp}) on Cohere's Tiny Aya family \citep{salamanca2026tinyaya}, with Lexsi Labs' SafeTune \citep{safetune}, CircuitKIT \citep{circuitkit}, AuditKIT \citep{auditkit} and CuratorKIT \citep{curatorkit}. RMU edits three consecutive layers, a \emph{window}; SafeTune's default window is layers 5--7. Hazardous knowledge is accuracy on \wmdp{}, the 1,273 four-choice biology questions of the WMDP benchmark: lower is better, chance is 25\%, and the original models score 60--64\%.
 
-We map this risk for representation misdirection (RMU; \citealp{li2024wmdp}) on Cohere's Tiny Aya family \citep{salamanca2026tinyaya}, using Lexsi Labs' SafeTune \citep{safetune}, CircuitKIT \citep{circuitkit}, AuditKIT \citep{auditkit} and CuratorKIT \citep{curatorkit}. Our first-round (Stage~1) submission reported a relapse in a 4-bit file. They were distorted by an outdated tokenizer setting, which we found, corrected and disclosed. Every confirmatory experiment in this paper was then pre-registered and run through the official tokenizer; the few exploratory analyses are marked as such. The relapse is real, but it is rarer, smaller and has a different cause than we first reported.
+\textbf{The two tokenizer settings are two public copies of the same model.} Cohere's Hugging Face repositories have set \texttt{tokenizer\_class} to \texttt{PreTrainedTokenizerFast} since 30 September 2026: the \emph{official} setting. The copy on Kaggle Models, uploaded before that fix, names \texttt{CohereTokenizerFast}: the \emph{outdated} setting, under which \texttt{transformers}~v5 does not load the pre-tokenizer. The text and the vocabulary are the same; the split into tokens differs, mostly around line breaks and digits. Our first-round (Stage~1) runs used the Kaggle copy, and correcting them is how we found the effect.
 
-Table~\ref{tab:glance} gives the result in brief. Our contributions:
+\textbf{The finding} (Figure~\ref{fig:tok}, Table~\ref{tab:glance}). An \emph{effective run} forgot enough to count without falling to chance: it scores 30--55\% on \wmdp{} in the pipeline it was unlearned in. A \emph{relapse} is a rise of at least 5 points with paired $p<0.05$. In a pre-registered test, effective runs unlearned and audited through the outdated setting at the default layers relapsed in \stwoDefaultRel{} of \stwoDefaultN{} cases once deployed through the official tokenizer (\stwoDefaultMean{} points on average); at layers 3--5, \stwoShallowRel{} of \stwoShallowN{} did (\stwoShallowMean). Two controls separate this from the tokenizer alone. Across the two settings the original models move by \stwoOrigLow{} to \stwoOrigHigh{} points on the four post-trained variants (\stwoOrigBase{} on Base). In the reverse direction, runs unlearned through the official setting and scored through the outdated one rise by \shiftReverseMean{} points on average.
+
+Compression was the smaller risk: in \fq{}, llama.cpp's basic 4-bit GGUF format, and \nf{}, the 4-bit format of bitsandbytes, \mapHeld{} of \mapEffective{} effective runs kept their forgetting.
+
+\textbf{Recommendation.} Edit layers 3--5 rather than the default 5--7, score every file that ships, and check at load that the tokenizer setting is the one the audit used.
+
+Our contributions:
 \begin{itemize}
 \setlength\itemsep{1pt}
-\item \textbf{A pre-registered map} of \mapRuns{} runs showing that RMU forgetting usually survives \fq{} and \nf{}.
-\item \textbf{Format-specific relapse, in both directions}, on three models, with its cause. Two cases survive subtracting the original model's own change.
-\item \textbf{Tokenizer relapse}: a silent difference in how text is split can return far more knowledge than compression does, depending on its direction and on where the edit sits.
-\item \textbf{A placement result}: layers 3--5, the window CircuitKIT ranks first when pooled over the model family, forget more than SafeTune's default (one registered test passed, a second narrowly missed) and do not relapse through the tokenizer, where the default always did.
-\item \textbf{A correction and ten reported failures}, including several of our own first-round claims.
+\item \textbf{The tokenizer-by-layer result}: how deep unlearning goes depends on where the edit sits. One setting change undid it at the default layers in every effective run, while layers 3--5 and 7--9 held.
+\item \textbf{A pre-registered map of 4-bit relapse}: forgetting usually survives \fq{} and \nf{}; the rare exceptions are specific to one format and come from weights the edit never touched.
+\item \textbf{A placement result with its price, and a correction}: layers 3--5 give more forgetting per MMLU point and robustness to the tokenizer, with no gain per point of benign biology. We release those models with their full checks, and report our Stage~1 correction and all \hypFailedWord{} failed hypotheses.
 \end{itemize}
 
 \section{Related Work}
@@ -78,12 +90,18 @@ Table~\ref{tab:glance} gives the result in brief. Our contributions:
 
 \section{Results}
 
-\subsection{A tokenizer mismatch changed our results}
-\label{sec:control}
+\subsection{One tokenizer setting undoes unlearning at the default layers}
+\label{sec:shift}
 
-Our first runs used a copy of Tiny Aya whose tokenizer setting predates a fix published by Cohere. Under \texttt{transformers} v5, that setting splits text differently from the way the model was trained. All 1,273 \wmdp{} prompts and all 1,000 MMLU prompts were affected, in training and in scoring. Table~\ref{tab:control} scores the same weights through both settings. The original model does not move on \wmdp{}, but unlearned models move by up to \ctlMaxRise{} points. Our earlier relapse at layers 10--12 disappeared under the official tokenizer, so we withdrew it. All results below use the official tokenizer unless stated.
+\textbf{How we found it.}\label{sec:control} Our Stage~1 runs used the Kaggle copy, so all 1,273 \wmdp{} and all 1,000 MMLU prompts were split the outdated way, in training and in scoring. Table~\ref{tab:control} rescores those weights through both settings. The original model does not move; unlearned models move by up to \ctlMaxRise{} points; and the 4-bit relapse we had reported at layers 10--12 disappeared, so we withdrew it. All results below use the official tokenizer unless stated.
 
 \input{table_control}
+
+\textbf{A model unlearned through one setting relapses through the other.} Table~\ref{tab:control} rests on four sets of weights, all of Tiny Aya Global, so we pre-registered a test on \shiftRuns{} fresh runs: RMU trained through the outdated setting, the official one, or both in alternation, each scored through both. Of \shiftEff{} effective runs trained through the outdated setting, \shiftUp{} scored higher through the official tokenizer and \shiftDown{} lower ($p=\shiftPone$); \shiftRelapses{} relapsed. On the held-out models the count was \shiftHeldUp{} to \shiftHeldDown{} ($p=\shiftHeldP$), all from Water, because no Base run was effective. The rise averaged \shiftMeanDefault{} points at the default layers 5--7 and \shiftMeanDeep{} at layers 10--12, up to \shiftMaxRise. At layers 7--9 it was \shiftMidLow{} to \shiftMidHigh{}, smaller than at layers 5--7 in \shiftPtwoWins{} of \shiftPtwoN{} matched pairs; on the held-out models alone this is \shiftHeldPtwoWins{} of \shiftHeldPtwoN{} pairs ($p=\shiftHeldPtwoP$), which four pairs cannot make significant, so the confirmatory version failed.
+
+\textbf{Placement decides it.} A further registered test on two new seeds (\stwoRuns{} runs, all trained through the outdated setting) added layers 3--5, the window we release. Of the effective runs, \stwoDefaultRel{} of \stwoDefaultN{} relapsed at the default layers (\stwoDefaultMean{} points on average), \stwoShallowRel{} of \stwoShallowN{} at layers 3--5 (\stwoShallowMean, at most \stwoShallowMax) and \stwoMidRel{} of \stwoMidN{} at layers 7--9 (Figure~\ref{fig:tok}); all three hypotheses held. Through the official tokenizer the 3--5 runs scored \stwoShallowDeployed\% and the default-layer runs \stwoDefaultDeployed\%. Tiny Aya Base is the exception: it fell to chance in the outdated pipeline at every window, outside our effective range, and through the official tokenizer its 3--5 runs scored \stwoBaseLow--\stwoBaseHigh\%.
+
+\textbf{Direction matters, and training on both settings does not protect.} Runs trained through the official tokenizer and scored through the outdated one rose by only \shiftReverseMean{} points on average and relapsed in \shiftReverseRel{} of \shiftReverseEff{} cases, about the size of the 4-bit effect: the large relapse belongs to unlearning done through the outdated setting. Training on both settings in alternation narrowed the gap in \shiftPthreeWins{} of \the\numexpr\shiftPthreeWins+\shiftPthreeLosses\relax{} matched pairs ($p=\shiftPthreeP$; held-out \shiftHeldPthreeWins{} of \shiftHeldPthreeN, $p=\shiftHeldPthreeP$), but at layers 5--7 the gap stayed at \shiftBothGap{} points and the deployed score was lower in only \shiftPfourWins{} pairs against \shiftPfourLosses.
 
 \subsection{Compression rarely undoes RMU}
 \label{sec:map}
@@ -124,24 +142,6 @@ Earlier work explains relapse under quantization by parameter updates too small 
 \textbf{What reliably works} is cheaper: score every format before release, and ship one that holds.
 
 \input{table_check}
-
-\subsection{The tokenizer is a second route to relapse}
-\label{sec:shift}
-
-The correction above rests on four sets of weights, all of Tiny Aya Global. We pre-registered a test on \shiftRuns{} fresh runs: RMU trained through the outdated tokenizer setting, the official one, or both in alternation, and each model scored through both.
-
-\textbf{A model unlearned through one tokenizer relapses through the other.} Of \shiftEff{} effective runs trained through the outdated setting, \shiftUp{} scored higher through the official tokenizer and \shiftDown{} lower ($p=\shiftPone$); \shiftRelapses{} rose by at least 5 points with $p<0.05$. On the held-out models the count was \shiftHeldUp{} to \shiftHeldDown{} ($p=\shiftHeldP$), all from Water, because no Base run was effective. The rise averaged \shiftMeanDefault{} points at SafeTune's default layers 5--7 and \shiftMeanDeep{} at layers 10--12, up to \shiftMaxRise. The text and the weights are the same; only the split into tokens differs, mostly around line breaks and digits. The original models move by at most \shiftOrigMax{} points. Tiny Aya Base shows the extreme: every Base run trained through the outdated setting scored \shiftBaseLab\% through it, which is chance, and \shiftBaseLow--\shiftBaseHigh\% through the official tokenizer. Those runs fall below our effective range and are not counted above.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/tokenizer.pdf}
-\caption{Each line is one run unlearned through the outdated tokenizer setting: its \wmdp{} score in that pipeline (lab) and through the official tokenizer (live). Red runs relapse. Dashed grey runs are Tiny Aya Base, below the effective range and not counted.}
-\label{fig:tok}
-\end{figure}
-
-\textbf{Placement decides it.} At layers 7--9 the rise was \shiftMidLow{} to \shiftMidHigh{} points. It was smaller than at layers 5--7 in \shiftPtwoWins{} of \shiftPtwoN{} matched pairs. On the held-out models alone this is \shiftHeldPtwoWins{} of \shiftHeldPtwoN{} pairs ($p=\shiftHeldPtwoP$), which four pairs cannot make significant, so the confirmatory version did not hold. A further registered test on two new seeds added layers 3--5, the window we release. Trained through the outdated setting, \stwoDefaultRel{} of \stwoDefaultN{} effective runs at the default layers relapsed (\stwoDefaultMean{} points on average), \stwoShallowRel{} of \stwoShallowN{} at layers 3--5 (\stwoShallowMean, at most \stwoShallowMax) and \stwoMidRel{} of \stwoMidN{} at layers 7--9; all three hypotheses held (Figure~\ref{fig:tok}). Through the official tokenizer the 3--5 runs scored \stwoShallowDeployed\%, the default-layer runs \stwoDefaultDeployed\%. Tiny Aya Base is the exception: it fell to chance in the outdated pipeline at every window, outside our effective range, and through the official tokenizer its 3--5 runs scored \stwoBaseLow--\stwoBaseHigh\%.
-
-\textbf{Training on both tokenizers narrows the gap but does not protect the deployed model.} The gap between the two tokenizers was smaller in \shiftPthreeWins{} of \the\numexpr\shiftPthreeWins+\shiftPthreeLosses\relax{} matched pairs ($p=\shiftPthreeP$), though not significantly on the held-out models (\shiftHeldPthreeWins{} of \shiftHeldPthreeN, $p=\shiftHeldPthreeP$). At layers 5--7 it stayed at \shiftBothGap{} points, and the score through the official tokenizer was lower in only \shiftPfourWins{} pairs against \shiftPfourLosses. \textbf{Direction matters.} Runs trained through the official tokenizer and scored through the outdated one rose by only \shiftReverseMean{} points on average and relapsed in \shiftReverseRel{} of \shiftReverseEff{} cases, about the size of the 4-bit effect. The large relapse belongs to unlearning done through the outdated setting. The dependable protection is procedural: audit through the exact tokenizer files that ship with the model.
 
 \subsection{Where to place the edit}
 \label{sec:place}

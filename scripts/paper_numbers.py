@@ -407,9 +407,9 @@ def glance() -> tuple[dict, dict]:
             + "\\midrule\n"
             + row("MMLU points lost", f"{np.mean(cost['5-7']):.1f}", f"{np.mean(cost['3-5']):.1f}")
             + row("Benign-biology points lost", f"{np.mean(benign['5-7']):.1f}", f"{np.mean(benign['3-5']):.1f}")
-            + row("Hazard points forgotten per benign point", f"{np.mean(forgot['5-7']) / np.mean(benign['5-7']):.2f}", f"{np.mean(forgot['3-5']) / np.mean(benign['3-5']):.2f}"))
+            + row("Hazard points per benign point", f"{np.mean(forgot['5-7']) / np.mean(benign['5-7']):.2f}", f"{np.mean(forgot['3-5']) / np.mean(benign['3-5']):.2f}"))
     tex = table("@{}lrr@{}", "Layers edited & 5--7 (default) & 3--5 \\\\\n", body,
-                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited. Bottom: the final runs, official tokenizer, five models and two seeds. Lower \\wmdp{} is better.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
+                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited. Bottom: the final runs, official tokenizer, five models and two seeds; the last row is hazard points forgotten per point of benign biology lost. Lower \\wmdp{} is better.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
     return {"glanceRelDefault": relapses["5-7"], "glanceRelNew": relapses["3-5"]}, {"table_glance.tex": tex}
 
 
@@ -474,8 +474,8 @@ def revisions() -> tuple[dict, dict]:
     desc = "; ".join(f"R{i + 1}: " + ", ".join(f"{n} \\texttt{{{sha}}}" for n, sha in zip(names, r)) + f" (committed {' and '.join(sorted({date(x) for x in r}))})" for i, r in enumerate(sets))
     same = all(len({json.dumps({k: v for k, v in c["files"].items() if k != "generation_config.json"}, sort_keys=True) for c in H[f"CohereLabs/tiny-aya-{v}"] if c["sha"][:10] in {r[i] for r in sets}}) == 1
                for i, v in enumerate(("global", "fire", "earth", "water", "base")))
-    body += ("\\midrule\nStage~1 (withdrawn results; probe translations) & -- & 9--11 Nov, Kaggle & Kaggle Models \\path{cohere-labs/tiny-aya}, version 1 \\\\\n")
-    tex = ("\\begin{table*}[t]\n\\centering\\footnotesize\n\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{0.47\\textwidth} r l l@{}}\n\\toprule\nExperiment & Jobs & Jobs started (UTC, 2026) & Revision \\\\\n\\midrule\n" + body +
+    body += ("\\midrule\nStage~1 (withdrawn results; probe translations) & -- & 9--11 Nov, on Kaggle & Kaggle's copy, version 1 \\\\\n")
+    tex = ("\\begin{table*}[t]\n\\centering\\footnotesize\n\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{0.44\\textwidth} r l >{\\raggedright\\arraybackslash}p{0.2\\textwidth}@{}}\n\\toprule\nExperiment & Jobs & Jobs started (UTC, 2026) & Revision \\\\\n\\midrule\n" + body +
            "\\bottomrule\n\\end{tabular}\n\\caption{Model and tokenizer revision of every experiment. No Stage~2 run recorded the revision it downloaded: each job took the main branch of \\texttt{CohereLabs/tiny-aya-<variant>} when it started, so the revision is read from the job's start time (Hugging Face Jobs' record, \\texttt{results/survey/jobs.json}) and the repositories' public history (\\texttt{results/survey/official\\_history.json}). " + desc +
            ("." + (" Among tokenizer files, configuration and weights, R1 and R2 differ only in \\texttt{generation\\_config.json}: the tokenizer files and weights have the same content hashes." if len(sets) > 1 and same else "")) +
            f" Job counts exclude {len(smoke)} three-batch pipeline tests. The outdated setting inside Stage~2 jobs is the same revision's tokenizer files with \\texttt{{tokenizer\\_class}} set to \\texttt{{CohereTokenizerFast}}; Stage~1 used the copy Kaggle held (uploaded 16 February 2026), whose revision Kaggle identifies only as version 1.}}\n\\label{{tab:revisions}}\n\\end{{table*}}\n")

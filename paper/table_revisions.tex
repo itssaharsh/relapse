@@ -1,6 +1,6 @@
 \begin{table*}[!t]
 \centering\footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.47\textwidth} r l l@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.44\textwidth} r l >{\raggedright\arraybackslash}p{0.2\textwidth}@{}}
 \toprule
 Experiment & Jobs & Jobs started (UTC, 2026) & Revision \\
 \midrule
@@ -16,7 +16,7 @@ Placement and tokenizer (PR5) & 10 & 22 Nov 13:12--13:13 & R1 \\
 NPO pilot & 5 & 22 Nov 13:16--14:12 & R1 \\
 CircuitKIT, 160 prompts & 5 & 24 Nov 11:11--11:12 & R2 \\
 \midrule
-Stage~1 (withdrawn results; probe translations) & -- & 9--11 Nov, Kaggle & Kaggle Models \path{cohere-labs/tiny-aya}, version 1 \\
+Stage~1 (withdrawn results; probe translations) & -- & 9--11 Nov, on Kaggle & Kaggle's copy, version 1 \\
 \bottomrule
 \end{tabular}
 \caption{Model and tokenizer revision of every experiment. No Stage~2 run recorded the revision it downloaded: each job took the main branch of \texttt{CohereLabs/tiny-aya-<variant>} when it started, so the revision is read from the job's start time (Hugging Face Jobs' record, \texttt{results/survey/jobs.json}) and the repositories' public history (\texttt{results/survey/official\_history.json}). R1: Global \texttt{af89d219b5}, Fire \texttt{73500c80fc}, Earth \texttt{0624fafbe2}, Water \texttt{41a99216d1}, Base \texttt{d62ac17e24} (committed 2026-09-30); R2: Global \texttt{4694bd755a}, Fire \texttt{2a4c47da62}, Earth \texttt{87642d58c6}, Water \texttt{8ddffb7188}, Base \texttt{d62ac17e24} (committed 2026-09-30 and 2026-11-24). Among tokenizer files, configuration and weights, R1 and R2 differ only in \texttt{generation\_config.json}: the tokenizer files and weights have the same content hashes. Job counts exclude 3 three-batch pipeline tests. The outdated setting inside Stage~2 jobs is the same revision's tokenizer files with \texttt{tokenizer\_class} set to \texttt{CohereTokenizerFast}; Stage~1 used the copy Kaggle held (uploaded 16 February 2026), whose revision Kaggle identifies only as version 1.}

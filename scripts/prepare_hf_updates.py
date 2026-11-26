@@ -132,7 +132,7 @@ def with_status(old: str, kind: str, today: str) -> str:
 def main() -> None:
     from huggingface_hub import HfApi, hf_hub_download
     api = HfApi()
-    today = datetime.datetime.now(datetime.timezone.utc).strftime("%-d %B %Y")
+    today = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=5, minutes=30))).strftime("%-d %B %Y")      # the author's date (IST), as apply_hf_updates.py reads FIX_DATE
     for d in ("cards", "previous", "space__relapse-article"):
         os.makedirs(os.path.join(OUT, d), exist_ok=True)
     live = {}

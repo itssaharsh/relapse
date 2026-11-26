@@ -1,4 +1,4 @@
-# Pushes prepared on 26 November 2026, waiting for a yes
+# Pushes prepared on 27 November 2026, waiting for a yes
 
 Nothing here has been uploaded. `python scripts/apply_hf_updates.py` prints this plan; `--yes` carries it out. No repository is created, deleted or renamed, and no visibility changes.
 

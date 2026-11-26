@@ -65,6 +65,8 @@ def brief() -> dict:
     dm = audit_damage()[0]
     extra = {"default": {"mmlu_audited": float(dm["stwoDefaultCostAudited"]), "mmlu_deployed": float(dm["stwoDefaultCostDeployed"])},
              "released": {"mmlu_audited": float(dm["stwoShallowCostAudited"]), "mmlu_deployed": float(dm["stwoShallowCostDeployed"])}}
+    sl = load("single_line", "summary.json")      # pre-registration 6: the same runs scored with single-line prompts
+    extra["default"] |= {"single_relapses": sl["S2"]["relapses"], "single_runs": sl["S2"]["effective"], "single_rise": pt(sl["by_window"]["5-7"]["mean_rise"])}
     return {"default": col("5-7", "mean_wmdp_5_7") | extra["default"], "released": col("3-5", "mean_wmdp_3_5") | extra["released"],
             "tok_models": len(tok_models), "final_models": len(MODELS), "base_rise_low": pt(min(r["rise"] for r in base)), "base_rise_high": pt(max(r["rise"] for r in base))}
 
@@ -151,6 +153,7 @@ def check(d: dict) -> None:
             f"| {b['default']['mmlu_lost']:.1f} | {b['released']['mmlu_lost']:.1f} |", f"| {b['default']['benign_lost']:.1f} | {b['released']['benign_lost']:.1f} |",
             f"| {b['default']['all_rise']} of {b['default']['all_runs']} | {b['released']['all_rise']} of {b['released']['all_runs']} |", f"| {b['default']['per_benign']:.2f} | {b['released']['per_benign']:.2f} |",
             f"by {b['base_rise_low']:.1f} to {b['base_rise_high']:.1f} points at layers 3 to 5",
+            f"{b['default']['single_relapses']} of {b['default']['single_runs']} relapse (we had expected",
             f"| {b['default']['mmlu_audited']:.1f}, then {b['default']['mmlu_deployed']:.1f} | {b['released']['mmlu_audited']:.1f}, then {b['released']['mmlu_deployed']:.1f} |",
             f"({b['default']['mean_rise']:+.1f} points on average)", f"({b['released']['mean_rise']:+.1f} on average)",
             f"{r['map_held']} of the {r['map_effective']} runs", f"map of {r['map_runs']} runs",

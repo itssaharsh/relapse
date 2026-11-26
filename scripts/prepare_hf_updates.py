@@ -53,7 +53,7 @@ def finding() -> str:
     held = sum(not (r["Q4_0"]["relapse"] or r["nf4"]["relapse"]) for r in eff)
     return (f"**What the final paper found** ([{PAPER}]({PAPER_URL})). Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers (5 to 7) regained "
             f"{100 * s2['by_window']['5-7']['mean_rise']:.1f} points on average once loaded through the official tokenizer, in {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} runs that count; "
-            f"those runs had also lost {dm['stwoDefaultCostAudited']} MMLU points where they were audited and {dm['stwoDefaultCostDeployed']} once deployed. "
+            f"those runs had also lost {dm['stwoDefaultCostAudited']} MMLU points where they were audited and {dm['stwoDefaultCostDeployed']} once deployed, and with single-line prompts none of them relapsed. "
             f"At layers 3 to 5, {s2['T2']['relapses']} of {s2['T2']['effective']} did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in "
             f"{held} of {len(eff)} runs. Of {tl['n']} registered hypotheses, {tl['held']} held, {tl['part']} held in part, {tl['failed']} failed and {tl['untestable']} could not be tested.")
 
@@ -110,7 +110,7 @@ CC-BY-NC-4.0, the license of the original model. Use is also subject to Cohere's
 
 
 def status_block(kind: str, today: str) -> str:
-    extra = {"relapse-runs": "The `stage2/` folders hold the runs the paper reports, from five pre-registered experiments (the fifth, placement against the tokenizer, is `stage2/shift2/`), and `stage2/survey/` holds the survey of public copies, the official repositories' history and the start time and commit of every job. Everything outside `stage2/` and `correct_tokenizer/` is Stage 1, made through the outdated tokenizer setting, and is superseded.",
+    extra = {"relapse-runs": "The `stage2/` folders hold the runs the paper reports, from six pre-registered experiments (the fifth, placement against the tokenizer, is `stage2/shift2/`; the sixth, single-line prompts, `stage2/single_line/`), and `stage2/survey/` holds the survey of public copies, the official repositories' history and the start time and commit of every job. Everything outside `stage2/` and `correct_tokenizer/` is Stage 1, made through the outdated tokenizer setting, and is superseded.",
              "relapse-wmdp-bio-probes": "The translations and rewordings were made in Stage 1 by Tiny Aya Global through Kaggle's copy, so through the outdated tokenizer setting; no native speaker checked them. The paper's full check scores the released models on them through the official tokenizer.",
              "relapse-article": "This page is the write-up of the final results, rebuilt from `docs/ARTICLE.md`.",
              "relapse": "This page shows the final, pre-registered Stage 2 results; every number on it is read from the result files."}[kind]
@@ -157,11 +157,11 @@ def main() -> None:
     # datasets and Spaces: the live card with a status block under its title
     for kind, name in [("dataset", n) for n in DATASETS] + [("space", "relapse-article")]:
         cards[(kind, name)] = with_status(live[(kind, name)], name, today)
-    cards[("dataset", "relapse-runs")] = cards[("dataset", "relapse-runs")].replace("Four pre-registered experiments", "Five pre-registered experiments").replace("scripts/build_results.py", "scripts/archive/stage1/build_results.py").replace(
-        "Five pre-registered experiments, trained and scored through the **official tokenizer** on all five Tiny Aya models.",
-        "Five pre-registered experiments on all five Tiny Aya models, scored through the **official tokenizer**; the two tokenizer experiments also unlearn and score through the outdated setting, on purpose.").replace(
+    cards[("dataset", "relapse-runs")] = cards[("dataset", "relapse-runs")].replace("Four pre-registered experiments", "Six pre-registered experiments").replace("scripts/build_results.py", "scripts/archive/stage1/build_results.py").replace(
+        "Six pre-registered experiments, trained and scored through the **official tokenizer** on all five Tiny Aya models.",
+        "Six pre-registered experiments on all five Tiny Aya models, scored through the **official tokenizer**; the two tokenizer experiments also unlearn and score through the outdated setting, on purpose.").replace(
         "| `stage2/shift/` | The tokenizer experiment: each run scored through the official and the outdated tokenizer setting |",
-        "| `stage2/shift/` | The tokenizer experiment: each run scored through the official and the outdated tokenizer setting |\n| `stage2/shift2/` | Placement against the tokenizer (pre-registration 5): layers 3 to 5, 5 to 7 and 7 to 9, unlearned through the outdated setting, scored through both |\n| `stage2/survey/` | The survey of public copies, the official repositories' history, the start time and commit of every job, token-level differences; `stage2/check_tokenizer.py` is the checker |")
+        "| `stage2/shift/` | The tokenizer experiment: each run scored through the official and the outdated tokenizer setting |\n| `stage2/shift2/` | Placement against the tokenizer (pre-registration 5): layers 3 to 5, 5 to 7 and 7 to 9, unlearned through the outdated setting, scored through both |\n| `stage2/single_line/` | Pre-registration 6: the same saved runs scored with single-line prompts through both settings |\n| `stage2/survey/` | The survey of public copies, the official repositories' history, the start time and commit of every job, token-level differences; `stage2/check_tokenizer.py` is the checker |")
     cards[("space", "relapse")] = with_status(open(os.path.join(ROOT, "space", "README.md")).read(), "relapse", today)      # the demo Space's card is kept in space/README.md
     for (kind, name), text in cards.items():
         open(os.path.join(OUT, "cards", f"{kind}__{name}.md"), "w").write(text)
@@ -191,7 +191,7 @@ def main() -> None:
     plan += [f"   - `{USER}/{n}` ({k})" + ("" if f"{k}__{n}" in changed else " (unchanged)") for k, n in targets]
     plan += ["3. Demo Space `itssaharsh/relapse`: `index.html`, `app.js`, `data/stage2.json` and the preview image `og.png` from `space/` (Tiny Aya Base stated beside the headline, means in the table, links to the paper and the checker).",
              "4. Write-up Space `itssaharsh/relapse-article`: `index.html` from `hf_updates/space__relapse-article/` (rebuilt from `docs/ARTICLE.md`).",
-             "5. Dataset `itssaharsh/relapse-runs`: add `stage2/survey/` (the files of `results/survey/`), replace `stage2/paper.pdf` with the final `paper/main.pdf`, add `stage2/check_tokenizer.py` (the checker, so it sits inside the judged collection), and add `stage2/PREREGISTRATION_5.md` if it is not there.",
+             "5. Dataset `itssaharsh/relapse-runs`: add `stage2/survey/` (the files of `results/survey/`), replace `stage2/paper.pdf` with the final `paper/main.pdf`, add `stage2/check_tokenizer.py` (the checker, so it sits inside the judged collection), `stage2/single_line/` and `stage2/PREREGISTRATION_6.md`, and add `stage2/PREREGISTRATION_5.md` if it is not there.",
              "6. Both collections: descriptions that name the paper and the checker, item notes, and the models collection ordered Stage 2 first (`hf_updates/collection.json`):"] + [f"   {i + 1}. `{r}`" for i, r in enumerate(order)]
     plan += [f"7. The five Stage 1 model repositories that carry the outdated setting ({', '.join('`' + n + '`' for n in revs)}): replace `tokenizer_config.json` with Cohere's fixed file "
              f"(`{VENDOR_REPO}` at `{VENDOR_REV[:10]}`). Their cards give the date ({FIX_DATE}) and the revision the Stage 1 results used. The apply script does this only on that date."]

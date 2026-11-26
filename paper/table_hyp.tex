@@ -30,8 +30,12 @@ R7 & A rule chooses how long to train the repair & \textbf{Failed} \\
 T1 & The tokenizer rise is smaller at layers 3--5 than at 5--7 & Held \\
 T2 & Under 1 in 5 runs at layers 3--5 relapse through the tokenizer & Held \\
 T3 & Layers 7--9 again hold and layers 5--7 again relapse & Held \\
+\addlinespace[2pt]
+S1 & On single-line prompts the default-layer rise is smaller & Held \\
+S2 & At least half of the default-layer runs still relapse on single-line prompts & \textbf{Failed} \\
+S3 & Under 1 in 5 runs at layers 3--5 relapse on single-line prompts & Held \\
 \bottomrule
 \end{tabular}
-\caption{Every registered hypothesis, its outcome read from the flags the registered analyses wrote. H: pre-registration 1; P: 2; Q: 3; R: 4; T: 5. For H and P the held-out models are the confirmatory test; P2 and P3 held on all five models and failed there.}
+\caption{Every registered hypothesis, its outcome read from the flags the registered analyses wrote. H: pre-registration 1; P: 2; Q: 3; R: 4; T: 5; S: 6. For H and P the held-out models are the confirmatory test; P2 and P3 held on all five models and failed there.}
 \label{tab:hyp}
 \end{table}

@@ -3245,5 +3245,90 @@
    "SAMPLES",
    "VARIANT"
   ]
+ },
+ {
+  "started": "2026-11-26T18:11:28Z",
+  "flavor": "l4x1",
+  "outcome": "COMPLETED",
+  "repo_commit": "8a3d71f68efd645d7abc45746c0509158ffce4ea",
+  "experiment": "single_line",
+  "variant": "global",
+  "seed": "",
+  "out": "",
+  "run_suffix": "",
+  "batches": "",
+  "settings": [
+   "EXPERIMENT",
+   "REPO_COMMIT",
+   "VARIANT"
+  ]
+ },
+ {
+  "started": "2026-11-26T18:11:31Z",
+  "flavor": "l4x1",
+  "outcome": "COMPLETED",
+  "repo_commit": "8a3d71f68efd645d7abc45746c0509158ffce4ea",
+  "experiment": "single_line",
+  "variant": "fire",
+  "seed": "",
+  "out": "",
+  "run_suffix": "",
+  "batches": "",
+  "settings": [
+   "EXPERIMENT",
+   "REPO_COMMIT",
+   "VARIANT"
+  ]
+ },
+ {
+  "started": "2026-11-26T18:11:35Z",
+  "flavor": "l4x1",
+  "outcome": "COMPLETED",
+  "repo_commit": "8a3d71f68efd645d7abc45746c0509158ffce4ea",
+  "experiment": "single_line",
+  "variant": "earth",
+  "seed": "",
+  "out": "",
+  "run_suffix": "",
+  "batches": "",
+  "settings": [
+   "EXPERIMENT",
+   "REPO_COMMIT",
+   "VARIANT"
+  ]
+ },
+ {
+  "started": "2026-11-26T18:11:39Z",
+  "flavor": "l4x1",
+  "outcome": "COMPLETED",
+  "repo_commit": "8a3d71f68efd645d7abc45746c0509158ffce4ea",
+  "experiment": "single_line",
+  "variant": "water",
+  "seed": "",
+  "out": "",
+  "run_suffix": "",
+  "batches": "",
+  "settings": [
+   "EXPERIMENT",
+   "REPO_COMMIT",
+   "VARIANT"
+  ]
+ },
+ {
+  "started": "2026-11-26T18:11:44Z",
+  "flavor": "l4x1",
+  "outcome": "COMPLETED",
+  "repo_commit": "8a3d71f68efd645d7abc45746c0509158ffce4ea",
+  "experiment": "single_line",
+  "variant": "base",
+  "seed": "",
+  "out": "",
+  "run_suffix": "",
+  "batches": "",
+  "settings": [
+   "EXPERIMENT",
+   "REPO_COMMIT",
+   "VARIANT"
+  ]
  }
 ]

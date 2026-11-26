@@ -17,7 +17,10 @@
    "all_rise": 20,
    "all_runs": 20,
    "mmlu_audited": 5.8,
-   "mmlu_deployed": 1.7
+   "mmlu_deployed": 1.7,
+   "single_relapses": 0,
+   "single_runs": 16,
+   "single_rise": 0.8
   },
   "released": {
    "pipeline": 35.6,
@@ -555,7 +558,7 @@
   "original_high": 63.5
  },
  "hypotheses": {
-  "registered": 22,
-  "failed": 10
+  "registered": 25,
+  "failed": 11
  }
 }

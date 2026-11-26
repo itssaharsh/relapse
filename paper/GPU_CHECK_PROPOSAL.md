@@ -1,6 +1,6 @@
-# Optional GPU check (proposal; nothing has been run)
+# Optional GPU check: the proposal as it was made
 
-Not submitted. To be registered and committed as `results/PREREGISTRATION_6.md` before any job starts, only if the author says yes.
+Not submitted. The author approved it on 26 November 2026. It was registered as `results/PREREGISTRATION_6.md` (commit `8a3d71f`, 18:11 UTC) before its five jobs started, ran in about 2.3 L4 GPU-hours (under $2), and its result is in `results/single_line/summary.json` and the paper's appendix: S1 held, S2 failed, S3 held. The text below is the proposal, unchanged.
 
 **What.** Rescore the 60 saved runs of pre-registration 5 (and the five originals) with every prompt on a single line: the same question and the four options joined by " | " in place of line breaks, ending in "Answer:". fp16, WMDP-bio (1,273) and MMLU (1,000), through both tokenizer settings. Scoring only: no training, no new seeds. The panel ranked this above the fine-tuning attack on the default layers, because it is the one check that speaks to what the two settings do to the text.
 

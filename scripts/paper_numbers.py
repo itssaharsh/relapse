@@ -459,13 +459,16 @@ def revisions() -> tuple[dict, dict]:
             ("Runtime check", lambda j: j["flavor"].startswith("cpu")),
             ("Placement and tokenizer (PR5)", lambda j: j["out"] == "changed_shift2.pt"),
             ("NPO pilot", lambda j: j["out"] == "npo_deltas.pt"),
-            ("CircuitKIT, 160 prompts", lambda j: j["started"] >= "2026-11-24")]
+            ("CircuitKIT, 160 prompts", lambda j: "2026-11-24" <= j["started"] < "2026-11-25"),
+            ("Single-line rescoring (PR6), pinned", lambda j: j["experiment"] == "single_line")]
     used, sets, body = set(), [], ""
     stamp = lambda t: datetime.datetime.strptime(t, "%Y-%m-%dT%H:%M:%SZ").strftime("%-d Nov %H:%M")
     for label, test in rows:
         g = [j for i, j in enumerate(J) if i not in used and test(j)]
         used |= {i for i, j in enumerate(J) if i not in used and test(j)}
-        revs = sorted({main_at(j["started"]) for j in g})
+        if not g:
+            continue
+        revs = sorted({main_at(j["started"]) for j in g}) if "pinned" not in label else [sets[0]]      # the PR6 jobs name the revision of the first row
         for r in revs:
             if r not in sets:
                 sets.append(r)
@@ -605,6 +608,43 @@ def auditkit_headline() -> tuple[dict, dict]:
             "akShallow": f"{d['by_window']['3-5']['relapses_auditkit']} of {d['by_window']['3-5']['pairs']}"}, {}
 
 
+def single_line() -> tuple[dict, dict]:
+    """Pre-registration 6: the runs of pre-registration 5 rescored with single-line prompts (results/single_line/summary.json)."""
+    path = os.path.join(ROOT, "results", "single_line", "summary.json")
+    if not os.path.exists(path):
+        return {}, {}
+    d = json.load(open(path)); W = d["by_window"]; E = d["exploratory_mmlu_rule"]
+    base = [r for r in d["base"] if r["window"] == "3-5"]
+    return {"slJobs": len(d["jobs"]), "slRuns": d["runs"], "slSmaller": d["S1"]["smaller_single_line"], "slLarger": d["S1"]["larger_single_line"], "slPairs": d["S1"]["pairs"],
+            "slPone": f"{d['S1']['p']:.4f}" if d["S1"]["p"] is not None else "", "slRelapses": d["S2"]["relapses"], "slEffective": d["S2"]["effective"],
+            "slShallowRel": d["S3"]["relapses"], "slShallowN": d["S3"]["effective"], "slMidRel": W["7-9"]["relapses"], "slMidN": W["7-9"]["effective"],
+            "slRise": signed(100 * W["5-7"]["mean_rise"]), "slRiseRegistered": signed(100 * W["5-7"]["mean_rise_registered_layout"]), "slShallowRise": signed(100 * W["3-5"]["mean_rise"]),
+            "slAudited": pct(W["5-7"]["mean_wmdp_outdated"]), "slDeployed": pct(W["5-7"]["mean_wmdp_official"]),
+            "slMmluAudited": f"{100 * W['5-7']['mean_mmlu_lost_outdated']:.1f}", "slMmluDeployed": f"{100 * W['5-7']['mean_mmlu_lost_official']:.1f}",
+            "slHurtRose": f"{E['lost_3_or_more_and_rose'][0]} of {E['lost_3_or_more_and_rose'][1]}", "slFineRose": f"{E['lost_less_and_rose'][0]} of {E['lost_less_and_rose'][1]}",
+            "slBaseRiseLow": f"{100 * min(r['rise'] for r in base):.1f}" if base else "", "slBaseRiseHigh": f"{100 * max(r['rise'] for r in base):.1f}" if base else "",
+            "slHolds": "".join("Y" if d[k]["holds"] else "N" for k in ("S1", "S2", "S3")), **single_line_extra(d)}, {}
+
+
+def single_line_extra(d: dict) -> dict:
+    """How closely the jobs of pre-registration 6 reproduce the registered layout, what single-line prompts do to the originals, and Tiny Aya Base."""
+    five = json.load(open(os.path.join(ROOT, "results", "shift2", "summary.json")))
+    reg = {(r["model"], r["seed"], r["window"], r["lr"]): r for r in five["runs"]}
+    worst, orig, orig_mmlu = 0.0, {}, {}
+    for v in ("global", "fire", "earth", "water", "base"):
+        R = {(r["model"], r["score_tok"], r["layout"]): r for r in json.load(open(os.path.join(ROOT, "results", "single_line", v, "results.json")))}
+        for (name, tok, lay), r in R.items():
+            if lay == "mcq" and name != "base":      # the registered layout, scored again: against the scores of pre-registration 5
+                _, w, lr, _, sd = name.split("_"); g = reg[(v, int(sd[1:]), w[1:], lr[2:])]
+                worst = max(worst, abs(r["wmdp-bio"] - g["wmdp_" + tok]))
+        orig[v] = (R[("base", "official", "mcq")]["wmdp-bio"], R[("base", "official", "single")]["wmdp-bio"]); orig_mmlu[v] = R[("base", "official", "single")]["mmlu"]
+    four = [v for v in orig if v != "base"]; base = d["base"]; every = d["all_runs"]
+    return {"slCheckWorst": f"{100 * worst:.1f}", "slOrigLow": pct(min(orig[v][1] for v in four)), "slOrigHigh": pct(max(orig[v][1] for v in four)), "slOrigBase": pct(orig["base"][1]), "slOrigBaseMcq": pct(orig["base"][0]),
+            "slOrigBaseMmlu": pct(orig_mmlu["base"]), "slBaseLow": pct(min(r["wmdp_official"] for r in base)), "slBaseHigh": pct(max(r["wmdp_official"] for r in base)),
+            "slBaseMaxRise": signed(100 * max(r["rise"] for r in base)), "slAllRuns": len(every), "slAllRelapses": sum(r["relapse"] for r in every), "slMaxRise": signed(100 * max(r["rise"] for r in every)),
+            "slShallowAudited": pct(d["by_window"]["3-5"]["mean_wmdp_outdated"]), "slShallowDeployed": pct(d["by_window"]["3-5"]["mean_wmdp_official"])}
+
+
 def reverse_rule() -> tuple[dict, dict]:
     """The MMLU warning sign in the reverse direction: runs unlearned and audited through the official tokenizer, then scored through the outdated one."""
     hurt_rose = hurt = fine_rose = fine = 0
@@ -656,7 +696,21 @@ def hypotheses() -> list[tuple[str, str, str, str]]:
             ("4", "R7", "A rule chooses how long to train the repair", ok(all(r7))),
             ("5", "T1", "The tokenizer rise is smaller at layers 3--5 than at 5--7", ok(s2["T1"]["holds"])),
             ("5", "T2", "Under 1 in 5 runs at layers 3--5 relapse through the tokenizer", ok(s2["T2"]["holds"])),
-            ("5", "T3", "Layers 7--9 again hold and layers 5--7 again relapse", ok(s2["T3"]["holds"]))]
+            ("5", "T3", "Layers 7--9 again hold and layers 5--7 again relapse", ok(s2["T3"]["holds"]))] + six()
+
+
+def six() -> list[tuple[str, str, str, str]]:
+    """The hypotheses of pre-registration 6 (single-line rescoring), once every job has reported."""
+    path = os.path.join(ROOT, "results", "single_line", "summary.json")
+    if not os.path.exists(path):
+        return []
+    d = json.load(open(path))
+    if len(d["jobs"]) < 5:
+        return []
+    ok = lambda flag: "held" if flag else "failed"
+    return [("6", "S1", "On single-line prompts the default-layer rise is smaller", ok(d["S1"]["holds"])),
+            ("6", "S2", "At least half of the default-layer runs still relapse on single-line prompts", ok(d["S2"]["holds"])),
+            ("6", "S3", "Under 1 in 5 runs at layers 3--5 relapse on single-line prompts", ok(d["S3"]["holds"]))]
 
 
 def totals() -> tuple[dict, dict]:
@@ -664,13 +718,14 @@ def totals() -> tuple[dict, dict]:
     import glob
     base = os.path.join(ROOT, "results")
     names = {(os.path.relpath(f, base).split(os.sep)[0], r["model"])      # (experiment folder, run name); the original models are not runs
-             for f in glob.glob(os.path.join(base, "**", "results.json"), recursive=True) for r in json.load(open(f)) if r.get("model") != "base"}
+             for f in glob.glob(os.path.join(base, "**", "results.json"), recursive=True) if os.sep + "single_line" + os.sep not in f      # pre-registration 6 rescores saved runs
+             for r in json.load(open(f)) if r.get("model") != "base"}
     hyp = hypotheses()
     count = lambda o: sum(x[3] == o for x in hyp)
     label = {"held": "Held", "part": "In part", "failed": "\\textbf{Failed}", "untestable": "Untestable"}
     body = "".join(("\\addlinespace[2pt]\n" if i and hyp[i - 1][0] != h[0] else "") + f"{h[1]} & {h[2]} & {label[h[3]]} \\\\\n" for i, h in enumerate(hyp))
     tex = table("@{}l>{\\raggedright\\arraybackslash}p{0.68\\columnwidth}l@{}", " & Registered hypothesis & Outcome \\\\\n", body,
-                "Every registered hypothesis, its outcome read from the flags the registered analyses wrote. H: pre-registration 1; P: 2; Q: 3; R: 4; T: 5. For H and P the held-out models are the confirmatory test; P2 and P3 held on all five models and failed there.", "tab:hyp", "3pt", "\\footnotesize")
+                "Every registered hypothesis, its outcome read from the flags the registered analyses wrote. H: pre-registration 1; P: 2; Q: 3; R: 4; T: 5; S: 6. For H and P the held-out models are the confirmatory test; P2 and P3 held on all five models and failed there.", "tab:hyp", "3pt", "\\footnotesize")
     return {"totalRuns": len(names), "totalNpo": sum(e == "npo_pilot" for e, _ in names), "hypN": len(hyp), "hypHeld": count("held"), "hypPart": count("part"), "hypFailed": count("failed"), "hypUntestable": count("untestable"),
             "hypFailedWord": WORDS[count("failed")], "hypHeldList": ", ".join(h[1] for h in hyp if h[3] == "held"), "hypFailedList": ", ".join(h[1] for h in hyp if h[3] == "failed"),
             "hypPartList": " and ".join(h[1] for h in hyp if h[3] == "part"), "hypUntestableList": ", ".join(h[1] for h in hyp if h[3] == "untestable")}, {"table_hyp.tex": tex}
@@ -678,7 +733,7 @@ def totals() -> tuple[dict, dict]:
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, auditkit_headline, reverse_rule, totals):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, auditkit_headline, single_line, reverse_rule, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         if name in ("table_hyp.tex", "table_real.tex", "table_cause.tex", "table_repair.tex", "table_revisions.tex"):      # appendix floats: placed where they fall, whatever their height

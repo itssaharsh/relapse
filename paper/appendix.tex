@@ -117,11 +117,11 @@ Each job is a \texttt{uv} script whose header pins Python, \texttt{transformers}
 
 \textbf{Technical failures} (none changed a setting). Upload limits cost two repair jobs their per-question files (re-scored from saved weights, \path{results/deep/*_rescored}) and one job its results file (rebuilt); one repair run was retrained. A storage limit forced three final-model jobs to be rerun with the same settings. Some 4-bit scores of the first tokenizer experiment were lost; no registered test used them. One Fire run of part~A has \nf{} scores only per question and is left out of the analysis; it does not relapse.
 
-\section{Declarations and changes since Stage 1}
+\section{Declarations, use of language models, and changes since Stage 1}
 \label{app:decl}
 
 \textbf{Outside work.} One independent researcher did this work. None of it predates the hackathon: the first commit is dated 9 November 2026 and the repository holds no earlier code.
 
-\textbf{Numbers and scoring.} Every number comes from saved result files through generated tables. No language model is used as a judge.
+\textbf{Use of AI assistants.} AI coding and writing assistants (Claude Code, Anthropic) were used for the code, experiments and writing under the author's direction; the author checked the results and is responsible for the content. Every number comes from saved result files through generated tables. No language model is used as a judge.
 
 \textbf{Changes since the Stage~1 submission.} At 21:04 UTC on 21 November we committed the correction: Stage~1 used Kaggle's outdated tokenizer setting, so we withdrew the 4-bit relapse at layers 10--12 on Global, the repair by training on the 4-bit file and the claims built on them, and stopped relying on any other Stage~1 number. Pre-registrations 1 to 4, their amendments and their analysis scripts were committed from 18:19 on 21 November to 02:31 on 22 November, each before the runs or results it covers; the results, with the failed hypotheses, from 22:12 on 21 November to 07:28 on 22 November. Pre-registration~5 and its analysis script were committed at 13:12:18 on 22 November; Hugging Face Jobs records its ten jobs as started between \revPrFiveFirst{} and \revPrFiveLast{} from that commit (\texttt{\revPrFiveCommit}), and its results were committed at 14:15. Pre-registration~6, its job and its analysis were committed at 18:11:09 on 26 November; its \revPrSixJobs{} jobs are recorded as started between \revPrSixFirst{} and \revPrSixLast{} from that commit (\texttt{\revPrSixCommit}). GitHub's push record (\path{results/survey/pushes.json}) shows pre-registrations 1--\pushPublic{} public within \pushMaxLag{} seconds of their commits; pre-registration~6 became public only with this paper's push (its jobs carry its hash).

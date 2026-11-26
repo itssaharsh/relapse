@@ -1,0 +1,113 @@
+{
+ "date": "2026-11-26",
+ "kaggle": "searched Kaggle Models: 1 model(s), 5 variation(s)",
+ "hugging_face": {
+  "repos": 1275,
+  "official": {
+   "copies": 492,
+   "downloads": 410871,
+   "downloads_30d": 84071
+  },
+  "outdated": {
+   "copies": 423,
+   "downloads": 67669,
+   "downloads_30d": 10183
+  },
+  "unknown": {
+   "copies": 360,
+   "downloads": 11030,
+   "downloads_30d": 8945
+  }
+ },
+ "hugging_face_outdated_by_format": {
+  "adapter": {
+   "copies": 200,
+   "downloads": 22489,
+   "downloads_30d": 2185
+  },
+  "gguf": {
+   "copies": 2,
+   "downloads": 1149,
+   "downloads_30d": 147
+  },
+  "gguf+bitsandbytes": {
+   "copies": 1,
+   "downloads": 184,
+   "downloads_30d": 184
+  },
+  "gguf+transformers": {
+   "copies": 4,
+   "downloads": 2866,
+   "downloads_30d": 2866
+  },
+  "gptq": {
+   "copies": 1,
+   "downloads": 20,
+   "downloads_30d": 20
+  },
+  "mlx": {
+   "copies": 2,
+   "downloads": 393,
+   "downloads_30d": 92
+  },
+  "mlx+bitsandbytes": {
+   "copies": 5,
+   "downloads": 2555,
+   "downloads_30d": 637
+  },
+  "onnx": {
+   "copies": 4,
+   "downloads": 2055,
+   "downloads_30d": 172
+  },
+  "transformers": {
+   "copies": 204,
+   "downloads": 35958,
+   "downloads_30d": 3880
+  }
+ },
+ "hugging_face_outdated_not_ours": {
+  "copies": 418,
+  "downloads": 64619,
+  "downloads_30d": 7133
+ },
+ "hugging_face_outdated_ours": {
+  "copies": 5,
+  "downloads": 3050,
+  "downloads_30d": 3050
+ },
+ "hugging_face_outdated_transformers": {
+  "copies": 421,
+  "downloads": 66520,
+  "downloads_30d": 10036
+ },
+ "hugging_face_outdated_gguf": {
+  "copies": 2,
+  "downloads": 1149,
+  "downloads_30d": 147
+ },
+ "official_repos": {
+  "CohereLabs/tiny-aya-base": "official",
+  "CohereLabs/tiny-aya-earth": "official",
+  "CohereLabs/tiny-aya-fire": "official",
+  "CohereLabs/tiny-aya-global": "official",
+  "CohereLabs/tiny-aya-water": "official"
+ },
+ "kaggle_models": {
+  "copies": 5,
+  "outdated": 5,
+  "official": 0
+ },
+ "unknown_reasons": [
+  "GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (adapter.gguf); 1 of 16 GGUF files read",
+  "GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (adapter.gguf); 1 of 38 GGUF files read",
+  "GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (imatrix-safety.gguf); 1 of 6 GGUF files read",
+  "GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (problem11/p11_lora_broken-f16.gguf); 1 of 2 GGUF files read",
+  "GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (wsp_s1.gguf); 1 of 7 GGUF files read",
+  "gated: tokenizer files not readable without accepting the repo's terms",
+  "no tokenizer_config.json and no GGUF file (the tokenizer comes from another repo)",
+  "tokenizer_class=TokenizersBackend; GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (codemix-refusal-lora-f16.gguf)",
+  "tokenizer_class=TokenizersBackend; GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (gguf/desi-agent-sft-lora-f16.gguf)",
+  "tokenizer_class=TokenizersBackend; GGUF header names no pre-tokenizer (tokenizer.ggml.model=None) (v3_adapter.gguf); 1 of 3 GGUF files read"
+ ]
+}

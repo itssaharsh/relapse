@@ -1,4 +1,4 @@
-\begin{table}[t]
+\begin{table}[!t]
 \centering\footnotesize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.68\columnwidth}l@{}}
 \toprule
@@ -32,6 +32,6 @@ T2 & Under 1 in 5 runs at layers 3--5 relapse through the tokenizer & Held \\
 T3 & Layers 7--9 again hold and layers 5--7 again relapse & Held \\
 \bottomrule
 \end{tabular}
-\caption{Every registered hypothesis and its outcome, read from the flags the registered analyses wrote (\texttt{scripts/paper\_numbers.py}). H: pre-registration 1 (map); P: 2 (tokenizer); Q: 3 (placement); R: 4 (relapse follow-up); T: 5 (placement against the tokenizer). For H and P the held-out models are the confirmatory test, as registered; P2 and P3 held on all five models and failed there.}
+\caption{Every registered hypothesis, its outcome read from the flags the registered analyses wrote. H: pre-registration 1; P: 2; Q: 3; R: 4; T: 5. For H and P the held-out models are the confirmatory test; P2 and P3 held on all five models and failed there.}
 \label{tab:hyp}
 \end{table}

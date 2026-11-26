@@ -115,7 +115,7 @@ def deep() -> tuple[dict, dict]:
             "fireRsixK": E["R6"]["seeds_with_nf4_only_relapse"], "fireRsixN": E["R6"]["of"], **net_of_original()}
     tables = {}
     # every run that relapses in a format, the seed-12 runs and their retraining
-    rows = [r for r in runs if r["arm"] in ("plain", "rerun") and r["effective"] and (r["arm"] == "rerun" or r["Q4_0"]["relapse"] or r["nf4"]["relapse"] or (r["seed"] == 12 and r["window"] == "10-12"))]
+    rows = [r for r in runs if r["arm"] == "plain" and r["effective"] and (r["Q4_0"]["relapse"] or r["nf4"]["relapse"] or (r["seed"] == 12 and r["window"] == "10-12"))]      # the seed-12 reruns are given in the text
     cell = lambda r, f: f"{pct(r[f]['wmdp'])} ({signed(100 * r[f]['delta'])})" + ("$^{*}$" if r[f]["relapse"] else "")
     compact = lambda r: f"{r['model'].capitalize()} {r['seed']}, lr {lr_text(r['lr'])}" + ("$^{\\dagger}$" if r["arm"] == "rerun" else "")
     body = "".join(f"{compact(r)} & {pct(r['wmdp_fp16'])} & {cell(r, 'Q4_0')} & {cell(r, 'nf4')} \\\\\n"
@@ -136,7 +136,7 @@ def deep() -> tuple[dict, dict]:
     w = sum(v["mean_change_Q4_0"] - v["mean_change_nf4"] > gap for v in seeds); l = sum(v["mean_change_Q4_0"] - v["mean_change_nf4"] < gap for v in seeds)
     nums.update(rtwoNetWins=w, rtwoNetN=w + l, rtwoNetP=f"{sum(math.comb(w + l, i) for i in range(w, w + l + 1)) / 2 ** (w + l):.2f}")
     tables["table_cases.tex"] = table("@{}lrrr@{}", r"Model, seed, lr & fp16 & \fq{} & \nf{} \\" + "\n", body,
-                                      r"\wmdp{} accuracy (\%) of the same weights at fp16 and after each 4-bit round trip, with the change in points. $^{*}$ marks a relapse; $^{\dagger}$ marks a seed-12 run retrained with the same settings on an L4 GPU. Base and Water are edited at layers 10--12, Fire at layers 13--15.", "tab:cases", "3pt")
+                                      r"\wmdp{} accuracy (\%) of the same weights at fp16 and after each 4-bit round trip, with the change in points. $^{*}$ marks a relapse. Base and Water are edited at layers 10--12, Fire at layers 13--15.", "tab:cases", "3pt")
     # real llama.cpp files, compared by AuditKIT
     real = [(n, v) for models in d["part_b_real_files"].values() for n, v in models.items()]
     if real:
@@ -409,7 +409,7 @@ def glance() -> tuple[dict, dict]:
             + row("Benign-biology points lost", f"{np.mean(benign['5-7']):.1f}", f"{np.mean(benign['3-5']):.1f}")
             + row("Hazard points forgotten per benign point", f"{np.mean(forgot['5-7']) / np.mean(benign['5-7']):.2f}", f"{np.mean(forgot['3-5']) / np.mean(benign['3-5']):.2f}"))
     tex = table("@{}lrr@{}", "Layers edited & 5--7 (default) & 3--5 \\\\\n", body,
-                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one (pre-registration 5). Effective runs: four post-trained variants, two seeds, 16 per column. All runs add Tiny Aya Base, which is at chance when audited. Bottom: the final runs through the official tokenizer, mean of five models and two seeds. Original models score 60--64\\% on \\wmdp{}; lower is better.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
+                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited. Bottom: the final runs, official tokenizer, five models and two seeds. Lower \\wmdp{} is better.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
     return {"glanceRelDefault": relapses["5-7"], "glanceRelNew": relapses["3-5"]}, {"table_glance.tex": tex}
 
 
@@ -479,7 +479,37 @@ def revisions() -> tuple[dict, dict]:
            "\\bottomrule\n\\end{tabular}\n\\caption{Model and tokenizer revision of every experiment. No Stage~2 run recorded the revision it downloaded: each job took the main branch of \\texttt{CohereLabs/tiny-aya-<variant>} when it started, so the revision is read from the job's start time (Hugging Face Jobs' record, \\texttt{results/survey/jobs.json}) and the repositories' public history (\\texttt{results/survey/official\\_history.json}). " + desc +
            ("." + (" Among tokenizer files, configuration and weights, R1 and R2 differ only in \\texttt{generation\\_config.json}: the tokenizer files and weights have the same content hashes." if len(sets) > 1 and same else "")) +
            f" Job counts exclude {len(smoke)} three-batch pipeline tests. The outdated setting inside Stage~2 jobs is the same revision's tokenizer files with \\texttt{{tokenizer\\_class}} set to \\texttt{{CohereTokenizerFast}}; Stage~1 used the copy Kaggle held (uploaded 16 February 2026), whose revision Kaggle identifies only as version 1.}}\n\\label{{tab:revisions}}\n\\end{{table*}}\n")
-    return {"revJobs": len(J), "revSmoke": len(smoke), "revSets": len(sets)}, {"table_revisions.tex": tex}
+    everything = json.load(open(os.path.join(base, "jobs.json")))
+    pr5 = [j for j in J if j["out"] == "changed_shift2.pt"]
+    return {"revJobs": len(J), "revSmoke": len(smoke), "revSets": len(sets), "revAll": len(everything), "revCompleted": sum(j["outcome"] == "COMPLETED" for j in everything),
+            "revPrFiveFirst": pr5[0]["started"][11:19], "revPrFiveLast": pr5[-1]["started"][11:19], "revPrFiveCommit": pr5[0]["repo_commit"][:7], "revPrFiveFlavor": pr5[0]["flavor"].replace("JobHardware.", "").lower()}, {"table_revisions.tex": tex}
+
+
+def survey() -> tuple[dict, dict]:
+    """The survey of public copies (results/survey/, written by scripts/survey_copies.py)."""
+    base = os.path.join(ROOT, "results", "survey")
+    if not os.path.exists(os.path.join(base, "copies.csv")):
+        return {}, {}
+    import csv
+    import datetime
+    R = list(csv.DictReader(open(os.path.join(base, "copies.csv"))))
+    S = json.load(open(os.path.join(base, "summary.json"))); P = json.load(open(os.path.join(base, "probe_sample.json")))
+    official_repos = set(S["official_repos"])
+    hf = [r for r in R if not r["repo"].startswith("kaggle:")]; kg = [r for r in R if r["repo"].startswith("kaggle:")]
+    derived = [r for r in hf if r["repo"] not in official_repos]
+    out = [r for r in derived if r["setting"] == "outdated"]; others = [r for r in out if not r["repo"].startswith("itssaharsh/")]
+    num = lambda x: int(x) if str(x).isdigit() else 0
+    th = lambda n: f"{n:,}".replace(",", "{,}")
+    gguf = [r for r in derived if "tokenizer.ggml.pre" in r["evidence"]]
+    day = datetime.datetime.strptime(S["date"], "%Y-%m-%d")
+    return {"surveyDate": f"{day.day} {day.strftime('%B %Y')}", "surveyFound": th(len(hf)), "surveyRead": len([r for r in derived if r["setting"] in ("official", "outdated")]),
+            "surveyOutdated": len(out), "surveyOutdatedOthers": len(others), "surveyOurs": len(out) - len(others), "surveyDownloads": th(sum(num(r["downloads"]) for r in others)),
+            "surveyDownloadsMonth": th(sum(num(r["downloads_30d"]) for r in others)), "surveyAfterFix": sum(r["last_modified"] > "2026-09-30" for r in others),
+            "surveyUnknown": len([r for r in derived if r["setting"] == "unknown"]), "surveyNoFiles": sum("no tokenizer_config.json" in r["evidence"] for r in derived),
+            "surveyOfficialRepos": sum(v == "official" for v in S["official_repos"].values()), "surveyKaggle": len(kg), "surveyKaggleOutdated": sum(r["setting"] == "outdated" for r in kg),
+            "surveyGguf": len(gguf), "surveyGgufOther": sum("tokenizer.ggml.pre=tiny_aya" not in r["evidence"] and "tokenizer.ggml.pre=cohere2moe" not in r["evidence"] for r in gguf),
+            "surveySampled": P["sampled"], "surveySampledDiffer": P["split_differently"], "surveyTransformers": P["transformers"],
+            "surveyShare": f"{100 * len(out) / len([r for r in derived if r['setting'] in ('official', 'outdated')]):.0f}"}, {}
 
 
 WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve")
@@ -532,7 +562,7 @@ def totals() -> tuple[dict, dict]:
     label = {"held": "Held", "part": "In part", "failed": "\\textbf{Failed}", "untestable": "Untestable"}
     body = "".join(("\\addlinespace[2pt]\n" if i and hyp[i - 1][0] != h[0] else "") + f"{h[1]} & {h[2]} & {label[h[3]]} \\\\\n" for i, h in enumerate(hyp))
     tex = table("@{}l>{\\raggedright\\arraybackslash}p{0.68\\columnwidth}l@{}", " & Registered hypothesis & Outcome \\\\\n", body,
-                "Every registered hypothesis and its outcome, read from the flags the registered analyses wrote (\\texttt{scripts/paper\\_numbers.py}). H: pre-registration 1 (map); P: 2 (tokenizer); Q: 3 (placement); R: 4 (relapse follow-up); T: 5 (placement against the tokenizer). For H and P the held-out models are the confirmatory test, as registered; P2 and P3 held on all five models and failed there.", "tab:hyp", "3pt", "\\footnotesize")
+                "Every registered hypothesis, its outcome read from the flags the registered analyses wrote. H: pre-registration 1; P: 2; Q: 3; R: 4; T: 5. For H and P the held-out models are the confirmatory test; P2 and P3 held on all five models and failed there.", "tab:hyp", "3pt", "\\footnotesize")
     return {"totalRuns": len(names), "totalNpo": sum(e == "npo_pilot" for e, _ in names), "hypN": len(hyp), "hypHeld": count("held"), "hypPart": count("part"), "hypFailed": count("failed"), "hypUntestable": count("untestable"),
             "hypFailedWord": WORDS[count("failed")], "hypHeldList": ", ".join(h[1] for h in hyp if h[3] == "held"), "hypFailedList": ", ".join(h[1] for h in hyp if h[3] == "failed"),
             "hypPartList": " and ".join(h[1] for h in hyp if h[3] == "part"), "hypUntestableList": ", ".join(h[1] for h in hyp if h[3] == "untestable")}, {"table_hyp.tex": tex}
@@ -540,9 +570,11 @@ def totals() -> tuple[dict, dict]:
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, totals):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
+        if name in ("table_hyp.tex", "table_real.tex", "table_cause.tex", "table_repair.tex", "table_revisions.tex"):      # appendix floats: placed where they fall, whatever their height
+            tex = tex.replace("\\begin{table}[t]", "\\begin{table}[!t]").replace("\\begin{table*}[t]", "\\begin{table*}[!t]")
         open(os.path.join(PAPER, name), "w").write(tex)
     open(os.path.join(PAPER, "numbers.tex"), "w").write("% generated by scripts/paper_numbers.py\n" + "".join(f"\\newcommand{{\\{k}}}{{{v}}}\n" for k, v in nums.items()))
 

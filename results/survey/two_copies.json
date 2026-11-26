@@ -1,0 +1,21 @@
+{
+ "date": "2026-11-26",
+ "copies": [
+  {
+   "target": "CohereLabs/tiny-aya-global",
+   "kind": "hf",
+   "revision": "4694bd755a1e47bc65376ea9bc8d822d6911f4c1",
+   "setting": "official",
+   "evidence": "tokenizer_class=PreTrainedTokenizerFast",
+   "read": 8169
+  },
+  {
+   "target": "kaggle:cohere-labs/tiny-aya/transformers/global/1",
+   "kind": "kaggle",
+   "revision": "1",
+   "setting": "outdated",
+   "evidence": "tokenizer_class=CohereTokenizerFast",
+   "read": 8170
+  }
+ ]
+}

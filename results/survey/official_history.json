@@ -1,0 +1,1327 @@
+{
+ "CohereLabs/tiny-aya-base": [
+  {
+   "sha": "d62ac17e241c871fc52e9a95d7b0e2615189d7d5",
+   "date": "2026-09-30T13:24:34Z",
+   "title": "Set tokenizer_class to PreTrainedTokenizerFast so transformers v5 loads the pre-tokenizer from tokenizer.json (v5's CohereTokenizer hardcodes Digits(individual_digits=True), which does not match training)",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "b851d957a8b6fbe80c3662dd821f51c48b35f62b"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "1c1166cbc8bbd17760e85d9e1c40d61725f60ae8",
+   "date": "2026-05-01T15:16:47Z",
+   "title": "Update config.json",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "c1cf242d7204c2a416eeaf203f86b59e0abb0eca",
+   "date": "2026-04-29T14:01:55Z",
+   "title": "Update README.md",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "dc84373d69f30ae3a8431ffb351081c6c33152b9",
+   "date": "2026-03-23T07:03:08Z",
+   "title": "Update README.md",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "65e44bc0477f6f40cd8a974c71c07d871c18c429",
+   "date": "2026-02-24T08:53:46Z",
+   "title": "Upload signatures for tiny-aya-base",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "cdffb4573ac44d6ed4a2e33de7cfd9466bd1208f",
+   "date": "2026-02-19T03:10:07Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "19b90491b844c6c1cdfe50083a67f96e2f615658",
+   "date": "2026-02-17T07:05:13Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "992fc96cd7ed6bffb8f39a98f992770be2806b3d",
+   "date": "2026-02-17T03:19:28Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "52bf12f5e68855d808f0c90bca6e5da8df739f24",
+   "date": "2026-02-16T08:28:10Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "89d4303d2e1c04a99c341d75cfeffa6250c370b2",
+   "date": "2026-02-16T06:34:56Z",
+   "title": "Update assets via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "9f085144117fd6fdb6c69e4ca848e08938741830",
+   "date": "2026-02-16T06:34:54Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "fc7dd8c755daddab585cd33272a454d4329e0bf8",
+   "date": "2026-02-16T06:22:52Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "18e2cbe71df8702f989de7d924351517f060d35e",
+   "date": "2026-02-13T08:19:12Z",
+   "title": "Add files using upload-large-folder tool",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "afbc07248f256b3cb47f4ea7c20edb8d6121a3d746fb13eda364afbf9131de96",
+    "model-00002-of-00002.safetensors": "d6e35c5212016c0e01e255ea7d7f756cadc70404e80e6ca22944df5d4dbd0fdb",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "8f21f6c4f761c192f486ea2c5b06b62b3ef30819b33dc105bdf8b26c8e7974f6",
+    "tokenizer_config.json": "594f032f51e50875aa85af6e9a6b5ce7c868d622"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "1a5d2c40c991f833d566ddd85f62f03af9c62df4",
+   "date": "2026-02-13T03:09:56Z",
+   "title": "Update README via Huggy",
+   "files": {},
+   "setting": "unknown"
+  },
+  {
+   "sha": "f4d53756865da98002641579ef24ec3d6921bf6f",
+   "date": "2026-02-13T02:47:42Z",
+   "title": "initial commit",
+   "files": {},
+   "setting": "unknown"
+  }
+ ],
+ "CohereLabs/tiny-aya-global": [
+  {
+   "sha": "4694bd755a1e47bc65376ea9bc8d822d6911f4c1",
+   "date": "2026-11-24T03:44:55Z",
+   "title": "Upload 2 files",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "ecf78e57e43999c8f306ae35eb7d41130894c78f",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "df1351c78fec0fb5d63fd60167af6e2d6fe5f14f"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "c4269d6ecdc9046a8528e4a32f0ef1d0b2c03efc",
+   "date": "2026-11-24T03:25:27Z",
+   "title": "Stop generation on <|END_OF_TURN_TOKEN|> as well as <EOS_TOKEN>",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "ecf78e57e43999c8f306ae35eb7d41130894c78f",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "df1351c78fec0fb5d63fd60167af6e2d6fe5f14f"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "af89d219b53ed9b13b8a4645f9c8028973510324",
+   "date": "2026-09-30T13:24:36Z",
+   "title": "Set tokenizer_class to PreTrainedTokenizerFast so transformers v5 loads the pre-tokenizer from tokenizer.json (v5's CohereTokenizer hardcodes Digits(individual_digits=True), which does not match training)",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "df1351c78fec0fb5d63fd60167af6e2d6fe5f14f"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "00590ff258ccd84a805f13efcd1c34c2a542654f",
+   "date": "2026-07-07T14:58:13Z",
+   "title": "Add EvalEval community eval results (#11)",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "b2d281bab0beaecb3418d0c0dc53eaba90574011",
+   "date": "2026-05-01T15:15:00Z",
+   "title": "Update config.json",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "3129dc5c1c0299c2070604db154af47e90a8c919",
+   "date": "2026-04-29T14:02:09Z",
+   "title": "Update README.md",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "464250f048b3b2e10cf0f194c2928f342c50af3d",
+   "date": "2026-03-23T07:03:39Z",
+   "title": "Update README.md",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "b2f40192d990d66a6f28a4b90d72817ab9c613da",
+   "date": "2026-02-24T08:53:52Z",
+   "title": "Upload signatures for tiny-aya-global",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "12295a00613904599bc6eaa160e547e386355f88",
+   "date": "2026-02-19T03:10:14Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "7df6e8d55b68576759be5af2889eb223ec26551a",
+   "date": "2026-02-17T16:00:19Z",
+   "title": "remove unused code (#2)",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "859ced5483d3147e04eee63bb66bbb1416573937",
+   "date": "2026-02-17T15:57:11Z",
+   "title": "transformers v5 compatibility (#1)",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "13ae3f5db6119bbde17cc2977be826c2ab94e4da",
+   "date": "2026-02-17T07:05:24Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "8a53f8f7120620723c271a873dd00ba31112d1b7",
+   "date": "2026-02-17T03:19:32Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "42fc8b3aeecbd066242aad17e66451a85359ac03",
+   "date": "2026-02-16T06:35:02Z",
+   "title": "Update assets via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "81cd3d33ef63341a901b62bc04cf41496c404256",
+   "date": "2026-02-16T06:35:00Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "78a339e1f6db03c2e715d805ad0103458ed068c3",
+   "date": "2026-02-16T06:22:59Z",
+   "title": "Update assets via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "2f949c473ec8d3a2ace074b16eca98c1d8ef6a2a",
+   "date": "2026-02-16T06:22:58Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "c522eb5b6bf687ec5b240521eb4f0e881498ac49",
+   "date": "2026-02-13T10:10:38Z",
+   "title": "Update tokenizer_config.json",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "5c9f22e269492bd7d393f41d3c627b67badb879c",
+   "date": "2026-02-13T10:02:34Z",
+   "title": "Add files using upload-large-folder tool",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "0590022d0efe06f12e08e1e94302f069dff404341b426f7435c6303725635fb1",
+    "model-00002-of-00002.safetensors": "2ac3809931d113785058809f27775620e0b8aec6fbc7e163c9c09c08b5f90dab",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "4d1372747c862046ca99dc85b679b5852aa172ef"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "d66ec5c8b70511bbd8b1c3041eb628315b2e11ac",
+   "date": "2026-02-13T09:13:02Z",
+   "title": "Update README via Huggy",
+   "files": {},
+   "setting": "unknown"
+  },
+  {
+   "sha": "e0bf31838f10f4790f8847d1c52024b9a5c203d1",
+   "date": "2026-02-13T09:13:01Z",
+   "title": "initial commit",
+   "files": {},
+   "setting": "unknown"
+  }
+ ],
+ "CohereLabs/tiny-aya-fire": [
+  {
+   "sha": "2a4c47da623dc04f84516d99cd69cc212cd02f0a",
+   "date": "2026-11-24T03:46:39Z",
+   "title": "Upload 2 files",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "ecf78e57e43999c8f306ae35eb7d41130894c78f",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "df1351c78fec0fb5d63fd60167af6e2d6fe5f14f"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "a21a285b44b6f954ca05a63ad225ce9b816892a5",
+   "date": "2026-11-24T03:25:30Z",
+   "title": "Stop generation on <|END_OF_TURN_TOKEN|> as well as <EOS_TOKEN>",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "ecf78e57e43999c8f306ae35eb7d41130894c78f",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "df1351c78fec0fb5d63fd60167af6e2d6fe5f14f"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "73500c80fcb6c8bea3e830c21d5d2920249a0e1a",
+   "date": "2026-09-30T13:24:40Z",
+   "title": "Set tokenizer_class to PreTrainedTokenizerFast so transformers v5 loads the pre-tokenizer from tokenizer.json (v5's CohereTokenizer hardcodes Digits(individual_digits=True), which does not match training)",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "df1351c78fec0fb5d63fd60167af6e2d6fe5f14f"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "be6cc40188067e69502b0873062c0d7c4e2ba1fe",
+   "date": "2026-05-01T15:16:20Z",
+   "title": "Update config.json",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "b56ac88abebe4718c516e6cf550e2250b62a7156",
+   "date": "2026-04-29T14:02:37Z",
+   "title": "Update README.md",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "8925b69b86d7109b54c56c9033a2b1a935c1c847",
+   "date": "2026-03-23T07:04:41Z",
+   "title": "Update README.md",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "c4db4f0402cc0bce566aebed9f8f67b09e44880c",
+   "date": "2026-02-24T08:53:50Z",
+   "title": "Upload signatures for tiny-aya-fire",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "8f2552666f4c48e14ca678ad5df555e71b29d8b5",
+   "date": "2026-02-19T03:10:23Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "49420a87efc5a90d9d1a2f5ec2fa26a2fe0c453c",
+   "date": "2026-02-17T16:01:03Z",
+   "title": "transformers v5 compatibility (#1)",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "452e70fde1eca4fbdb86bd21a8507ed9249749ec",
+   "date": "2026-02-17T07:05:36Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "6cf95956eb949f120151ea3be8486c102faf5b3f",
+   "date": "2026-02-17T03:19:37Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "b0e27d8b1de5f4d01ed23132696de028503a94f3",
+   "date": "2026-02-16T06:35:11Z",
+   "title": "Update assets via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "0ccacae2a1e3cb22665d22fd3d7e6e2f4a2c8630",
+   "date": "2026-02-16T06:35:09Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "35ee8315b2a9fffd23cd34f4a9bae6add73168a4",
+   "date": "2026-02-16T06:23:08Z",
+   "title": "Update assets via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "e0e8726728a11e8b0a21ac79f3a0df94eeb197fd",
+   "date": "2026-02-16T06:23:07Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "404a688ecbc0d02158d6cf003fad4e4c1bfdafa5",
+   "date": "2026-02-13T12:20:40Z",
+   "title": "Update tokenizer_config.json",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "97cc81c75cc8b45fc03341053b5a0c06c602b2dd",
+   "date": "2026-02-13T12:20:10Z",
+   "title": "Add files using upload-large-folder tool",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "270416001874dd1d7d9b22d0f11ec54a1e272ba42b1637ca4b7aaebd1bd2df8e",
+    "model-00002-of-00002.safetensors": "4e2129a13b31d9a66bf842bb144f4832f09d5ea6b26f3433c5658ecc1f543d45",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "7955f61989865b0dcd6d9a81ad365a3d6436c2c4"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "728efd02c1558999247b667d3b95a027c68daa5b",
+   "date": "2026-02-13T11:39:07Z",
+   "title": "Update README via Huggy",
+   "files": {},
+   "setting": "unknown"
+  },
+  {
+   "sha": "e7bd40ff2c9cec894ef715e088794cfec3d7ba8a",
+   "date": "2026-02-13T11:39:06Z",
+   "title": "initial commit",
+   "files": {},
+   "setting": "unknown"
+  }
+ ],
+ "CohereLabs/tiny-aya-water": [
+  {
+   "sha": "8ddffb7188c78460db43f7ce408265b9c4b8b623",
+   "date": "2026-11-24T03:47:27Z",
+   "title": "Upload 2 files",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "ecf78e57e43999c8f306ae35eb7d41130894c78f",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "df1351c78fec0fb5d63fd60167af6e2d6fe5f14f"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "d38732746f7876e2d2a2015031bd73a5059ef75c",
+   "date": "2026-11-24T03:25:31Z",
+   "title": "Stop generation on <|END_OF_TURN_TOKEN|> as well as <EOS_TOKEN>",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "ecf78e57e43999c8f306ae35eb7d41130894c78f",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "df1351c78fec0fb5d63fd60167af6e2d6fe5f14f"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "41a99216d12b3ef4881df762934186e5e4d2bbc1",
+   "date": "2026-09-30T13:24:45Z",
+   "title": "Set tokenizer_class to PreTrainedTokenizerFast so transformers v5 loads the pre-tokenizer from tokenizer.json (v5's CohereTokenizer hardcodes Digits(individual_digits=True), which does not match training)",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "df1351c78fec0fb5d63fd60167af6e2d6fe5f14f"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "3696a27d9f455538e50887778122cc898b6370b8",
+   "date": "2026-05-01T15:16:34Z",
+   "title": "Update config.json",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "dd8e0e5177d6937445ec6cd66adbd64ee90c1f0e",
+   "date": "2026-04-29T14:02:51Z",
+   "title": "Update README.md",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "0a00561c57c6dd6db6b481e0ac5a6ec54e35001b",
+   "date": "2026-03-23T07:05:01Z",
+   "title": "Update README.md",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "fb3dae83f2a2a7893a593ae0ac4d099cb1b46a8c",
+   "date": "2026-02-24T08:53:54Z",
+   "title": "Upload signatures for tiny-aya-water",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "bb9bc44d5555714a4762a1b7ccf20e2883839e49",
+   "date": "2026-02-19T03:10:03Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "c146660bce96f905f0b031e00f05383f64fc6733",
+   "date": "2026-02-17T16:05:48Z",
+   "title": "transformers v5 compatibility (#1)",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "e23894c060cf4ef965a7102d83beed4613980077",
+   "date": "2026-02-17T07:05:09Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "6e99847730be960321b7bc1f4ef87d42d549992b",
+   "date": "2026-02-17T03:19:25Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "a21cfb0311be3d4edfe61155ba24c4a0f411f8e2",
+   "date": "2026-02-16T06:34:51Z",
+   "title": "Update assets via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "66c857b197665725fbb2d51eb56b8c3fe08c515b",
+   "date": "2026-02-16T06:34:48Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "e9c07f976223576c0f4bc0d2dc330420b0a2bcdd",
+   "date": "2026-02-16T06:22:49Z",
+   "title": "Update assets via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "59da4c479a326b97bb2cef51b0f3733e2523f974",
+   "date": "2026-02-16T06:22:48Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "66bbac01c6a74ae7a69ef92320f1b957cd298be0",
+   "date": "2026-02-13T12:16:26Z",
+   "title": "Update tokenizer_config.json",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "54137e17f057745332b46dd22d45f531cf59f20c",
+   "date": "2026-02-13T12:15:53Z",
+   "title": "Add files using upload-large-folder tool",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "841c8c23c185b51e300b5d8e2dc6c46c57ee62270398e01fc2201439b71df555",
+    "model-00002-of-00002.safetensors": "98adc7c67bac3f8419392460b6e125dae4ccd392fa6e8413ed2cf2fd47ec4744",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "7955f61989865b0dcd6d9a81ad365a3d6436c2c4"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "e360f3c35ebc661e8af6cb841887a198829406c5",
+   "date": "2026-02-13T11:38:58Z",
+   "title": "Update README via Huggy",
+   "files": {},
+   "setting": "unknown"
+  },
+  {
+   "sha": "31b15c34b914f4d5190b499a26074b754428061f",
+   "date": "2026-02-13T11:38:57Z",
+   "title": "initial commit",
+   "files": {},
+   "setting": "unknown"
+  }
+ ],
+ "CohereLabs/tiny-aya-earth": [
+  {
+   "sha": "87642d58c6bca9c4fe0d6f48a7bc113ffde49e5a",
+   "date": "2026-11-24T03:45:54Z",
+   "title": "Upload 2 files",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "ecf78e57e43999c8f306ae35eb7d41130894c78f",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "fac8dc4270a691a692ca5035d6ba6ce35897dc93"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "370a419057c0c7ec9cd845b97ce5b5a79114589f",
+   "date": "2026-11-24T03:25:28Z",
+   "title": "Stop generation on <|END_OF_TURN_TOKEN|> as well as <EOS_TOKEN>",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "ecf78e57e43999c8f306ae35eb7d41130894c78f",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "fac8dc4270a691a692ca5035d6ba6ce35897dc93"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "0624fafbe200f930b89566fc4ec4da314ba48d89",
+   "date": "2026-09-30T13:25:07Z",
+   "title": "Set tokenizer_class to PreTrainedTokenizerFast so that transformers v5 uses tokenizer.json (#3)",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "fac8dc4270a691a692ca5035d6ba6ce35897dc93"
+   },
+   "setting": "official"
+  },
+  {
+   "sha": "821f26a10f8e67a5b453f62d3091d5d4af14b1ae",
+   "date": "2026-05-01T15:16:03Z",
+   "title": "Update config.json",
+   "files": {
+    "config.json": "30c1a79af48d3e123c6c19856265a5ebc1333e89",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "04956e347eaa452afa9580fa1d85481482e0f11e",
+   "date": "2026-04-29T14:02:25Z",
+   "title": "Update README.md",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "b7fa2ead972fab22a9c74f6ba7f37b6e4babd5eb",
+   "date": "2026-03-23T07:04:07Z",
+   "title": "Update README.md",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "cfe56f60a32ea92ab707d89e79916952541314f7",
+   "date": "2026-02-24T08:53:48Z",
+   "title": "Upload signatures for tiny-aya-earth",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "6e05b0cfcf942ba52c3bf56dca610539689c36cd",
+   "date": "2026-02-19T03:10:19Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "5dd2bc4e439a1b030f99be419f54a714695a96b2",
+   "date": "2026-02-17T16:00:49Z",
+   "title": "transformers v5 compatibility (#1)",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "7ce49c1e931e260f542a90e724253181bef90f62",
+   "date": "2026-02-17T07:05:30Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "edb6a903a3e89ff651acbb083caafd4d1a13bef5",
+   "date": "2026-02-17T03:19:35Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "859b2b5de66b2874e5e4b5ca4fb3021ea28a2ec1",
+   "date": "2026-02-16T06:35:07Z",
+   "title": "Update assets via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "7cbc0d9739b57560e4cfa8a3a1536d243946bc99",
+   "date": "2026-02-16T06:35:05Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "a009017be60a593f2bcc0327955e1a6a9c7463e5",
+   "date": "2026-02-16T06:23:04Z",
+   "title": "Update assets via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "9f05a866fe5566c8c1cb8ab4ecd77fecbd9508a4",
+   "date": "2026-02-16T06:23:03Z",
+   "title": "Update README via Huggy",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "aa946de74493499468acab2dbc513c76ba29ea62",
+   "date": "2026-02-13T12:13:35Z",
+   "title": "Update tokenizer_config.json",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "b6f2eb68b3fe409f15a67c0b6c4da69240e9d7a3"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "c4da929ec29634e005a782635202de0aba8550c4",
+   "date": "2026-02-13T12:00:56Z",
+   "title": "Add files using upload-large-folder tool",
+   "files": {
+    "config.json": "e6687587967ef7c2ed43dd191fbe05bfab7798c9",
+    "generation_config.json": "a5c3b97439d2c9966fd528dc5bff76ccabddd78a",
+    "model-00001-of-00002.safetensors": "241f69384f874e2a6693d6de3c77224593514288218df0b8c432854bb4ae6336",
+    "model-00002-of-00002.safetensors": "bea39b097358d078a62e88b25f367489d771b3b7f2c8206d4bb8f0df4e0c7af0",
+    "special_tokens_map.json": "ca863ef43d715fef7b64a689a00ebda81602ba80",
+    "tokenizer.json": "2227ea9c52e8afb3f98bfed2679008b275f2664de69dfde174b374389eb0225d",
+    "tokenizer_config.json": "7955f61989865b0dcd6d9a81ad365a3d6436c2c4"
+   },
+   "setting": "outdated"
+  },
+  {
+   "sha": "7547c8ff1f61d354222b15b3eee0be0dc8523175",
+   "date": "2026-02-13T11:39:05Z",
+   "title": "Update README via Huggy",
+   "files": {},
+   "setting": "unknown"
+  },
+  {
+   "sha": "85230603e838cfe24378c35a20af2fdf996b2ac1",
+   "date": "2026-02-13T11:39:04Z",
+   "title": "initial commit",
+   "files": {},
+   "setting": "unknown"
+  }
+ ]
+}

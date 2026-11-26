@@ -1,0 +1,115 @@
+{
+ "transformers": "5.20.2",
+ "sampled": 12,
+ "split_differently": 12,
+ "copies": [
+  {
+   "repo": "rumik-ai/rumik-oss-1",
+   "revision": "f3d748729f41016a49976b5bc66932a21361f0da",
+   "tokenizer_class": "CohereTokenizer",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "ERISLab/q2a_openai_whisper-medium_CohereLabs_tiny-aya-global_ws-en_us-500",
+   "revision": "a957e04837487eeea0b8c0dc52f0424f4c13e9ae",
+   "tokenizer_class": "CohereTokenizer",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "rita-cohere/iolai-tiny-aya-global-greedy",
+   "revision": "91224a8e3277a59f3999f877c32ef63da156c6a1",
+   "tokenizer_class": "CohereTokenizerFast",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "ERISLab/q2a_openai_whisper-medium_CohereLabs_tiny-aya-base_ws-ta_in-200",
+   "revision": "8323d4c2257efe103b368f80ebe9fcf707809c24",
+   "tokenizer_class": "CohereTokenizer",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "jjzha/tiny-aya-global-dpo_english-dpo-lr5e-6",
+   "revision": "dc7fad10e8b984eb7a772e9dfec2cf0a478a6378",
+   "tokenizer_class": "CohereTokenizer",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "jjzha/tiny-aya-global-danish-sft-lr2e-4",
+   "revision": "667bcff24218d1dc7a8e2dfea70cae46dfde9cdf",
+   "tokenizer_class": "CohereTokenizer",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "dsfsi/tiny_aya_global-lora-r64-eng-yor",
+   "revision": "241df90eda2f2fba56e9897b0ab3fdfe615d9cef",
+   "tokenizer_class": "CohereTokenizer",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "dsfsi/tiny_aya_earth-lora-r64-hau-eng",
+   "revision": "6366fdde941566faf49df1ecc5b1568c99faf119",
+   "tokenizer_class": "CohereTokenizer",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "ERISLab/q2a_openai_whisper-medium_CohereLabs_tiny-aya-fire_ws-ta_in-150",
+   "revision": "d02d4154cc79149625afce925a430545f5df61a2",
+   "tokenizer_class": "CohereTokenizer",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "JuliaKreutzerCohere/tiny-aya-global-prompt-postexplain",
+   "revision": "2f17dd776ccdffbc31df752cebb65fe73a8d8a60",
+   "tokenizer_class": "CohereTokenizerFast",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "ERISLab/q2a_openai_whisper-medium_CohereLabs_tiny-aya-earth_ws-es_es-400",
+   "revision": "82b3fb463696d883697d6cef82ac7986fb99cc86",
+   "tokenizer_class": "CohereTokenizer",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  },
+  {
+   "repo": "bhavyagoyal-lexsi/multilingual-clean-finance-ckps",
+   "revision": "7db95c3baa2a3afb1dcccc842ab3815fde77e67c",
+   "tokenizer_class": "CohereTokenizer",
+   "class_loaded": "CohereTokenizer",
+   "same_split_as_official": false,
+   "tokens_official": 45,
+   "tokens_loaded": 52
+  }
+ ]
+}

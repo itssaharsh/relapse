@@ -46,6 +46,9 @@ Six pre-registered experiments on all five Tiny Aya models, scored through the *
 | `stage2/shift2/` | Placement against the tokenizer (pre-registration 5): layers 3 to 5, 5 to 7 and 7 to 9, unlearned through the outdated setting, scored through both |
 | `stage2/single_line/` | Pre-registration 6: the same saved runs scored with single-line prompts through both settings |
 | `stage2/survey/` | The survey of public copies, the official repositories' history, the start time and commit of every job, token-level differences; `stage2/check_tokenizer.py` is the checker |
+| `stage2/shift2/` | Placement against the tokenizer (pre-registration 5): layers 3 to 5, 5 to 7 and 7 to 9, unlearned through the outdated setting, scored through both |
+| `stage2/single_line/` | Pre-registration 6: the same saved runs scored with single-line prompts through both settings |
+| `stage2/survey/` | The survey of public copies, the official repositories' history, the start time and commit of every job, token-level differences; `stage2/check_tokenizer.py` is the checker |
 | `stage2/place/`, `stage2/final/` | Where to place the edit, the final models and their full check |
 
 Each folder has a `summary.json` written by the matching `scripts/analyze_*.py` in the repository. The files hold scores only, no question text.

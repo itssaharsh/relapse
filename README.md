@@ -202,4 +202,4 @@ Nothing here reads a path on the author's machine. The analyses above read `resu
 - One model family and one unlearning method.
 - The models published in Stage 1 were trained with the outdated tokenizer setting and their repositories still carry it; their cards say so. The Stage 2 models replace them.
 
-Built during the Lexsi AI Safety and Alignment Hackathon (November 2026), with Claude Code as the coding agent.
+Built during the Lexsi AI Safety and Alignment Hackathon (November 2026). AI assistance was used in building this project (Claude Code as the coding agent), under the author's direction; the author checked the results.

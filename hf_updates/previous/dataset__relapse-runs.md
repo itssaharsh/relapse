@@ -7,7 +7,7 @@ pretty_name: Relapse runs, per-question results and logs
 # Relapse: runs, per-question results and logs
 
 <!-- relapse-status:start -->
-> **Status on 27 November 2026.** The `stage2/` folders hold the runs the paper reports, from six pre-registered experiments (the fifth, placement against the tokenizer, is `stage2/shift2/`; the sixth, single-line prompts, `stage2/single_line/`), and `stage2/survey/` holds the survey of public copies, the official repositories' history and the start time and commit of every job. Everything outside `stage2/` and `correct_tokenizer/` is Stage 1, made through the outdated tokenizer setting, and is superseded.
+> **Status on 26 November 2026.** The `stage2/` folders hold the runs the paper reports, from six pre-registered experiments (the fifth, placement against the tokenizer, is `stage2/shift2/`; the sixth, single-line prompts, `stage2/single_line/`), and `stage2/survey/` holds the survey of public copies, the official repositories' history and the start time and commit of every job. Everything outside `stage2/` and `correct_tokenizer/` is Stage 1, made through the outdated tokenizer setting, and is superseded.
 >
 > **What the final paper found** ([An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf)). Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers (5 to 7) regained 11.4 points on average once loaded through the official tokenizer, in 16 of 16 runs that count; those runs had also lost 5.8 MMLU points where they were audited and 1.7 once deployed, and with single-line prompts none of them relapsed. At layers 3 to 5, 0 of 16 did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in 107 of 109 runs. Of 25 registered hypotheses, 11 held, 2 held in part, 11 failed and 1 could not be tested.
 >
@@ -28,6 +28,9 @@ Six pre-registered experiments on all five Tiny Aya models, scored through the *
 | `stage2/map/` | The 150-run map: fp16, Q4_0 and NF4 scores of every run, right or wrong per question |
 | `stage2/deep/` | The relapse follow-up: fresh seeds, real llama.cpp files, bitsandbytes NF4, one part of the model rounded at a time, the repair and its controls |
 | `stage2/shift/` | The tokenizer experiment: each run scored through the official and the outdated tokenizer setting |
+| `stage2/shift2/` | Placement against the tokenizer (pre-registration 5): layers 3 to 5, 5 to 7 and 7 to 9, unlearned through the outdated setting, scored through both |
+| `stage2/single_line/` | Pre-registration 6: the same saved runs scored with single-line prompts through both settings |
+| `stage2/survey/` | The survey of public copies, the official repositories' history, the start time and commit of every job, token-level differences; `stage2/check_tokenizer.py` is the checker |
 | `stage2/shift2/` | Placement against the tokenizer (pre-registration 5): layers 3 to 5, 5 to 7 and 7 to 9, unlearned through the outdated setting, scored through both |
 | `stage2/single_line/` | Pre-registration 6: the same saved runs scored with single-line prompts through both settings |
 | `stage2/survey/` | The survey of public copies, the official repositories' history, the start time and commit of every job, token-level differences; `stage2/check_tokenizer.py` is the checker |

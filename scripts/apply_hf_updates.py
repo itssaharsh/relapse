@@ -51,11 +51,18 @@ def main() -> None:
         if repo in items:
             api.update_collection_item(col.slug, items[repo].item_object_id, note=plan["notes"][repo], position=position)
     api.update_collection_metadata(col.slug, description=plan["descriptions"][plan["collection"]])
+    for repo, note in plan.get("add_models", {}).items():      # the models used, after our own
+        if repo not in items:
+            api.add_collection_item(col.slug, repo, "model", note=note, exists_ok=True); print("added to the models collection:", repo)
     data = next(c for c in api.list_collections(owner=USER) if plan["data_collection"] in c.slug)
     for it in api.get_collection(data.slug).items:
         if it.item_id in plan["data_notes"]:
             api.update_collection_item(data.slug, it.item_object_id, note=plan["data_notes"][it.item_id])
     api.update_collection_metadata(data.slug, description=plan["descriptions"][plan["data_collection"]])
+    have = {it.item_id for it in api.get_collection(data.slug).items}
+    for repo, note in plan.get("add_datasets", {}).items():      # the datasets used, after our own
+        if repo not in have:
+            api.add_collection_item(data.slug, repo, "dataset", note=note, exists_ok=True); print("added to the data collection:", repo)
     # 7. the Stage 1 repositories: Cohere's fixed tokenizer_config.json in place of the outdated one, on the date (UTC) their cards give
     import datetime
     import sys

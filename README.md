@@ -177,6 +177,8 @@ python scripts/check_tokenizer.py itssaharsh/relapse-tiny-aya-global-unlearn-bio
 python scripts/survey_copies.py         # repeats the survey of public copies (CPU; reads tokenizer files and GGUF headers only)
 ```
 
+Nothing here reads a path on the author's machine. The analyses above read `results/` by relative path and need no account. Each GPU job is one self-contained script: `bash hf_jobs/build_single_line.sh job.py` (or another `hf_jobs/build*.sh`) joins a header, `kaggle/common.py` and one experiment script, and `hf jobs uv run job.py`, with the settings named in its pre-registration, runs it. The header downloads the model, the datasets and, for scoring jobs, the saved edited matrices from Hugging Face at pinned revisions into directories the job creates (`/tmp/kg/…`), and uploads its results to the dataset named in `OUT_REPO`; to run a job yourself, set `OUT_REPO` in the header to a dataset you own. Tiny Aya and the WMDP forget corpus are gated, so your token must have accepted both. The edited matrices of every run (about 87 GB) are in a private working dataset; the training jobs remake them from the seeds in each pre-registration. Both collections list what was used as well as what was made: [models](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) and [data](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets).
+
 | Folder | What is in it |
 |---|---|
 | [`results/PREREGISTRATION.md`](results/PREREGISTRATION.md) and [`_2`](results/PREREGISTRATION_2.md), [`_3`](results/PREREGISTRATION_3.md), [`_4`](results/PREREGISTRATION_4.md), [`_5`](results/PREREGISTRATION_5.md), [`_6`](results/PREREGISTRATION_6.md) | The six pre-registrations, each committed before its runs |

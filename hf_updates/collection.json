@@ -36,5 +36,18 @@
   "itssaharsh/relapse-wmdp-bio-probes": "707 reworded and translated WMDP-bio questions used in the full check.",
   "itssaharsh/relapse-article": "The write-up: final results, every registered hypothesis and its outcome.",
   "itssaharsh/relapse": "Demo page: the final, pre-registered Stage 2 results, drawn from the result files."
+ },
+ "add_models": {
+  "CohereLabs/tiny-aya-global": "Used, not ours: Cohere Labs' original model, the starting point of every run and the reference each score is compared with. Gated by Cohere.",
+  "CohereLabs/tiny-aya-fire": "Used, not ours: Cohere Labs' original model, the starting point of every run and the reference each score is compared with. Gated by Cohere.",
+  "CohereLabs/tiny-aya-earth": "Used, not ours: Cohere Labs' original model, the starting point of every run and the reference each score is compared with. Gated by Cohere.",
+  "CohereLabs/tiny-aya-water": "Used, not ours: Cohere Labs' original model, the starting point of every run and the reference each score is compared with. Gated by Cohere.",
+  "CohereLabs/tiny-aya-base": "Used, not ours: Cohere Labs' original model, the starting point of every run and the reference each score is compared with. Gated by Cohere."
+ },
+ "add_datasets": {
+  "cais/wmdp": "Used, not ours: the WMDP benchmark. Every run is scored on its 1,273 WMDP-bio questions.",
+  "cais/wmdp-bio-forget-corpus": "Used, not ours: the texts RMU forgets. Gated; downloaded inside each job and never redistributed.",
+  "Salesforce/wikitext": "Used, not ours: the texts RMU retains (wikitext-2-raw-v1).",
+  "cais/mmlu": "Used, not ours: general knowledge (a fixed sample of 1,000 questions) and the four benign-biology subjects."
  }
 }

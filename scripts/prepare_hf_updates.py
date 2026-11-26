@@ -183,7 +183,14 @@ def main() -> None:
                   f"{USER}/relapse-wmdp-bio-probes": "707 reworded and translated WMDP-bio questions used in the full check.",
                   f"{USER}/relapse-article": "The write-up: final results, every registered hypothesis and its outcome.",
                   f"{USER}/relapse": "Demo page: the final, pre-registered Stage 2 results, drawn from the result files."}
-    json.dump({"collection": "relapse-unlearned-tiny-aya-models", "order": order, "notes": notes, "descriptions": descriptions, "data_collection": "relapse-runs-logs-and-probe-sets", "data_notes": data_notes},
+    # what the submission form asks of the two collections: every model and dataset used, not only the ones made here
+    used_models = {f"CohereLabs/tiny-aya-{v}": "Used, not ours: Cohere Labs' original model, the starting point of every run and the reference each score is compared with. Gated by Cohere." for v in VARIANTS}
+    used_data = {"cais/wmdp": "Used, not ours: the WMDP benchmark. Every run is scored on its 1,273 WMDP-bio questions.",
+                 "cais/wmdp-bio-forget-corpus": "Used, not ours: the texts RMU forgets. Gated; downloaded inside each job and never redistributed.",
+                 "Salesforce/wikitext": "Used, not ours: the texts RMU retains (wikitext-2-raw-v1).",
+                 "cais/mmlu": "Used, not ours: general knowledge (a fixed sample of 1,000 questions) and the four benign-biology subjects."}
+    json.dump({"collection": "relapse-unlearned-tiny-aya-models", "order": order, "notes": notes, "descriptions": descriptions, "data_collection": "relapse-runs-logs-and-probe-sets", "data_notes": data_notes,
+               "add_models": used_models, "add_datasets": used_data},
               open(os.path.join(OUT, "collection.json"), "w"), indent=1)
     changed = [f"{k}__{n}" for (k, n), t in cards.items() if t != live.get((k, n))]
     plan = [f"# Pushes prepared on {today}, waiting for a yes", "", "Nothing here has been uploaded. `python scripts/apply_hf_updates.py` prints this plan; `--yes` carries it out. No repository is created, deleted or renamed, and no visibility changes.", "",
@@ -193,6 +200,8 @@ def main() -> None:
              "4. Write-up Space `itssaharsh/relapse-article`: `index.html` from `hf_updates/space__relapse-article/` (rebuilt from `docs/ARTICLE.md`).",
              "5. Dataset `itssaharsh/relapse-runs`: add `stage2/survey/` (the files of `results/survey/`), replace `stage2/paper.pdf` with the final `paper/main.pdf`, add `stage2/check_tokenizer.py` (the checker, so it sits inside the judged collection), `stage2/single_line/` and `stage2/PREREGISTRATION_6.md`, and add `stage2/PREREGISTRATION_5.md` if it is not there.",
              "6. Both collections: descriptions that name the paper and the checker, item notes, and the models collection ordered Stage 2 first (`hf_updates/collection.json`):"] + [f"   {i + 1}. `{r}`" for i, r in enumerate(order)]
+    plan += ["   Added after them, as the submission form asks for every model and dataset used: " + ", ".join(f"`{r}`" for r in used_models) + " in the models collection; "
+             + ", ".join(f"`{r}`" for r in used_data) + " in the data collection. Each is marked as used, not ours."]
     plan += [f"7. The five Stage 1 model repositories that carry the outdated setting ({', '.join('`' + n + '`' for n in revs)}): replace `tokenizer_config.json` with Cohere's fixed file "
              f"(`{VENDOR_REPO}` at `{VENDOR_REV[:10]}`). Their cards give the date ({FIX_DATE}, UTC) and the revision the Stage 1 results used. Done on that date; the apply script leaves a repository that already has the fixed file alone."]
     open(os.path.join(OUT, "PLAN.md"), "w").write("\n".join(plan) + "\n")

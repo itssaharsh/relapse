@@ -39,7 +39,7 @@ STAGE1 = {"tiny-aya-global-unlearn-bio-default-layers": "layers 5 to 7, SafeTune
           "tiny-aya-global-unlearn-bio-deeper-layers": "layers 10 to 12",
           "tiny-aya-global-unlearn-bio-deeper-layers-file-trained": "layers 10 to 12, trained with the model seen as its Q4_0 file",
           "tiny-aya-global-unlearn-bio-sweep": "the edited matrices of all 38 Stage 1 runs, at five layer windows"}
-FIX_DATE = "27 November 2026"      # the day the Stage 1 repositories get Cohere's fixed tokenizer_config.json (scripts/apply_hf_updates.py checks the date)
+FIX_DATE = "26 November 2026"      # the day (UTC, as Hugging Face records the commits) the Stage 1 repositories got Cohere's fixed tokenizer_config.json; results/survey/reports.json has the commits
 VENDOR_REPO, VENDOR_REV = "CohereLabs/tiny-aya-global", "af89d219b53ed9b13b8a4645f9c8028973510324"      # Cohere's fix of 30 September 2026
 DATASETS = ("relapse-runs", "relapse-wmdp-bio-probes")
 SPACES = ("relapse-article", "relapse")
@@ -78,7 +78,7 @@ def stage1_card(name: str, what: str, old: str, files: list[str], today: str, re
     front, body = split(old)
     title = next((l for l in body.split("\n") if l.startswith("# ")), f"# {name}")
     table = [l for l in body.split("\n") if l.startswith("| fp16:") or l.startswith("|---|---|---|---|")][:2]      # the scores through the official tokenizer, already on the card
-    tok = (f"Until {FIX_DATE} its `tokenizer_config.json` carried that setting (`tokenizer_class: CohereTokenizerFast`); on that date it was replaced with Cohere's fixed file (from `{VENDOR_REPO}` at `{VENDOR_REV[:10]}`), so the repository now loads with the official tokenizer. "
+    tok = (f"Until {FIX_DATE} (UTC) its `tokenizer_config.json` carried that setting (`tokenizer_class: CohereTokenizerFast`); on that date it was replaced with Cohere's fixed file (from `{VENDOR_REPO}` at `{VENDOR_REV[:10]}`), so the repository now loads with the official tokenizer. "
            f"The Stage 1 results were made with revision `{revs[name][:10]}` of this repository, which keeps the outdated setting."
            if name in revs else "It holds edited matrices only, no tokenizer files.")
     stage2 = ", ".join(f"[{v.capitalize()}](https://huggingface.co/{USER}/relapse-tiny-aya-{v}-unlearn-bio)" for v in VARIANTS)
@@ -132,7 +132,7 @@ def with_status(old: str, kind: str, today: str) -> str:
 def main() -> None:
     from huggingface_hub import HfApi, hf_hub_download
     api = HfApi()
-    today = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=5, minutes=30))).strftime("%-d %B %Y")      # the author's date (IST), as apply_hf_updates.py reads FIX_DATE
+    today = datetime.datetime.now(datetime.timezone.utc).strftime("%-d %B %Y")      # UTC, as every date in the cards and the paper
     for d in ("cards", "previous", "space__relapse-article"):
         os.makedirs(os.path.join(OUT, d), exist_ok=True)
     live = {}
@@ -194,7 +194,7 @@ def main() -> None:
              "5. Dataset `itssaharsh/relapse-runs`: add `stage2/survey/` (the files of `results/survey/`), replace `stage2/paper.pdf` with the final `paper/main.pdf`, add `stage2/check_tokenizer.py` (the checker, so it sits inside the judged collection), `stage2/single_line/` and `stage2/PREREGISTRATION_6.md`, and add `stage2/PREREGISTRATION_5.md` if it is not there.",
              "6. Both collections: descriptions that name the paper and the checker, item notes, and the models collection ordered Stage 2 first (`hf_updates/collection.json`):"] + [f"   {i + 1}. `{r}`" for i, r in enumerate(order)]
     plan += [f"7. The five Stage 1 model repositories that carry the outdated setting ({', '.join('`' + n + '`' for n in revs)}): replace `tokenizer_config.json` with Cohere's fixed file "
-             f"(`{VENDOR_REPO}` at `{VENDOR_REV[:10]}`). Their cards give the date ({FIX_DATE}) and the revision the Stage 1 results used. The apply script does this only on that date."]
+             f"(`{VENDOR_REPO}` at `{VENDOR_REV[:10]}`). Their cards give the date ({FIX_DATE}, UTC) and the revision the Stage 1 results used. Done on that date; the apply script leaves a repository that already has the fixed file alone."]
     open(os.path.join(OUT, "PLAN.md"), "w").write("\n".join(plan) + "\n")
     print(f"wrote {len(cards)} cards ({len(changed)} differ from what is live), the write-up page, collection.json and PLAN.md to {OUT}")
 

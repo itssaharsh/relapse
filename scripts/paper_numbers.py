@@ -489,8 +489,9 @@ def revisions() -> tuple[dict, dict]:
            f" Job counts exclude {len(smoke)} three-batch pipeline tests. The outdated setting inside Stage~2 jobs is the same revision's tokenizer files with \\texttt{{tokenizer\\_class}} set to \\texttt{{CohereTokenizerFast}}; Stage~1 used the copy Kaggle held (uploaded 16 February 2026), whose revision Kaggle identifies only as version 1.}}\n\\label{{tab:revisions}}\n\\end{{table*}}\n")
     everything = json.load(open(os.path.join(base, "jobs.json")))
     pr5 = [j for j in J if j["out"] == "changed_shift2.pt"]
+    pr6 = sorted((j for j in J if j["experiment"] == "single_line"), key=lambda j: j["started"])
     return {"revJobs": len(J), "revSmoke": len(smoke), "revSets": len(sets), "revAll": len(everything), "revCompleted": sum(j["outcome"] == "COMPLETED" for j in everything),
-            "revPrFiveFirst": pr5[0]["started"][11:19], "revPrFiveLast": pr5[-1]["started"][11:19], "revPrFiveCommit": pr5[0]["repo_commit"][:7], "revPrFiveFlavor": pr5[0]["flavor"].replace("JobHardware.", "").lower()}, {"table_revisions.tex": tex}
+            "revPrFiveFirst": pr5[0]["started"][11:19], "revPrFiveLast": pr5[-1]["started"][11:19], "revPrFiveCommit": pr5[0]["repo_commit"][:7], "revPrSixCommit": pr6[0]["repo_commit"][:7], "revPrSixFirst": pr6[0]["started"][11:19], "revPrSixLast": pr6[-1]["started"][11:19], "revPrSixJobs": len(pr6), "revPrFiveFlavor": pr5[0]["flavor"].replace("JobHardware.", "").lower()}, {"table_revisions.tex": tex}
 
 
 def survey() -> tuple[dict, dict]:
@@ -669,15 +670,21 @@ def pushes() -> tuple[dict, dict]:
 
 
 def reports() -> tuple[dict, dict]:
-    """The issues opened on the kits' repositories (scripts/report_record.py): how many, and the date in the author's time zone (IST), as the Stage 1 fix is dated."""
+    """The reports and the Stage 1 fix (scripts/report_record.py), dated in UTC as GitHub, Kaggle and Hugging Face record them."""
     path = os.path.join(ROOT, "results", "survey", "reports.json")
     if not os.path.exists(path):
         return {}, {}
     import datetime
-    R = json.load(open(path))["issues"]; ist = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
-    days = sorted({datetime.datetime.fromisoformat(r["created_at"].replace("Z", "+00:00")).astimezone(ist).date() for r in R})
-    assert len(days) == 1 and len({r["kit"] for r in R}) == 4
-    return {"reportsN": len(R), "reportsDate": f"{days[0].day} {days[0]:%B %Y}"}, {}
+    R = json.load(open(path)); day = lambda t: datetime.datetime.fromisoformat(t.replace("Z", "+00:00")).astimezone(datetime.timezone.utc).date()
+    show = lambda d: f"{d.day} {d:%B %Y}"
+    issues, fix = {day(r["created_at"]) for r in R["issues"]}, {day(r["created_at"]) for r in R["stage1_tokenizer_fix"]}
+    assert len(issues) == 1 and len(fix) == 1 and len({r["kit"] for r in R["issues"]}) == 4
+    out = {"reportsN": len(R["issues"]), "reportsDate": show(min(issues)), "fixDate": show(min(fix)), "fixDay": f"{min(fix).day} {min(fix):%B}", "fixRepos": len(R["stage1_tokenizer_fix"])}
+    k = R.get("kaggle_discussion") or {}
+    if k.get("posted"):
+        assert day(k["posted"]) == min(issues)      # the paper gives one date for the issues and the Kaggle post
+        out.update(kaggleDate=show(day(k["posted"])), kaggleUrl=k["url"])
+    return out, {}
 
 
 def reverse_rule() -> tuple[dict, dict]:

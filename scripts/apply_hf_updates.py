@@ -56,19 +56,21 @@ def main() -> None:
         if it.item_id in plan["data_notes"]:
             api.update_collection_item(data.slug, it.item_object_id, note=plan["data_notes"][it.item_id])
     api.update_collection_metadata(data.slug, description=plan["descriptions"][plan["data_collection"]])
-    # 7. the Stage 1 repositories: Cohere's fixed tokenizer_config.json in place of the outdated one, on the date their cards give
+    # 7. the Stage 1 repositories: Cohere's fixed tokenizer_config.json in place of the outdated one, on the date (UTC) their cards give
     import datetime
     import sys
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from check_tokenizer import check
     from huggingface_hub import hf_hub_download
     from prepare_hf_updates import FIX_DATE, VENDOR_REPO, VENDOR_REV
-    ist = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=5, minutes=30)))
-    if f"{ist.day} {ist.strftime('%B %Y')}" != FIX_DATE:
-        print(f"NOT DONE: the Stage 1 tokenizer fix. The cards say {FIX_DATE}; today is {ist:%d %B %Y} (IST). Set FIX_DATE, prepare again, and rerun.")
-    else:
-        fixed = hf_hub_download(VENDOR_REPO, "tokenizer_config.json", revision=VENDOR_REV)
-        for name in json.load(open(os.path.join(OUT, "stage1_revisions.json"))):
+    utc = datetime.datetime.now(datetime.timezone.utc)
+    fixed = hf_hub_download(VENDOR_REPO, "tokenizer_config.json", revision=VENDOR_REV)
+    for name in json.load(open(os.path.join(OUT, "stage1_revisions.json"))):
+        if check(f"{USER}/{name}")["setting"] == "official":
+            print("tokenizer already fixed:", name)
+        elif f"{utc.day} {utc.strftime('%B %Y')}" != FIX_DATE:
+            print(f"NOT DONE: the Stage 1 tokenizer fix of {name}. The cards say {FIX_DATE} (UTC); today is {utc:%d %B %Y}. Set FIX_DATE, prepare again, and rerun.")
+        else:
             api.upload_file(path_or_fileobj=fixed, path_in_repo="tokenizer_config.json", repo_id=f"{USER}/{name}", commit_message="Tokenizer setting: Cohere's fix of 30 September 2026 (tokenizer_class PreTrainedTokenizerFast)")
             print("tokenizer fixed:", name, "->", check(f"{USER}/{name}")["setting"])
     print("done: cards, Spaces, dataset, collections and the Stage 1 tokenizer fix. Remaining: git push origin main.")

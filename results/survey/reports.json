@@ -1,4 +1,5 @@
 {
+ "times": "UTC, as GitHub, Kaggle and Hugging Face record them",
  "issues": [
   {
    "kit": "SafeTune",
@@ -26,9 +27,36 @@
   }
  ],
  "kaggle_discussion": {
-  "page": "https://www.kaggle.com/models/cohere-labs/tiny-aya",
-  "text": "hf_updates/reports/kaggle_discussion.md",
-  "posted": null,
-  "note": "Kaggle's public API has no call that creates a discussion; the text is ready and was not posted from this machine."
- }
+  "url": "https://www.kaggle.com/models/cohere-labs/tiny-aya/discussion/762145",
+  "title": "tokenizer_config.json here still names CohereTokenizerFast: under transformers 5.x the text is split differently from Hugging Face's copy",
+  "posted": "2026-11-26T20:54:58Z",
+  "text": "hf_updates/reports/kaggle_discussion.md"
+ },
+ "stage1_tokenizer_fix": [
+  {
+   "repo": "itssaharsh/tiny-aya-global-unlearn-bio-default-layers",
+   "commit": "4196e15f71db8e58a3c213f7625770fcac117073",
+   "created_at": "2026-11-26T20:32:05Z"
+  },
+  {
+   "repo": "itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers",
+   "commit": "667e432c2f30edabd2c8acdb2017d42d3d98ad26",
+   "created_at": "2026-11-26T20:32:09Z"
+  },
+  {
+   "repo": "itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-4bit-aware",
+   "commit": "b5ee88b097e010716b552c162a95bc58f5e0e4e3",
+   "created_at": "2026-11-26T20:32:12Z"
+  },
+  {
+   "repo": "itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers",
+   "commit": "899d6e1b2744adbed371523db03dffe5e0cdcf47",
+   "created_at": "2026-11-26T20:32:16Z"
+  },
+  {
+   "repo": "itssaharsh/tiny-aya-global-unlearn-bio-deeper-layers-file-trained",
+   "commit": "0e33455b57736679adac8088e6200e6a87dc64e6",
+   "created_at": "2026-11-26T20:32:20Z"
+  }
+ ]
 }

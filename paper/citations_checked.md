@@ -335,3 +335,77 @@ The submission form asks that every repository, model, dataset and tool the expe
 - Year: 2023 (the file's first commit, 2023-11-01, "gguf : add file format specification")
 - Source of these fields: the file itself and the GitHub API
 - Cited for: Appendix E: the file format of the real 4-bit files.
+
+# Added 27 November 2026: the organisers' citation review
+
+Five papers the organisers asked for, taken from arXiv's own BibTeX export (`https://arxiv.org/bibtex/<id>`, fetched 27 November 2026; full author list, `eprint`, `archivePrefix`, `primaryClass` as exported; only the key was shortened and the title braced to keep its case). The abstract page of each was fetched the same day and its title compared with the export.
+
+## `dang2024ayaexpanse`
+
+- URL: https://arxiv.org/abs/2412.04261 (BibTeX: https://arxiv.org/bibtex/2412.04261)
+- Title: Aya Expanse: Combining Research Breakthroughs for a New Multilingual Frontier
+- Authors (45): John Dang; Shivalika Singh; Daniel D'souza; Arash Ahmadian; Alejandro Salamanca; Madeline Smith; Aidan Peppin; Sungjin Hong; Manoj Govindassamy; Terrence Zhao; Sandra Kublik; Meor Amer; Viraat Aryabumi; Jon Ander Campos; Yi-Chern Tan; Tom Kocmi; Florian Strub; Nathan Grinsztajn; Yannis Flet-Berliac; Acyr Locatelli; Hangyu Lin; Dwarak Talupuru; Bharat Venkitesh; David Cairuz; Bowen Yang; Tim Chung; Wei-Yin Ko; Sylvie Shang Shi; Amir Shukayev; Sammie Bae; Aleksandra Piktus; Roman Castagné; Felipe Cruz-Salinas; Eddie Kim; Lucas Crawhall-Stein; Adrien Morisot; Sudip Roy; Phil Blunsom; Ivan Zhang; Aidan Gomez; Nick Frosst; Marzieh Fadaee; Beyza Ermis; Ahmet Üstün; Sara Hooker
+- Year: 2024 (2024/12/05); primary class cs.CL
+- Cited for: Introduction, where the Tiny Aya family is introduced: an earlier, larger multilingual model family from Cohere. The paper does not say Tiny Aya is Aya Expanse or derived from it: the Tiny Aya report (arXiv:2603.11510, HTML fetched 27 November 2026) cites Dang et al. (2024) only for win-rate evaluation and makes no such statement.
+
+## `seth2026safetune`
+
+- URL: https://arxiv.org/abs/2609.22153 (BibTeX: https://arxiv.org/bibtex/2609.22153)
+- Title: SafeTune: A Unified Faithful Library for Auditing and Repairing Safety Drift in Fine-Tuned LLMs
+- Authors (4): Pratinav Seth; Saisab Sadhu; Anshul Kaushal; Vinay Kumar Sankarapu
+- Year: 2026 (2026/08/26); primary class cs.LG
+- Cited for: Introduction (first mention of SafeTune), Setup (the paragraph on the kits), Appendix A (kit table). The repository citation `safetune` is kept beside it.
+
+## `seth2026circuitkit`
+
+- URL: https://arxiv.org/abs/2607.19317 (BibTeX: https://arxiv.org/bibtex/2607.19317)
+- Title: CircuitKIT : Circuit Discovery, Evaluation, and Application Toolkit for Mechanistic Interpretability
+- Authors (4): Pratinav Seth; Hem Gosalia; Aditya Kasliwal; Vinay Kumar Sankarapu
+- Year: 2026 (2026/07/21); primary class cs.LG
+- Cited for: Introduction (first mention of CircuitKIT), Setup (kits), Appendix A (kit table). The repository citation `circuitkit` is kept beside it.
+
+## `arora2026auditkit`
+
+- URL: https://arxiv.org/abs/2610.22511 (BibTeX: https://arxiv.org/bibtex/2610.22511)
+- Title: AuditKIT: A Unified Evaluation Spine for Benchmarking, Judging, and Comparing Large Language Models and Agentic Systems
+- Authors (7): Shreeyans Arora; Utsav Avaiya; Zera Lyngkhoi; Hem Gosalia; Ram Mohan Rao Kadiyala; Vinay Kumar Sankarapu; Pratinav Seth
+- Year: 2026 (2026/10/15); primary class cs.CL
+- Cited for: Introduction (first mention of AuditKIT), Setup (kits), Appendix A (kit table), caption of the real-files table. The repository citation `auditkit` is kept beside it.
+
+## `bhattacharjee2026curatorkit`
+
+- URL: https://arxiv.org/abs/2606.21631 (BibTeX: https://arxiv.org/bibtex/2606.21631)
+- Title: CuratorKIT : Data Curation and Synthetic Data Generation for LLM Post-Training
+- Authors (4): Soham Bhattacharjee; Karun Sharma; Vinay Kumar Sankarapu; Pratinav Seth
+- Year: 2026 (2026/06/19); primary class cs.CL
+- Cited for: Introduction (first mention of CuratorKIT), Setup (kits), Appendix A (kit table). The repository citation `curatorkit` is kept beside it.
+
+## Methods and tools the paper names (audit of 27 November 2026)
+
+Each record below was fetched on 27 November 2026 before its entry was written.
+
+| Key | What it is cited for | Source opened | Fields taken from it |
+|---|---|---|---|
+| `mcnemar1947note` | the exact McNemar test (Section 4.3, Appendix D) | Crossref record of doi:10.1007/BF02295996 | Quinn McNemar; Psychometrika 12(2), 153-157; 1947 |
+| `holm1979simple` | the Holm correction (Section 4.3, Appendix D) | OpenAlex record W2121044470 (doi:10.2307/4615733); Crossref has no record of it | Sture Holm; Scandinavian Journal of Statistics 6, 65-70; 1979 |
+| `clopper1934use` | the Clopper-Pearson interval (Appendix D) | Crossref record of doi:10.1093/biomet/26.4.404 | C. J. Clopper, E. S. Pearson; Biometrika 26(4), 404-413; 1934 |
+| `fisher1922interpretation` | the Fisher exact test (Appendix D) | Crossref record of doi:10.2307/2340521 | R. A. Fisher; Journal of the Royal Statistical Society 85(1), from page 87; 1922 |
+| `efron1979bootstrap` | the bootstrap (Setup, Appendix D) | Crossref record of doi:10.1214/aos/1176344552 | B. Efron; The Annals of Statistics 7(1), 1-26; 1979 |
+| `broder1997resemblance` | MinHash deduplication in CuratorKIT (Appendix A) | Crossref record of doi:10.1109/SEQUEN.1997.666900 | A. Z. Broder; Compression and Complexity of SEQUENCES 1997, 21-29 |
+| `bengio2013estimating` | the straight-through gradient of the repair arm (Appendix E) | arXiv BibTeX export of 1308.3432 | Bengio, Leonard, Courville; 2013; cs.LG |
+| `frantar2023gptq` | GPTQ, named in Related Work | arXiv BibTeX export and abstract page of 2210.17323 | four authors as exported; comments field: "ICLR 2023" |
+| `lin2024awq` | AWQ, named in Related Work | arXiv BibTeX export and abstract page of 2306.00978 | ten authors as exported; comments field: "MLSys 2024 Best Paper Award" (the export's year field, 2026, is that of the latest revision) |
+| `uv` | the `uv` scripts every job is (Appendix G) | GitHub API, astral-sh/uv | description; repository created 2023-10-02; no citation file, cited as Astral |
+| `pytest` | the test suite (Appendix G) | the repository's CITATION file, pytest-dev/pytest | authors and year 2004 as that file gives them |
+| `claudecode` | the AI assistant named in the declarations (Appendix H) | GitHub API, anthropics/claude-code | repository created 2025-02-22; cited as Anthropic |
+| `hfjobs` | Hugging Face Jobs, where Stage 2 ran (Appendix F) | https://huggingface.co/docs/huggingface_hub/guides/jobs | page title "Run and manage Jobs" |
+| `kaggletinyaya` | Kaggle's copy of Tiny Aya, the outdated setting's source (Introduction) | https://www.kaggle.com/models/cohere-labs/tiny-aya (and Kaggle's API record of the model, read by `scripts/check_tokenizer.py`) | model owner cohere-labs; five variations |
+
+Also moved to their first mention in the main text, from entries already recorded above: Transformers, llama.cpp and GGUF, bitsandbytes and QLoRA (NF4), WikiText, PyTorch, LoRA, MMLU.
+
+| `shi2024muse` | MUSE, whose Books corpus Related Work names | arXiv BibTeX export, abstract page and HTML of 2407.06460 ("Books consists of the Harry Potter book series.") | ten authors as exported; 2024; cs.CL |
+| `dixon1946sign` | the sign test (Appendix D) | Crossref record of doi:10.1080/01621459.1946.10501898 | W. J. Dixon, A. M. Mood; Journal of the American Statistical Association 41(236), 557-566; 1946 |
+| `python` | Python, which every job header pins (Appendix G) | GitHub API, python/cpython, and its LICENSE file | description "The Python programming language"; cited as Python Software Foundation, the licensor named in that file; year of access |
+| `pip` | pip (Appendix G) | GitHub API, pypa/pip, and its pyproject.toml | description; authors field "The pip developers"; repository created 2011 |
+
+`salamanca2026tinyaya` was replaced on 27 November 2026 by arXiv's own BibTeX export of 2603.11510 (26 authors, `primaryClass` cs.CL), so it has the same form as the five entries the organisers asked for.

@@ -8,7 +8,7 @@ pretty_name: Relapse Stage 2 working files (edited matrices and raw job outputs)
 
 This is the dataset the Stage 2 jobs of the paper wrote into as they ran: the edited weight matrices of every run and the raw outputs of every job. It is kept so that a scoring job can be rerun without retraining. For reading results, use [`itssaharsh/relapse-runs`](https://huggingface.co/datasets/itssaharsh/relapse-runs), which holds the same per-question results in a tidier layout, or the `results/` folder of the [code repository](https://github.com/itssaharsh/relapse).
 
-**Paper:** [An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf). **Code, jobs and pre-registrations:** [github.com/itssaharsh/relapse](https://github.com/itssaharsh/relapse). Status on 26 November 2026 (UTC): made public on 26 November 2026 (UTC); unchanged since the jobs wrote it, apart from this card and the `stage1/` folder.
+**Paper:** [An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf). **Code, jobs and pre-registrations:** [github.com/itssaharsh/relapse](https://github.com/itssaharsh/relapse). Status on 27 November 2026 (UTC): made public on 26 November 2026 (UTC); unchanged since the jobs wrote it, apart from this card and the `stage1/` folder.
 
 ## What is in it
 

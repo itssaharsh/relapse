@@ -149,7 +149,7 @@ def deep() -> tuple[dict, dict]:
         rc = lambda v, f: f"{pct(v[f]['file'])} ({signed(100 * v[f]['rise'])})" + ("$^{*}$" if v[f]["relapse"] else "") if f in v else "--"
         body = "".join(f"{short(n)} & {pct(v['Q4_0']['fp16'])} & {rc(v, 'Q4_0')} & {rc(v, 'Q4_K_M')} & {rc(v, 'nf4')} \\\\\n" for t, n, v in sorted(keep, key=lambda x: short(x[1])))
         tables["table_real.tex"] = table("@{}lrrrr@{}", r" & & \multicolumn{2}{c}{Real file} & Round trip \\" + "\n" + r"\cmidrule(lr){3-4}\cmidrule(l){5-5}" + "\n" + r"Model, seed, lr & fp16 & \fq{} & \qkm{} & \nf{} \\" + "\n", body,
-                                         r"Real llama.cpp files of every relapsing run of the map and the fresh seeds, and of the other Fire run of seed 44, built in the same job: \wmdp{} accuracy (\%) and change against fp16, compared with AuditKIT's paired bootstrap. \nf{} is the round trip, which the bitsandbytes loader reproduces. $^{*}$ marks a relapse.", "tab:real", "1.8pt", "\\footnotesize")
+                                         r"Real llama.cpp files of every relapsing run of the map and the fresh seeds, and of the other Fire run of seed 44, built in the same job: \wmdp{} accuracy (\%) and change against fp16, compared with AuditKIT's paired bootstrap \protect\citep{arora2026auditkit}. \nf{} is the round trip, which the bitsandbytes loader reproduces. $^{*}$ marks a relapse.", "tab:real", "1.8pt", "\\footnotesize")
         others = sorted(100 * v["Q4_0"]["rise"] for t, n, v in keep if "base" in n.lower() and not v["Q4_0"]["relapse"])
         nums["realOtherRises"] = " and ".join(f"{x:.1f}" for x in others)
         rep_real = [v for t, models in d["part_b_real_files"].items() for n, v in models.items() if "file_nb600" in n]

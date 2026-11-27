@@ -58,12 +58,12 @@ def test_every_number_in_the_write_up_is_measured():
 
 
 def test_stage2_block_is_rebuilt_from_the_results():
-    from build_readme import REPO, block, brief
+    from build_readme import block, brief, for_article
     for doc in DOCS:
         assert "<!-- brief:start -->\n" + brief() + "<!-- brief:end -->" in read(doc)
     text = block()
     assert "<!-- stage2:start -->\n" + text + "<!-- stage2:end -->" in read("README.md")
-    assert "<!-- stage2:start -->\n" + text.replace("](results/", "](" + REPO + "results/") + "<!-- stage2:end -->" in read(os.path.join("docs", "ARTICLE.md"))
+    assert "<!-- stage2:start -->\n" + for_article(text) + "<!-- stage2:end -->" in read(os.path.join("docs", "ARTICLE.md"))
 
 
 def test_withdrawn_claims_stay_withdrawn():

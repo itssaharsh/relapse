@@ -135,7 +135,9 @@ def hypotheses() -> dict:
     from build_readme import block
     rows = [line for line in block().split("### Every registered hypothesis")[1].splitlines() if line.startswith("| ") and not line.startswith("| Experiment")]
     failed = [r for r in rows if "**Failed" in r or "**Not significant" in r]
-    return {"registered": len(rows), "failed": len(failed)}
+    from build_readme import tally
+    t = tally(); assert t["n"] == len(rows) and t["failed"] == len(failed)      # the page's counts are the paper's
+    return {"registered": len(rows), "failed": len(failed), "part": t["part"], "held": t["held"], "untestable": t["untestable"]}
 
 
 def build() -> dict:

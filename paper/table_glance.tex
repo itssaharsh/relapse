@@ -1,5 +1,5 @@
 \begin{table}[!b]
-\centering\small\setlength{\tabcolsep}{4pt}
+\centering\small\setlength{\tabcolsep}{3.8pt}
 \begin{tabular}{@{}lrr@{}}
 \toprule
 Layers edited & 5--7 (default) & 3--5 \\
@@ -8,7 +8,7 @@ Layers edited & 5--7 (default) & 3--5 \\
 \wmdp{} as deployed (\%) & 50.8 & 36.8 \\
 Relapses, effective runs & 16 of 16 & 0 of 16 \\
 Rise $\geq$5 points, all runs & 20 of 20 & 4 of 20 \\
-MMLU lost, audited $\rightarrow$ deployed & 5.8 $\rightarrow$ 1.7 & 0.5 $\rightarrow$ 1.1 \\
+MMLU lost, audited $\rightarrow$ deployed & 5.8 $\rightarrow$ 1.7 & 0.6 $\rightarrow$ 1.1 \\
 Rise $\geq$5, MMLU lost $<$3$^\ast$ & \multicolumn{2}{r}{0 of 48} \\
 \midrule
 MMLU points lost & 2.3 & 1.6 \\
@@ -16,6 +16,6 @@ Benign-biology points lost & 4.5 & 6.3 \\
 Hazard points per benign point & 3.26 & 3.30 \\
 \bottomrule
 \end{tabular}
-\caption{The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited; MMLU lost is against the original through the same tokenizer. Bottom: the final runs, official tokenizer, five models and two seeds. $^\ast$Both tokenizer experiments, every window: runs that had lost under 3 MMLU points as audited.}
+\caption{The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one, on multiple-choice prompts. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited; MMLU lost is against the original through the same tokenizer. Bottom: the final runs, official tokenizer, five models and two seeds. $^\ast$Exploratory; both tokenizer experiments, every window: runs that had lost under 3 MMLU points as audited.}
 \label{tab:glance}
 \end{table}

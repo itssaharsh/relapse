@@ -154,7 +154,7 @@
   <section class="wrong wrap" id="wrong" aria-labelledby="wrong-h">
     <h2 id="wrong-h">What we got wrong</h2>
     <p>Our first round of results (Stage 1) ran Tiny Aya through an outdated tokenizer setting. The copy of the model we used predated a fix Cohere made on Hugging Face, so text was split differently from the way the model was trained. The weights were fine; the scores were not. We withdrew the claims we had made on those models: that one of them relapsed in a 4-bit file, and that training on the file repaired it.</p>
-    <p>Everything on this page is Stage 2. Each experiment was registered in the repository before it ran, and every model was scored through the official tokenizer. <span data-t="hypotheses.failed|Words"></span> of the <span data-t="hypotheses.registered"></span> registered hypotheses failed, in full or in part, and every one is reported.</p>
+    <p>Everything on this page is Stage 2. Each experiment was registered in the repository before it ran, and every model was scored through the official tokenizer. <span data-t="hypotheses.failed|Words"></span> of the <span data-t="hypotheses.registered"></span> registered hypotheses failed and <span data-t="hypotheses.part|words"></span> held only in part; every one is reported.</p>
     <ul class="links">
       <li><a href="https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf">The paper (PDF)</a></li>
       <li><a href="https://huggingface.co/spaces/itssaharsh/relapse-article">The write-up</a></li>

@@ -20,6 +20,9 @@ def main(out: str) -> None:
     body = body.replace("<table>", '<div class="tw"><table>').replace("</table>", "</table></div>")
     page = open(os.path.join(out, "index.html")).read()
     page = re.sub(r"<main>.*</main>", lambda m: "<main>" + body + "</main>", page, flags=re.S)
+    title = re.search(r"^# (.+)$", src, flags=re.M).group(1).strip()      # the page's title is the article's own headline
+    page = re.sub(r"<title>.*?</title>", lambda m: "<title>" + title + "</title>", page, count=1, flags=re.S)
+    page = re.sub(r'(<meta name="description" content=")[^"]*(")', lambda m: m.group(1) + "Write-up of Relapse: final, pre-registered results on unlearning hazardous biology from Tiny Aya, through two tokenizer settings and in 4-bit files." + m.group(2), page, count=1)
     open(os.path.join(out, "index.html"), "w").write(page)
 
 

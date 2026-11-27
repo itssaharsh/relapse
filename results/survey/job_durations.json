@@ -1,0 +1,1408 @@
+{
+ "source": "huggingface_hub HfApi().list_jobs(): created_at, started_at, finished_at, flavor, status",
+ "prices_usd_per_hour": {
+  "cpu-xl": 1.0,
+  "t4-small": 0.4,
+  "t4-medium": 0.6,
+  "l4x1": 0.8,
+  "l40sx1": 1.8
+ },
+ "prices_source": "https://huggingface.co/pricing, read on 27 November 2026",
+ "jobs": [
+  {
+   "created": "2026-11-21T18:19:11Z",
+   "started": "2026-11-21T18:19:15Z",
+   "finished": "2026-11-21T18:31:45Z",
+   "flavor": "t4-small",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 749.722
+  },
+  {
+   "created": "2026-11-21T18:32:12Z",
+   "started": "2026-11-21T18:32:16Z",
+   "finished": "2026-11-21T21:44:53Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 11556.724
+  },
+  {
+   "created": "2026-11-21T18:32:18Z",
+   "started": "2026-11-21T18:32:30Z",
+   "finished": "2026-11-21T22:01:33Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 12542.869
+  },
+  {
+   "created": "2026-11-21T18:32:23Z",
+   "started": "2026-11-21T18:36:28Z",
+   "finished": "2026-11-21T21:59:34Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 12185.961
+  },
+  {
+   "created": "2026-11-21T18:32:29Z",
+   "started": "2026-11-21T18:36:18Z",
+   "finished": "2026-11-21T21:47:31Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 11473.375
+  },
+  {
+   "created": "2026-11-21T18:32:36Z",
+   "started": "2026-11-21T18:36:24Z",
+   "finished": "2026-11-21T21:46:57Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 11433.044
+  },
+  {
+   "created": "2026-11-21T18:32:42Z",
+   "started": "2026-11-21T18:35:59Z",
+   "finished": "2026-11-21T21:54:00Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 11881.644
+  },
+  {
+   "created": "2026-11-21T18:32:47Z",
+   "started": "2026-11-21T18:36:45Z",
+   "finished": "2026-11-21T22:00:18Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 12213.012
+  },
+  {
+   "created": "2026-11-21T18:32:53Z",
+   "started": "2026-11-21T18:36:44Z",
+   "finished": "2026-11-21T22:04:42Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 12477.828
+  },
+  {
+   "created": "2026-11-21T18:32:59Z",
+   "started": "2026-11-21T18:36:47Z",
+   "finished": "2026-11-21T21:56:47Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 11999.751
+  },
+  {
+   "created": "2026-11-21T18:33:05Z",
+   "started": "2026-11-21T18:36:21Z",
+   "finished": "2026-11-21T21:54:18Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 11877.387
+  },
+  {
+   "created": "2026-11-21T18:34:44Z",
+   "started": "2026-11-21T18:36:29Z",
+   "finished": "2026-11-21T18:38:20Z",
+   "flavor": "t4-medium",
+   "outcome": "ERROR",
+   "experiment": "",
+   "seconds": 110.451
+  },
+  {
+   "created": "2026-11-21T18:39:50Z",
+   "started": "2026-11-21T18:39:55Z",
+   "finished": "2026-11-21T18:51:19Z",
+   "flavor": "t4-medium",
+   "outcome": "ERROR",
+   "experiment": "",
+   "seconds": 684.448
+  },
+  {
+   "created": "2026-11-21T19:00:35Z",
+   "started": "2026-11-21T19:00:47Z",
+   "finished": "2026-11-21T20:29:35Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5327.407
+  },
+  {
+   "created": "2026-11-21T20:34:46Z",
+   "started": "2026-11-21T20:39:35Z",
+   "finished": "2026-11-21T20:53:47Z",
+   "flavor": "t4-small",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 851.94
+  },
+  {
+   "created": "2026-11-21T21:15:12Z",
+   "started": "2026-11-21T21:15:16Z",
+   "finished": "2026-11-21T21:38:21Z",
+   "flavor": "t4-small",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 1385.09
+  },
+  {
+   "created": "2026-11-21T21:25:11Z",
+   "started": "2026-11-21T21:29:24Z",
+   "finished": "2026-11-22T02:04:10Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 16486.777
+  },
+  {
+   "created": "2026-11-21T21:25:17Z",
+   "started": "2026-11-21T21:29:32Z",
+   "finished": "2026-11-22T02:08:20Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 16728.185
+  },
+  {
+   "created": "2026-11-21T21:25:23Z",
+   "started": "2026-11-21T21:29:25Z",
+   "finished": "2026-11-22T01:48:01Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 15515.343
+  },
+  {
+   "created": "2026-11-21T21:25:29Z",
+   "started": "2026-11-21T21:29:07Z",
+   "finished": "2026-11-22T01:52:03Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 15775.838
+  },
+  {
+   "created": "2026-11-21T21:25:35Z",
+   "started": "2026-11-21T21:31:37Z",
+   "finished": "2026-11-22T01:44:22Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 15164.537
+  },
+  {
+   "created": "2026-11-21T21:25:41Z",
+   "started": "2026-11-21T21:29:03Z",
+   "finished": "2026-11-22T01:49:08Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 15604.411
+  },
+  {
+   "created": "2026-11-21T21:25:47Z",
+   "started": "2026-11-21T21:29:31Z",
+   "finished": "2026-11-22T02:03:36Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 16444.457
+  },
+  {
+   "created": "2026-11-21T21:25:52Z",
+   "started": "2026-11-21T21:29:11Z",
+   "finished": "2026-11-22T01:58:58Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 16186.945
+  },
+  {
+   "created": "2026-11-21T21:25:58Z",
+   "started": "2026-11-21T21:31:31Z",
+   "finished": "2026-11-22T02:00:20Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 16128.714
+  },
+  {
+   "created": "2026-11-21T21:26:04Z",
+   "started": "2026-11-21T21:28:57Z",
+   "finished": "2026-11-22T02:00:31Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 16294.563
+  },
+  {
+   "created": "2026-11-21T22:06:28Z",
+   "started": "2026-11-21T22:06:42Z",
+   "finished": "2026-11-21T23:06:07Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 3565.406
+  },
+  {
+   "created": "2026-11-21T22:12:55Z",
+   "started": "2026-11-21T22:13:00Z",
+   "finished": "2026-11-21T22:20:09Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 429.622
+  },
+  {
+   "created": "2026-11-21T22:12:59Z",
+   "started": "2026-11-21T22:16:49Z",
+   "finished": "2026-11-21T22:23:01Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 372.367
+  },
+  {
+   "created": "2026-11-21T22:13:03Z",
+   "started": "2026-11-21T22:17:00Z",
+   "finished": "2026-11-21T22:23:14Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 374.378
+  },
+  {
+   "created": "2026-11-21T22:13:07Z",
+   "started": "2026-11-21T22:16:57Z",
+   "finished": "2026-11-21T22:23:07Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 370.388
+  },
+  {
+   "created": "2026-11-21T22:13:11Z",
+   "started": "2026-11-21T22:16:53Z",
+   "finished": "2026-11-21T22:23:05Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 371.335
+  },
+  {
+   "created": "2026-11-21T22:24:17Z",
+   "started": "2026-11-21T22:24:22Z",
+   "finished": "2026-11-22T01:28:21Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "place",
+   "seconds": 11039.688
+  },
+  {
+   "created": "2026-11-21T22:24:21Z",
+   "started": "2026-11-21T22:24:25Z",
+   "finished": "2026-11-22T01:26:43Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "place",
+   "seconds": 10938.091
+  },
+  {
+   "created": "2026-11-21T22:24:25Z",
+   "started": "2026-11-21T22:24:29Z",
+   "finished": "2026-11-22T02:28:05Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "place",
+   "seconds": 14615.483
+  },
+  {
+   "created": "2026-11-21T22:24:29Z",
+   "started": "2026-11-21T22:24:33Z",
+   "finished": "2026-11-22T02:20:30Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "place",
+   "seconds": 14156.136
+  },
+  {
+   "created": "2026-11-21T22:24:33Z",
+   "started": "2026-11-21T22:24:38Z",
+   "finished": "2026-11-22T01:21:17Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "place",
+   "seconds": 10598.889
+  },
+  {
+   "created": "2026-11-21T22:24:38Z",
+   "started": "2026-11-21T22:24:42Z",
+   "finished": "2026-11-22T01:19:09Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "place",
+   "seconds": 10466.98
+  },
+  {
+   "created": "2026-11-21T22:24:42Z",
+   "started": "2026-11-21T22:24:56Z",
+   "finished": "2026-11-22T02:14:25Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "place",
+   "seconds": 13769.359
+  },
+  {
+   "created": "2026-11-21T22:24:46Z",
+   "started": "2026-11-21T22:28:37Z",
+   "finished": "2026-11-22T02:10:05Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "place",
+   "seconds": 13287.819
+  },
+  {
+   "created": "2026-11-21T22:24:50Z",
+   "started": "2026-11-21T22:28:29Z",
+   "finished": "2026-11-22T01:32:00Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "place",
+   "seconds": 11011.06
+  },
+  {
+   "created": "2026-11-21T22:24:54Z",
+   "started": "2026-11-21T22:28:33Z",
+   "finished": "2026-11-22T01:23:16Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "place",
+   "seconds": 10482.849
+  },
+  {
+   "created": "2026-11-21T22:44:23Z",
+   "started": null,
+   "finished": null,
+   "flavor": "t4-medium",
+   "outcome": "CANCELED",
+   "experiment": "",
+   "seconds": null
+  },
+  {
+   "created": "2026-11-21T22:44:27Z",
+   "started": null,
+   "finished": null,
+   "flavor": "t4-medium",
+   "outcome": "CANCELED",
+   "experiment": "",
+   "seconds": null
+  },
+  {
+   "created": "2026-11-21T22:44:31Z",
+   "started": null,
+   "finished": null,
+   "flavor": "t4-medium",
+   "outcome": "CANCELED",
+   "experiment": "",
+   "seconds": null
+  },
+  {
+   "created": "2026-11-21T22:44:35Z",
+   "started": null,
+   "finished": null,
+   "flavor": "t4-medium",
+   "outcome": "CANCELED",
+   "experiment": "",
+   "seconds": null
+  },
+  {
+   "created": "2026-11-21T22:44:39Z",
+   "started": "2026-11-21T22:48:04Z",
+   "finished": "2026-11-22T00:18:26Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5421.387
+  },
+  {
+   "created": "2026-11-21T22:44:43Z",
+   "started": "2026-11-21T22:48:21Z",
+   "finished": "2026-11-22T00:24:57Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5795.794
+  },
+  {
+   "created": "2026-11-21T22:44:48Z",
+   "started": "2026-11-21T22:48:06Z",
+   "finished": "2026-11-22T00:24:41Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5794.873
+  },
+  {
+   "created": "2026-11-21T22:44:52Z",
+   "started": "2026-11-21T22:48:20Z",
+   "finished": "2026-11-22T00:17:58Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5378.478
+  },
+  {
+   "created": "2026-11-21T22:44:57Z",
+   "started": null,
+   "finished": null,
+   "flavor": "t4-medium",
+   "outcome": "CANCELED",
+   "experiment": "",
+   "seconds": null
+  },
+  {
+   "created": "2026-11-21T22:45:01Z",
+   "started": null,
+   "finished": null,
+   "flavor": "t4-medium",
+   "outcome": "CANCELED",
+   "experiment": "",
+   "seconds": null
+  },
+  {
+   "created": "2026-11-21T22:45:06Z",
+   "started": "2026-11-21T22:46:06Z",
+   "finished": "2026-11-21T22:49:34Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 208.664
+  },
+  {
+   "created": "2026-11-21T22:47:57Z",
+   "started": "2026-11-21T22:51:32Z",
+   "finished": "2026-11-21T23:41:36Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 3003.894
+  },
+  {
+   "created": "2026-11-21T22:48:01Z",
+   "started": "2026-11-21T22:54:57Z",
+   "finished": "2026-11-21T23:44:39Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2982.284
+  },
+  {
+   "created": "2026-11-21T22:48:05Z",
+   "started": "2026-11-21T22:51:29Z",
+   "finished": "2026-11-21T23:39:58Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2909.378
+  },
+  {
+   "created": "2026-11-21T22:48:09Z",
+   "started": "2026-11-21T22:49:38Z",
+   "finished": "2026-11-21T23:38:10Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2911.212
+  },
+  {
+   "created": "2026-11-21T22:48:13Z",
+   "started": "2026-11-21T22:48:33Z",
+   "finished": "2026-11-21T23:01:48Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 794.531
+  },
+  {
+   "created": "2026-11-21T22:48:17Z",
+   "started": "2026-11-21T22:51:30Z",
+   "finished": "2026-11-21T23:04:13Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 763.392
+  },
+  {
+   "created": "2026-11-21T22:50:02Z",
+   "started": "2026-11-21T22:51:00Z",
+   "finished": "2026-11-21T23:35:06Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2646.318
+  },
+  {
+   "created": "2026-11-21T22:50:06Z",
+   "started": "2026-11-21T22:55:55Z",
+   "finished": "2026-11-21T23:23:08Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1633.261
+  },
+  {
+   "created": "2026-11-21T22:50:10Z",
+   "started": "2026-11-21T22:51:23Z",
+   "finished": "2026-11-21T23:32:03Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2439.9
+  },
+  {
+   "created": "2026-11-21T22:50:14Z",
+   "started": "2026-11-21T22:51:17Z",
+   "finished": "2026-11-21T23:18:45Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1647.567
+  },
+  {
+   "created": "2026-11-21T22:50:18Z",
+   "started": "2026-11-21T22:53:25Z",
+   "finished": "2026-11-22T00:12:56Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 4770.707
+  },
+  {
+   "created": "2026-11-21T22:51:22Z",
+   "started": "2026-11-21T22:54:51Z",
+   "finished": "2026-11-21T23:33:05Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2293.883
+  },
+  {
+   "created": "2026-11-21T22:51:26Z",
+   "started": "2026-11-21T22:53:17Z",
+   "finished": "2026-11-21T23:30:42Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2244.71
+  },
+  {
+   "created": "2026-11-21T22:51:31Z",
+   "started": "2026-11-21T22:56:27Z",
+   "finished": "2026-11-21T23:35:31Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2343.813
+  },
+  {
+   "created": "2026-11-21T22:51:35Z",
+   "started": "2026-11-21T22:53:24Z",
+   "finished": "2026-11-21T23:32:16Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2331.458
+  },
+  {
+   "created": "2026-11-21T22:53:15Z",
+   "started": "2026-11-21T22:54:38Z",
+   "finished": "2026-11-21T23:19:07Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1468.197
+  },
+  {
+   "created": "2026-11-21T22:53:19Z",
+   "started": "2026-11-21T22:53:36Z",
+   "finished": "2026-11-21T23:17:13Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1417.094
+  },
+  {
+   "created": "2026-11-21T22:54:11Z",
+   "started": "2026-11-21T22:54:35Z",
+   "finished": "2026-11-21T23:20:59Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1583.621
+  },
+  {
+   "created": "2026-11-21T23:04:49Z",
+   "started": "2026-11-21T23:04:54Z",
+   "finished": "2026-11-22T00:06:05Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 3671.877
+  },
+  {
+   "created": "2026-11-21T23:07:44Z",
+   "started": "2026-11-21T23:07:54Z",
+   "finished": "2026-11-21T23:15:10Z",
+   "flavor": "l4x1",
+   "outcome": "ERROR",
+   "experiment": "",
+   "seconds": 436.288
+  },
+  {
+   "created": "2026-11-21T23:12:38Z",
+   "started": "2026-11-21T23:12:54Z",
+   "finished": "2026-11-21T23:24:36Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 702.085
+  },
+  {
+   "created": "2026-11-21T23:21:54Z",
+   "started": "2026-11-21T23:21:58Z",
+   "finished": "2026-11-21T23:40:11Z",
+   "flavor": "l40sx1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1092.424
+  },
+  {
+   "created": "2026-11-21T23:25:16Z",
+   "started": "2026-11-21T23:25:21Z",
+   "finished": "2026-11-21T23:48:50Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1409.069
+  },
+  {
+   "created": "2026-11-21T23:44:00Z",
+   "started": "2026-11-21T23:44:12Z",
+   "finished": "2026-11-22T00:19:16Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2104.523
+  },
+  {
+   "created": "2026-11-21T23:44:04Z",
+   "started": "2026-11-21T23:44:15Z",
+   "finished": "2026-11-22T00:07:29Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1393.657
+  },
+  {
+   "created": "2026-11-21T23:46:17Z",
+   "started": "2026-11-21T23:46:28Z",
+   "finished": "2026-11-21T23:53:44Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 436.367
+  },
+  {
+   "created": "2026-11-21T23:46:21Z",
+   "started": "2026-11-21T23:46:31Z",
+   "finished": "2026-11-21T23:53:58Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 446.361
+  },
+  {
+   "created": "2026-11-21T23:46:26Z",
+   "started": "2026-11-21T23:46:31Z",
+   "finished": "2026-11-22T00:23:03Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2192.278
+  },
+  {
+   "created": "2026-11-21T23:49:23Z",
+   "started": "2026-11-21T23:49:29Z",
+   "finished": "2026-11-22T00:13:07Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1418.507
+  },
+  {
+   "created": "2026-11-21T23:49:27Z",
+   "started": "2026-11-21T23:52:33Z",
+   "finished": "2026-11-22T00:00:07Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 454.445
+  },
+  {
+   "created": "2026-11-21T23:49:31Z",
+   "started": "2026-11-21T23:49:48Z",
+   "finished": "2026-11-22T00:25:02Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2114.551
+  },
+  {
+   "created": "2026-11-21T23:49:35Z",
+   "started": "2026-11-21T23:52:06Z",
+   "finished": "2026-11-22T00:11:41Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1175.335
+  },
+  {
+   "created": "2026-11-22T00:35:39Z",
+   "started": "2026-11-22T00:35:50Z",
+   "finished": "2026-11-22T01:54:18Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 4708.316
+  },
+  {
+   "created": "2026-11-22T00:35:43Z",
+   "started": "2026-11-22T00:35:47Z",
+   "finished": "2026-11-22T00:42:57Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 430.224
+  },
+  {
+   "created": "2026-11-22T00:35:47Z",
+   "started": "2026-11-22T00:39:30Z",
+   "finished": "2026-11-22T01:09:50Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1820.115
+  },
+  {
+   "created": "2026-11-22T00:35:51Z",
+   "started": "2026-11-22T00:38:55Z",
+   "finished": "2026-11-22T00:55:28Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 992.868
+  },
+  {
+   "created": "2026-11-22T00:35:54Z",
+   "started": "2026-11-22T00:39:12Z",
+   "finished": "2026-11-22T00:56:42Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1049.984
+  },
+  {
+   "created": "2026-11-22T00:49:22Z",
+   "started": "2026-11-22T00:53:42Z",
+   "finished": "2026-11-22T01:32:42Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2339.75
+  },
+  {
+   "created": "2026-11-22T00:50:20Z",
+   "started": "2026-11-22T00:53:32Z",
+   "finished": "2026-11-22T01:54:16Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 3644.235
+  },
+  {
+   "created": "2026-11-22T00:50:24Z",
+   "started": "2026-11-22T00:52:33Z",
+   "finished": "2026-11-22T01:54:15Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 3701.388
+  },
+  {
+   "created": "2026-11-22T02:04:23Z",
+   "started": "2026-11-22T02:16:14Z",
+   "finished": "2026-11-22T02:55:10Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2335.688
+  },
+  {
+   "created": "2026-11-22T02:04:29Z",
+   "started": "2026-11-22T02:24:27Z",
+   "finished": "2026-11-22T02:38:03Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 815.321
+  },
+  {
+   "created": "2026-11-22T02:31:09Z",
+   "started": "2026-11-22T02:31:19Z",
+   "finished": "2026-11-22T02:57:55Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1596.532
+  },
+  {
+   "created": "2026-11-22T02:31:13Z",
+   "started": "2026-11-22T02:38:28Z",
+   "finished": "2026-11-22T04:10:27Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5519.293
+  },
+  {
+   "created": "2026-11-22T02:31:17Z",
+   "started": "2026-11-22T02:38:07Z",
+   "finished": "2026-11-22T04:10:40Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5552.735
+  },
+  {
+   "created": "2026-11-22T02:31:21Z",
+   "started": "2026-11-22T02:33:53Z",
+   "finished": "2026-11-22T04:06:32Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5558.713
+  },
+  {
+   "created": "2026-11-22T02:31:25Z",
+   "started": "2026-11-22T02:33:00Z",
+   "finished": "2026-11-22T03:00:49Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1669.764
+  },
+  {
+   "created": "2026-11-22T04:15:13Z",
+   "started": "2026-11-22T05:13:57Z",
+   "finished": "2026-11-22T05:40:09Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1571.575
+  },
+  {
+   "created": "2026-11-22T04:15:17Z",
+   "started": "2026-11-22T04:46:25Z",
+   "finished": "2026-11-22T05:13:58Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1652.771
+  },
+  {
+   "created": "2026-11-22T04:15:21Z",
+   "started": "2026-11-22T05:13:28Z",
+   "finished": "2026-11-22T05:39:41Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1572.941
+  },
+  {
+   "created": "2026-11-22T04:15:27Z",
+   "started": "2026-11-22T05:11:58Z",
+   "finished": "2026-11-22T06:29:26Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 4648.036
+  },
+  {
+   "created": "2026-11-22T04:15:31Z",
+   "started": "2026-11-22T05:12:02Z",
+   "finished": "2026-11-22T06:29:06Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 4623.161
+  },
+  {
+   "created": "2026-11-22T05:42:00Z",
+   "started": "2026-11-22T05:42:11Z",
+   "finished": "2026-11-22T06:58:31Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 4580.2
+  },
+  {
+   "created": "2026-11-22T05:42:03Z",
+   "started": "2026-11-22T05:42:14Z",
+   "finished": "2026-11-22T07:00:09Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 4674.654
+  },
+  {
+   "created": "2026-11-22T05:42:07Z",
+   "started": "2026-11-22T05:53:53Z",
+   "finished": "2026-11-22T07:12:42Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 4729.306
+  },
+  {
+   "created": "2026-11-22T05:42:49Z",
+   "started": "2026-11-22T05:51:54Z",
+   "finished": "2026-11-22T06:28:47Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2213.086
+  },
+  {
+   "created": "2026-11-22T05:42:53Z",
+   "started": "2026-11-22T05:48:05Z",
+   "finished": "2026-11-22T06:24:59Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2214.626
+  },
+  {
+   "created": "2026-11-22T05:42:57Z",
+   "started": "2026-11-22T06:11:12Z",
+   "finished": "2026-11-22T06:48:23Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2230.446
+  },
+  {
+   "created": "2026-11-22T05:43:01Z",
+   "started": "2026-11-22T06:29:30Z",
+   "finished": "2026-11-22T07:06:01Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2190.97
+  },
+  {
+   "created": "2026-11-22T05:43:05Z",
+   "started": "2026-11-22T06:29:10Z",
+   "finished": "2026-11-22T07:05:08Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2157.996
+  },
+  {
+   "created": "2026-11-22T07:31:49Z",
+   "started": "2026-11-22T07:32:00Z",
+   "finished": "2026-11-22T07:36:51Z",
+   "flavor": "l4x1",
+   "outcome": "ERROR",
+   "experiment": "",
+   "seconds": 291.006
+  },
+  {
+   "created": "2026-11-22T07:37:43Z",
+   "started": "2026-11-22T07:37:48Z",
+   "finished": "2026-11-22T07:45:12Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 443.889
+  },
+  {
+   "created": "2026-11-22T07:37:47Z",
+   "started": "2026-11-22T07:45:17Z",
+   "finished": "2026-11-22T07:52:39Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 441.588
+  },
+  {
+   "created": "2026-11-22T07:37:51Z",
+   "started": "2026-11-22T08:06:37Z",
+   "finished": "2026-11-22T08:14:00Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 443.611
+  },
+  {
+   "created": "2026-11-22T07:37:56Z",
+   "started": "2026-11-22T08:00:09Z",
+   "finished": "2026-11-22T08:07:29Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 439.509
+  },
+  {
+   "created": "2026-11-22T07:38:00Z",
+   "started": "2026-11-22T07:52:43Z",
+   "finished": "2026-11-22T08:00:05Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 442.588
+  },
+  {
+   "created": "2026-11-22T08:20:30Z",
+   "started": "2026-11-22T08:20:36Z",
+   "finished": "2026-11-22T08:39:11Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1115.398
+  },
+  {
+   "created": "2026-11-22T08:40:23Z",
+   "started": "2026-11-22T08:40:28Z",
+   "finished": "2026-11-22T10:23:39Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 6191.309
+  },
+  {
+   "created": "2026-11-22T10:24:40Z",
+   "started": "2026-11-22T10:24:49Z",
+   "finished": "2026-11-22T10:40:50Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 961.355
+  },
+  {
+   "created": "2026-11-22T10:42:02Z",
+   "started": "2026-11-22T10:42:08Z",
+   "finished": "2026-11-22T12:36:40Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 6872.257
+  },
+  {
+   "created": "2026-11-22T10:42:06Z",
+   "started": "2026-11-22T10:42:12Z",
+   "finished": "2026-11-22T12:28:44Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 6392.167
+  },
+  {
+   "created": "2026-11-22T10:42:10Z",
+   "started": "2026-11-22T10:42:16Z",
+   "finished": "2026-11-22T11:47:37Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 3921.291
+  },
+  {
+   "created": "2026-11-22T10:42:14Z",
+   "started": "2026-11-22T10:42:20Z",
+   "finished": "2026-11-22T12:09:00Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5200.211
+  },
+  {
+   "created": "2026-11-22T10:42:18Z",
+   "started": "2026-11-22T10:42:25Z",
+   "finished": "2026-11-22T12:26:51Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 6266.9
+  },
+  {
+   "created": "2026-11-22T10:42:22Z",
+   "started": "2026-11-22T10:42:28Z",
+   "finished": "2026-11-22T12:21:18Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5929.728
+  },
+  {
+   "created": "2026-11-22T10:42:26Z",
+   "started": "2026-11-22T10:42:33Z",
+   "finished": "2026-11-22T12:22:48Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 6015.414
+  },
+  {
+   "created": "2026-11-22T10:42:30Z",
+   "started": "2026-11-22T10:42:36Z",
+   "finished": "2026-11-22T12:09:30Z",
+   "flavor": "cpu-xl",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 5214.56
+  },
+  {
+   "created": "2026-11-22T13:12:27Z",
+   "started": "2026-11-22T13:15:41Z",
+   "finished": "2026-11-22T14:01:44Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 2763.847
+  },
+  {
+   "created": "2026-11-22T13:12:32Z",
+   "started": "2026-11-22T13:26:40Z",
+   "finished": "2026-11-22T14:13:40Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 2820.03
+  },
+  {
+   "created": "2026-11-22T13:12:37Z",
+   "started": "2026-11-22T13:26:48Z",
+   "finished": "2026-11-22T14:11:50Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 2701.806
+  },
+  {
+   "created": "2026-11-22T13:12:42Z",
+   "started": "2026-11-22T13:26:48Z",
+   "finished": "2026-11-22T14:13:55Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 2826.642
+  },
+  {
+   "created": "2026-11-22T13:12:47Z",
+   "started": "2026-11-22T13:27:03Z",
+   "finished": "2026-11-22T14:13:16Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 2773.611
+  },
+  {
+   "created": "2026-11-22T13:12:51Z",
+   "started": "2026-11-22T13:26:47Z",
+   "finished": "2026-11-22T14:12:47Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 2760.1
+  },
+  {
+   "created": "2026-11-22T13:12:56Z",
+   "started": "2026-11-22T13:26:39Z",
+   "finished": "2026-11-22T14:13:28Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 2809.03
+  },
+  {
+   "created": "2026-11-22T13:13:01Z",
+   "started": "2026-11-22T13:26:44Z",
+   "finished": "2026-11-22T14:13:44Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 2819.865
+  },
+  {
+   "created": "2026-11-22T13:13:06Z",
+   "started": "2026-11-22T13:26:49Z",
+   "finished": "2026-11-22T14:13:05Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 2776.025
+  },
+  {
+   "created": "2026-11-22T13:13:11Z",
+   "started": "2026-11-22T13:26:49Z",
+   "finished": "2026-11-22T14:12:11Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "shift",
+   "seconds": 2721.799
+  },
+  {
+   "created": "2026-11-22T13:16:18Z",
+   "started": "2026-11-22T13:26:50Z",
+   "finished": "2026-11-22T14:09:51Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2581.849
+  },
+  {
+   "created": "2026-11-22T13:16:23Z",
+   "started": "2026-11-22T13:26:49Z",
+   "finished": "2026-11-22T14:00:24Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2015.01
+  },
+  {
+   "created": "2026-11-22T14:12:00Z",
+   "started": "2026-11-22T14:12:04Z",
+   "finished": "2026-11-22T14:54:36Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2551.783
+  },
+  {
+   "created": "2026-11-22T14:12:06Z",
+   "started": "2026-11-22T14:12:20Z",
+   "finished": "2026-11-22T14:59:45Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 2845.28
+  },
+  {
+   "created": "2026-11-22T14:12:11Z",
+   "started": "2026-11-22T14:12:16Z",
+   "finished": "2026-11-22T14:45:01Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 1965.013
+  },
+  {
+   "created": "2026-11-24T11:11:59Z",
+   "started": "2026-11-24T11:12:12Z",
+   "finished": "2026-11-24T11:21:38Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 566.058
+  },
+  {
+   "created": "2026-11-24T11:12:03Z",
+   "started": "2026-11-24T11:12:16Z",
+   "finished": "2026-11-24T11:21:43Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 567.078
+  },
+  {
+   "created": "2026-11-24T11:12:08Z",
+   "started": "2026-11-24T11:16:30Z",
+   "finished": "2026-11-24T11:25:52Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 562.133
+  },
+  {
+   "created": "2026-11-24T11:12:12Z",
+   "started": "2026-11-24T11:16:28Z",
+   "finished": "2026-11-24T11:25:51Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 563.093
+  },
+  {
+   "created": "2026-11-24T11:12:16Z",
+   "started": "2026-11-24T11:16:15Z",
+   "finished": "2026-11-24T11:25:42Z",
+   "flavor": "t4-medium",
+   "outcome": "COMPLETED",
+   "experiment": "",
+   "seconds": 567.165
+  },
+  {
+   "created": "2026-11-26T18:11:28Z",
+   "started": "2026-11-26T19:26:49Z",
+   "finished": "2026-11-26T19:53:27Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "single_line",
+   "seconds": 1597.733
+  },
+  {
+   "created": "2026-11-26T18:11:31Z",
+   "started": "2026-11-26T18:39:38Z",
+   "finished": "2026-11-26T19:06:02Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "single_line",
+   "seconds": 1584.813
+  },
+  {
+   "created": "2026-11-26T18:11:35Z",
+   "started": "2026-11-26T19:35:33Z",
+   "finished": "2026-11-26T20:02:07Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "single_line",
+   "seconds": 1593.452
+  },
+  {
+   "created": "2026-11-26T18:11:39Z",
+   "started": "2026-11-26T18:28:44Z",
+   "finished": "2026-11-26T18:57:06Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "single_line",
+   "seconds": 1701.986
+  },
+  {
+   "created": "2026-11-26T18:11:44Z",
+   "started": "2026-11-26T18:57:10Z",
+   "finished": "2026-11-26T19:25:54Z",
+   "flavor": "l4x1",
+   "outcome": "COMPLETED",
+   "experiment": "single_line",
+   "seconds": 1723.882
+  }
+ ]
+}

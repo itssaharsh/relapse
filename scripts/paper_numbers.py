@@ -173,9 +173,10 @@ def deep() -> tuple[dict, dict]:
     if cases:
         body = "".join(f"{label} & " + " & ".join(signed(v[p]) for _, v in cases) + " \\\\\n" for p, label in parts)
         tables["table_cause.tex"] = table("@{}l" + "r" * len(cases) + "@{}", r" & \multicolumn{2}{c}{\fq{}} & \multicolumn{2}{c}{\nf{}} \\" + "\nRounded part & " + " & ".join(n for n, _ in cases) + " \\\\\n", body,
-                                          r"Change in \wmdp{} (points) when only one part of the model is rounded to the format that relapses. Columns are the relapsing runs (model and seed; Base 12 is the mean of its three runs).", "tab:cause", "2.5pt", "\\footnotesize")
+                                          r"Change in \wmdp{} (points) when only one part of the model is rounded to the format that relapses. Columns are the runs examined (model and seed; Base 12 is the mean of its three runs, one of which rose by under 5 points and is not a relapse).", "tab:cause", "2.5pt", "\\footnotesize")
         single = [100 * C[fmt][k]["edited"]["rise"] for fmt in C for k in C[fmt] if k != "base" and "edited" in C[fmt][k] and ((fmt == "Q4_0") == k.startswith("base"))]
-        nums.update(causeEditedMax=f"{max(single):.1f}", causeCases=len(single))
+        whole = [C[fmt][k]["all"] for fmt in C for k in C[fmt] if k != "base" and "edited" in C[fmt][k] and ((fmt == "Q4_0") == k.startswith("base"))]
+        nums.update(causeEditedMax=f"{max(single):.1f}", causeCases=len(single), causeRelapses=sum(w["rise"] >= 0.05 and w["p"] < 0.05 for w in whole))
         for n, v in cases:
             nums["cause" + n.replace(" ", "").replace("12", "A").replace("43", "B").replace("44", "").replace("42", "")] = f"{signed(v['before'])} in front, {signed(v['after'])} behind"
     # NF4 as bitsandbytes loads it
@@ -228,7 +229,7 @@ def shift() -> tuple[dict, dict]:
             "shiftPtwoWins": A["P2"]["wins"], "shiftPtwoN": A["P2"]["wins"] + A["P2"]["losses"], "shiftPthreeWins": A["P3"]["wins"], "shiftPthreeLosses": A["P3"]["losses"], "shiftPthreeP": f"{A['P3']['p']:.3f}",
             "shiftPfourWins": A["P4"]["wins"], "shiftPfourLosses": A["P4"]["losses"], "shiftBothGap": signed(np.mean(rise(both))),
             "shiftBaseLab": f"{100 * np.mean([r['wmdp_outdated'] for r in base]):.1f}", "shiftBaseLow": f"{100 * min(r['wmdp_official'] for r in base):.1f}", "shiftBaseHigh": f"{100 * max(r['wmdp_official'] for r in base):.1f}",
-            "shiftHeldPtwoWins": H["P2"]["wins"], "shiftHeldPtwoN": H["P2"]["wins"] + H["P2"]["losses"], "shiftHeldPtwoP": f"{H['P2']['p']:.3f}",
+            "shiftHeldPtwoWins": H["P2"]["wins"], "shiftHeldPtwoN": H["P2"]["wins"] + H["P2"]["losses"], "shiftHeldPtwoP": f"{H['P2']['p']:.4f}".rstrip("0"),
             "shiftHeldPthreeWins": H["P3"]["wins"], "shiftHeldPthreeN": H["P3"]["wins"] + H["P3"]["losses"], "shiftHeldPthreeP": f"{H['P3']['p']:.2f}",
             "shiftBaseMidLow": f"{min(100 * r['rise'] for r in base if r['window'] == '7-9'):.1f}", "shiftBaseMidHigh": f"{max(100 * r['rise'] for r in base if r['window'] == '7-9'):.1f}",
             "shiftPoneModels": sum(v["p"] < 0.05 for v in A["P1"]["per_model"].values()),
@@ -279,7 +280,10 @@ def place() -> tuple[dict, dict]:
                     finalGainLow=f"{min(-100 * x['difference'] for x in won):.1f}", finalGainHigh=f"{max(-100 * x['difference'] for x in won):.1f}",
                     finalCostMax=f"{max(100 * x['cost_3_5'] for x in P):.1f}", finalCostMean=f"{np.mean([100 * x['cost_3_5'] for x in P]):.1f}",
                     finalBaseCostOld=" and ".join(f"{100 * x['cost_5_7']:.1f}" for x in P if x["model"] == "base"), finalBaseCostNew=" and ".join(f"{100 * x['cost_3_5']:.1f}" for x in P if x["model"] == "base"),
-                    finalChangeLow=signed(min(change)), finalChangeHigh=signed(max(change)), finalRelapses=sum(bool(v.get("relapse")) for x in P for v in x["formats"].values()))
+                    finalChangeLow=signed(min(change)), finalChangeHigh=signed(max(change)),
+                    finalCostMaxReleased=f"{max(100 * x['cost_3_5'] for x in P if x['seed'] == 34):.1f}",
+                    finalChangeLowReleased=signed(min(100 * v["change"] for x in P if x["seed"] == 34 for v in x["formats"].values() if "change" in v)),
+                    finalChangeHighReleased=signed(max(100 * v["change"] for x in P if x["seed"] == 34 for v in x["formats"].values() if "change" in v)), finalRelapses=sum(bool(v.get("relapse")) for x in P for v in x["formats"].values()))
     return nums, {}
 
 
@@ -298,10 +302,10 @@ def check() -> tuple[dict, dict]:
         body += " & unlearned & " + " & ".join(pct(mean(v, lambda e: e['fp16'][k]['model'])) for k, _ in cols)
         body += f" & {pct(mean(v, lambda e: e['real_files']['wmdp-bio']['Q4_K_M']['file']))} & {pct(mean(v, lambda e: e['outdated_tokenizer']['outdated']))} & {pct(mean(v, lambda e: e['fine_tuning']['after_hazard_questions']))} \\\\\n"
         body += "\\addlinespace[2pt]\n" if v != models[-1] else ""
-    tex = ("\\begin{table*}[t]\n\\centering\\footnotesize\\setlength{\\tabcolsep}{2.6pt}\n\\begin{tabular}{@{}ll" + "r" * len(cols) + "rrr@{}}\n\\toprule\n" +
+    tex = ("\\begin{table*}[t]\n\\centering\\footnotesize\\setlength{\\tabcolsep}{2.45pt}\n\\begin{tabular}{@{}ll" + "r" * len(cols) + "rrr@{}}\n\\toprule\n" +
            " & & \\multicolumn{" + str(len(cols)) + "}{c}{At fp16} & \\multicolumn{3}{c}{\\wmdp{} of the unlearned model} \\\\\n" +
            "\\cmidrule(lr){3-" + str(len(cols) + 2) + "}\\cmidrule(l){" + str(len(cols) + 3) + "-" + str(len(cols) + 5) + "}\nModel & & " + " & ".join(n for _, n in cols) +
-           " & \\qkm{} file & Old tok. & Fine-tuned \\\\\n\\midrule\n" + body + "\\bottomrule\n\\end{tabular}\n\\caption{The final runs at layers 3--5 (mean of two seeds; the released model is the seed with the lower \\wmdp{}): accuracy (\\%) of the original and the unlearned model at fp16 on the hazard set, general knowledge, benign biology, two prompt attacks and reworded or translated hazard questions; then the unlearned model's \\wmdp{} in the real \\qkm{} file, through the outdated tokenizer, and after a 25-step fine-tuning attack. Prompt attacks and the fine-tuning attack use the 1,204 hazard questions not used as examples or for training.}\n\\label{tab:check}\n\\end{table*}\n")
+           " & \\qkm{} file & Outdated & Fine-tuned \\\\\n\\midrule\n" + body + "\\bottomrule\n\\end{tabular}\n\\caption{The final runs at layers 3--5 (mean of two seeds; the released model is the seed with the lower \\wmdp{}): accuracy (\\%) of the original and the unlearned model at fp16 on the hazard set, general knowledge, benign biology, two prompt attacks and reworded or translated hazard questions; then the unlearned model's \\wmdp{} in the real \\qkm{} file, through the outdated tokenizer, and after a 25-step fine-tuning attack. Prompt attacks and the fine-tuning attack use the 1,204 hazard questions not used as examples or for training.}\n\\label{tab:check}\n\\end{table*}\n")
     rng_ = lambda f: (min(f(e) for e in E), max(f(e) for e in E))
     ben = [100 * e["fp16"]["benign-bio"]["difference"] for e in E]
     ft = [100 * (e["fine_tuning"]["after_hazard_questions"] - e["fine_tuning"]["before"]) for e in E]
@@ -414,7 +418,7 @@ def glance() -> tuple[dict, dict]:
             + row("Benign-biology points lost", f"{np.mean(benign['5-7']):.1f}", f"{np.mean(benign['3-5']):.1f}")
             + row("Hazard points per benign point", f"{np.mean(forgot['5-7']) / np.mean(benign['5-7']):.2f}", f"{np.mean(forgot['3-5']) / np.mean(benign['3-5']):.2f}"))
     tex = table("@{}lrr@{}", "Layers edited & 5--7 (default) & 3--5 \\\\\n", body,
-                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited; MMLU lost is against the original through the same tokenizer. Bottom: the final runs, official tokenizer, five models and two seeds. $^\\ast$Both tokenizer experiments, every window: runs that had lost under 3 MMLU points as audited.", "tab:glance", "4pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
+                "The result in brief. Top: runs unlearned and audited through the outdated tokenizer setting, then deployed through the official one, on multiple-choice prompts. Effective runs: the four post-trained variants; all runs add Tiny Aya Base, at chance when audited; MMLU lost is against the original through the same tokenizer. Bottom: the final runs, official tokenizer, five models and two seeds. $^\\ast$Exploratory; both tokenizer experiments, every window: runs that had lost under 3 MMLU points as audited.", "tab:glance", "3.8pt").replace("\\begin{table}[t]", "\\begin{table}[!b]")      # page one, at the foot of the first column
     return {"glanceRelDefault": relapses["5-7"], "glanceRelNew": relapses["3-5"]}, {"table_glance.tex": tex}
 
 
@@ -543,9 +547,9 @@ def audit_damage() -> tuple[dict, dict]:
         return out
     two, one = runs("shift2", (51, 52)), runs("shift", (21, 22))
     eff = lambda rs, w: [r for r in rs if r["window"] == w and 0.30 <= r["audited"] <= 0.55]
-    mean = lambda rs, k: f"{100 * np.mean([r[k] for r in rs]):.1f}"
+    mean = lambda rs, k: f"{round(100 * np.mean([r[k] for r in rs]) + 1e-9, 1):.1f}"      # the nudge keeps an exact .x5 from printing low through float noise
     both = two + one
-    rose = [r["rise"] >= 0.05 for r in both]; hurt = [r["cost_audited"] >= 0.03 for r in both]
+    rose = [r["rise"] >= 0.05 for r in both]; hurt = [round(r["cost_audited"], 6) >= 0.03 for r in both]      # rounded: MMLU costs are multiples of 0.001, and one run lost exactly 0.030
     base = [r for r in two if r["model"] == "base"]
     nums = {"dmgRuns": len(both), "dmgRose": sum(rose), "dmgAgree": sum(a == b for a, b in zip(rose, hurt)), "dmgHurt": sum(hurt),
             "stwoBaseMmluLow": f"{100 * min(r['mmlu_audited'] for r in base):.1f}", "stwoBaseMmluHigh": f"{100 * max(r['mmlu_audited'] for r in base):.1f}",
@@ -577,6 +581,8 @@ def audit_damage() -> tuple[dict, dict]:
     nums.update(stwoShareBack=f"{100 * np.mean(share):.0f}", stwoShareLow=f"{100 * min(share):.0f}", stwoShareHigh=f"{100 * max(share):.0f}",
                 stwoUnitsDefault=f"{by_unit('5-7')[0]} of {by_unit('5-7')[1]}", stwoUnitsShallow=f"{by_unit('3-5')[0]} of {by_unit('3-5')[1]}", stwoUnitUpper=f"{100 * (1 - 0.025 ** (1 / by_unit('3-5')[1])):.1f}",
                 dmgHurtRose=f"{sum(a and b for a, b in zip(rose, hurt))} of {sum(hurt)}", dmgFineRose=f"{sum(a and not b for a, b in zip(rose, hurt))} of {sum(not b for b in hurt)}",
+                dmgHurtRoseNoBase=f"{sum(a and b for a, b, r in zip(rose, hurt, both) if r['model'] != 'base')} of {sum(b for b, r in zip(hurt, both) if r['model'] != 'base')}",
+                dmgHurtBase=sum(b for b, r in zip(hurt, both) if r["model"] == "base"), dmgHurtBaseRose=sum(a and b for a, b, r in zip(rose, hurt, both) if r["model"] == "base"),
                 ctlPairs=len(pairs), ctlOutdatedTrained=f"{100 * np.mean([a for a, _ in pairs]):.1f}", ctlOfficialTrained=f"{100 * np.mean([b for _, b in pairs]):.1f}")
     # outside Tiny Aya Base, do window and damage in the audit pipeline overlap? And does the rise grow with the damage inside a window?
     rest = [r for r in both if r["model"] != "base"]
@@ -687,6 +693,23 @@ def reports() -> tuple[dict, dict]:
     return out, {}
 
 
+def compute() -> tuple[dict, dict]:
+    """Hours per hardware from Hugging Face's job record and their cost at list prices (results/survey/job_durations.json, scripts/job_durations.py)."""
+    path = os.path.join(ROOT, "results", "survey", "job_durations.json")
+    if not os.path.exists(path):
+        return {}, {}
+    d = json.load(open(path)); J, price = d["jobs"], d["prices_usd_per_hour"]
+    hours = lambda f, js=J: sum(x["seconds"] or 0 for x in js if x["flavor"] == f) / 3600
+    single = [x for x in J if x["experiment"] == "single_line"]; rest = [x for x in J if x["experiment"] != "single_line"]
+    cost = lambda js: sum(hours(f, js) * price[f] for f in price)
+    small = [f for f in price if f not in ("t4-medium", "l4x1", "cpu-xl")]
+    return {"costTotal": f"{cost(rest):.0f}", "costHoursT": f"{hours('t4-medium', rest):.1f}", "costHoursL": f"{hours('l4x1', rest):.1f}", "costHoursCpu": f"{hours('cpu-xl', rest):.1f}",
+            "costPriceT": f"{price['t4-medium']:.2f}", "costPriceL": f"{price['l4x1']:.2f}", "costPriceCpu": f"{price['cpu-xl']:.2f}",
+            "costOther": f"{sum(hours(f, rest) * price[f] for f in small):.2f}", "costNoTimes": sum(x["seconds"] is None for x in J),
+            "costSingleJobs": len(single), "costSingleMinLow": f"{min(x['seconds'] for x in single) / 60:.0f}", "costSingleMinHigh": f"{max(x['seconds'] for x in single) / 60:.0f}",
+            "costSingle": f"{cost(single):.2f}"}, {}
+
+
 def reverse_rule() -> tuple[dict, dict]:
     """The MMLU warning sign in the reverse direction: runs unlearned and audited through the official tokenizer, then scored through the outdated one."""
     hurt_rose = hurt = fine_rose = fine = 0
@@ -736,9 +759,9 @@ def hypotheses() -> list[tuple[str, str, str, str]]:
             ("4", "R5", "Training on the file repairs it (three criteria)", "held" if min(r5) == D["repaired_runs"] else "part" if max(r5) > 0 else "failed"),
             ("4", "R6", "A relapse in \\nf{} and not \\fq{} exists", ok(d["part_e"]["R6"]["holds"])),
             ("4", "R7", "A rule chooses how long to train the repair", ok(all(r7))),
-            ("5", "T1", "The tokenizer rise is smaller at layers 3--5 than at 5--7", ok(s2["T1"]["holds"])),
-            ("5", "T2", "Under 1 in 5 runs at layers 3--5 relapse through the tokenizer", ok(s2["T2"]["holds"])),
-            ("5", "T3", "Layers 7--9 again hold and layers 5--7 again relapse", ok(s2["T3"]["holds"]))] + six()
+            ("5", "T1", "Among effective runs, the tokenizer rise is smaller at layers 3--5 than at 5--7", ok(s2["T1"]["holds"])),
+            ("5", "T2", "Under 1 in 5 effective runs at layers 3--5 relapse through the tokenizer", ok(s2["T2"]["holds"])),
+            ("5", "T3", "Effective runs at layers 7--9 again hold, at 5--7 again relapse", ok(s2["T3"]["holds"]))] + six()
 
 
 def six() -> list[tuple[str, str, str, str]]:
@@ -759,7 +782,7 @@ def totals() -> tuple[dict, dict]:
     """The number of unlearning runs with a results.json under results/, and the tally of registered hypotheses."""
     import glob
     base = os.path.join(ROOT, "results")
-    names = {(os.path.relpath(f, base).split(os.sep)[0], r["model"])      # (experiment folder, run name); the original models are not runs
+    names = {(os.path.relpath(f, base).split(os.sep)[0], r.get("pilot", ""), r["model"])      # (experiment folder, sub-pilot, run name): the NPO pilot reuses names across its sub-pilots; the original models are not runs
              for f in glob.glob(os.path.join(base, "**", "results.json"), recursive=True) if os.sep + "single_line" + os.sep not in f      # pre-registration 6 rescores saved runs
              for r in json.load(open(f)) if r.get("model") != "base"}
     hyp = hypotheses()
@@ -768,14 +791,14 @@ def totals() -> tuple[dict, dict]:
     body = "".join(("\\addlinespace[2pt]\n" if i and hyp[i - 1][0] != h[0] else "") + f"{h[1]} & {h[2]} & {label[h[3]]} \\\\\n" for i, h in enumerate(hyp))
     tex = table("@{}l>{\\raggedright\\arraybackslash}p{0.68\\columnwidth}l@{}", " & Registered hypothesis & Outcome \\\\\n", body,
                 "Every registered hypothesis, its outcome read from the flags the registered analyses wrote. H: pre-registration 1; P: 2; Q: 3; R: 4; T: 5; S: 6. For H and P the held-out models are the confirmatory test; P2 and P3 held on all five models and failed there.", "tab:hyp", "3pt", "\\footnotesize")
-    return {"totalRuns": len(names), "totalNpo": sum(e == "npo_pilot" for e, _ in names), "hypN": len(hyp), "hypHeld": count("held"), "hypPart": count("part"), "hypFailed": count("failed"), "hypUntestable": count("untestable"),
+    return {"totalRuns": len(names), "totalNpo": sum(e == "npo_pilot" for e, _, _ in names), "hypN": len(hyp), "hypHeld": count("held"), "hypPart": count("part"), "hypFailed": count("failed"), "hypUntestable": count("untestable"),
             "hypFailedWord": WORDS[count("failed")], "hypHeldList": ", ".join(h[1] for h in hyp if h[3] == "held"), "hypFailedList": ", ".join(h[1] for h in hyp if h[3] == "failed"),
             "hypPartList": " and ".join(h[1] for h in hyp if h[3] == "part"), "hypUntestableList": ", ".join(h[1] for h in hyp if h[3] == "untestable")}, {"table_hyp.tex": tex}
 
 
 def main() -> None:
     nums, tables = {}, {}
-    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, auditkit_headline, single_line, single_line_tokens, pushes, reports, reverse_rule, totals):
+    for part in (control, relapse_map, deep, shift, place, check, runtime, shift2, glance, mcnemar, revisions, survey, audit_damage, tokens, auditkit_headline, single_line, single_line_tokens, pushes, reports, compute, reverse_rule, totals):
         n, t = part(); nums.update(n); tables.update(t)
     for name, tex in tables.items():
         if name in ("table_hyp.tex", "table_real.tex", "table_cause.tex", "table_repair.tex", "table_revisions.tex"):      # appendix floats: placed where they fall, whatever their height

@@ -55,7 +55,7 @@ def finding() -> str:
             f"{100 * s2['by_window']['5-7']['mean_rise']:.1f} points on average once loaded through the official tokenizer, in {s2['T3']['5-7'][0]} of {s2['T3']['5-7'][1]} runs that count; "
             f"those runs had also lost {dm['stwoDefaultCostAudited']} MMLU points where they were audited and {dm['stwoDefaultCostDeployed']} once deployed, and with single-line prompts none of them relapsed. "
             f"At layers 3 to 5, {s2['T2']['relapses']} of {s2['T2']['effective']} did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in "
-            f"{held} of {len(eff)} runs. Of {tl['n']} registered hypotheses, {tl['held']} held, {tl['part']} held in part, {tl['failed']} failed and {tl['untestable']} could not be tested.")
+            f"{held} of {len(eff)} effective runs. Of {tl['n']} registered hypotheses, {tl['held']} held, {tl['part']} held in part, {tl['failed']} failed and {tl['untestable']} could not be tested.")
 
 
 def split(text: str) -> tuple[str, str]:
@@ -234,6 +234,13 @@ def main() -> None:
         live[("dataset", "relapse-stage2")] = open(api.hf_hub_download(f"{USER}/relapse-stage2", "README.md", repo_type="dataset")).read()
     except Exception:
         live[("dataset", "relapse-stage2")] = ""
+    seen, kept = set(), []      # the runs card: rows added on an earlier run are already in the live card, so keep each stage2 row once
+    for line in cards[("dataset", "relapse-runs")].split("\n"):
+        if line.startswith("| `stage2/") and line in seen:
+            continue
+        seen.add(line); kept.append(line)
+    cards[("dataset", "relapse-runs")] = "\n".join(kept)
+    cards[("space", "relapse-article")] = cards[("space", "relapse-article")].replace("short_description: Forget the hazard, keep the rest, even in the 4-bit file", "short_description: Unlearning on Tiny Aya, two tokenizer settings, 4-bit files")
     for (kind, name), text in cards.items():
         open(os.path.join(OUT, "cards", f"{kind}__{name}.md"), "w").write(text)
     # the write-up Space: its page template with the article body swapped in
@@ -262,7 +269,7 @@ def main() -> None:
                  "cais/mmlu": "Used, not ours: general knowledge (a fixed sample of 1,000 questions) and the four benign-biology subjects."}
     json.dump({"collection": "relapse-unlearned-tiny-aya-models", "order": order, "notes": notes, "descriptions": descriptions, "data_collection": "relapse-runs-logs-and-probe-sets", "data_notes": data_notes,
                "add_models": used_models, "add_datasets": used_data,
-               "add_own_datasets": {f"{USER}/relapse-stage2": "Working files of the Stage 2 jobs: the edited matrices of every run (87 GB) and raw job outputs, so a scoring job can be rerun without retraining."}},
+               "add_own_datasets": {f"{USER}/relapse-stage2": "Working files of the Stage 2 jobs: the edited matrices of every run and raw job outputs (about 91 GB), so a scoring job can be rerun without retraining."}},
               open(os.path.join(OUT, "collection.json"), "w"), indent=1)
     changed = [f"{k}__{n}" for (k, n), t in cards.items() if t != live.get((k, n))]
     plan = [f"# Pushes prepared on {today}, waiting for a yes", "", "Nothing here has been uploaded. `python scripts/apply_hf_updates.py` prints this plan; `--yes` carries it out. No repository is created, deleted or renamed, and no visibility changes.", "",

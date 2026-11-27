@@ -36,7 +36,7 @@
    "per_benign": 3.3,
    "all_rise": 4,
    "all_runs": 20,
-   "mmlu_audited": 0.5,
+   "mmlu_audited": 0.6,
    "mmlu_deployed": 1.1
   },
   "tok_models": 4,
@@ -559,6 +559,9 @@
  },
  "hypotheses": {
   "registered": 25,
-  "failed": 11
+  "failed": 11,
+  "part": 2,
+  "held": 11,
+  "untestable": 1
  }
 }

@@ -51,6 +51,6 @@
   "cais/mmlu": "Used, not ours: general knowledge (a fixed sample of 1,000 questions) and the four benign-biology subjects."
  },
  "add_own_datasets": {
-  "itssaharsh/relapse-stage2": "Working files of the Stage 2 jobs: the edited matrices of every run (87 GB) and raw job outputs, so a scoring job can be rerun without retraining."
+  "itssaharsh/relapse-stage2": "Working files of the Stage 2 jobs: the edited matrices of every run and raw job outputs (about 91 GB), so a scoring job can be rerun without retraining."
  }
 }

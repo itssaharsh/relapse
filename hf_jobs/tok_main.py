@@ -2,7 +2,7 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
 MP = model_path("global")
 toks = {"current_official": AutoTokenizer.from_pretrained(MP),
-        "kaggle_copy": AutoTokenizer.from_pretrained("itssaharsh/tiny-aya-global-unlearn-bio-default-layers")}
+        "kaggle_copy": AutoTokenizer.from_pretrained("itssaharsh/tiny-aya-global-unlearn-bio-default-layers", revision="d5a7b12018c97ea313c59a2bb2cb099b4e48c36c")}      # the revision the job of 21 November 2026 loaded; the branch has carried Cohere's fixed file since 26 November
 log({k: type(v).__name__ for k, v in toks.items()})
 model = AutoModelForCausalLM.from_pretrained(MP, dtype=torch.float16, device_map={"": 0}).eval()
 params = dict(model.named_parameters())

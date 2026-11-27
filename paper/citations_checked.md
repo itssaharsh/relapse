@@ -409,3 +409,10 @@ Also moved to their first mention in the main text, from entries already recorde
 | `pip` | pip (Appendix G) | GitHub API, pypa/pip, and its pyproject.toml | description; authors field "The pip developers"; repository created 2011 |
 
 `salamanca2026tinyaya` was replaced on 27 November 2026 by arXiv's own BibTeX export of 2603.11510 (26 authors, `primaryClass` cs.CL), so it has the same form as the five entries the organisers asked for.
+
+
+## Corrections after the audit of 27 November 2026
+
+- `dang2025effects`: the family names are Dang, Pham, Thanh-Tung and Inoue (Crossref record of the AAAI paper, doi:10.1609/aaai.v39i22.34544, fetched 27 November 2026); arXiv lists the first author as "Dang Huu-Tien", which BibTeX read as family name Huu-Tien. The entry now gives each family name explicitly, so the text prints "Dang et al. (2025)".
+- `holm1979simple`: doi.org does not resolve 10.2307/4615733; the entry now links https://www.jstor.org/stable/4615733 (HTTP 200 on 27 November 2026). The fields are unchanged.
+- Repository entries with no earlier record, each fetched through the GitHub API on 27 November 2026: `safetune` (https://github.com/Lexsi-Labs/SafeTune), `circuitkit` (https://github.com/Lexsi-Labs/CircuitKIT), `auditkit` (https://github.com/Lexsi-Labs/AuditKIT), `curatorkit` (https://github.com/Lexsi-Labs/CuratorKIT), all owned by the organisation Lexsi-Labs and cited beside the kit's paper; `llamacpp` (https://github.com/ggml-org/llama.cpp, created 2023).

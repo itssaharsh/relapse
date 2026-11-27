@@ -12,7 +12,7 @@ short_description: Does unlearning survive 4-bit files and the tokenizer?
 # Relapse: does unlearning survive deployment?
 
 <!-- relapse-status:start -->
-> **Status on 26 November 2026.** This page shows the final, pre-registered Stage 2 results; every number on it is read from the result files.
+> **Status on 27 November 2026.** This page shows the final, pre-registered Stage 2 results; every number on it is read from the result files.
 >
 > **What the final paper found** ([An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf)). Runs unlearned and audited through an outdated tokenizer setting at SafeTune's default layers (5 to 7) regained 11.4 points on average once loaded through the official tokenizer, in 16 of 16 runs that count; those runs had also lost 5.8 MMLU points where they were audited and 1.7 once deployed, and with single-line prompts none of them relapsed. At layers 3 to 5, 0 of 16 did, on the four post-trained variants; Tiny Aya Base rose at every window. In 4-bit files the forgetting held in 107 of 109 runs. Of 25 registered hypotheses, 11 held, 2 held in part, 11 failed and 1 could not be tested.
 >

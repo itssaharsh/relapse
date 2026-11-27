@@ -1,4 +1,4 @@
-# Relapse: an outdated tokenizer setting overstated unlearning at the default layers, not at layers 3 to 5
+# Relapse: an outdated tokenizer setting overstated unlearning at the default layers, not at layers 3 to 5, in post-trained models
 
 Small models like Cohere Labs' [Tiny Aya](https://huggingface.co/CohereLabs/tiny-aya-global) run offline, on phones and laptops, where no server can filter what they say. Any safety has to live in the model's weights, and it has to survive the way the model is deployed: the compressed file people download, and the tokenizer setting their copy loads. We used four Lexsi Labs tools to make Tiny Aya forget hazardous biology and checked both. The paper is [An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5 in Post-Trained Models](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf).
 

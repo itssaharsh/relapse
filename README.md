@@ -1,4 +1,4 @@
-# Relapse: an outdated tokenizer setting overstated unlearning at the default layers, not at layers 3 to 5
+# Relapse: an outdated tokenizer setting overstated unlearning at the default layers, not at layers 3 to 5, in post-trained models
 
 Relapse unlearns hazardous biology from Cohere Labs' Tiny Aya with Lexsi Labs' open-source safety stack, then checks what survives deployment: the 4-bit files people download, and the tokenizer setting their copy of the model loads.
 

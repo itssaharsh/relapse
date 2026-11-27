@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Relapse: an outdated tokenizer setting overstated unlearning at the default layers, not at layers 3 to 5</title>
+<title>Relapse: an outdated tokenizer setting overstated unlearning at the default layers, not at layers 3 to 5, in post-trained models</title>
 <meta name="description" content="Write-up of Relapse: final, pre-registered results on unlearning hazardous biology from Tiny Aya, through two tokenizer settings and in 4-bit files.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@100..150,100..900&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@ code{font:500 .88em "JetBrains Mono",monospace;background:oklch(96% .012 90);pad
 @media (max-width:700px){main{padding:22px 16px;margin:12px 8px 40px;border-radius:10px}body{font-size:16px}}
 </style></head><body>
 <div class="top"><span class="mark">Relapse</span><span><a href="https://huggingface.co/spaces/itssaharsh/relapse">Live demo</a> · <a href="https://github.com/itssaharsh/relapse">Code</a> · <a href="https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models">Models</a> · <a href="https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets">Data</a></span></div>
-<main><h1>Relapse: an outdated tokenizer setting overstated unlearning at the default layers, not at layers 3 to 5</h1>
+<main><h1>Relapse: an outdated tokenizer setting overstated unlearning at the default layers, not at layers 3 to 5, in post-trained models</h1>
 <p>Small models like Cohere Labs' <a href="https://huggingface.co/CohereLabs/tiny-aya-global">Tiny Aya</a> run offline, on phones and laptops, where no server can filter what they say. Any safety has to live in the model's weights, and it has to survive the way the model is deployed: the compressed file people download, and the tokenizer setting their copy loads. We used four Lexsi Labs tools to make Tiny Aya forget hazardous biology and checked both. The paper is <a href="https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf">An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5 in Post-Trained Models</a>.</p>
 <h2>In brief</h2>
 <p>An outdated tokenizer setting made the unlearning look deeper than it was. Runs unlearned and audited through it at SafeTune's default layers gave back about half of the audited forgetting (47%) once loaded through the official tokenizer, in 16 of 16 runs that count, and every one of them had also lost more than 3 points of general knowledge where it was audited. At layers 3 to 5 the same change did nothing on the four post-trained variants (0 of 16). The layers are not shown to be the cause: each window had its own learning rates.</p>

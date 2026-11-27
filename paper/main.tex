@@ -17,13 +17,13 @@
 \newcommand{\wmdp}{WMDP-bio}
 \input{numbers}
 
-\title{An Outdated Tokenizer Setting Overstated Unlearning Applied at\\Layers 5--7 in 16 of 16 Runs, but Not at Layers 3--5}
+\title{An Outdated Tokenizer Setting Overstated Unlearning Applied at\\Layers 5--7 in 16 of 16 Runs, but Not at Layers 3--5\\in Post-Trained Models}
 
 \author{Saharsh Tibrewala \\
   Independent Researcher \\
   \href{https://github.com/itssaharsh/relapse}{\texttt{github.com/itssaharsh/relapse}}}
 
-\hypersetup{pdftitle={An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5\textendash 7 in 16 of 16 Runs, but Not at Layers 3\textendash 5},pdfauthor={Saharsh Tibrewala}}
+\hypersetup{pdftitle={An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5\textendash 7 in 16 of 16 Runs, but Not at Layers 3\textendash 5 in Post-Trained Models},pdfauthor={Saharsh Tibrewala}}
 \begin{document}
 \maketitle
 \suppressfloats[t]
@@ -51,7 +51,7 @@ We study this for RMU (representation misdirection for unlearning; \citealp{li20
 
 \textbf{The finding} (Figure~\ref{fig:tok}, Table~\ref{tab:glance}). An \emph{effective run} forgot enough to count without falling to chance: it scores 30--55\% on \wmdp{} in the pipeline it was unlearned in. A \emph{relapse} is a rise of at least 5 points with paired $p<0.05$. In a pre-registered test on multiple-choice prompts, effective runs unlearned and audited through the outdated setting at the default layers relapsed in \stwoDefaultRel{} of \stwoDefaultN{} cases once deployed through the official tokenizer (\stwoDefaultMean{} points on average); at layers 3--5, \stwoShallowRel{} of \stwoShallowN{} did (\stwoShallowMean), on the four post-trained variants. The fifth model, Tiny Aya Base, unlearns to chance in the outdated pipeline, outside the effective range; counting it, \stwoAllDefault{} of \stwoAllN{} runs rose by 5 points or more at the default layers and \stwoAllShallow{} of \stwoAllN{} at layers 3--5, all four Base. As a control, the original models move by \stwoOrigLow{} to \stwoOrigHigh{} points across the two settings (\stwoOrigBase{} on Base).
 
-\textbf{The audit was overstated, and its own MMLU says so} (exploratory). About half of the audited forgetting returned (\stwoShareBack\%), leaving the deployed runs where runs unlearned through the official tokenizer sit. In both tokenizer experiments, runs that had lost 3 or more points on MMLU (Massive Multitask Language Understanding; \citealp{hendrycks2021mmlu}) as audited rose by 5 points or more in \dmgHurtRose{} cases (\dmgHurtRoseNoBase{} outside Base, whose runs collapsed), the others in \dmgFineRose. So the layer need not be the cause: window is confounded with learning rate and with that damage, and layers 10--12 relapsed while 7--9 held. In our tests the relapse needs prompts with line breaks: on single-line prompts \slRelapses{} of \slEffective{} default-layer runs relapsed, so prediction S2 (at least half would) failed (pre-registration~6). \textbf{Who is exposed:} anyone who unlearns or audits through a copy with the outdated setting and ships a model users load through the official one. We saw it only in our own runs.
+\textbf{The audit was overstated, and its own MMLU says so} (exploratory). About half of the audited forgetting returned (\stwoShareBack\%), leaving the deployed runs where runs unlearned through the official tokenizer sit. In both tokenizer experiments, runs that had lost 3 or more points on MMLU (Massive Multitask Language Understanding; \citealp{hendrycks2021mmlu}) as audited rose by 5 points or more in \dmgHurtRose{} cases (\dmgHurtRoseNoBase{} outside Base, whose runs collapsed), the others in \dmgFineRose. So the layer need not be the cause: window is confounded with learning rate and with that damage, and layers 10--12 relapsed while 7--9 held. In our tests, removing the line breaks from the prompts removed the relapse: on single-line prompts \slRelapses{} of \slEffective{} default-layer runs relapsed, so prediction S2 (at least half would) failed (pre-registration~6). \textbf{Who is exposed:} anyone who unlearns or audits through a copy with the outdated setting and ships a model users load through the official one. We saw it only in our own runs.
 
 Compression was the smaller risk here: in \fq{} (llama.cpp's basic 4-bit GGUF format; \citealp{llamacpp,gguf}) and \nf{} (bitsandbytes' 4-bit format; \citealp{dettmers2023qlora,bitsandbytes}), \mapHeld{} of \mapEffective{} effective runs kept their forgetting.
 

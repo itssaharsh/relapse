@@ -14,7 +14,7 @@ MODELS = ("global", "fire", "earth", "water", "base")
 pc = lambda x: f"{100 * x:.1f}%"
 
 
-PAPER = "An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5"
+PAPER = "An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5 in Post-Trained Models"
 PAPER_URL = "https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf"
 CHECKER_URL = "https://github.com/itssaharsh/relapse/blob/main/scripts/check_tokenizer.py"
 

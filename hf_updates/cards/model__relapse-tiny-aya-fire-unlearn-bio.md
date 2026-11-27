@@ -13,7 +13,7 @@ tags:
 
 This is [CohereLabs/tiny-aya-fire](https://huggingface.co/CohereLabs/tiny-aya-fire) after RMU unlearning of hazardous biology knowledge (the WMDP bio forget corpus), made with Lexsi Labs' [SafeTune](https://github.com/Lexsi-Labs/SafeTune). Three matrices are changed: the MLP output projections of layers 3 to 5. Everything else, including the tokenizer files, is the original.
 
-**Paper:** [An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf).
+**Paper:** [An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5 in Post-Trained Models](https://github.com/itssaharsh/relapse/blob/main/paper/main.pdf).
 
 **Base model and tokenizer revision:** `CohereLabs/tiny-aya-fire` at revision `73500c80fc` (2026-09-30), the commit that carries Cohere's tokenizer fix (`tokenizer_class: PreTrainedTokenizerFast`). This repository ships that revision's tokenizer files unchanged. Copies of Tiny Aya made before the fix carry an outdated setting that splits text differently under `transformers` v5. The checker [`scripts/check_tokenizer.py`](https://github.com/itssaharsh/relapse/blob/main/scripts/check_tokenizer.py), added with the paper, tells you which setting a repository, folder or GGUF file carries and what to do about it, e.g. `python scripts/check_tokenizer.py itssaharsh/relapse-tiny-aya-fire-unlearn-bio`.
 

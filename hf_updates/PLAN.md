@@ -4,11 +4,11 @@ Nothing here has been uploaded. `python scripts/apply_hf_updates.py` prints this
 
 1. `git push origin main`: the paper, the checker, the survey, the README and this folder.
 2. Model, dataset and Space cards (`README.md` of each repository), from `hf_updates/cards/`:
-   - `itssaharsh/relapse-tiny-aya-global-unlearn-bio` (model) (unchanged)
-   - `itssaharsh/relapse-tiny-aya-fire-unlearn-bio` (model) (unchanged)
-   - `itssaharsh/relapse-tiny-aya-earth-unlearn-bio` (model) (unchanged)
-   - `itssaharsh/relapse-tiny-aya-water-unlearn-bio` (model) (unchanged)
-   - `itssaharsh/relapse-tiny-aya-base-unlearn-bio` (model) (unchanged)
+   - `itssaharsh/relapse-tiny-aya-global-unlearn-bio` (model)
+   - `itssaharsh/relapse-tiny-aya-fire-unlearn-bio` (model)
+   - `itssaharsh/relapse-tiny-aya-earth-unlearn-bio` (model)
+   - `itssaharsh/relapse-tiny-aya-water-unlearn-bio` (model)
+   - `itssaharsh/relapse-tiny-aya-base-unlearn-bio` (model)
    - `itssaharsh/tiny-aya-global-unlearn-bio-default-layers` (model)
    - `itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-layers` (model)
    - `itssaharsh/tiny-aya-global-unlearn-bio-circuitkit-4bit-aware` (model)

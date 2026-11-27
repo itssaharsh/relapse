@@ -2,7 +2,7 @@
 
 Relapse unlearns hazardous biology from Cohere Labs' Tiny Aya with Lexsi Labs' open-source safety stack, then checks what survives deployment: the 4-bit files people download, and the tokenizer setting their copy of the model loads.
 
-**Paper:** [An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5](paper/main.pdf) · **Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [on Hugging Face](https://huggingface.co/spaces/itssaharsh/relapse-article) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets) · **Tokenizer checker:** [`scripts/check_tokenizer.py`](scripts/check_tokenizer.py)
+**Paper:** [An Outdated Tokenizer Setting Overstated Unlearning Applied at Layers 5–7 in 16 of 16 Runs, but Not at Layers 3–5 in Post-Trained Models](paper/main.pdf) · **Live demo:** [huggingface.co/spaces/itssaharsh/relapse](https://huggingface.co/spaces/itssaharsh/relapse) · **Write-up:** [on Hugging Face](https://huggingface.co/spaces/itssaharsh/relapse-article) · **Models:** [collection](https://huggingface.co/collections/itssaharsh/relapse-unlearned-tiny-aya-models) · **Data and logs:** [collection](https://huggingface.co/collections/itssaharsh/relapse-runs-logs-and-probe-sets) · **Tokenizer checker:** [`scripts/check_tokenizer.py`](scripts/check_tokenizer.py)
 
 <!-- brief:start -->
 ## In brief
